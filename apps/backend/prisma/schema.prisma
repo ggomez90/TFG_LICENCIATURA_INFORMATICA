@@ -1,0 +1,205 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model contenido_educativo {
+  idContenidoEducativo Int       @id @default(autoincrement())
+  titulo               String    @db.VarChar(150)
+  descripcion          String    @db.Text
+  urlRecurso           String?   @db.VarChar(500)
+  fechaPublicacion     DateTime  @db.DateTime(0)
+  visible              Boolean   @default(true)
+  creadoPor            Int
+  usuario              usuario   @relation(fields: [creadoPor], references: [idUsuario], map: "fk_contenido_creador")
+  desafio              desafio[]
+
+  @@index([creadoPor], map: "fk_contenido_creador")
+}
+
+model desafio {
+  idDesafio            Int                   @id @default(autoincrement())
+  titulo               String                @db.VarChar(150)
+  descripcion          String                @db.Text
+  tipoResiduo          String                @db.VarChar(80)
+  requiereInscripcion  Boolean               @default(false)
+  unidadMedida         String                @db.VarChar(20)
+  meta                 Decimal               @db.Decimal(12, 3)
+  puntosTotales        Int
+  puntosPorUnidad      Decimal               @db.Decimal(12, 3)
+  bonificacionCompleto Int?
+  puntosParcial        Boolean               @default(false)
+  fechaInicio          DateTime              @db.DateTime(0)
+  fechaFin             DateTime              @db.DateTime(0)
+  estado               String                @db.VarChar(30)
+  idContenidoEducativo Int?
+  contenido_educativo  contenido_educativo?  @relation(fields: [idContenidoEducativo], references: [idContenidoEducativo], map: "fk_desafio_contenido")
+  entrega              entrega[]
+  inscripcion_desafio  inscripcion_desafio[]
+
+  @@index([idContenidoEducativo], map: "fk_desafio_contenido")
+}
+
+model encuesta {
+  idEncuesta         Int                  @id @default(autoincrement())
+  titulo             String               @db.VarChar(150)
+  descripcion        String               @db.Text
+  activa             Boolean              @default(false)
+  fechaPublicacion   DateTime?            @db.DateTime(0)
+  fechaCierre        DateTime?            @db.DateTime(0)
+  creadaPor          Int
+  usuario            usuario              @relation(fields: [creadaPor], references: [idUsuario], map: "fk_encuesta_admin")
+  respuesta_encuesta respuesta_encuesta[]
+
+  @@index([creadaPor], map: "fk_encuesta_admin")
+}
+
+model entrega {
+  idEntrega                                    Int                 @id @default(autoincrement())
+  idUsuario                                    Int
+  idDesafio                                    Int
+  fecha                                        DateTime            @db.DateTime(0)
+  cantidadDeclarada                            Decimal             @db.Decimal(12, 3)
+  cantidadVerificada                           Decimal?            @db.Decimal(12, 3)
+  estado                                       String              @db.VarChar(30)
+  observaciones                                String?             @db.VarChar(300)
+  idOperarioValidador                          Int?
+  fechaValidacion                              DateTime?           @db.DateTime(0)
+  motivoRechazo                                String?             @db.VarChar(200)
+  ubicacion                                    String?             @db.VarChar(200)
+  desafio                                      desafio             @relation(fields: [idDesafio], references: [idDesafio], map: "fk_entrega_desafio")
+  usuario_entrega_idOperarioValidadorTousuario usuario?            @relation("entrega_idOperarioValidadorTousuario", fields: [idOperarioValidador], references: [idUsuario], map: "fk_entrega_operario")
+  usuario_entrega_idUsuarioTousuario           usuario             @relation("entrega_idUsuarioTousuario", fields: [idUsuario], references: [idUsuario], map: "fk_entrega_usuario")
+  movimiento_puntos                            movimiento_puntos[]
+
+  @@index([idOperarioValidador], map: "fk_entrega_operario")
+  @@index([idDesafio], map: "idx_entrega_desafio")
+  @@index([estado], map: "idx_entrega_estado")
+  @@index([idUsuario], map: "idx_entrega_usuario")
+}
+
+model inscripcion_desafio {
+  idInscripcion    Int       @id @default(autoincrement())
+  idUsuario        Int
+  idDesafio        Int
+  fechaAdhesion    DateTime  @db.Date
+  fechaBaja        DateTime? @db.Date
+  progresoPorc     Decimal   @default(0.00) @db.Decimal(5, 2)
+  puntosAcumulados Int       @default(0)
+  estado           String    @db.VarChar(30)
+  desafio          desafio   @relation(fields: [idDesafio], references: [idDesafio], onDelete: Cascade, map: "fk_insc_desafio")
+  usuario          usuario   @relation(fields: [idUsuario], references: [idUsuario], onDelete: Cascade, map: "fk_insc_usuario")
+
+  @@unique([idUsuario, idDesafio], map: "uq_insc_usuario_desafio")
+  @@index([idDesafio], map: "idx_insc_desafio")
+}
+
+model movimiento_puntos {
+  idMovimiento                                     Int      @id @default(autoincrement())
+  idUsuario                                        Int
+  fecha                                            DateTime @default(now()) @db.DateTime(0)
+  tipo                                             String   @db.VarChar(20)
+  origen                                           String   @db.VarChar(20)
+  puntos                                           Int
+  descripcion                                      String   @db.VarChar(200)
+  idEntrega                                        Int?
+  idVoucher                                        Int?
+  idAdminAjuste                                    Int?
+  usuario_movimiento_puntos_idAdminAjusteTousuario usuario? @relation("movimiento_puntos_idAdminAjusteTousuario", fields: [idAdminAjuste], references: [idUsuario], map: "fk_mov_admin")
+  entrega                                          entrega? @relation(fields: [idEntrega], references: [idEntrega], map: "fk_mov_entrega")
+  usuario_movimiento_puntos_idUsuarioTousuario     usuario  @relation("movimiento_puntos_idUsuarioTousuario", fields: [idUsuario], references: [idUsuario], map: "fk_mov_usuario")
+  voucher                                          voucher? @relation(fields: [idVoucher], references: [idVoucher], map: "fk_mov_voucher")
+
+  @@index([idAdminAjuste], map: "fk_mov_admin")
+  @@index([idEntrega], map: "fk_mov_entrega")
+  @@index([idVoucher], map: "fk_mov_voucher")
+  @@index([origen], map: "idx_mov_origen")
+  @@index([idUsuario], map: "idx_mov_usuario")
+  @@index([idUsuario, fecha], map: "idx_mov_usuario_fecha")
+}
+
+model notificacion {
+  idNotificacion Int      @id @default(autoincrement())
+  titulo         String   @db.VarChar(150)
+  mensaje        String   @db.Text
+  fechaCreacion  DateTime @default(now()) @db.DateTime(0)
+  creadaPor      Int
+  visible        Boolean  @default(true)
+  usuario        usuario  @relation(fields: [creadaPor], references: [idUsuario], map: "fk_notif_admin")
+
+  @@index([creadaPor], map: "fk_notif_admin")
+}
+
+model respuesta_encuesta {
+  idRespuesta       Int      @id @default(autoincrement())
+  idEncuesta        Int
+  idUsuario         Int?
+  nombreApellidoInv String?  @db.VarChar(150)
+  dniCuilCuitInv    String?  @db.VarChar(20)
+  fechaRespuesta    DateTime @default(now()) @db.DateTime(0)
+  contenido         String   @db.Text
+  encuesta          encuesta @relation(fields: [idEncuesta], references: [idEncuesta], onDelete: Cascade, map: "fk_resp_encuesta")
+  usuario           usuario? @relation(fields: [idUsuario], references: [idUsuario], map: "fk_resp_usuario")
+
+  @@index([idEncuesta], map: "idx_resp_encuesta")
+  @@index([idUsuario], map: "idx_resp_usuario")
+}
+
+model usuario {
+  idUsuario                                                  Int                   @id @default(autoincrement())
+  nombres                                                    String?               @db.VarChar(100)
+  apellidos                                                  String?               @db.VarChar(100)
+  razonSocial                                                String?               @db.VarChar(150)
+  dniCuitCuil                                                String                @unique(map: "uq_doc") @db.VarChar(20)
+  direccion                                                  String                @db.VarChar(150)
+  localidad                                                  String                @db.VarChar(100)
+  provincia                                                  String                @db.VarChar(50)
+  usuario                                                    String                @unique(map: "uq_usuario") @db.VarChar(80)
+  email                                                      String                @unique(map: "uq_email") @db.VarChar(120)
+  password                                                   String                @db.VarChar(255)
+  rol                                                        String                @db.VarChar(30)
+  estado                                                     Boolean               @default(true)
+  puntos                                                     Int                   @default(0)
+  contenido_educativo                                        contenido_educativo[]
+  encuesta                                                   encuesta[]
+  entrega_entrega_idOperarioValidadorTousuario               entrega[]             @relation("entrega_idOperarioValidadorTousuario")
+  entrega_entrega_idUsuarioTousuario                         entrega[]             @relation("entrega_idUsuarioTousuario")
+  inscripcion_desafio                                        inscripcion_desafio[]
+  movimiento_puntos_movimiento_puntos_idAdminAjusteTousuario movimiento_puntos[]   @relation("movimiento_puntos_idAdminAjusteTousuario")
+  movimiento_puntos_movimiento_puntos_idUsuarioTousuario     movimiento_puntos[]   @relation("movimiento_puntos_idUsuarioTousuario")
+  notificacion                                               notificacion[]
+  respuesta_encuesta                                         respuesta_encuesta[]
+  voucher                                                    voucher[]
+}
+
+model voucher {
+  idVoucher         Int                 @id @default(autoincrement())
+  idUsuario         Int
+  idVoucherTipo     Int
+  estado            String              @db.VarChar(30)
+  fechaAdquisicion  DateTime?           @db.DateTime(0)
+  fechaUso          DateTime?           @db.DateTime(0)
+  movimiento_puntos movimiento_puntos[]
+  voucher_tipo      voucher_tipo        @relation(fields: [idVoucherTipo], references: [idVoucherTipo], map: "fk_voucher_tipo")
+  usuario           usuario             @relation(fields: [idUsuario], references: [idUsuario], map: "fk_voucher_usuario")
+
+  @@index([estado], map: "idx_voucher_estado")
+  @@index([idVoucherTipo], map: "idx_voucher_tipo")
+  @@index([idUsuario], map: "idx_voucher_usuario")
+}
+
+model voucher_tipo {
+  idVoucherTipo       Int       @id @default(autoincrement())
+  nombre              String    @db.VarChar(120)
+  descripcion         String    @db.Text
+  puntosRequeridos    Int
+  montoBeneficio      Int
+  fechaInicioVigencia DateTime  @db.Date
+  fechaFinVigencia    DateTime  @db.Date
+  activo              Boolean   @default(true)
+  voucher             voucher[]
+}

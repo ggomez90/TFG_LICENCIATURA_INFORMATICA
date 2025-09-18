@@ -1,0 +1,33 @@
+{
+  "realm": "yo-reciclo",
+  "enabled": true,
+  "displayName": "Yo Reciclo",
+  "roles": {
+    "realm": [
+      { "name": "ADMINISTRADOR", "description": "Rol de administrador" },
+      { "name": "OPERARIO", "description": "Rol de operario" },
+      { "name": "CLIENTE", "description": "Rol de cliente" }
+    ]
+  },
+  "clients": [
+    {
+      "clientId": "angular-yo-reciclo",
+      "protocol": "openid-connect",
+      "publicClient": true,
+      "standardFlowEnabled": true,
+      "directAccessGrantsEnabled": true,
+      "redirectUris": ["http://localhost/*"],
+      "webOrigins": ["http://localhost:4200", "http://localhost"],
+      "attributes": { "pkce.code.challenge.method": "S256" }
+    },
+    {
+      "clientId": "api-yo-reciclo",
+      "protocol": "openid-connect",
+      "publicClient": false,
+      "bearerOnly": true,
+      "serviceAccountsEnabled": true,
+      "redirectUris": [],
+      "webOrigins": ["*"]
+    }
+  ]
+}

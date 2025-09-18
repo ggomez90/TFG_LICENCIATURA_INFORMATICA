@@ -1,0 +1,56 @@
+# --- SO / editores ---
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.code-workspace
+
+# --- Node / PNPM ---
+node_modules/
+pnpm-debug.log*
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+# ⚠️ No ignores los lockfiles: committeá pnpm-lock.yaml de cada app
+
+# --- Builds / caches ---
+dist/
+build/
+tmp/
+temp/
+logs/
+**/*.log
+
+# --- Angular (Vite) caches ---
+.angular/
+apps/frontend/.angular/
+apps/frontend/.vite/
+apps/frontend/.cache/
+
+# --- Service worker / coverage ---
+coverage/
+apps/**/coverage/
+
+# --- Env / secretos (mantener .env.example) ---
+**/.env
+**/.env.*
+!.env.example
+infra/nginx/*.crt
+infra/nginx/*.key
+
+# --- Prisma ---
+# (NO ignores prisma/schema.prisma ni prisma/migrations)
+# El cliente @prisma/client vive en node_modules (ya ignorado)
+
+# --- Docker compose overrides locales (opcionales) ---
+infra/*-override.yml
+infra/*.local.yml
+
+# --- Backups / dumps (ubicá tus .sql aquí y se ignoran) ---
+infra/backups/
+db/dumps/
+
+# --- Keycloak exports con secretos (opcional) ---
+# Si vas a versionar un export del realm, sanitizalo y renómbralo a realm-export.example.json
+keycloak/*.json
+!keycloak/realm-export.example.json
