@@ -1,0 +1,318 @@
+/* ===== Reset & fondo ambiental ===== */
+html, body { height: 100%; }
+body, .login-pf, .pf-c-login {
+  min-height: 100vh;
+  margin: 0;
+  background:
+    radial-gradient(1200px 800px at 10% -10%, rgba(16,185,129,0.12) 0%, rgba(16,185,129,0) 60%),
+    radial-gradient(900px 600px at 110% 110%, rgba(34,197,94,0.12) 0%, rgba(34,197,94,0) 60%),
+    linear-gradient(180deg, #f0fdf4 0%, #ffffff 50%, #ecfdf5 100%),
+    url("../img/bg-ambiental.svg?v=10") center / cover no-repeat fixed !important;
+  color: #0f172a; /* slate-900 */
+}
+
+/* Ocultar SOLO el header global (barra arriba), NO el título del card */
+#kc-header, .kc-header, #kc-header-wrapper, .kc-header-wrapper, .kc-logo-text {
+  display: none !important;
+}
+
+/* Centrado del contenedor */
+.pf-c-login,
+#kc-container-wrapper,
+.login-pf-page {
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  min-height: 100vh; /* fix centrado */
+}
+@supports (height: 100dvh) {
+  .pf-c-login,
+  #kc-container-wrapper,
+  .login-pf-page {
+    min-height: 100dvh; /* mejor en móviles con barras */
+  }
+}
+
+/* Tarjeta del login */
+.pf-c-card,
+.card-pf {
+  width: 100%;
+  max-width: 420px;
+  border-radius: 20px !important;
+  border: 1px solid rgba(16,185,129,0.25) !important;
+  background: #ffffff !important;
+  box-shadow:
+    0 10px 25px rgba(16,185,129,0.12),
+    0 2px 8px rgba(2, 6, 23, 0.1) !important;
+  overflow: hidden;
+}
+
+/* ===== Header dentro de la tarjeta (PF v5 y legacy) ===== */
+.pf-c-login__main-header,
+.login-pf-header {
+  display: block !important;
+  text-align: center;
+  padding: 16px 22px 0 22px;
+}
+
+/* LOGO DENTRO DEL CARD (encima del título) */
+.pf-c-login__main-header::before,
+.login-pf-header::before {
+  content: "";
+  display: block;
+  width: 180px;                 /* ancho del logo */
+  height: 150px;                /* alto del logo  */
+  margin: 6px auto 8px auto;
+  background: url("../img/logo.png?v=2") center / contain no-repeat;
+  filter: drop-shadow(0 4px 10px rgba(16,185,129,0.25));
+}
+
+/* Título dentro del card ("Acceder a tu cuenta") */
+#kc-page-title {
+  display: block !important;
+  text-align: center;
+  color: #065f46;           /* emerald-800 */
+  font-weight: 700;
+  font-size: 18px;
+  margin: 4px 0 14px 0;
+  text-transform: uppercase;
+}
+
+/* (IMPORTANTE) Desactivá inyectores anteriores de logo fuera del card */
+.pf-c-login__container::before,
+#kc-container-wrapper::before,
+.login-pf-page::before {
+  content: none !important;
+  display: none !important;
+}
+
+/* Inputs */
+.pf-c-form-control, 
+#kc-form-login input[type="text"],
+#kc-form-login input[type="password"],
+#kc-register-form input[type="text"],
+#kc-register-form input[type="password"],
+#kc-register-form input[type="email"] {
+  border-radius: 12px !important;
+  border: 1px solid rgba(16,185,129,0.25) !important;
+  padding: 10px 12px !important;
+  outline: none !important;
+  font-size: 16px;
+}
+.pf-c-form-control:focus,
+#kc-form-login input:focus,
+#kc-register-form input:focus {
+  border-color: #10b981 !important;
+  box-shadow: 0 0 0 3px rgba(16,185,129,0.2) !important;
+}
+
+/* Labels más grandes y legibles */
+.pf-c-form__label label,
+#kc-form-login label,
+#kc-register-form label,
+#kc-reset-password-form label,
+label.control-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #065f46;
+  margin-bottom: 6px;
+}
+
+/* Botón principal */
+.pf-c-button.pf-m-primary,
+#kc-login, 
+#kc-register, 
+input[type="submit"].btn-primary {
+  background-color: #059669 !important;
+  border-color: #059669 !important;
+  border-radius: 12px !important;
+  padding: 10px 14px !important;
+  font-weight: 600 !important;
+  font-size: 18px;
+}
+.pf-c-button.pf-m-primary:hover,
+#kc-login:hover, 
+#kc-register:hover, 
+input[type="submit"].btn-primary:hover {
+  background-color: #047857 !important;
+}
+
+/* Links */
+.pf-c-button.pf-m-link,
+#kc-form-options a,
+a { color: #0284C7 !important; }
+.pf-c-button.pf-m-link:hover,
+#kc-form-options a:hover,
+a:hover {
+  color: #0284C7 !important;
+  text-decoration: underline;
+}
+
+/* Solo el link de "¿Olvidaste tu contraseña?" más grande */
+a#forgot-password,
+a#kc-reset-password,
+#kc-form-options a[href*="reset-credentials"],
+.pf-c-login__main-footer a[href*="reset-credentials"],
+.kc-login-reset-pwd a[href*="reset-credentials"] {
+  font-size: 18px !important;
+  line-height: 1.4 !important;
+}
+
+/* Mensajes de error/alertas */
+.pf-c-alert, .alert-error, .feedback-error {
+  border-radius: 12px !important;
+}
+
+/* Responsivo (card): mantener proporciones en móviles sin tocar colores/tamaños */
+@media (max-width: 480px) {
+  .pf-c-card, .card-pf {
+    max-width: 94vw;
+    border-radius: 16px !important;
+  }
+  /* SIN cambios al tamaño del logo en móvil para no achicarlo */
+}
+
+/* Apagar fondos por defecto de PatternFly */
+.pf-v5-c-background-image,
+.pf-c-background-image { display: none !important; }
+
+/* Legacy: quitar pseudo-fondo viejo */
+.login-pf:before { content: none !important; }
+
+/* ===== Ancho reducido de campos y botón dentro del card ===== */
+
+/* 1) Limitar el ancho de cada grupo de campo y centrarlo */
+#kc-form-login .pf-c-form__group,
+#kc-register-form .pf-c-form__group,
+#kc-reset-password-form .pf-c-form__group,
+/* fallback legacy */
+#kc-form-login .form-group,
+#kc-register-form .form-group,
+#kc-reset-password-form .form-group {
+  max-width: 280px;
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* 2) Hacer que los inputs ocupen ese ancho limitado */
+#kc-form-login .pf-c-form-control,
+#kc-register-form .pf-c-form-control,
+#kc-reset-password-form .pf-c-form-control,
+/* fallback legacy */
+#kc-form-login input[type="text"],
+#kc-form-login input[type="password"],
+#kc-register-form input[type="text"],
+#kc-register-form input[type="password"],
+#kc-register-form input[type="email"],
+#kc-reset-password-form input[type="text"],
+#kc-reset-password-form input[type="password"] {
+  width: 100%;
+}
+
+/* 3) Botón principal más angosto y centrado */
+#kc-form-buttons,
+#kc-register-form .form-actions,
+#kc-reset-password-form .form-actions {
+  display: flex;
+  justify-content: center;
+}
+
+#kc-login,
+#kc-register,
+input[type="submit"].btn-primary,
+/* fallbacks posibles */
+#kc-login.btn,
+#kc-register.btn {
+  width: 200px;
+  max-width: 90%;
+}
+
+/* 4) Opcional: los links "Recordarme", "¿Olvidaste tu contraseña?" con el mismo ancho */
+#kc-form-options,
+#kc-form-options > * {
+  max-width: 320px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Mensajes */
+.pf-c-alert, .alert-error, .feedback-error { border-radius: 12px !important; }
+
+/* Footer: “Municipalidad de Ceres” debajo del card */
+.pf-c-card::after,
+.card-pf::after {
+  content: "Municipalidad de Ceres";
+  display: block;
+  text-align: center;
+  color: #065f46;
+  font-size: 13px;
+  font-weight: 600;
+  margin: 12px 0 4px 0;
+}
+
+/* 5) Responsive: un poco más chico en móviles (sin cambiar tamaños base del logo) */
+@media (max-width: 480px) {
+  #kc-form-login .pf-c-form__group,
+  #kc-register-form .pf-c-form__group,
+  #kc-reset-password-form .pf-c-form__group,
+  #kc-form-login .form-group,
+  #kc-register-form .form-group,
+  #kc-reset-password-form .form-group {
+    max-width: 280px;
+  }
+  #kc-login,
+  #kc-register,
+  input[type="submit"].btn-primary,
+  #kc-login.btn,
+  #kc-register.btn {
+    width: 220px;
+  }
+}
+
+/* ===== FINAL OVERRIDE — Debe ir al final del archivo ===== */
+html,
+body,
+#kc-page-container,
+.pf-v5-c-page,
+.login-pf,
+.pf-c-login,
+.pf-v5-c-page__main {  /* añadimos main por si aplica fondo ahí */
+  background-color: transparent !important;
+  background:
+    radial-gradient(1200px 800px at 10% -10%, rgba(16,185,129,0.12) 0%, rgba(16,185,129,0) 60%),
+    radial-gradient(900px 600px at 110% 110%, rgba(34,197,94,0.12) 0%, rgba(34,197,94,0) 60%),
+    linear-gradient(180deg, rgba(240,253,244,0.88) 0%, rgba(255,255,255,0.86) 50%, rgba(236,253,245,0.88) 100%),
+    url("../img/bg-ambiental.svg?v=13")
+    center / cover no-repeat fixed !important;
+}
+
+/* === OVERRIDE ABSOLUTO DEL FONDO — PEGAR AL FINAL === */
+html,
+body,
+#kc-page-container,
+.pf-v5-c-page,
+.login-pf,
+.pf-c-login,
+.pf-v5-c-page__main {
+  background: 
+    url("../img/bg-ambiental.svg?v=99"),
+    radial-gradient(1200px 800px at 10% -10%, rgba(16,185,129,0.12) 0%, rgba(16,185,129,0) 60%),
+    radial-gradient(900px 600px at 110% 110%, rgba(34,197,94,0.12) 0%, rgba(34,197,94,0) 60%),
+    linear-gradient(180deg, #f0fdf4 0%, #ffffff 50%, #ecfdf5 100%) !important;
+
+  background-position: center center !important;
+  background-size: cover !important;
+  background-repeat: no-repeat !important;
+  background-attachment: fixed !important;
+}
+
+/* ==== FIX EXTRA DE CENTRADO (neutraliza empujes de PF) ==== */
+.pf-c-login__container,
+.pf-c-login__main,
+.login-pf .card-pf,
+.pf-c-card {
+  margin-top: 0 !important;
+  align-self: center !important;
+  justify-self: center !important;
+}
