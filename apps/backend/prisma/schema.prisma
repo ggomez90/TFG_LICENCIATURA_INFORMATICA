@@ -102,6 +102,7 @@ model Usuario {
   usuario          String           @unique(map: "uq_usuario") @db.VarChar(80)
   email            String           @unique(map: "uq_email")   @db.VarChar(120)
   clave            String           @db.VarChar(255)
+  motivoBan        String?          @db.VarChar(300)
 
   // Estados/Roles
   idRolUsuario     Int
