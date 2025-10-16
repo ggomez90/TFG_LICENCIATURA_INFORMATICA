@@ -10,4 +10,8 @@ export class UpdateEstadoVoucherDto {
 }
 export class FilterEstadoVoucherDto extends PaginationDto {
   @IsOptional() @IsString() q?: string;
+
+    // hereda de OrderDto las propiedades order y sortBy
+  order?: 'ASC' | 'DESC';
+  sortBy?: string;
 }

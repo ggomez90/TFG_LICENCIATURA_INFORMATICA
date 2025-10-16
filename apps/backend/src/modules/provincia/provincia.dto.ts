@@ -9,4 +9,8 @@ export class UpdateProvinciaDto { /* normalmente no se edita */ }
 
 export class FilterProvinciaDto extends PaginationDto {
   @IsOptional() @IsString() q?: string;
+
+  // hereda de OrderDto las propiedades order y sortBy
+  order?: 'ASC' | 'DESC';
+  sortBy?: string;
 }

@@ -6,15 +6,13 @@ import {
   ResourceGuard,
   RoleGuard,
 } from 'nest-keycloak-connect';
-
-import { PrismaModule } from './prisma/prisma.module'; // <-- agregado
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { SecureController } from './secure.controller';
+import { PrismaModule } from './prisma/prisma.module';
+import { AuthModule, KeycloakAuthGuard, RolesGuard } from './auth';
 
 @Module({
   imports: [
-    PrismaModule, // <-- agregado
+    AuthModule,
+    PrismaModule,
     KeycloakConnectModule.register({
       authServerUrl: process.env.KEYCLOAK_URL ?? 'http://keycloak:8081',
       realm: process.env.KEYCLOAK_REALM ?? 'yo-reciclo',
@@ -22,12 +20,10 @@ import { SecureController } from './secure.controller';
       secret: process.env.KEYCLOAK_CLIENT_SECRET as string,
     }),
   ],
-  controllers: [AppController, SecureController],
+  controllers: [],
   providers: [
-    AppService,
-    { provide: APP_GUARD, useClass: AuthGuard },
-    { provide: APP_GUARD, useClass: ResourceGuard },
-    { provide: APP_GUARD, useClass: RoleGuard },
+    { provide: APP_GUARD, useClass: KeycloakAuthGuard },
+    { provide: APP_GUARD, useClass: RolesGuard },
   ],
 })
 export class AppModule {}

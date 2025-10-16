@@ -6,9 +6,19 @@ export class CreateLocalidadDto {
   @IsString() @Length(1, 50) nombre!: string;
   @IsInt() @Min(1) idProvincia!: number;
 }
-export class UpdateLocalidadDto { /* normalmente no se edita */ }
+export class UpdateLocalidadDto { 
+    @IsOptional() @IsString() @Length(1, 50)
+  nombre?: string;
+
+  @IsOptional() @IsInt() @Min(1)
+  idProvincia?: number;
+ }
 
 export class FilterLocalidadDto extends PaginationDto {
   @IsOptional() @IsInt() @Min(1) idProvincia?: number;
   @IsOptional() @IsString() q?: string;
+
+  // hereda de OrderDto las propiedades order y sortBy
+  order?: 'ASC' | 'DESC';
+  sortBy?: string;
 }

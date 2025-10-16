@@ -10,4 +10,8 @@ export class UpdateEstadoDesafioDto {
 }
 export class FilterEstadoDesafioDto extends PaginationDto {
   @IsOptional() @IsString() q?: string;
+
+  // hereda de OrderDto las propiedades order y sortBy
+  order?: 'ASC' | 'DESC';
+  sortBy?: string;
 }
