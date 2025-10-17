@@ -1,12 +1,17 @@
-import { IsInt, IsOptional, Min } from 'class-validator';
+import { IsDateString, IsInt, IsOptional, Min } from 'class-validator';
 import { PaginationDto } from '../common/pagination.dto';
-import { DateRangeDto } from '../common/date-range.dto';
 import { OrderDto } from '../common/order.dto';
 
 export class FilterEntregaDto extends PaginationDto {
   @IsOptional() @IsInt() @Min(1) idCliente?: number;
   @IsOptional() @IsInt() @Min(1) idDesafio?: number;
   @IsOptional() @IsInt() @Min(1) estado?: number;
+
+  // ✅ Agregados para tus necesidades:
+  @IsOptional() @IsInt() @Min(1) idInscripcionDesafio?: number;
+
+  @IsOptional() @IsDateString() fechaDesde?: string; // rango por fechaCreacion
+  @IsOptional() @IsDateString() fechaHasta?: string;
 }
 
 export class OrderEntregaDto extends OrderDto {

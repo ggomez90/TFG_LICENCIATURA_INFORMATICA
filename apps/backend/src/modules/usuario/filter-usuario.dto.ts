@@ -1,4 +1,4 @@
-import { IsEmail, IsInt, IsOptional, IsString, Min } from 'class-validator';
+import { IsEmail, IsInt, IsOptional, IsString, Min, IsIn } from 'class-validator';
 import { PaginationDto } from '../common/pagination.dto';
 import { OrderDto } from '../common/order.dto';
 
@@ -23,5 +23,6 @@ export class FilterUsuarioDto extends PaginationDto {
 }
 
 export class OrderUsuarioDto extends OrderDto {
-  // sortBy sugeridos: 'idUsuario','usuario','email','idRolUsuario','idEstadoUsuario'
+  @IsOptional()
+  @IsIn(['idUsuario', 'usuario', 'email', 'idRolUsuario', 'idEstadoUsuario']) declare sortBy?: string;
 }
