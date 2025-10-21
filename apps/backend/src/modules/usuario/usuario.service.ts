@@ -1,6 +1,7 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+// apps/backend/src/modules/usuario/usuario.service.ts
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
-import { Prisma, Usuario } from '@prisma/client';
+import { KeycloakAdminService } from '../../auth/keycloak-admin.service';
 
 import { CreateUsuarioDto } from './create-usuario.dto';
 import { UpdateUsuarioDto } from './update-usuario.dto';
@@ -8,168 +9,219 @@ import { HabilitarUsuarioDto } from './enable-usuario.dto';
 import { BanearUsuarioDto } from './ban-usuario.dto';
 import { FilterUsuarioDto } from './filter-usuario.dto';
 
-type UpdateContext = { asAdmin?: boolean };
+type AppRoleName = 'ADMIN' | 'OPERARIO' | 'CLIENTE';
+
+const ROL = {
+  ADMIN: 1,
+  OPERARIO: 2,
+  CLIENTE: 3,
+} as const;
+
+const ESTADO = {
+  PENDIENTE: 1,
+  HABILITADO: 2,
+  BANEADO: 3,
+} as const;
+
+function roleNameFromId(id: number): AppRoleName {
+  if (id === ROL.ADMIN) return 'ADMIN';
+  if (id === ROL.OPERARIO) return 'OPERARIO';
+  return 'CLIENTE';
+}
 
 @Injectable()
 export class UsuarioService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly kcAdmin: KeycloakAdminService,
+  ) {}
 
-  // ---------------- Create público ----------------
-  async create(dto: CreateUsuarioDto): Promise<Usuario> {
-    try {
-      return await this.prisma.usuario.create({
-        data: { ...dto },
-      });
-    } catch (error: any) {
-      // Uniques: dniCuitCuil, usuario, email
-      if (error?.code === 'P2002') {
-        const target = Array.isArray(error?.meta?.target) ? error.meta.target.join(', ') : 'dato único';
-        throw new BadRequestException(`Ya existe un registro con el mismo ${target}.`);
-      }
-      throw error;
-    }
+  // ------------------------------------------------------------
+  // Público
+  // ------------------------------------------------------------
+  async create(dto: CreateUsuarioDto) {
+    return this.prisma.usuario.create({
+      data: {
+        nombres: dto.nombres?.trim() ?? '',
+        apellidos: dto.apellidos?.trim() ?? '',
+        dniCuitCuil: dto.dniCuitCuil ?? null,
+        usuario: dto.usuario?.trim() ?? '',
+        // Si el esquema Prisma marca email como NOT NULL, evitamos null en TS
+        email: dto.email?.toLowerCase().trim() ?? '',
+        idRolUsuario: (dto as any).idRolUsuario ?? ROL.CLIENTE,
+        idEstadoUsuario: (dto as any).idEstadoUsuario ?? ESTADO.HABILITADO,
+        motivoBan: (dto as any).motivoBan ?? null,
+      },
+    });
   }
 
-  // ---------------- List (solo ADMIN) ----------------
-  async findAll(filter: FilterUsuarioDto) {
-    const {
-      limit = 20,
-      offset = 0,
-      // confiamos en OrderUsuarioDto: sortBy válido o undefined
-      sortBy,
-      order,
-      query,
-      idEstadoUsuario,
-      idRolUsuario,
-    } = filter as any;
+  // ------------------------------------------------------------
+  // Autenticado
+  // ------------------------------------------------------------
+async meAndSync(kcUser: any) {
+  // upsert en BD a partir del token de Keycloak
+  const updated = await this.upsertFromKeycloakToken(kcUser);
 
-    const where: Prisma.UsuarioWhereInput = {};
+  // Sin bloquear la respuesta: sincroniza rol a KC (fire-and-forget)
+  this.syncRoleToKeycloak(kcUser, updated.idRolUsuario).catch((err) => {
+    console.warn('[kc-sync] ensureUserHasRole fallo:', err?.message || err);
+  });
 
-    if (query) {
-      // MySQL con collation utf8mb4_unicode_ci suele ser case-insensitive
-      where.OR = [
-        { nombres:     { contains: query } },
-        { apellidos:   { contains: query } },
-        { usuario:     { contains: query } },
-        { email:       { contains: query } },
-        { dniCuitCuil: { contains: query } },
-      ];
-    }
+  return updated;
+}
 
-    if (idEstadoUsuario !== undefined && idEstadoUsuario !== null) {
-      where.idEstadoUsuario = Number(idEstadoUsuario);
-    }
 
-    if (idRolUsuario !== undefined && idRolUsuario !== null) {
-      where.idRolUsuario = Number(idRolUsuario);
-    }
+  async updateSelf(identifier: string, dto: UpdateUsuarioDto) {
+    const current = await this.prisma.usuario.findFirst({
+      where: { OR: [{ usuario: identifier }, { email: identifier }] },
+    });
+    if (!current) throw new NotFoundException('Usuario no encontrado');
 
-    // Al confiar en el DTO, sortBy (si viene) ya es uno de:
-    // 'idUsuario' | 'usuario' | 'email' | 'idRolUsuario' | 'idEstadoUsuario'
-    const sortField = (sortBy ?? 'idUsuario') as keyof Prisma.UsuarioOrderByWithRelationInput;
-    const sortOrder: Prisma.SortOrder = (order ?? 'desc').toLowerCase() === 'asc' ? 'asc' : 'desc';
-
-    const orderBy: Prisma.UsuarioOrderByWithRelationInput = { [sortField]: sortOrder };
-
-    const take = Number(limit);
-    const skip = Number(offset);
-
-    const [items, total] = await this.prisma.$transaction([
-      this.prisma.usuario.findMany({
-        where,
-        skip,
-        take,
-        orderBy,
-      }),
-      this.prisma.usuario.count({ where }),
-    ]);
-
-    return { items, total, limit: take, offset: skip };
+    return this.prisma.usuario.update({
+      where: { idUsuario: current.idUsuario },
+      data: {
+        nombres: dto.nombres ?? current.nombres,
+        apellidos: dto.apellidos ?? current.apellidos,
+        dniCuitCuil: dto.dniCuitCuil ?? current.dniCuitCuil,
+      },
+    });
   }
 
-  // ---------------- Read (self/admin helpers) ----------------
-  async findById(idOrIdentifier: number | string): Promise<Usuario> {
-    let found: Usuario | null = null;
+  // ------------------------------------------------------------
+  // ADMIN
+  // ------------------------------------------------------------
+  async findAll(_filter: FilterUsuarioDto) {
+    return this.prisma.usuario.findMany({ orderBy: { idUsuario: 'asc' } });
+  }
 
-    if (typeof idOrIdentifier === 'number' || /^\d+$/.test(String(idOrIdentifier))) {
-      found = await this.prisma.usuario.findUnique({
-        where: { idUsuario: Number(idOrIdentifier) },
+  async enable(id: number, dto: HabilitarUsuarioDto) {
+    // ⚠️ tu error venía porque el DTO no tenía la propiedad -> ahora sí
+    const estado = dto.idEstadoUsuario ?? ESTADO.HABILITADO;
+    return this.prisma.usuario.update({
+      where: { idUsuario: id },
+      data: { idEstadoUsuario: estado },
+    });
+  }
+
+  async ban(id: number, dto: BanearUsuarioDto) {
+    const motivo = (dto as any).motivoBan ?? 'Ban administrado';
+    return this.prisma.usuario.update({
+      where: { idUsuario: id },
+      data: { idEstadoUsuario: ESTADO.BANEADO, motivoBan: motivo },
+    });
+  }
+
+  async update(id: number, dto: UpdateUsuarioDto, opts?: { asAdmin?: boolean }) {
+    const current = await this.prisma.usuario.findUnique({ where: { idUsuario: id } });
+    if (!current) throw new NotFoundException('Usuario no encontrado');
+
+    const updated = await this.prisma.usuario.update({
+      where: { idUsuario: id },
+      data: {
+        nombres: dto.nombres ?? current.nombres,
+        apellidos: dto.apellidos ?? current.apellidos,
+        dniCuitCuil: dto.dniCuitCuil ?? current.dniCuitCuil,
+        idRolUsuario:
+          typeof (dto as any).idRolUsuario === 'number'
+            ? (dto as any).idRolUsuario
+            : current.idRolUsuario,
+        idEstadoUsuario:
+          typeof (dto as any).idEstadoUsuario === 'number'
+            ? (dto as any).idEstadoUsuario
+            : current.idEstadoUsuario,
+        motivoBan: (dto as any).motivoBan ?? current.motivoBan,
+      },
+    });
+
+    // Si más adelante guardamos el sub de KC en BD, acá podríamos re-sincronizar el rol
+    if (opts?.asAdmin && updated.idRolUsuario !== current.idRolUsuario) {
+      // no-op por ahora
+    }
+
+    return updated;
+  }
+
+  // ------------------------------------------------------------
+  // Helpers
+  // ------------------------------------------------------------
+  private identifierFromKc(user: any): string {
+    return (
+      user?.preferred_username ??
+      user?.email ??
+      user?.username ??
+      user?.sub ??
+      ''
+    ).toString();
+  }
+
+  private emailFromKc(user: any): string | null {
+    const email = (user?.email ?? user?.preferred_username ?? '').toString().trim();
+    return email ? email.toLowerCase() : null;
+  }
+
+  private async upsertFromKeycloakToken(kcUser: any) {
+    const identifier = this.identifierFromKc(kcUser);
+    const emailKC = this.emailFromKc(kcUser); // string | null
+
+    const nombres = (kcUser?.given_name ?? '').toString().trim();
+    const apellidos = (kcUser?.family_name ?? '').toString().trim();
+
+    let existing = await this.prisma.usuario.findFirst({
+      where: {
+        OR: [
+          ...(emailKC ? [{ email: emailKC }] : []),
+          { usuario: identifier },
+        ],
+      },
+    });
+
+    if (!existing) {
+      // Si tu esquema requiere email NOT NULL, usamos fallback vacío
+      existing = await this.prisma.usuario.create({
+        data: {
+          nombres,
+          apellidos,
+          dniCuitCuil: null,
+          usuario: identifier,
+          email: emailKC ?? '', // 👈 evita error de tipo
+          idRolUsuario: ROL.CLIENTE,
+          idEstadoUsuario: ESTADO.HABILITADO,
+          motivoBan: null,
+        },
       });
     } else {
-      const identifier = String(idOrIdentifier).trim();
-      found = await this.prisma.usuario.findFirst({
-        where: {
-          OR: [
-            { usuario: identifier },
-            { email: identifier },
-            { dniCuitCuil: identifier },
-          ],
+      existing = await this.prisma.usuario.update({
+        where: { idUsuario: existing.idUsuario },
+        data: {
+          nombres: nombres || existing.nombres,
+          apellidos: apellidos || existing.apellidos,
+          email: emailKC ?? existing.email, // mantiene tipo correcto
         },
       });
     }
 
-    if (!found) throw new NotFoundException('Usuario no encontrado');
-    return found;
+    return existing;
   }
 
-  // ---------------- Update por ADMIN ----------------
-  async update(idUsuario: number, dto: UpdateUsuarioDto, _ctx?: UpdateContext): Promise<Usuario> {
-    const exists = await this.prisma.usuario.findUnique({ where: { idUsuario } });
-    if (!exists) throw new NotFoundException('Usuario no encontrado');
+private async syncRoleToKeycloak(identity: any, idRolUsuario: number) {
+  try {
+    const username: string =
+      identity?.preferred_username ||
+      identity?.username ||
+      identity?.email ||
+      identity?.sub;
 
-    try {
-      return await this.prisma.usuario.update({
-        where: { idUsuario },
-        data: { ...dto },
-      });
-    } catch (error: any) {
-      if (error?.code === 'P2002') {
-        const target = Array.isArray(error?.meta?.target) ? error.meta.target.join(', ') : 'dato único';
-        throw new BadRequestException(`Ya existe un registro con el mismo ${target}.`);
-      }
-      throw error;
-    }
+    const roleName =
+      idRolUsuario === 1 ? 'ADMIN' :
+      idRolUsuario === 2 ? 'OPERARIO' :
+      'CLIENTE';
+
+    await this.kcAdmin.ensureUserHasRole(username, roleName);
+  } catch (e) {
+    // No frenar login si falla el Admin API
+    console.warn('[kc-sync] KC role sync failed:', (e as Error)?.message || e);
   }
+}
 
-  // ---------------- Update self (requiere login) ----------------
-  async updateSelf(identifier: string, dto: UpdateUsuarioDto): Promise<Usuario> {
-    const me: Usuario = await this.findById(identifier);
 
-    // Bloquear cambios sensibles en self-service (ajusta según tu política)
-    const { idRolUsuario, idEstadoUsuario, ...safe } = dto as any;
-
-    try {
-      return await this.prisma.usuario.update({
-        where: { idUsuario: me.idUsuario },
-        data: { ...safe },
-      });
-    } catch (error: any) {
-      if (error?.code === 'P2002') {
-        const target = Array.isArray(error?.meta?.target) ? error.meta.target.join(', ') : 'dato único';
-        throw new BadRequestException(`Ya existe un registro con el mismo ${target}.`);
-      }
-      throw error;
-    }
-  }
-
-  // ---------------- Enable / Ban (solo ADMIN) ----------------
-  async enable(idUsuario: number, dto: HabilitarUsuarioDto): Promise<Usuario> {
-    const exists = await this.prisma.usuario.findUnique({ where: { idUsuario } });
-    if (!exists) throw new NotFoundException('Usuario no encontrado');
-
-    return this.prisma.usuario.update({
-      where: { idUsuario },
-      data: { ...(dto as any) },
-    });
-  }
-
-  async ban(idUsuario: number, dto: BanearUsuarioDto): Promise<Usuario> {
-    const exists = await this.prisma.usuario.findUnique({ where: { idUsuario } });
-    if (!exists) throw new NotFoundException('Usuario no encontrado');
-
-    return this.prisma.usuario.update({
-      where: { idUsuario },
-      data: { ...(dto as any) },
-    });
-  }
 }

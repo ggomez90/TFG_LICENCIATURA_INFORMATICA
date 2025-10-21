@@ -20,10 +20,11 @@ services:
       dockerfile: Dockerfile
     environment:
       DATABASE_URL: "mysql://root:9029@db:3306/yo_reciclo"
-      KEYCLOAK_URL: "http://keycloak:8081"
+      #KEYCLOAK_URL: "http://keycloak:8081"
       KEYCLOAK_REALM: "yo-reciclo"
       KEYCLOAK_CLIENT_ID: "api-yo-reciclo"
       KEYCLOAK_CLIENT_SECRET: "UjGKTBJhTnApd6ABV4Jbbc5BPZMp34Lg"
+      KEYCLOAK_REALM_PUBLIC_KEY: "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAw9itl2U6ASugY7Gjorq2/DB5LatKRUSV+OykxrOVvypQMdwtVzG8ksDcPX8gfKqW8sfu7EkTnK1o1OaTlzIptxB5wt2z7nhDncqfWMKl8Pe8TOT/aPcNaG8mjLlYvBfLDahC/9dQThTJiSvek5W/0VM9cLpqgyiTcKOk2dY1IG1GTOrJe6NJfNLqU934pUIdYPltU4F2LyHN+gO27hJd1QHykrr5jJAMSA0rO95nYFw4D0KyLbMsTHk/LmjGzMGteFsV6kYr/VAFWIQgDDCo447v7GdtxJFoUvoA0c3VNodkwIfH3QxCKORNwcUwYGIbnGVtKFZywT1O6ErSpqnIpQIDAQAB"
     ports: ["3001:3000"]
     depends_on: [db, keycloak]
     volumes:

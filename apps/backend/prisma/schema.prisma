@@ -98,10 +98,9 @@ model Usuario {
   idUsuario        Int              @id @default(autoincrement())
   nombres          String?          @db.VarChar(100)
   apellidos        String?          @db.VarChar(100)
-  dniCuitCuil      String           @unique(map: "uq_doc")     @db.VarChar(20)
+  dniCuitCuil      String?          @unique(map: "uq_doc")     @db.VarChar(20)
   usuario          String           @unique(map: "uq_usuario") @db.VarChar(80)
   email            String           @unique(map: "uq_email")   @db.VarChar(120)
-  clave            String           @db.VarChar(255)
   motivoBan        String?          @db.VarChar(300)
 
   // Estados/Roles

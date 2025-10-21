@@ -1,36 +1,39 @@
+// apps/backend/src/auth/auth.module.ts
 import { Module } from '@nestjs/common';
 import {
   KeycloakConnectModule,
-  ResourceGuard,
-  RoleGuard,
-  AuthGuard,
   PolicyEnforcementMode,
   TokenValidation,
 } from 'nest-keycloak-connect';
+import { KeycloakAdminService } from './keycloak-admin.service';
+
+/**
+ * OJO con las URLs:
+ * - Para VALIDAR tokens (issuer) usamos la URL PÚBLICA que ve el front: http://localhost:8081
+ *   => así el guard no falla con "wrong ISS".
+ * - Para ADMIN API (crear roles/asignar etc.) ya usamos http://keycloak:8081 dentro de KeycloakAdminService.
+ */
+const REALM = process.env.KEYCLOAK_REALM || 'yo-reciclo';
+const CLIENT_ID = process.env.KEYCLOAK_CLIENT_ID || 'api-yo-reciclo';
+const CLIENT_SECRET = process.env.KEYCLOAK_CLIENT_SECRET || '';
+const REALM_PUBKEY = process.env.KEYCLOAK_REALM_PUBLIC_KEY;
+
+// issuer público que coincide con el 'iss' del token que entrega el navegador
+const PUBLIC_AUTH_SERVER_URL = 'http://localhost:8081';
 
 @Module({
   imports: [
     KeycloakConnectModule.register({
-      authServerUrl: process.env.KEYCLOAK_URL!,   // ej: http://keycloak:8081
-      realm: process.env.KEYCLOAK_REALM!,         // ej: yo-reciclo
-      clientId: process.env.KEYCLOAK_CLIENT_ID!,  // ej: api-yo-reciclo
-
-      // Si tu cliente en Keycloak es CONFIDENTIAL (tu compose trae KEYCLOAK_CLIENT_SECRET):
-      secret: process.env.KEYCLOAK_CLIENT_SECRET!,
-
-      // Si fuera PUBLIC, quitá "secret" y poné:
-      // public: true,
-
-      // Enums (no strings):
+      authServerUrl: PUBLIC_AUTH_SERVER_URL, // <— importante para que el issuer esperado sea http://localhost:8081/realms/yo-reciclo
+      realm: REALM,
+      clientId: CLIENT_ID,
+      secret: CLIENT_SECRET,
+      realmPublicKey: REALM_PUBKEY,
+      tokenValidation: TokenValidation.OFFLINE,         // validación por firma sin ir a KC
       policyEnforcement: PolicyEnforcementMode.PERMISSIVE,
-      tokenValidation: TokenValidation.ONLINE,
     }),
   ],
-  providers: [
-    // Activa los guards globalmente si querés:
-    { provide: 'APP_GUARD', useClass: AuthGuard },
-    { provide: 'APP_GUARD', useClass: ResourceGuard },
-    { provide: 'APP_GUARD', useClass: RoleGuard },
-  ],
+  providers: [KeycloakAdminService],
+  exports: [KeycloakConnectModule, KeycloakAdminService],
 })
 export class AuthModule {}

@@ -10,8 +10,8 @@ import {
   UseGuards,
   HttpCode,
   HttpStatus,
-  ValidationPipe // <- usa esto si NO tenés un ValidationPipe global
 } from '@nestjs/common';
+
 import { UsuarioService } from './usuario.service';
 import { CreateUsuarioDto } from './create-usuario.dto';
 import { UpdateUsuarioDto } from './update-usuario.dto';
@@ -31,8 +31,33 @@ export class UsuarioController {
   @Post()
   @HttpCode(HttpStatus.CREATED)
   async createPublic(@Body() dto: CreateUsuarioDto) {
-    // SUGERENCIA seguridad (opcional): el service debería omitir 'clave' en la respuesta.
     return this.usuarioService.create(dto);
+  }
+
+  // ============================
+  // Autenticado (cualquier rol)
+  // ============================
+
+  // Idempotente: crea/actualiza el usuario local en BD según el token
+  @Get('me/sync')
+  @UseGuards(KeycloakAuthGuard)
+  async syncMe(@User() user: any) {
+    return this.usuarioService.meAndSync(user);
+  }
+
+  // Perfil "propio" (reutiliza sync para garantizar que existe)
+  @Get('me')
+  @UseGuards(KeycloakAuthGuard)
+  async me(@User() user: any) {
+    return this.usuarioService.meAndSync(user);
+  }
+
+  @Patch('me')
+  @UseGuards(KeycloakAuthGuard)
+  async updateMe(@User() user: any, @Body() dto: UpdateUsuarioDto) {
+    const identifier =
+      user?.preferred_username ?? user?.email ?? user?.username ?? user?.sub;
+    return this.usuarioService.updateSelf(identifier, dto);
   }
 
   // ============================
@@ -41,8 +66,6 @@ export class UsuarioController {
   @Get()
   @UseGuards(KeycloakAuthGuard, RolesGuard)
   @Roles('ADMIN')
-  // Si NO tenés ValidationPipe global, descomenta la línea debajo:
-  // async findAll(@Query(new ValidationPipe({ transform: true })) filter: FilterUsuarioDto) {
   async findAll(@Query() filter: FilterUsuarioDto) {
     return this.usuarioService.findAll(filter);
   }
@@ -75,36 +98,5 @@ export class UsuarioController {
     @Body() dto: UpdateUsuarioDto,
   ) {
     return this.usuarioService.update(id, dto, { asAdmin: true });
-  }
-
-  // ============================
-  // Login requerido (cualquier rol)
-  // ============================
-  @Get('me')
-  @UseGuards(KeycloakAuthGuard)
-  async me(@User() user: any) {
-    // Preferimos un identificador que exista en la BD:
-    // - preferred_username (Keycloak) suele mapear a 'usuario'
-    // - email (Keycloak) mapearía a 'email'
-    // - como último recurso, intentamos sub (si lo hubieras guardado como id)
-    const identifier =
-      user?.preferred_username ??
-      user?.email ??
-      user?.username ?? // por si tu decorador lo expone así
-      user?.sub;
-
-    return this.usuarioService.findById(identifier);
-  }
-
-  @Patch('me')
-  @UseGuards(KeycloakAuthGuard)
-  async updateMe(@User() user: any, @Body() dto: UpdateUsuarioDto) {
-    const identifier =
-      user?.preferred_username ??
-      user?.email ??
-      user?.username ??
-      user?.sub;
-
-    return this.usuarioService.updateSelf(identifier, dto);
   }
 }
