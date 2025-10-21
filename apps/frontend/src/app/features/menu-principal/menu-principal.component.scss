@@ -1,0 +1,420 @@
+:host { display: contents; }
+
+/* ---------- TOPBAR ---------- */
+.topbar{
+  position: sticky; top:0; z-index: 20;
+  display:flex; align-items:center; gap:12px;
+  padding:8px 16px;
+  min-height:64px;
+  background: rgba(255,255,255,0.9);
+  backdrop-filter: blur(6px);
+  border-bottom:1px solid rgba(16,185,129,0.15);
+}
+
+.spacer{ flex:1 1 auto; }
+
+/* Izquierda */
+.brand{
+  display:flex; align-items:center; gap:12px; min-width:0;
+  flex: 0 1 auto; /* permite encoger sin desbordar */
+
+  .logo{ height:76px; width:auto; display:block; }
+
+  .welcome{
+    display:flex; align-items:baseline; gap:6px;
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+
+    .lbl{
+      font-size:16px; letter-spacing:.04em; color:#065f46; font-weight:700;
+    }
+    .name{
+      font-size:16px; font-weight:800; color:#065f46;
+    }
+  }
+}
+
+/* Derecha */
+.actions{
+  display:flex; align-items:center; gap:8px;
+  flex: 0 0 auto;
+
+  .icon-btn{
+    display:inline-flex; align-items:center; justify-content:center;
+    width:50px; height:50px; position:relative;
+    border:1px solid rgba(2,6,23,0.06); background:#fff; border-radius:10px;
+    color:#065f46; cursor:pointer; outline:none;
+    &:hover{ background:#f8fafc; color:#047857; }
+    .icon{ width:30px; height:30px; display:block; }
+    .badge{
+      position:absolute; top:-4px; right:-4px;
+      background:#ef4444; color:#fff; font-size:10px; font-weight:700;
+      height:16px; min-width:16px; padding:0 4px; border-radius:999px;
+      display:grid; place-items:center; border:2px solid #fff;
+    }
+  }
+
+  .profile{
+    position:relative;
+
+    .profile-btn{
+      display:flex; align-items:center; gap:8px;
+      background:#fff; border:1px solid rgba(2,6,23,0.06);
+      border-radius:16px; padding:4px 8px; cursor:pointer; width:80px; height:50px;
+
+      .avatar{
+        width:40px; height:40px; border-radius:999px;
+        background:#10b98120; color:#065f46; font-weight:800;
+        display:grid; place-items:center; font-size:14px;
+      }
+      .chev{ font-size:18px; color:#065f46; }
+    }
+
+    .dropdown{
+      position:absolute; right:0; margin-top:8px;
+      background: linear-gradient(180deg, rgba(236,253,245,.94), rgba(255,255,255,.94));
+      border:1px solid rgba(16,185,129,.28);
+      box-shadow: 0 16px 32px rgba(16,185,129,.15), 0 8px 16px rgba(2,6,23,.06);
+      border-radius:14px; min-width:220px; padding:8px; display:grid; gap:2px; z-index:30; font-size: 16px;
+
+      a, button.logout{
+        appearance:none; background:transparent; border:0;
+        text-align:left; padding:10px 12px; border-radius:10px;
+        font-size:14px; cursor:pointer; text-decoration:none;
+      }
+      a{ color:#065f46; font-weight:600; }
+      a:hover{ background:rgba(16,185,129,.10); color:#064e3b; }
+      button.logout{ color:#dc2626; }
+      button.logout:hover{ background:rgba(220,38,38,.08); }
+    }
+  }
+}
+
+/* ---------- NAV PRIMARIO (debajo del header) ---------- */
+.primary-nav{
+  position: sticky; top:64px; /* queda justo debajo del header */
+  z-index: 15;
+  background: rgba(255,255,255,0.9);
+  backdrop-filter: blur(6px);
+  border-bottom:1px solid rgba(16,185,129,0.15);
+}
+
+/* Contenedor de tabs */
+.tabs{
+  max-width:1200px; margin:0 auto; padding:0 16px;
+  display:flex; gap:16px;
+  justify-content:center; align-items:center;
+  min-height:48px;
+  flex-wrap: nowrap;
+}
+
+/* Estilo de tab tipo enlace con subrayado (sin “recuadro de botón”) */
+.tab{
+  position:relative;
+  display:inline-block;
+  padding:12px 2px;
+  text-decoration:none;
+  color:#065f46; font-weight:700; font-size:16px; letter-spacing:.02em;
+  text-transform:uppercase;
+  white-space:nowrap;
+
+  &::after{
+    content:""; position:absolute; left:0; right:0; bottom:6px;
+    height:2px; background: transparent; transition: background .2s ease;
+  }
+  &:hover{ color:#065f46; }
+  &:hover::after{ background: rgba(16,185,129,.6); }
+
+  &.active{
+    color:#065f46;
+  }
+  &.active::after{
+    background:#10b981; /* emerald-500 */
+  }
+}
+
+/* Estado sin menú */
+.tabs.empty{
+  justify-content:center; color:#64748b; min-height:48px;
+}
+
+/* ---------- CONTENIDO ---------- */
+.content{ padding:16px; }
+
+/* ---------- RESPONSIVE ---------- */
+
+/* Tablet: reducir tamaños y permitir scroll si no entra */
+@media (max-width: 1024px){
+  .brand .logo{ height:56px; }
+}
+
+@media (max-width: 900px){
+  /* Header compacto y sin solapes */
+  .brand .logo{ height:48px; }
+  .brand .welcome .lbl{ display:none; } /* ahorra espacio */
+  .brand .welcome .name{ font-size:14px; }
+
+  /* Tabs con scroll horizontal si no caben */
+  .tabs{
+    justify-content:flex-start; gap:12px;
+    overflow-x:auto; -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .tabs::-webkit-scrollbar{ display:none; }
+
+  .tab{ font-size:12px; padding:10px 2px; }
+}
+
+/* Móvil: más compacto */
+@media (max-width: 600px){
+  .topbar{ padding:6px 12px; }
+  .brand .logo{ height:42px; }
+  .actions .icon-btn{ width:36px; height:36px; }
+  .actions .profile .profile-btn{ height:36px; }
+  .actions .profile .profile-btn .avatar{ width:28px; height:28px; font-size:12px; }
+
+  .primary-nav{ top:56px; }
+  .tab{ font-size:11px; padding:8px 2px; }
+}
+
+/* --- Toggle + comportamiento --- */
+.nav-toggle{ position:absolute; left:-9999px; }   /* checkbox oculto */
+
+/* Hamburgesa SIEMPRE visible (vos pediste dejarla permanente) */
+.hamburger{ display:inline-flex; }
+
+/* Menú oculto por defecto; se muestra sólo al togglear */
+.primary-nav{ display:none; }
+.nav-toggle:checked ~ .primary-nav{ display:block; }
+
+/* Mantener anclaje bajo el header en desktop */
+.primary-nav{
+  position: sticky; top:64px; z-index:15;
+  background: rgba(255,255,255,0.9);
+  backdrop-filter: blur(6px);
+  border-bottom:1px solid rgba(16,185,129,0.15);
+}
+
+/* ====== Responsive ====== */
+/* En ≤900px el menú se despliega en columna (vertical) */
+@media (max-width: 900px){
+  .primary-nav{ display:none; }                         /* sigue oculto por defecto */
+  .nav-toggle:checked ~ .primary-nav{ display:block; }  /* visible al togglear */
+
+  .primary-nav{
+    position: sticky; top:64px; z-index:15;
+    background: rgba(255,255,255,0.9);
+    backdrop-filter: blur(6px);
+    border-bottom:1px solid rgba(16,185,129,0.15);
+  }
+
+  .tabs{
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+    padding: 8px 16px 12px;
+    min-height: unset;
+    overflow: visible; /* panel vertical sin scroll horizontal */
+  }
+
+  .tab{
+    display:block;
+    padding:12px 2px;
+  }
+}
+
+/* Ajuste del top en header compacto (ya lo tenías) */
+@media (max-width: 600px){
+  .nav-toggle:checked ~ .primary-nav{ top:56px; }
+}
+
+/* =========================================================================
+   FOOTER (franja tipo header, fondo verde y letras blancas)
+   ========================================================================= */
+.app-footer{
+  margin-top: 16px;
+  background: linear-gradient(180deg, #059669 0%, #047857 100%);
+  color: #fff;
+  border-top: 1px solid rgba(255,255,255,.18);
+}
+
+/* Full-bleed y columnas que estiran en alto */
+.app-footer__wrap{
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  padding: 16px 24px;
+  display: grid;
+  gap: 16px;
+  grid-template-columns: 1fr;   /* mobile: una columna */
+  align-items: stretch;         /* cada columna ocupa el alto total del footer */
+}
+
+/* Cada sección ocupa el alto y centra su contenido verticalmente */
+.f-col{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;  /* centra vertical */
+  gap: 8px;
+  min-height: 100%;
+}
+
+.f-title{
+  margin: 0;
+  font-weight: 800;
+  font-size: 16px;
+  letter-spacing: .02em;
+  color: #fff;
+}
+.f-title--center{ text-align: center; }
+
+/* --- Sección 1: marca (escudo + “Gobierno de la Ciudad / de Ceres”) --- */
+.f-col--brand{
+  align-items: flex-start;  /* centro-izquierda */
+}
+.f-brand{
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  justify-content: flex-start;
+}
+.f-escudo{
+  width: 96px;
+  height: auto;
+  display: block;
+  filter: drop-shadow(0 6px 14px rgba(0,0,0,.15));
+}
+.f-brand__text{
+  display: grid;
+  line-height: 1.05;
+}
+.f-brand__text .line1,
+.f-brand__text .line2{
+  font-weight: 800;
+  font-size: 16px;
+  letter-spacing: .02em;
+  color: #fff;
+  white-space: nowrap;
+}
+
+/* --- Listas / enlaces (secciones 2 y 5) --- */
+.f-list{
+  list-style: none;
+  padding: 0; margin: 0;
+  display: grid; gap: 6px;
+  font-size: 14px;
+  width: 100%;              /* aprovecha todo el ancho */
+}
+.f-list--full{ width: 100%; }
+.f-list a{
+  color: #ffffff; text-decoration: underline;
+  text-underline-offset: 2px;
+}
+/* Viñetas (items) para secciones 2 y 5 */
+.app-footer__wrap > .f-col:nth-child(2) .f-list,
+.app-footer__wrap > .f-col:nth-child(5) .f-list{
+  list-style: disc;
+  padding-left: 18px;
+}
+
+/* --- Redes sociales (sección 3) --- */
+.f-social{
+  display: flex;
+  gap: 18px;
+  flex-wrap: wrap;
+  justify-content: space-evenly; /* ocupan todo el ancho de la sección */
+  width: 100%;
+}
+.f-social--center{ justify-content: space-evenly; }
+
+/* Íconos grandes, sin fondo ni bordes */
+.f-soc{
+  display: inline-block;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  transition: transform .2s ease, opacity .2s ease;
+}
+.f-soc:hover{ transform: translateY(-2px); opacity: .9; }
+.f-soc img{
+  width: 40px; height: 40px; display: block;
+}
+@media (min-width: 900px){
+  .f-soc img{ width: 40px; height: 40px; }
+}
+
+/* --- Stores (sección 4): SVG uno debajo del otro, más grandes, sin “marcos” --- */
+.f-stores{
+  display: flex;
+  flex-direction: column;   /* uno debajo del otro */
+  align-items: center;
+  gap: 18px;
+  width: 100%;
+}
+.f-stores--center{ justify-content: center; }
+
+.f-store{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  margin: 0;
+  border: 0;
+  background: transparent !important;
+  box-shadow: none !important;
+  outline: none;
+  border-radius: 0;
+}
+.f-store__img{
+  display: block;
+  height: 60px;            /* más grande en mobile */
+  width: auto;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  outline: none !important;
+  object-fit: contain;     /* evita “marcos” por desborde */
+}
+.f-store span{ display: none; } /* oculta textos redundantes */
+@media (min-width: 900px){
+  .f-store__img{ height: 40px; } /* aún más grande en desktop */
+}
+
+/* --- Copy final --- */
+.app-footer__copy{
+  text-align: center;
+  font-size: 13px; font-weight: 600;
+  padding: 10px 16px 14px;
+  border-top: 1px solid rgba(255,255,255,.18);
+  color: #fff;
+  background: linear-gradient(180deg, rgba(0,0,0,.0), rgba(0,0,0,.04));
+}
+
+/* --- Desktop (≥900px): redistribución de anchos (menos ancho a 1, más a 2 y 5) --- */
+@media (min-width: 900px){
+  .app-footer__wrap{
+    /* ↓ Ajuste de proporciones:
+       - Sección 1 (brand): 1.4fr (menos ancho, como pediste)
+       - Sección 2 (contacto): 2.3fr (más ancho para que todo entre en un renglón)
+       - Sección 3 (redes): 1fr
+       - Sección 4 (stores): 1.2fr (columna)
+       - Sección 5 (términos): 1.9fr (un poco más ancha)
+    */
+    grid-template-columns: 1.4fr 2.3fr 1fr 1.2fr 1.9fr;
+    align-items: stretch; /* cada columna ocupa todo el alto */
+    gap: 18px;
+  }
+
+  /* Leve desplazamiento a la derecha para 2 y 5, como pediste */
+  .app-footer__wrap > .f-col:nth-child(2),
+  .app-footer__wrap > .f-col:nth-child(5){
+    padding-left: 18px;
+  }
+
+  .f-escudo{ width: 110px; }
+}
+
+/* Ajuste leve también en mobile para 2 y 5 (apenas a la derecha) */
+.app-footer__wrap > .f-col:nth-child(2),
+.app-footer__wrap > .f-col:nth-child(5){
+  padding-left: 8px;
+}

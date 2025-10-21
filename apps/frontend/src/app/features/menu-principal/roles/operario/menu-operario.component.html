@@ -1,0 +1,125 @@
+<section class="dsf-wrap">
+  <header class="dsf-header">
+    <h1 class="dsf-title">Panel del Operario — ¡Yo Reciclo!</h1>
+    <p class="dsf-sub">Validá entregas, registrá retiros y seguí tus puntos asignados.</p>
+  </header>
+
+  <!-- MÉTRICAS RÁPIDAS -->
+  <div class="stat-grid">
+    <article class="stat-card">
+      <div class="stat-icon">
+        <svg viewBox="0 0 24 24"><path fill="currentColor" d="M3 6h18v2H3zM6 10h12v2H6zM8 14h8v2H8z"/></svg>
+      </div>
+      <div class="stat-body">
+        <h3 class="stat-title">Entregas pendientes</h3>
+        <div class="stat-value">{{ entregasPendientesAsignadas() }}</div>
+        <div class="stat-sub">Asignadas a tu usuario</div>
+      </div>
+    </article>
+
+    <article class="stat-card">
+      <div class="stat-icon">
+        <svg viewBox="0 0 24 24"><path fill="currentColor" d="M4 4h16v4H4V4zm0 6h10v10H4V10zm12 0h4v10h-4V10z"/></svg>
+      </div>
+      <div class="stat-body">
+        <h3 class="stat-title">Retiros de hoy</h3>
+        <div class="stat-value">{{ retirosHoy() }}</div>
+        <div class="stat-sub">Programados en agenda</div>
+      </div>
+    </article>
+
+    <article class="stat-card">
+      <div class="stat-icon">
+        <svg viewBox="0 0 24 24"><path fill="currentColor" d="M5 19V8h3v11H5zm5 0V5h3v14h-3zm5 0v-7h3v7h-3z"/></svg>
+      </div>
+      <div class="stat-body">
+        <h3 class="stat-title">Kg procesados (semana)</h3>
+        <div class="stat-value">{{ kgProcesadosSemana() }}</div>
+        <div class="stat-sub">Acumulado semanal</div>
+      </div>
+    </article>
+
+    <article class="stat-card">
+      <div class="stat-icon">
+        <svg viewBox="0 0 24 24"><path fill="currentColor" d="M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8z"/></svg>
+      </div>
+      <div class="stat-body">
+        <h3 class="stat-title">Incidencias abiertas</h3>
+        <div class="stat-value">{{ incidenciasAbiertas() }}</div>
+        <div class="stat-sub">Reportes pendientes</div>
+      </div>
+    </article>
+  </div>
+
+  <!-- ACCESOS RÁPIDOS -->
+  <div class="dsf-grid">
+    <article class="dsf-card" *ngFor="let l of links()">
+      <div class="dsf-card__media">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path fill="currentColor" [attr.d]="l.iconPath"></path>
+        </svg>
+      </div>
+      <div class="dsf-card__body">
+        <h2 class="dsf-card__title">{{ l.title }}</h2>
+        <p class="dsf-card__desc">{{ l.desc }}</p>
+        <div class="dsf-card__actions">
+          <a class="dsf-btn" [routerLink]="l.route">IR →</a>
+        </div>
+      </div>
+    </article>
+  </div>
+
+  <!-- TAREAS ASIGNADAS -->
+  <section class="assign">
+    <header class="assign__header">
+      <h2 class="assign__title">Puntos asignados</h2>
+      <p class="assign__sub">Distribución de pendientes por punto verde (total: {{ totalPendientes() }}).</p>
+    </header>
+
+    <div class="assign__grid">
+      <article class="assign__card" *ngFor="let t of tareasConPct()">
+        <header class="assign__head">
+          <h3 class="assign__name">{{ t.punto }}</h3>
+          <span class="assign__count">{{ t.pendientes }} pendientes</span>
+        </header>
+        <p class="assign__addr muted">{{ t.direccion }}</p>
+        <div class="assign__bar">
+          <div class="assign__bar-fill" [style.width.%]="t.pct"></div>
+        </div>
+        <div class="assign__pct muted">{{ t.pct | number:'1.0-0' }}%</div>
+      </article>
+    </div>
+  </section>
+
+  <!-- ACTIVIDAD RECIENTE -->
+  <section class="recent">
+    <header class="recent__header">
+      <h2 class="recent__title">Actividad reciente</h2>
+      <p class="recent__sub">Pendientes por validar y últimas validadas.</p>
+    </header>
+
+    <div class="recent__grid">
+      <article class="recent__card">
+        <h3 class="recent__card-title">Pendientes</h3>
+        <ul class="recent__list">
+          <li *ngFor="let e of ultPendientes()">
+            <span class="pill pill--warn">PEND.</span>
+            <strong>{{ e.cliente }}</strong>
+            <span class="muted">· {{ e.desafio }} · {{ e.punto }} · {{ e.fecha }}</span>
+          </li>
+        </ul>
+      </article>
+
+      <article class="recent__card">
+        <h3 class="recent__card-title">Validadas</h3>
+        <ul class="recent__list">
+          <li *ngFor="let e of ultValidadas()">
+            <span class="pill pill--ok">OK</span>
+            <strong>{{ e.cliente }}</strong>
+            <span class="muted">· {{ e.desafio }} · {{ e.punto }} · {{ e.fecha }}</span>
+          </li>
+        </ul>
+      </article>
+    </div>
+  </section>
+</section>

@@ -1,0 +1,90 @@
+<section class="dsf-wrap">
+  <header class="dsf-header">
+    <h1 class="dsf-title">Mis datos</h1>
+    <p class="dsf-sub">Visualizá la información de tu perfil. Para modificarla, usá “Editar perfil”.</p>
+  </header>
+
+  <ng-container *ngIf="usuario() as u">
+    <div class="form-grid">
+
+      <!-- Identificación -->
+      <article class="form-card">
+        <h2 class="block-title">Identificación</h2>
+
+        <div class="row">
+          <div class="col-6">
+            <label>Nombres</label>
+            <div class="ro-field">{{ u.nombres || '—' }}</div>
+          </div>
+          <div class="col-6">
+            <label>Apellidos</label>
+            <div class="ro-field">{{ u.apellidos || '—' }}</div>
+          </div>
+          <div class="col-6">
+            <label>Razón social</label>
+            <div class="ro-field">{{ u.razonSocial || '—' }}</div>
+          </div>
+          <div class="col-6">
+            <label>DNI / CUIT / CUIL</label>
+            <div class="ro-field">{{ u.dniCuitCuil || '—' }}</div>
+          </div>
+        </div>
+      </article>
+
+      <!-- Contacto -->
+      <article class="form-card">
+        <h2 class="block-title">Contacto</h2>
+
+        <div class="row">
+          <div class="col-6">
+            <label>Email</label>
+            <div class="ro-field">{{ u.email || '—' }}</div>
+          </div>
+          <div class="col-6">
+            <label>Usuario</label>
+            <div class="ro-field">{{ u.usuario || '—' }}</div>
+          </div>
+          <div class="col-6">
+            <label>Dirección</label>
+            <div class="ro-field">{{ u.direccion || '—' }}</div>
+          </div>
+          <div class="col-6">
+            <label>Localidad</label>
+            <div class="ro-field">{{ u.localidad || '—' }}</div>
+          </div>
+          <div class="col-6">
+            <label>Provincia</label>
+            <div class="ro-field">{{ u.provincia || '—' }}</div>
+          </div>
+        </div>
+      </article>
+
+      <!-- Estado y rol -->
+      <article class="form-card">
+        <h2 class="block-title">Rol y estado</h2>
+
+        <div class="row">
+          <div class="col-6">
+            <label>Rol</label>
+            <div class="ro-field tag">{{ u.rol || '—' }}</div>
+          </div>
+          <div class="col-6">
+            <label>Estado</label>
+            <div class="ro-field tag" [class.tag--ok]="u.estado" [class.tag--off]="!u.estado">
+              {{ u.estado ? 'Activo' : 'Inactivo' }}
+            </div>
+          </div>
+          <div class="col-6">
+            <label>Puntos</label>
+            <div class="ro-field strong">{{ u.puntos }}</div>
+          </div>
+        </div>
+      </article>
+
+      <!-- Acciones -->
+      <div class="actions">
+        <a class="dsf-btn" routerLink="/menu-principal/perfil/editar">EDITAR PERFIL →</a>
+      </div>
+    </div>
+  </ng-container>
+</section>

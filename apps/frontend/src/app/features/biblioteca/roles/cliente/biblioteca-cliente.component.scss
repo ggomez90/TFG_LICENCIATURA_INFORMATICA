@@ -1,0 +1,96 @@
+:host { display:block; }
+
+/* —— Base “Desafíos” reutilizada —— */
+.dsf-wrap{
+  display:grid; gap:12px;
+  background:
+    radial-gradient(900px 600px at 0% -10%, rgba(16,185,129,.10) 0%, rgba(16,185,129,0) 60%),
+    linear-gradient(180deg, #f0fdf4 0%, #ffffff 100%);
+  border:1px solid rgba(16,185,129,.25);
+  border-radius:14px;
+  padding:12px;
+  box-shadow: 0 10px 22px rgba(16,185,129,.12), 0 2px 8px rgba(2,6,23,.08);
+}
+
+.dsf-header{ display:grid; gap:8px; }
+.dsf-title{ margin:0; font-weight:800; color:#065f46; font-size:18px; }
+.dsf-sub{ margin:0; color:#065f46; opacity:.9; font-size:14px; }
+
+/* Toolbar */
+.dsf-toolbar{
+  display:flex; gap:12px; flex-wrap:wrap; align-items:center;
+}
+.dsf-input input{
+  width: min(520px, 100%);
+  padding:10px 12px; border-radius:10px;
+  border:1px solid rgba(16,185,129,.28);
+  outline:none; font-size:14px; color:#065f46;
+  background:#fff;
+}
+.dsf-input input:focus{ box-shadow: 0 0 0 3px rgba(16,185,129,.18); }
+
+.dsf-filter{ display:flex; align-items:center; gap:8px; color:#065f46; font-weight:700; }
+.dsf-filter select{
+  padding:8px 10px; border-radius:10px; background:#fff;
+  border:1px solid rgba(16,185,129,.28); color:#065f46; font-weight:700; font-size:14px;
+}
+
+/* Grid */
+.dsf-grid{
+  display:grid; gap:12px;
+  grid-template-columns: repeat(12, 1fr);
+}
+.dsf-card{ grid-column: span 12; }
+
+/* Card */
+.dsf-card{
+  display:grid; grid-template-columns: 1fr; gap:12px;
+  background:
+    radial-gradient(60% 80% at 0% 0%, rgba(16,185,129,.12) 0%, rgba(16,185,129,0) 70%),
+    radial-gradient(60% 80% at 100% 100%, rgba(5,150,105,.10) 0%, rgba(5,150,105,0) 70%),
+    #ffffff;
+  border:1px solid rgba(16,185,129,.28);
+  border-radius:16px; padding:12px;
+  box-shadow: 0 10px 22px rgba(16,185,129,.12), 0 2px 8px rgba(2,6,23,.08);
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+.dsf-card:hover{ transform: translateY(-2px); box-shadow: 0 14px 28px rgba(16,185,129,.16), 0 3px 12px rgba(2,6,23,.10); }
+
+.dsf-card__media{
+  width:100%; aspect-ratio:1/1; border-radius:12px;
+  border:1px solid rgba(16,185,129,.22);
+  background:
+    radial-gradient(60% 80% at 0% 0%, rgba(16,185,129,.18) 0%, rgba(16,185,129,0) 70%),
+    radial-gradient(60% 80% at 100% 100%, rgba(34,197,94,.16) 0%, rgba(34,197,94,0) 70%),
+    #ffffff;
+  display:grid; place-items:center;
+}
+.dsf-card__media svg{ width:48px; height:48px; color: rgba(6,95,70,.9); }
+
+.dsf-card__body{ display:grid; gap:6px; }
+.dsf-card__title{ margin:0; font-weight:800; color:#065f46; font-size:16px; }
+.dsf-card__desc{ margin:0; color:#065f46; opacity:.9; font-size:14px; }
+
+.dsf-badges .badge{
+  display:inline-block; padding:4px 8px; border-radius:999px;
+  background:rgba(16,185,129,.12); color:#065f46; font-weight:800; font-size:12px;
+  border:1px solid rgba(16,185,129,.28);
+}
+
+.dsf-card__actions{
+  margin-top:6px;
+  display:flex; justify-content:flex-end;
+}
+.dsf-btn{
+  appearance:none; border:1px solid #059669; background:#059669; color:#fff;
+  border-radius:10px; padding:8px 12px; cursor:pointer; font-weight:700; font-size:14px;
+}
+.dsf-btn:hover{ background:#047857; border-color:#047857; }
+
+/* Responsive */
+@media (min-width: 700px){
+  .dsf-card{ grid-column: span 6; }
+}
+@media (min-width: 1100px){
+  .dsf-card{ grid-column: span 4; }
+}

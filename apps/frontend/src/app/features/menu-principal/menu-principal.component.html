@@ -1,0 +1,159 @@
+<header class="topbar">
+  <!-- Izquierda: logo + bienvenida -->
+  <div class="brand">
+    <a [routerLink]="'/menu-principal'" class="logo-link" (click)="onNavigateMobile()">
+      <img src="/assets/img/logo.png" alt="Yo Reciclo" class="logo" />
+    </a>
+    <div class="welcome">
+      <span class="lbl">BIENVENIDO:</span>
+      <span class="name">{{ apellidoNombre() }}</span>
+    </div>
+  </div>
+
+  <div class="spacer"></div>
+
+  <!-- Derecha: campana + perfil -->
+  <div class="actions">
+    <button class="icon-btn bell" (click)="onBellClick()" aria-label="Notificaciones">
+      <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+        <path fill="currentColor" d="M12 2a6 6 0 0 0-6 6v3.586l-.707.707A1 1 0 0 0 6 14h12a1 1 0 0 0 .707-1.707L18 11.586V8a6 6 0 0 0-6-6Z"/>
+        <path fill="currentColor" d="M9 18a3 3 0 0 0 6 0H9Z"/>
+      </svg>
+      <span class="badge" *ngIf="notifCount() > 0">{{ notifCount() }}</span>
+    </button>
+
+    <div class="profile" (click)="$event.stopPropagation()">
+      <button class="profile-btn" (click)="toggleProfile()" aria-haspopup="menu" [attr.aria-expanded]="profileOpen()">
+        <span class="avatar">{{ iniciales() }}</span>
+        <span class="chev material-symbols-outlined">expand_more</span>
+      </button>
+
+      <div class="dropdown" *ngIf="profileOpen()">
+        <a routerLink="/menu-principal/perfil/" (click)="closeProfile()">MIS DATOS</a>
+        <a routerLink="/menu-principal/perfil/editar"   (click)="closeProfile()">EDITAR PERFIL</a>
+        <button class="logout" (click)="logout()">CERRAR SESIÓN</button>
+      </div>
+    </div>
+
+    <!-- Botón hamburguesa (se muestra en responsive según el SCSS) -->
+    <label for="nav-toggle" class="icon-btn hamburger" aria-label="Menú">
+      <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+        <path fill="currentColor" d="M3 6h18v2H3V6zm0 5h18v2H3v-2zm0 5h18v2H3v-2z"/>
+      </svg>
+    </label>
+  </div>
+</header>
+
+<!-- Toggle del menú responsive (debe estar antes del nav para que el SCSS lo controle) -->
+<input type="checkbox" id="nav-toggle" class="nav-toggle" hidden>
+
+<!-- NAV PRIMARIO (debajo del header) -->
+<nav class="primary-nav" *ngIf="centerMenu().length; else noMenu">
+  <div class="tabs" role="tablist">
+    <a
+      *ngFor="let item of centerMenu()"
+      [routerLink]="item.path"
+      routerLinkActive="active"
+      [routerLinkActiveOptions]="{ exact: item.path === '/menu-principal' }"
+      class="tab"
+      role="tab"
+      (click)="onNavigateMobile()"
+    >
+      {{ item.label }}
+    </a>
+  </div>
+</nav>
+
+<ng-template #noMenu>
+  <nav class="primary-nav">
+    <div class="tabs empty">Sin menú disponible</div>
+  </nav>
+</ng-template>
+
+<main class="content">
+  <app-menu-cliente  *ngIf="isCliente() && isHome()"></app-menu-cliente>
+  <app-menu-operario *ngIf="isOperario() && isHome()"></app-menu-operario>
+  <app-menu-admin    *ngIf="isAdmin()    && isHome()"></app-menu-admin>
+
+  <router-outlet></router-outlet>
+</main>
+
+<footer class="app-footer">
+  <div class="app-footer__wrap">
+    <!-- 1) Gobierno de la Ciudad de Ceres -->
+    <section class="f-col f-col--brand">
+      <div class="f-brand">
+        <img src="/assets/img/escudo-muni.png" alt="Escudo Gobierno de la Ciudad de Ceres" class="f-escudo" />
+        <div class="f-brand__text">
+          <span class="line1">Gobierno de la Ciudad</span>
+          <span class="line2">de Ceres</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2) Contacto (título centrado + items ancho completo) -->
+    <section class="f-col">
+      <h3 class="f-title f-title--center">Contacto</h3>
+      <ul class="f-list f-list--full">
+        <li><strong>Teléfono municipalidad: </strong>03491 – 15409319</li>
+        <li><strong>Celular corralón municipal: </strong>03491-15469029</li>
+        <li><strong>E-mail: </strong> <a href="mailto:secambiente@municipalidadceres.gob.ar">secambiente@municipalidadceres.gob.ar</a></li>
+        <li><strong>Municipalidad: </strong>Avenida Italia e H. Yrigoyen – S2340AJN – Ceres – Santa Fe</li>
+        <li><strong>Corralón: </strong>Avenida H. Yrigoyen 470</li>
+      </ul>
+    </section>
+
+    <!-- 3) Nuestras redes (título centrado + íconos desde assets) -->
+    <section class="f-col">
+      <h3 class="f-title f-title--center">Nuestras redes</h3>
+      <div class="f-social f-social--center">
+        <a aria-label="Instagram" href="#" class="f-soc" (click)="$event.preventDefault()">
+          <img src="/assets/icons/instagram.svg" alt="Instagram" />
+        </a>
+        <a aria-label="Facebook" href="#" class="f-soc" (click)="$event.preventDefault()">
+          <img src="/assets/icons/facebook.svg" alt="Facebook" />
+        </a>
+        <a aria-label="X" href="#" class="f-soc" (click)="$event.preventDefault()">
+          <img src="/assets/icons/x.svg" alt="X" />
+        </a>
+        <a aria-label="LinkedIn" href="#" class="f-soc" (click)="$event.preventDefault()">
+          <img src="/assets/icons/linkedin.svg" alt="LinkedIn" />
+        </a>
+        <a aria-label="Youtube" href="#" class="f-soc" (click)="$event.preventDefault()">
+          <img src="/assets/icons/youtube.svg" alt="Youtube" />
+        </a>
+        <a aria-label="PaginaWeb" href="#" class="f-soc" (click)="$event.preventDefault()">
+          <img src="/assets/icons/gcc.png" alt="PaginaWeb" />
+        </a>
+      </div>
+    </section>
+
+    <!-- 4) Descargá la App (título centrado + íconos desde assets) -->
+    <section class="f-col">
+      <h3 class="f-title f-title--center">Descargá la App</h3>
+      <div class="f-stores f-stores--center">
+        <a href="#" class="f-store" (click)="$event.preventDefault()">
+          <img src="/assets/icons/playstore.png" alt="Google Play" class="f-store__img" />
+        </a>
+        <a href="#" class="f-store" (click)="$event.preventDefault()">
+          <img src="/assets/icons/appstore.png" alt="App Store" class="f-store__img" />
+        </a>
+      </div>
+    </section>
+
+    <!-- 5) Términos y condiciones (título centrado + items ancho completo) -->
+    <section class="f-col">
+      <h3 class="f-title f-title--center">Términos y condiciones</h3>
+      <ul class="f-list f-list--full">
+        <li><a href="#" (click)="$event.preventDefault()">FAQ´s</a></li>
+        <li><a href="#" (click)="$event.preventDefault()">Política de privacidad y protección de datos</a></li>
+        <li><a href="#" (click)="$event.preventDefault()">Ayuda</a></li>
+        <li><a href="#" (click)="$event.preventDefault()">Sobre nosotros</a></li>
+      </ul>
+    </section>
+  </div>
+
+  <div class="app-footer__copy">
+    &copy; {{ currentYear }} Gobierno de la Ciudad de Ceres — Todos los derechos reservados
+  </div>
+</footer>

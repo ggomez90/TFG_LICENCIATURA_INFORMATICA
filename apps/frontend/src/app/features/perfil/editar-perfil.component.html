@@ -1,0 +1,73 @@
+<section class="dsf-wrap">
+  <header class="dsf-header">
+    <h1 class="dsf-title">Editar perfil</h1>
+    <p class="dsf-sub">Actualizá tus datos y guardá los cambios.</p>
+  </header>
+
+  <form class="form-grid" (submit)="$event.preventDefault(); guardar()">
+    <!-- Identificación -->
+    <fieldset class="dsf-card">
+      <legend class="legend">Identificación</legend>
+      <div class="field">
+        <label for="nombres">Nombres</label>
+        <input id="nombres" type="text" [value]="form().nombres || ''"
+               #nombres (input)="onChange('nombres', nombres.value)" />
+      </div>
+      <div class="field">
+        <label for="apellidos">Apellidos</label>
+        <input id="apellidos" type="text" [value]="form().apellidos || ''"
+               #apellidos (input)="onChange('apellidos', apellidos.value)" />
+      </div>
+      <div class="field">
+        <label for="razonSocial">Razón social</label>
+        <input id="razonSocial" type="text" [value]="form().razonSocial || ''"
+               #razon (input)="onChange('razonSocial', razon.value)" />
+      </div>
+      <div class="field">
+        <label for="doc">DNI / CUIT / CUIL</label>
+        <input id="doc" type="text" [value]="form().dniCuitCuil"
+               #doc (input)="onChange('dniCuitCuil', doc.value)" />
+      </div>
+    </fieldset>
+
+    <!-- Contacto -->
+    <fieldset class="dsf-card">
+      <legend class="legend">Contacto</legend>
+      <div class="field">
+        <label for="email">Email</label>
+        <input id="email" type="email" [value]="form().email"
+               #email (input)="onChange('email', email.value)" />
+      </div>
+      <div class="field">
+        <label for="usuario">Usuario</label>
+        <input id="usuario" type="text" [value]="form().usuario"
+               #usr (input)="onChange('usuario', usr.value)" />
+      </div>
+    </fieldset>
+
+    <!-- Ubicación -->
+    <fieldset class="dsf-card">
+      <legend class="legend">Ubicación</legend>
+      <div class="field">
+        <label for="direccion">Dirección</label>
+        <input id="direccion" type="text" [value]="form().direccion"
+               #dir (input)="onChange('direccion', dir.value)" />
+      </div>
+      <div class="field">
+        <label for="localidad">Localidad</label>
+        <input id="localidad" type="text" [value]="form().localidad"
+               #loc (input)="onChange('localidad', loc.value)" />
+      </div>
+      <div class="field">
+        <label for="provincia">Provincia</label>
+        <input id="provincia" type="text" [value]="form().provincia"
+               #prov (input)="onChange('provincia', prov.value)" />
+      </div>
+    </fieldset>
+
+    <div class="dsf-card__actions">
+      <a class="dsf-btn outline" routerLink="/perfil">← VOLVER</a>
+      <button type="submit" class="dsf-btn">GUARDAR CAMBIOS</button>
+    </div>
+  </form>
+</section>

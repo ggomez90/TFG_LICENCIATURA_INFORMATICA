@@ -1,0 +1,48 @@
+<section class="dsf-wrap">
+  <header class="dsf-header">
+    <h1 class="dsf-title">Biblioteca educativa (Ciudadanía)</h1>
+    <p class="dsf-sub">Guías, videos e infografías para separar y reciclar mejor.</p>
+
+    <div class="dsf-toolbar">
+      <div class="dsf-input">
+        <input
+          type="text"
+          placeholder="Buscar recursos (ej: plástico, guía, calendario)"
+          [value]="q()"
+          (input)="q.set($any($event.target).value)"
+          aria-label="Buscar"
+        />
+      </div>
+
+      <div class="dsf-filter">
+        <label>Filtrar por:</label>
+        <select
+          [value]="filtro()"
+          (change)="filtro.set($any($event.target).value)"
+        >
+          <option *ngFor="let t of tipos" [value]="t">{{ t }}</option>
+        </select>
+      </div>
+    </div>
+  </header>
+
+  <div class="dsf-grid">
+    <article class="dsf-card" *ngFor="let r of listFiltrada()">
+      <div class="dsf-card__media" [attr.data-tipo]="r.tipo">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path fill="currentColor" [attr.d]="r.icon"></path>
+        </svg>
+      </div>
+      <div class="dsf-card__body">
+        <h2 class="dsf-card__title">{{ r.titulo }}</h2>
+        <p class="dsf-card__desc">{{ r.desc }}</p>
+        <div class="dsf-badges">
+          <span class="badge">{{ r.tipo }}</span>
+        </div>
+        <div class="dsf-card__actions">
+          <button type="button" class="dsf-btn">VER RECURSO →</button>
+        </div>
+      </div>
+    </article>
+  </div>
+</section>

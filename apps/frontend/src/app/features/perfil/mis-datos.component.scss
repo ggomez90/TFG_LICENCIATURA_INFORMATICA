@@ -1,0 +1,90 @@
+:host { display:block; }
+
+/* Contenedor con look&feel DSF (igual que Editar Perfil) */
+.dsf-wrap{
+  display:grid; gap:12px;
+  background:
+    radial-gradient(900px 600px at 0% -10%, rgba(16,185,129,.10) 0%, rgba(16,185,129,0) 60%),
+    linear-gradient(180deg, #f0fdf4 0%, #ffffff 100%);
+  border:1px solid rgba(16,185,129,.25);
+  border-radius:14px;
+  padding:12px;
+  box-shadow: 0 10px 22px rgba(16,185,129,.12), 0 2px 8px rgba(2,6,23,.08);
+}
+
+.dsf-header{ display:grid; gap:4px; }
+.dsf-title{ margin:0; font-weight:800; color:#065f46; font-size:18px; }
+.dsf-sub{ margin:0; color:#065f46; opacity:.9; font-size:14px; }
+
+/* Grid de secciones */
+.form-grid{
+  display:grid; gap:12px;
+  grid-template-columns: repeat(12, 1fr);
+}
+.form-card{ grid-column: span 12; }
+
+.form-card{
+  display:grid; gap:12px;
+  background:
+    radial-gradient(60% 80% at 0% 0%, rgba(16,185,129,.12) 0%, rgba(16,185,129,0) 70%),
+    radial-gradient(60% 80% at 100% 100%, rgba(5,150,105,.10) 0%, rgba(5,150,105,0) 70%),
+    #ffffff;
+  border:1px solid rgba(16,185,129,.28);
+  border-radius:16px; padding:12px;
+  box-shadow: 0 10px 22px rgba(16,185,129,.12), 0 2px 8px rgba(2,6,23,.08);
+}
+
+.block-title{
+  margin:0; font-size:15px; font-weight:800; color:#065f46;
+  border-bottom:1px dashed rgba(16,185,129,.35);
+  padding-bottom:6px;
+}
+
+/* Layout de filas/columnas */
+.row{
+  display:grid; gap:10px;
+  grid-template-columns: repeat(12, 1fr);
+}
+.col-6{ grid-column: span 12; }
+.col-12{ grid-column: span 12; }
+
+label{
+  font-size:12px; color:#065f46; font-weight:700; margin-bottom:4px; display:block;
+}
+
+/* Campo solo-lectura (similar a input pero no editable) */
+.ro-field{
+  min-height: 38px;
+  border:1px solid rgba(16,185,129,.28);
+  border-radius:10px;
+  padding:8px 10px;
+  font-size:14px;
+  color:#064e3b;
+  background:
+    linear-gradient(0deg, rgba(240,253,244,.65), rgba(240,253,244,.65));
+  display:flex; align-items:center;
+}
+.ro-field.strong{ font-weight:800; }
+.ro-field.tag{
+  font-weight:800; text-transform:uppercase; letter-spacing:.3px;
+  border-color:#059669; color:#fff; background:#059669;
+}
+.ro-field.tag.tag--off{
+  border-color:#94a3b8; color:#0f172a; background:#e2e8f0;
+}
+
+.actions{
+  display:flex; gap:10px; justify-content:flex-end; margin-top:4px;
+}
+.dsf-btn{
+  appearance:none; border:1px solid #059669; background:#059669; color:#fff;
+  border-radius:10px; padding:8px 12px; cursor:pointer; font-weight:700; font-size:14px;
+  text-decoration:none; display:inline-flex; align-items:center;
+}
+.dsf-btn:hover{ background:#047857; border-color:#047857; }
+
+/* Responsive */
+@media (min-width:700px){
+  .form-card{ grid-column: span 12; }
+  .col-6{ grid-column: span 6; }
+}

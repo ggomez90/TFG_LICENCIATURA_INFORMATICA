@@ -1,0 +1,23 @@
+<section class="dsf-wrap">
+  <header class="dsf-header">
+    <h1 class="dsf-title">Biblioteca educativa (Administrador)</h1>
+    <p class="dsf-sub">Publicación y gestión de contenidos educativos para la ciudadanía.</p>
+  </header>
+
+  <div class="dsf-grid">
+    <article class="dsf-card" *ngFor="let t of tiles()">
+      <div class="dsf-card__media">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path fill="currentColor" [attr.d]="t.icon"></path>
+        </svg>
+      </div>
+      <div class="dsf-card__body">
+        <h2 class="dsf-card__title">{{ t.titulo }}</h2>
+        <p class="dsf-card__desc">{{ t.desc }}</p>
+        <div class="dsf-card__actions">
+          <button type="button" class="dsf-btn">{{ t.actionText }}</button>
+        </div>
+      </div>
+    </article>
+  </div>
+</section>

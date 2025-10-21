@@ -1,0 +1,110 @@
+<section class="dsf-wrap">
+  <header class="dsf-header">
+    <h1 class="dsf-title">Panel de Administración — ¡Yo Reciclo!</h1>
+    <p class="dsf-sub">Resumen general, accesos rápidos y actividad reciente del sistema.</p>
+  </header>
+
+  <!-- RESUMEN GLOBAL -->
+  <div class="stat-grid">
+    <article class="stat-card">
+      <div class="stat-icon">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 12a5 5 0 1 0-5-5 5 5 0 0 0 5 5zm0 2c-4.418 0-8 2.239-8 5v3h16v-3c0-2.761-3.582-5-8-5z"/></svg>
+      </div>
+      <div class="stat-body">
+        <h3 class="stat-title">Usuarios totales</h3>
+        <div class="stat-value">{{ usuariosTotal() }}</div>
+        <div class="stat-sub">
+          Admin {{ usuariosAdmin() }} ({{ pctAdmins() | number:'1.0-0' }}%) ·
+          Operarios {{ usuariosOperarios() }} ({{ pctOperarios() | number:'1.0-0' }}%) ·
+          Clientes {{ usuariosClientes() }} ({{ pctClientes() | number:'1.0-0' }}%)
+        </div>
+      </div>
+    </article>
+
+    <article class="stat-card">
+      <div class="stat-icon">
+        <svg viewBox="0 0 24 24"><path fill="currentColor" d="M4 4h16v4H4V4zm0 6h10v10H4V10zm12 0h4v10h-4V10z"/></svg>
+      </div>
+      <div class="stat-body">
+        <h3 class="stat-title">Desafíos activos</h3>
+        <div class="stat-value">{{ desafiosActivos() }}</div>
+        <div class="stat-sub">En ejecución actualmente</div>
+      </div>
+    </article>
+
+    <article class="stat-card">
+      <div class="stat-icon">
+        <svg viewBox="0 0 24 24"><path fill="currentColor" d="M4 6h16v4H4zM4 14h16v4H4z"/></svg>
+      </div>
+      <div class="stat-body">
+        <h3 class="stat-title">Vouchers entregados</h3>
+        <div class="stat-value">{{ vouchersEntregados() }}</div>
+        <div class="stat-sub">Acumulado del mes</div>
+      </div>
+    </article>
+
+    <article class="stat-card">
+      <div class="stat-icon">
+        <svg viewBox="0 0 24 24"><path fill="currentColor" d="M3 6h18v2H3zM6 10h12v2H6zM8 14h8v2H8z"/></svg>
+      </div>
+      <div class="stat-body">
+        <h3 class="stat-title">Entregas pendientes</h3>
+        <div class="stat-value">{{ entregasPendientes() }}</div>
+        <div class="stat-sub">A la espera de validación</div>
+      </div>
+    </article>
+  </div>
+
+  <!-- ACCESOS RÁPIDOS -->
+  <div class="dsf-grid">
+    <article class="dsf-card" *ngFor="let l of links()">
+      <div class="dsf-card__media">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path fill="currentColor" [attr.d]="l.iconPath"></path>
+        </svg>
+      </div>
+      <div class="dsf-card__body">
+        <h2 class="dsf-card__title">{{ l.title }}</h2>
+        <p class="dsf-card__desc">{{ l.desc }}</p>
+        <div class="dsf-card__actions">
+          <a class="dsf-btn" [routerLink]="l.route">IR →</a>
+        </div>
+      </div>
+    </article>
+  </div>
+
+  <!-- ACTIVIDAD RECIENTE -->
+  <section class="recent">
+    <header class="recent__header">
+      <h2 class="recent__title">Actividad reciente</h2>
+      <p class="recent__sub">Últimos movimientos de usuarios y entregas.</p>
+    </header>
+
+    <div class="recent__grid">
+      <article class="recent__card">
+        <h3 class="recent__card-title">Nuevos usuarios</h3>
+        <ul class="recent__list">
+          <li *ngFor="let u of ultUsuarios()">
+            <span class="pill" [class.pill--admin]="u.tipo==='ADMIN'" [class.pill--op]="u.tipo==='OPERARIO'">{{ u.tipo }}</span>
+            <strong>{{ u.nombre }}</strong>
+            <span class="muted">· {{ u.email }}</span>
+          </li>
+        </ul>
+      </article>
+
+      <article class="recent__card">
+        <h3 class="recent__card-title">Últimas entregas</h3>
+        <ul class="recent__list">
+          <li *ngFor="let e of ultEntregas()">
+            <span class="pill"
+              [class.pill--ok]="e.estado==='VALIDADA'"
+              [class.pill--warn]="e.estado==='PENDIENTE'"
+              [class.pill--danger]="e.estado==='RECHAZADA'">{{ e.estado }}</span>
+            <strong>{{ e.cliente }}</strong>
+            <span class="muted">· {{ e.desafio }} · {{ e.fecha }}</span>
+          </li>
+        </ul>
+      </article>
+    </div>
+  </section>
+</section>

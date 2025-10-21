@@ -1,0 +1,9 @@
+/* Gate: ocultar la app hasta que Keycloak termine su init/login */
+html:not(.app-ready) app-root {
+  display: none !important;
+}
+
+/* Evita que un style inyectado viejo bloquee la vista */
+#app-wait-style {
+  display: none !important;
+}

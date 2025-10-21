@@ -1,0 +1,128 @@
+<section class="dsf-wrap">
+  <header class="dsf-header">
+    <h1 class="dsf-title">Usuarios (Administrador)</h1>
+    <p class="dsf-sub">Gestión de usuarios: creación, listado, búsqueda, visualización y edición.</p>
+  </header>
+
+  <!-- Resumen / Contadores -->
+  <div class="dsf-grid stats">
+    <article class="dsf-card stat">
+      <div class="stat__num">{{ total() }}</div>
+      <div class="stat__label">Total</div>
+    </article>
+
+    <article class="dsf-card stat">
+      <div class="stat__num">{{ totalClientes() }}</div>
+      <div class="stat__label">Clientes</div>
+    </article>
+
+    <article class="dsf-card stat">
+      <div class="stat__num">{{ totalOperarios() }}</div>
+      <div class="stat__label">Operarios</div>
+    </article>
+
+    <article class="dsf-card stat">
+      <div class="stat__num">{{ totalAdmins() }}</div>
+      <div class="stat__label">Administradores</div>
+    </article>
+  </div>
+
+  <!-- Filtros -->
+  <div class="filters dsf-card">
+    <div class="filters__left">
+      <label class="field">
+        <span class="field__label">Buscar</span>
+        <input
+          type="search"
+          placeholder="ID, nombre, propietario, DNI/CUIT/CUIL, email…"
+          #qInput
+          (input)="onBuscar(qInput.value)"
+        />
+      </label>
+
+      <label class="field">
+        <span class="field__label">Tipo</span>
+        <select #rolSel (change)="onRolChange(rolSel.value)">
+          <option value="todos">Todos</option>
+          <option value="cliente">Cliente</option>
+          <option value="operario">Operario</option>
+          <option value="admin">Administrador</option>
+        </select>
+      </label>
+    </div>
+
+    <div class="filters__right">
+      <button type="button" class="dsf-btn dsf-btn--ghost" (click)="cargarDemo()">Cargar datos demo</button>
+      <button type="button" class="dsf-btn">+ Nuevo usuario</button>
+    </div>
+  </div>
+
+  <!-- Tabla -->
+  <div class="tbl dsf-card">
+    <div class="tbl__scroll">
+      <table>
+        <thead>
+          <tr>
+            <th style="width:90px">ID</th>
+            <th>Nombre usuario</th>
+            <th>Propietario</th>
+            <th>DNI/CUIT/CUIL</th>
+            <th>Email</th>
+            <th style="width:130px">Tipo</th>
+            <th style="width:110px" class="right">Acciones</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr *ngFor="let u of visible(); trackBy: trackById">
+            <td>{{ u.id }}</td>
+            <td>{{ u.nombreUsuario }}</td>
+            <td>{{ u.propietario }}</td>
+            <td>{{ u.dniCuitCuil }}</td>
+            <td>{{ u.email }}</td>
+            <td>
+              <span class="pill" [class.pill--admin]="u.tipo==='admin'"
+                                [class.pill--operario]="u.tipo==='operario'"
+                                [class.pill--cliente]="u.tipo==='cliente'">
+                {{ u.tipo }}
+              </span>
+            </td>
+            <td class="right">
+              <button type="button" class="icon-btn" (click)="verUsuario(u)" aria-label="Ver usuario">
+                <!-- ojo -->
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor"
+                  d="M12 5c-7 0-10 7-10 7s3 7 10 7 10-7 10-7-3-7-10-7zm0 11a4 4 0 1 1 .001-8.001A4 4 0 0 1 12 16z"/></svg>
+              </button>
+              <button type="button" class="icon-btn" (click)="editarUsuario(u)" aria-label="Editar usuario">
+                <!-- lápiz -->
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor"
+                  d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zm14.71-9.04c.39-.39.39-1.02 0-1.41L15.2 3.29a.9959.9959 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.8-1.66z"/></svg>
+              </button>
+            </td>
+          </tr>
+
+          <tr *ngIf="visible().length === 0">
+            <td class="empty" colspan="7">
+              <div class="empty__box">
+                <div class="empty__title">No hay usuarios para mostrar</div>
+                <div class="empty__sub">Cargá datos demo o conectá esta vista al backend.</div>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Paginación -->
+    <div class="pager" *ngIf="filtered().length > 0">
+      <div class="pager__info">
+        Página {{ page() }} de {{ pages() }} —
+        Mostrando {{ visible().length }} de {{ filtered().length }} (filtrados)
+      </div>
+      <div class="pager__actions">
+        <button type="button" class="dsf-btn dsf-btn--ghost" (click)="goPrev()" [disabled]="!canPrev()">‹ Anterior</button>
+        <button type="button" class="dsf-btn" (click)="goNext()" [disabled]="!canNext()">Siguiente ›</button>
+      </div>
+    </div>
+  </div>
+</section>

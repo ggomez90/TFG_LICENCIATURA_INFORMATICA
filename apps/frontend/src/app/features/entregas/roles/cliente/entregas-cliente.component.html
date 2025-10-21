@@ -1,0 +1,64 @@
+<section class="dsf-wrap">
+  <header class="dsf-header">
+    <h1 class="dsf-title">Mis Entregas (Cliente)</h1>
+    <p class="dsf-sub">Historial de entregas asociadas a tus desafíos inscriptos. Filtrá por estado o buscá por nombre/ID.</p>
+  </header>
+
+  <div class="dsf-toolbar">
+    <div class="dsf-field">
+      <label for="buscar">Buscar</label>
+      <input id="buscar" #buscarInput type="text" placeholder="Buscar por desafío o ID…"
+             (input)="q.set(buscarInput.value)" />
+    </div>
+
+    <div class="dsf-field">
+      <label for="estado">Estado</label>
+      <select id="estado" #estadoSel (change)="onEstadoChange($any(estadoSel).value)">
+        <option value="todos">Todos</option>
+        <option value="pendiente">Pendiente</option>
+        <option value="aprobada">Aprobada</option>
+        <option value="rechazada">Rechazada</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="dsf-grid">
+    <article class="dsf-card" *ngFor="let e of entregas()">
+      <div class="dsf-card__media">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path fill="currentColor" d="M19 3H5a2 2 0 0 0-2 2v12l4-4h12a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2z"/>
+        </svg>
+      </div>
+
+      <div class="dsf-card__body">
+        <div class="dsf-card__head">
+          <h2 class="dsf-card__title">{{ e.desafio }}</h2>
+          <span class="badge" [class.ok]="estadoBadgeClass(e.estado)==='ok'"
+                             [class.warn]="estadoBadgeClass(e.estado)==='warn'"
+                             [class.err]="estadoBadgeClass(e.estado)==='err'">
+            {{ estadoLabel(e.estado) }}
+          </span>
+        </div>
+
+        <p class="dsf-card__meta">
+          <strong>ID:</strong> {{ e.id }} ·
+          <strong>Fecha:</strong> {{ e.fecha | date:'dd/MM/yyyy' }} ·
+          <strong>Puntos:</strong> +{{ e.puntos }}
+        </p>
+
+        <p class="dsf-card__desc" *ngIf="e.observaciones">
+          <strong>Observaciones:</strong> {{ e.observaciones }}
+        </p>
+
+        <div class="dsf-card__actions">
+          <a class="dsf-btn ghost" routerLink="/app/desafios">Ver desafío</a>
+          <button type="button" class="dsf-btn">Detalle</button>
+        </div>
+      </div>
+    </article>
+
+    <article class="dsf-empty" *ngIf="entregas().length === 0">
+      <p>No se encontraron entregas con los filtros actuales.</p>
+    </article>
+  </div>
+</section>
