@@ -9,5 +9,5 @@ export class FilterDesafioDto extends PaginationDto {
 }
 
 export class OrderDesafioDto extends OrderDto {
-  // sortBy sugeridos: 'fechaInicio','fechaFin','puntosTotales'
+  // sortBy
 }

@@ -5,7 +5,7 @@ import { CatalogosService } from './catalogos.service';
 import { AuthGuard, RolesGuard } from '../../auth';
 import { Roles } from '../../auth/roles.decorator';
 
-// ===== Importar DTO de cada catálogo =====
+// Import DTO de cada catálogo
 import { CreateEstadoDesafioDto, UpdateEstadoDesafioDto, FilterEstadoDesafioDto } from './estado-desafio.dto';
 import { CreateEstadoEntregaDto, UpdateEstadoEntregaDto, FilterEstadoEntregaDto } from './estado-entrega.dto';
 import { CreateEstadoUsuarioDto, UpdateEstadoUsuarioDto, FilterEstadoUsuarioDto } from './estado-usuario.dto';
@@ -19,7 +19,7 @@ import { CreateOrigenMovimientoDto, UpdateOrigenMovimientoDto, FilterOrigenMovim
 export class CatalogosController {
   constructor(private readonly service: CatalogosService) {}
 
-  // ====== EstadoDesafio ======
+  // EstadoDesafio
   @Get('estado-desafio')
   @Roles('ADMIN', 'OPERARIO', 'CLIENTE')
   listEstadoDesafio(@Query() q: FilterEstadoDesafioDto) {
@@ -44,7 +44,7 @@ export class CatalogosController {
     return this.service.updateEstadoDesafio(id, dto);
   }
 
-  // ====== EstadoEntrega ======
+  //EstadoEntrega
   @Get('estado-entrega')
   @Roles('ADMIN', 'OPERARIO', 'CLIENTE')
   listEstadoEntrega(@Query() q: FilterEstadoEntregaDto) {
@@ -69,7 +69,7 @@ export class CatalogosController {
     return this.service.updateEstadoEntrega(id, dto);
   }
 
-  // ====== EstadoUsuario ======
+  //EstadoUsuario
   @Get('estado-usuario')
   @Roles('ADMIN', 'OPERARIO', 'CLIENTE')
   listEstadoUsuario(@Query() q: FilterEstadoUsuarioDto) {
@@ -94,7 +94,7 @@ export class CatalogosController {
     return this.service.updateEstadoUsuario(id, dto);
   }
 
-  // ====== EstadoVoucher ======
+  //EstadoVoucher
   @Get('estado-voucher')
   @Roles('ADMIN', 'OPERARIO', 'CLIENTE')
   listEstadoVoucher(@Query() q: FilterEstadoVoucherDto) {
@@ -119,7 +119,7 @@ export class CatalogosController {
     return this.service.updateEstadoVoucher(id, dto);
   }
 
-  // ====== RolUsuario ======
+  //RolUsuario
   @Get('rol-usuario')
   @Roles('ADMIN', 'OPERARIO', 'CLIENTE')
   listRolUsuario(@Query() q: FilterRolUsuarioDto) {
@@ -144,7 +144,7 @@ export class CatalogosController {
     return this.service.updateRolUsuario(id, dto);
   }
 
-  // ====== TipoMovimiento ======
+  //TipoMovimiento
   @Get('tipo-movimiento')
   @Roles('ADMIN', 'OPERARIO', 'CLIENTE')
   listTipoMovimiento(@Query() q: FilterTipoMovimientoDto) {
@@ -169,7 +169,7 @@ export class CatalogosController {
     return this.service.updateTipoMovimiento(id, dto);
   }
 
-  // ====== OrigenMovimiento ======
+  //OrigenMovimiento
   @Get('origen-movimiento')
   @Roles('ADMIN', 'OPERARIO', 'CLIENTE')
   listOrigenMovimiento(@Query() q: FilterOrigenMovimientoDto) {

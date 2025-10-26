@@ -1,5 +1,6 @@
 import { Component, computed, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { UsuarioCreateDialogComponent } from './create/usuario-create-dialog.component';
 
 type Rol = 'admin' | 'operario' | 'cliente';
 type FiltroRol = 'todos' | Rol;
@@ -16,7 +17,7 @@ interface Usuario {
 @Component({
   selector: 'app-usuarios-administrador',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, UsuarioCreateDialogComponent],
   templateUrl: './usuarios-administrador.component.html',
   styleUrls: ['./usuarios-administrador.component.scss'],
 })
@@ -32,6 +33,9 @@ export class UsuariosAdministradorComponent {
   filtroRol = signal<FiltroRol>('todos');      // filtro por rol
   page = signal<number>(1);
 
+  // Modal crear
+  showCreate = signal<boolean>(false);
+
   private isFiltroRol(v: string): v is FiltroRol {
     return v === 'todos' || v === 'admin' || v === 'operario' || v === 'cliente';
   }
@@ -46,6 +50,19 @@ export class UsuariosAdministradorComponent {
       this.filtroRol.set(value);
       this.page.set(1);
     }
+  }
+
+  // Abrir modal
+  onNuevaCuenta() {
+    this.showCreate.set(true);
+  }
+  onCreateClosed() {
+    this.showCreate.set(false);
+  }
+  onCreateSaved() {
+    this.showCreate.set(false);
+    // Aquí podrías refrescar el listado real si luego conectamos un endpoint de list.
+    // Por ahora, queda como hook.
   }
 
   // Contadores
@@ -93,12 +110,10 @@ export class UsuariosAdministradorComponent {
 
   // Acciones (por ahora, placeholders)
   verUsuario(u: Usuario) {
-    // Aquí podrías abrir un modal o navegar a un detalle
     console.log('Ver usuario', u);
   }
 
   editarUsuario(u: Usuario) {
-    // Aquí podrías navegar a /usuarios/:id/editar
     console.log('Editar usuario', u);
   }
 

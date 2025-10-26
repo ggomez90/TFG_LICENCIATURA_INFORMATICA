@@ -5,7 +5,7 @@ export class CreateProvinciaDto {
   @IsInt() @Min(1) idProvincia!: number; // seed controlado
   @IsString() @Length(1, 50) nombre!: string;
 }
-export class UpdateProvinciaDto { /* normalmente no se edita */ }
+export class UpdateProvinciaDto { /* no hay nada que editar aca */ }
 
 export class FilterProvinciaDto extends PaginationDto {
   @IsOptional() @IsString() q?: string;

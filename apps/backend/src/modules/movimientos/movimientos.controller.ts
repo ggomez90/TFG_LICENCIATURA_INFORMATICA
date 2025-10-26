@@ -20,11 +20,9 @@ import { KeycloakAuthGuard, RolesGuard, Roles, User } from '../../auth';
 export class MovimientosController {
   constructor(private readonly movimientosService: MovimientosService) {}
 
-  // =====================================================
   // Listado (login requerido)
-  // - Cliente: ve solo sus movimientos
-  // - Admin: ve todos
-  // =====================================================
+  // Cliente ve solo sus movimientos
+  //Admin ve todos
   @Get()
   @UseGuards(KeycloakAuthGuard, RolesGuard)
   @Roles('ADMIN', 'CLIENTE')
@@ -36,10 +34,7 @@ export class MovimientosController {
     return this.movimientosService.findAll(filter, { actorRole, identifier });
   }
 
-  // =====================================================
   // Crear (solo ADMIN desde API)
-  // (El “sistema” debe usar los métodos del service desde otros módulos.)
-  // =====================================================
   @Post()
   @UseGuards(KeycloakAuthGuard, RolesGuard)
   @Roles('ADMIN')
@@ -47,9 +42,7 @@ export class MovimientosController {
     return this.movimientosService.createByAdmin(dto);
   }
 
-  // =====================================================
-  // Update (solo ADMIN)
-  // =====================================================
+  // Update solo ADMIN
   @Patch(':id')
   @UseGuards(KeycloakAuthGuard, RolesGuard)
   @Roles('ADMIN')
@@ -60,7 +53,7 @@ export class MovimientosController {
     return this.movimientosService.updateByAdmin(idMovimiento, dto);
   }
 
-  // ---------------- helpers ----------------
+  //helpers
   private pickRole(user: any): 'ADMIN' | 'CLIENTE' {
     const roles =
       user?.realm_access?.roles ??

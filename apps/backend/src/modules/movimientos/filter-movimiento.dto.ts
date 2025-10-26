@@ -47,7 +47,6 @@ export class FilterMovimientoDto extends PaginationDto {
 }
 
 export class OrderMovimientoDto extends OrderDto {
-  // Sugerencias de ordenamiento:
-  // sortBy: 'fecha' | 'puntos' | 'idMovimiento'
-  // sortDir: 'asc' | 'desc'
+  // sortBy fecha, puntos, idmovimiento
+  // sortDir ascendente o descendente
 }

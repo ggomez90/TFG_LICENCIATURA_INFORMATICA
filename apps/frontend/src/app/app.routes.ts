@@ -1,6 +1,8 @@
 // apps/frontend/src/app/app.routes.ts
 import { Routes } from '@angular/router';
 import { authGuard } from './auth/auth.guard';
+import { hasRoleGuard } from './auth/role.guard'; // 👈 nuevo guard para roles
+
 import { MenuPrincipalComponent } from './features/menu-principal/menu-principal.component';
 import { ForbiddenPage } from './pages/forbidden.page';
 
@@ -27,11 +29,11 @@ import { ReportesOperarioComponent } from './features/reportes/reportes-operario
 import { MisDatosComponent } from './features/perfil/mis-datos.component';
 import { EditarPerfilComponent } from './features/perfil/editar-perfil.component';
 
-// 👇 NUEVO: página puente para la raíz
+// 👇 Página puente para login inicial
 import { LoginBridgePage } from './pages/login-bridge.page';
 
 export const routes: Routes = [
-  // Raíz → bridge silencioso (no redirige a /menu-principal de entrada)
+  // Ruta raíz → bridge que decide adónde redirigir según rol
   {
     path: '',
     pathMatch: 'full',
@@ -39,42 +41,45 @@ export const routes: Routes = [
     canActivate: [authGuard],
   },
 
-  // protegido por sesión + rutas hijas
+  // Área protegida con sesión activa
   {
     path: 'menu-principal',
     component: MenuPrincipalComponent,
     canActivate: [authGuard],
     children: [
-      //Home por rol (cliente, admin, operario)
+      // ==== HOME POR ROL ====
       { path: 'cliente', component: MenuClienteComponent },
-      { path: 'admin', component: MenuAdminComponent },
       { path: 'operario', component: MenuOperarioComponent },
 
-      //Perfil
+      // ADMIN: protegemos con roles específicos
+      { path: 'admin', component: MenuAdminComponent, canActivate: [hasRoleGuard], data: { roles: ['ADMIN', 'ADMINISTRADOR'] } },
+
+      // ==== PERFIL ====
       { path: 'perfil', component: MisDatosComponent },
       { path: 'perfil/editar', component: EditarPerfilComponent },
 
-      //Cliente:
+      // ==== CLIENTE ====
       { path: 'cliente/desafios', component: DesafiosClienteComponent },
       { path: 'cliente/vouchers', component: VouchersClienteComponent },
       { path: 'cliente/biblioteca', component: BibliotecaClienteComponent },
       { path: 'cliente/entregas', component: EntregasClienteComponent },
 
-      //Administrador:
-      { path: 'admin/desafios', component: DesafiosAdminComponent },
-      { path: 'admin/vouchers', component: VouchersAdminComponent },
-      { path: 'admin/biblioteca', component: BibliotecaAdministradorComponent },
-      { path: 'admin/usuarios', component: UsuariosAdministradorComponent },
-      { path: 'admin/indicadores', component: IndicadoresAdministradorComponent },
+      // ==== ADMINISTRADOR (todas protegidas por roles) ====
+      { path: 'admin/desafios', component: DesafiosAdminComponent, canActivate: [hasRoleGuard], data: { roles: ['ADMIN', 'ADMINISTRADOR'] } },
+      { path: 'admin/vouchers', component: VouchersAdminComponent, canActivate: [hasRoleGuard], data: { roles: ['ADMIN', 'ADMINISTRADOR'] } },
+      { path: 'admin/biblioteca', component: BibliotecaAdministradorComponent, canActivate: [hasRoleGuard], data: { roles: ['ADMIN', 'ADMINISTRADOR'] } },
+      { path: 'admin/usuarios', component: UsuariosAdministradorComponent, canActivate: [hasRoleGuard], data: { roles: ['ADMIN', 'ADMINISTRADOR'] } },
+      { path: 'admin/indicadores', component: IndicadoresAdministradorComponent, canActivate: [hasRoleGuard], data: { roles: ['ADMIN', 'ADMINISTRADOR'] } },
 
-      //Operario:
+      // ==== OPERARIO ====
       { path: 'operario/entregas', component: EntregasOperarioComponent },
       { path: 'operario/reportes', component: ReportesOperarioComponent },
     ],
   },
 
+  // Página de acceso denegado
   { path: 'forbidden', component: ForbiddenPage },
 
-  // fallback → raíz (que ya pasa por bridge + guard)
+  // Cualquier otra ruta → raíz (pasa por bridge + guard)
   { path: '**', redirectTo: '' },
 ];

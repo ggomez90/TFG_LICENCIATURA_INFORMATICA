@@ -5,7 +5,7 @@ import { OrderDto } from '../common/order.dto';
 export class FilterUsuarioDto extends PaginationDto {
   @IsOptional()
   @IsString()
-  q?: string; // búsqueda libre por nombre/usuario
+  q?: string; // busqueda libre por nombre/usuario
 
   @IsOptional()
   @IsEmail()

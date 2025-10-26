@@ -14,7 +14,7 @@ export class EncuestaService {
   private readonly MODEL = 'encuesta' as const;
   private readonly ID_FIELD = 'idEncuesta' as const;
 
-  // ---------------- Helpers: coerción de fechas ----------------
+  //Helpers de fechas
   private coerceCreate(dto: CreateEncuestaDto) {
     const data: any = { ...dto };
     if (dto.fechaPublicacion) data.fechaPublicacion = new Date(dto.fechaPublicacion);
@@ -29,7 +29,7 @@ export class EncuestaService {
     return data;
   }
 
-  // ---------------- Público: listado/filtrado ------------------
+  //Publico listado/filtrado
   async listPublic(filter: FilterEncuestaPublicDto) {
     const {
       limit = 20,
@@ -79,7 +79,7 @@ export class EncuestaService {
     return { items, total, limit: take, offset: skip, sortBy, order: sortOrder };
   }
 
-  // ---------------- ADMIN: create/update/activa ----------------
+  // ADMIN create/update/activa
   async create(dto: CreateEncuestaDto): Promise<Encuesta> {
     const data = this.coerceCreate(dto);
     try {

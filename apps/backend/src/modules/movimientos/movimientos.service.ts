@@ -5,7 +5,6 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
-  // Nota: si tu schema tiene tipos generados:
 import { Prisma, MovimientoPuntos, Usuario } from '@prisma/client';
 
 import { CreateMovimientoPuntosDto } from './create-movimiento-puntos.dto';
@@ -14,12 +13,10 @@ import { FilterMovimientoDto } from './filter-movimiento.dto';
 
 type ActorCtx = {
   actorRole: 'ADMIN' | 'CLIENTE';
-  identifier: string; // preferred_username | email | username | sub
+  identifier: string;
 };
 
-// Si querés, podés mapear tus catálogos acá (ids fijos)
 const TIPO = { CREDITO: 1, DEBITO: 2 } as const;
-// const ORIGEN = { ENTREGA: 1, VOUCHER: 2, AJUSTE: 3 } as const;
 
 @Injectable()
 export class MovimientosService {
@@ -28,7 +25,7 @@ export class MovimientosService {
   private readonly MODEL = 'movimientoPuntos' as const;
   private readonly ID_FIELD = 'idMovimiento' as const;
 
-  // ------- helpers: usuario/cliente --------
+  //helpers usuario/cliente
   private async findUsuarioByIdentifier(idOrIdentifier: number | string): Promise<Usuario> {
     let usuario: Usuario | null = null;
 
@@ -55,46 +52,39 @@ export class MovimientosService {
 
   private async resolveClienteIdFromIdentifier(identifier: string): Promise<number> {
     const usuario = await this.findUsuarioByIdentifier(identifier);
-    // En tu diseño, idCliente = idUsuario (1:1)
+    //idCliente = idUsuario (1:1)
     return usuario.idUsuario;
   }
 
-  // ------- signo según tipo (crédito/debito) -------
+  //signo segun tipo credito o debito
   private signByTipo(tipo: number): 1 | -1 {
-    return tipo === TIPO.DEBITO ? -1 : 1; // default: crédito suma
+    return tipo === TIPO.DEBITO ? -1 : 1; // default credito, suma
   }
 
-  // ------- aplica delta de puntos sobre Cliente.puntos -------
+  // aplica delta de puntos sobre Cliente.puntos
   private async applyBalanceDelta(clientId: number, delta: number) {
-    // Simple y atómico
     await this.prisma.cliente.update({
       where: { idCliente: clientId },
       data: { puntos: { increment: delta } },
     });
   }
 
-  // ============================================================
-  // PUBLIC API (para otros módulos del backend) – “Sistema”
-  // Llamar estos desde Entregas/Vouchers. No requieren login.
-  // ============================================================
   async createFromEntrega(data: CreateMovimientoPuntosDto): Promise<MovimientoPuntos> {
-    // Se espera: { idCliente, fecha, tipo: CREDITO, origen: ENTREGA, puntos, idEntrega?, descripcion? }
+    // Se espera idCliente, fecha, tipo: CREDITO, origen: ENTREGA, puntos, idEntrega?, descripcion
     return this.createAndAdjustBalance(data);
   }
 
   async createFromVoucher(data: CreateMovimientoPuntosDto): Promise<MovimientoPuntos> {
-    // Se espera: { idCliente, fecha, tipo: DEBITO, origen: VOUCHER, puntos, idVoucher?, descripcion? }
+    // Se espera idCliente, fecha, tipo: DEBITO, origen: VOUCHER, puntos, idVoucher?, descripcion
     return this.createAndAdjustBalance(data);
   }
 
   async createAjusteAdmin(data: CreateMovimientoPuntosDto): Promise<MovimientoPuntos> {
-    // Ajuste manual de admin (crédito o débito)
+    // Ajuste manual de admin (cred o deb)
     return this.createAndAdjustBalance(data);
   }
 
-  // ============================================================
-  // ADMIN endpoints (controller) – Create/Update
-  // ============================================================
+  // ADMIN Create/Update
   async createByAdmin(dto: CreateMovimientoPuntosDto): Promise<MovimientoPuntos> {
     return this.createAndAdjustBalance(dto);
   }
@@ -141,9 +131,7 @@ export class MovimientosService {
     });
   }
 
-  // ============================================================
-  // Listado (rol-aware)
-  // ============================================================
+  // Listado
   async findAll(filter: FilterMovimientoDto, ctx: ActorCtx) {
     const {
       limit = 20,
@@ -204,14 +192,11 @@ export class MovimientosService {
     return { items, total, limit: take, offset: skip, sortBy, order: sortOrder };
   }
 
-  // ============================================================
-  // Core: crea y ajusta saldo (transacción)
-  // ============================================================
+  //crea y ajusta saldo
   private async createAndAdjustBalance(dto: CreateMovimientoPuntosDto): Promise<MovimientoPuntos> {
     const data: any = { ...dto };
     if (dto.fecha) data.fecha = new Date(dto.fecha);
 
-    // delta según tipo
     const sign = this.signByTipo(dto.tipo);
     const delta = sign * Number(dto.puntos ?? 0);
 

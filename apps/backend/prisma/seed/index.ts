@@ -14,7 +14,6 @@ import { seedLocalidad } from './seed-localidad';
 const prisma = new PrismaClient();
 
 async function main() {
-  // Catálogos “chicos”
   await seedEstadoDesafio(prisma);
   await seedEstadoEntrega(prisma);
   await seedEstadoUsuario(prisma);

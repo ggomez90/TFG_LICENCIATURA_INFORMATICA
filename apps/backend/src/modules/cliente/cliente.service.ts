@@ -10,33 +10,26 @@ import { FilterClienteDto } from './filter-cliente.dto';
 export class ClienteService {
   constructor(private readonly prisma: PrismaService) {}
 
-  // ---------------------------------------
-  // Create (login requerido – controller)
-  // ---------------------------------------
+  // Create (login requerido – controller
   async create(dto: CreateClienteDto): Promise<Cliente> {
     try {
-      // Si querés inicializar puntos en 0 siempre:
-      // const data = { ...dto, puntos: dto.puntos ?? 0 };
       return await this.prisma.cliente.create({
         data: { ...dto },
       });
     } catch (error: any) {
       if (error?.code === 'P2002') {
-        // PK duplicada, etc.
+        // PK duplicada
         throw new BadRequestException('Ya existe un Cliente con ese idCliente.');
       }
       if (error?.code === 'P2003') {
-        // FK inválida (provincia, localidad, tipo)
+        // FK inválida
         throw new BadRequestException('Alguna referencia es inválida (Provincia/Localidad/TipoCliente).');
       }
       throw error;
     }
   }
-
-  // ---------------------------------------
   // List (solo ADMIN)
-  // Confía en FilterClienteDto y OrderDto
-  // ---------------------------------------
+  // FilterClienteDto y OrderDto
   async findAll(filter: FilterClienteDto) {
     const {
       limit = 20,
@@ -46,7 +39,7 @@ export class ClienteService {
       idProvincia,
       idLocalidad,
       idTipoCliente,
-      q, // búsqueda por nombre/apellido/razón social (relacional con Usuario)
+      q, // busqueda por nombre/apellido/razon social (relacional con Usuario)
     } = filter as any;
 
     const where: Prisma.ClienteWhereInput = {};
@@ -62,7 +55,6 @@ export class ClienteService {
         { usuario: { nombres: { contains: q } } as any },
         { usuario: { apellidos: { contains: q } } as any },
       ];
-      // Nota: as any se usa si el tipo generado por Prisma no infiere el path relacional.
     }
 
     const sortField = (sortBy ?? 'idCliente') as keyof Prisma.ClienteOrderByWithRelationInput;
@@ -78,8 +70,6 @@ export class ClienteService {
         skip,
         take,
         orderBy,
-        // Si querés incluir datos del Usuario asociado:
-        // include: { usuario: { select: { idUsuario: true, nombres: true, apellidos: true, email: true } } },
       }),
       this.prisma.cliente.count({ where }),
     ]);
@@ -87,22 +77,15 @@ export class ClienteService {
     return { items, total, limit: take, offset: skip };
   }
 
-  // ---------------------------------------
-  // Read por id (solo ADMIN)
-  // ---------------------------------------
+  // leer por id (solo ADMIN)
   async findOne(idCliente: number): Promise<Cliente> {
     const found = await this.prisma.cliente.findUnique({
       where: { idCliente },
-      // include: { usuario: { select: { idUsuario: true, nombres: true, apellidos: true, email: true } } },
     });
     if (!found) throw new NotFoundException('Cliente no encontrado');
     return found;
   }
 
-  // ---------------------------------------
-  // Helpers para ME: resolver idUsuario a idCliente
-  // Busca Usuario por: id, usuario, email o dniCuitCuil
-  // ---------------------------------------
   private async findUsuarioByIdentifier(idOrIdentifier: number | string): Promise<Usuario> {
     let usuario: Usuario | null = null;
 
@@ -127,15 +110,12 @@ export class ClienteService {
     return usuario;
   }
 
-  // ---------------------------------------
-  // Perfil propio (login requerido)
-  // ---------------------------------------
+  // Perfil propio (login requerido
   async findMe(identifier: string): Promise<Cliente> {
     const usuario = await this.findUsuarioByIdentifier(identifier);
 
     const cliente = await this.prisma.cliente.findUnique({
       where: { idCliente: usuario.idUsuario },
-      // include: { usuario: { select: { idUsuario: true, nombres: true, apellidos: true, email: true } } },
     });
 
     if (!cliente) throw new NotFoundException('Cliente no encontrado para el usuario autenticado');
@@ -163,9 +143,7 @@ export class ClienteService {
     }
   }
 
-  // ---------------------------------------
   // Update por ADMIN
-  // ---------------------------------------
   async update(idCliente: number, dto: UpdateClienteDto): Promise<Cliente> {
     const exists = await this.prisma.cliente.findUnique({ where: { idCliente } });
     if (!exists) throw new NotFoundException('Cliente no encontrado');

@@ -1,0 +1,110 @@
+:host { display: contents; }
+
+/* Backdrop con blur suave */
+.modal__backdrop{
+  position: fixed; inset: 0;
+  background: rgba(2,6,23,.45);
+  backdrop-filter: blur(2px);
+  z-index: 80;
+}
+
+/* Contenedor centrado */
+.modal__panel{
+  position: fixed; inset: 0;
+  display: grid; place-items: center;
+  padding: 16px; /* margen interior para que no pegue contra los bordes en mobile */
+  z-index: 90;
+  box-sizing: border-box;
+}
+
+/* Tarjeta del modal (tamaño responsivo, con scroll interno si crece) */
+.modal__card{
+  box-sizing: border-box;
+  width: clamp(320px, 92vw, 720px);
+  max-height: min(85vh, 720px);
+  display: grid;
+  grid-template-rows: auto 1fr;
+  background: #fff;
+  border: 1px solid rgba(16,185,129,.28);
+  border-radius: 14px;
+  box-shadow: 0 16px 32px rgba(16,185,129,.15), 0 8px 16px rgba(2,6,23,.06);
+  overflow: hidden; /* evita que el contenido “rompa” los bordes */
+}
+
+/* Header */
+.modal__header{
+  display:flex; align-items:center; justify-content:space-between; gap:8px;
+  background: #ecfdf5;
+  border-bottom: 1px solid rgba(16,185,129,.28);
+  padding: 10px 12px;
+
+  h3{ margin:0; color:#065f46; font-weight:800; }
+  .icon-btn.close{
+    appearance:none; border:1px solid rgba(16,185,129,.35); background:#fff; color:#065f46;
+    border-radius:10px; padding:6px; cursor:pointer; width:34px; height:34px;
+    line-height:1; font-size:18px;
+  }
+  .icon-btn.close:hover{ background:rgba(16,185,129,.10); }
+}
+
+/* Cuerpo con scroll si es necesario */
+.modal__body{
+  padding: 12px;
+  overflow: auto; /* scroll interno en caso de overflow vertical */
+}
+
+.hint{
+  margin: 0 0 8px 0;
+  font-size: 12px; color:#065f46; opacity:.85;
+}
+
+/* Formulario */
+.form{
+  display:grid; gap:12px;
+}
+
+.grid{
+  display:grid; gap:12px; 
+  grid-template-columns: 1fr; /* mobile una columna */
+}
+
+@media (min-width: 700px){
+  .grid{ grid-template-columns: 1fr 1fr; } /* desktop dos columnas */
+  .field--full{ grid-column: 1 / -1; }     /* ocupa todo el ancho */
+}
+
+.field{ display:grid; gap:6px; min-width:0; }
+.lbl{ font-size:12px; color:#065f46; font-weight:700; }
+
+/* Inputs 100% y sin desbordes */
+input, select{
+  appearance:none;
+  width: 100%;
+  min-width: 0;               /* clave para que no exceda el contenedor */
+  box-sizing: border-box;     /* incluye padding/borde en el ancho */
+  border:1px solid rgba(16,185,129,.35);
+  border-radius:10px;
+  padding:10px 12px;
+  font-size:14px; color:#065f46; background:#fff;
+}
+
+.err{ color:#b91c1c; font-size:12px; }
+
+/* Footer fijo dentro de la tarjeta */
+.modal__footer{
+  display:flex; align-items:center; justify-content:flex-end; gap:8px; 
+  padding-top: 8px; margin-top: 8px;
+  border-top: 1px solid rgba(16,185,129,.18);
+}
+
+.dsf-btn{
+  appearance:none; border:1px solid #059669; background:#059669; color:#fff;
+  border-radius:10px; padding:8px 12px; cursor:pointer; font-weight:700; font-size:14px;
+}
+.dsf-btn:hover{ background:#047857; border-color:#047857; }
+.dsf-btn--ghost{
+  background:transparent; color:#065f46; border-color:rgba(16,185,129,.45);
+}
+.dsf-btn--ghost:hover{
+  background:rgba(16,185,129,.08);
+}

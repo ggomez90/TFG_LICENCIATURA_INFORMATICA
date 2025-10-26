@@ -7,13 +7,12 @@ export class FilterEntregaDto extends PaginationDto {
   @IsOptional() @IsInt() @Min(1) idDesafio?: number;
   @IsOptional() @IsInt() @Min(1) estado?: number;
 
-  // ✅ Agregados para tus necesidades:
   @IsOptional() @IsInt() @Min(1) idInscripcionDesafio?: number;
 
-  @IsOptional() @IsDateString() fechaDesde?: string; // rango por fechaCreacion
+  @IsOptional() @IsDateString() fechaDesde?: string;
   @IsOptional() @IsDateString() fechaHasta?: string;
 }
 
 export class OrderEntregaDto extends OrderDto {
-  // sortBy sugeridos: 'fechaCreacion','fechaValidacion'
+  // sortBy
 }

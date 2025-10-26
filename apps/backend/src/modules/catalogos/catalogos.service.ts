@@ -14,7 +14,7 @@ import { CreateOrigenMovimientoDto, UpdateOrigenMovimientoDto, FilterOrigenMovim
 export class CatalogosService {
   constructor(private readonly prisma: PrismaService) {}
 
-  // ==== helpers comunes ====
+  //helpers comunes
   private buildPagination(q: { page?: number; pageSize?: number }) {
     const page = Math.max(1, Number(q.page) || 1);
     const pageSize = Math.min(200, Math.max(1, Number(q.pageSize) || 50));
@@ -28,7 +28,7 @@ export class CatalogosService {
     return { orderBy: { [sortByFallback]: dir as 'asc' | 'desc' } };
   }
 
-  // ========= EstadoDesafio =========
+  //EstadoDesafio
   async listEstadoDesafio(q: FilterEstadoDesafioDto) {
     const { skip, take } = this.buildPagination(q);
     const where = q.q ? { descripcion: { contains: q.q } } : {};
@@ -55,7 +55,7 @@ export class CatalogosService {
     });
   }
 
-  // ========= EstadoEntrega =========
+  // EstadoEntrega
   async listEstadoEntrega(q: FilterEstadoEntregaDto) {
     const { skip, take } = this.buildPagination(q);
     const where = q.q ? { descripcion: { contains: q.q } } : {};
@@ -82,7 +82,7 @@ export class CatalogosService {
     });
   }
 
-  // ========= EstadoUsuario =========
+  //EstadoUsuario
   async listEstadoUsuario(q: FilterEstadoUsuarioDto) {
     const { skip, take } = this.buildPagination(q);
     const where = q.q ? { descripcion: { contains: q.q } } : {};
@@ -109,7 +109,7 @@ export class CatalogosService {
     });
   }
 
-  // ========= EstadoVoucher =========
+  //EstadoVoucher
   async listEstadoVoucher(q: FilterEstadoVoucherDto) {
     const { skip, take } = this.buildPagination(q);
     const where = q.q ? { descripcion: { contains: q.q } } : {};
@@ -136,7 +136,7 @@ export class CatalogosService {
     });
   }
 
-  // ========= RolUsuario =========
+  //RolUsuario
   async listRolUsuario(q: FilterRolUsuarioDto) {
     const { skip, take } = this.buildPagination(q);
     const where = q.q ? { descripcion: { contains: q.q } } : {};
@@ -163,7 +163,7 @@ export class CatalogosService {
     });
   }
 
-  // ========= TipoMovimiento =========
+  //TipoMovimiento
   async listTipoMovimiento(q: FilterTipoMovimientoDto) {
     const { skip, take } = this.buildPagination(q);
     const where = q.q ? { descripcion: { contains: q.q } } : {};
@@ -190,7 +190,7 @@ export class CatalogosService {
     });
   }
 
-  // ========= OrigenMovimiento =========
+  //OrigenMovimiento
   async listOrigenMovimiento(q: FilterOrigenMovimientoDto) {
     const { skip, take } = this.buildPagination(q);
     const where = q.q ? { descripcion: { contains: q.q } } : {};

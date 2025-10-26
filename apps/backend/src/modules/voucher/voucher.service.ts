@@ -13,10 +13,10 @@ import { FilterVoucherDto } from './filter-voucher.dto';
 
 type ActorCtx = {
   actorRole: 'ADMIN' | 'CLIENTE';
-  identifier: string; // preferred_username | email | username | sub
+  identifier: string;
 };
 
-// ⚠ Ajustá estos IDs si tu catálogo usa otros valores
+// ID de tabla catálogo
 const ESTADO = {
   CREADO: 1,
   ADQUIRIDO: 2,
@@ -31,7 +31,7 @@ export class VoucherService {
   private readonly MODEL = 'voucher' as const;
   private readonly ID_FIELD = 'idVoucher' as const;
 
-  // ---------- helpers: usuario / cliente ----------
+  //helpers usuario / cliente
   private async findUsuarioByIdentifier(idOrIdentifier: number | string): Promise<Usuario> {
     let usuario: Usuario | null = null;
 
@@ -58,7 +58,7 @@ export class VoucherService {
 
   private async resolveClienteIdFromIdentifier(identifier: string): Promise<number> {
     const usuario = await this.findUsuarioByIdentifier(identifier);
-    // En tu diseño, idCliente = idUsuario (1:1)
+    // idCliente = idUsuario (1:1)
     return usuario.idUsuario;
   }
 
@@ -83,7 +83,7 @@ export class VoucherService {
     return allowed.some(([f, t]) => f === from && t === to);
   }
 
-  // ------------------------ Create ------------------------
+  //Create
   async create(dto: CreateVoucherDto, ctx: ActorCtx): Promise<Voucher> {
     if (!['ADMIN', 'CLIENTE'].includes(ctx.actorRole)) {
       throw new ForbiddenException('No autorizado para crear vouchers.');
@@ -91,7 +91,7 @@ export class VoucherService {
 
     const data: any = { ...dto };
 
-    // Si crea CLIENTE, forzamos su idCliente
+    // Si crea CLIENTE va su idCliente
     if (ctx.actorRole === 'CLIENTE') {
       const myIdCliente = await this.resolveClienteIdFromIdentifier(ctx.identifier);
       if (dto.idCliente !== myIdCliente) {
@@ -113,7 +113,7 @@ export class VoucherService {
     }
   }
 
-  // ------------------------ List (rol-aware) ------------------------
+  //List
   async findAll(filter: FilterVoucherDto, ctx: ActorCtx) {
     const {
       limit = 20,
@@ -153,7 +153,7 @@ export class VoucherService {
     return { items, total, limit: take, offset: skip, sortBy, order: sortOrder };
   }
 
-  // ------------------------ Update Estado ------------------------
+  //Update Estado
   async updateEstado(idVoucher: number, dto: UpdateEstadoVoucherDto, ctx: ActorCtx): Promise<Voucher> {
     if (!['ADMIN', 'CLIENTE'].includes(ctx.actorRole)) {
       throw new ForbiddenException('No autorizado para cambiar estado de vouchers.');
@@ -164,7 +164,7 @@ export class VoucherService {
     });
     if (!current) throw new NotFoundException('Voucher no encontrado');
 
-    // Cliente: solo sus vouchers
+    // Cliente solo sus vouchers
     if (ctx.actorRole === 'CLIENTE') {
       const myIdCliente = await this.resolveClienteIdFromIdentifier(ctx.identifier);
       if (current.idCliente !== myIdCliente) {
@@ -178,9 +178,6 @@ export class VoucherService {
     if (!this.isTransitionAllowed(ctx.actorRole, from, to)) {
       throw new ForbiddenException(`Transición de estado no permitida (${from} → ${to}) para rol ${ctx.actorRole}.`);
     }
-
-    // Si seteás marcas temporales al usar (opcional):
-    // if (to === ESTADO.UTILIZADO && !current.fechaUso) { data.fechaUso = new Date(); }
 
     const data: any = { idEstadoVoucher: to };
     return await (this.prisma as any)[this.MODEL].update({

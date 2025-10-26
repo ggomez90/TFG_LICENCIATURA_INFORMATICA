@@ -22,6 +22,6 @@ export class FilterVoucherTipoDto extends PaginationDto {
 }
 
 export class OrderVoucherTipoDto extends OrderDto {
-  // sortBy sugeridos: 'idVoucherTipo' | 'fechaInicioVigencia' | 'fechaFinVigencia' | 'puntosRequeridos'
-  // sortDir: 'asc' | 'desc'
+  // sortBy idVoucherTipo, fechaInicioVigencia, fechaFinVigencia, puntosRequeridos
+  // sortDir asc, desc
 }

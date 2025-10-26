@@ -14,7 +14,7 @@ export class VoucherTipoService {
   private readonly MODEL = 'voucherTipo' as const;
   private readonly ID_FIELD = 'idVoucherTipo' as const;
 
-  // ---------- helpers fechas ----------
+  //helpers fechas
   private coerceCreate(dto: CreateVoucherTipoDto) {
     const data: any = { ...dto };
     if (dto.fechaInicioVigencia) data.fechaInicioVigencia = new Date(dto.fechaInicioVigencia);
@@ -28,7 +28,7 @@ export class VoucherTipoService {
     return data;
   }
 
-  // ---------- List (ADMIN) ----------
+  // List (ADMIN)
   async findAll(filter: FilterVoucherTipoDto) {
     const {
       limit = 20,
@@ -53,10 +53,10 @@ export class VoucherTipoService {
         where.fechaInicioVigencia = { gte: new Date(desde) };
         where.fechaFinVigencia = { lte: new Date(hasta) };
     } else if (desde) {
-        // Solo se especifica "desde"
+        // Solo se especifica desde
         where.fechaInicioVigencia = { gte: new Date(desde) };
     } else if (hasta) {
-        // Solo se especifica "hasta"
+        // Solo se especifica hasta
         where.fechaFinVigencia = { lte: new Date(hasta) };
     }
     }
@@ -76,7 +76,7 @@ export class VoucherTipoService {
     return { items, total, limit: take, offset: skip, sortBy, order: sortOrder };
   }
 
-  // ---------- Create (ADMIN) ----------
+  //Create (ADMIN)
   async create(dto: CreateVoucherTipoDto): Promise<VoucherTipo> {
     const data = this.coerceCreate(dto);
     try {
@@ -89,7 +89,7 @@ export class VoucherTipoService {
     }
   }
 
-  // ---------- Update (ADMIN) ----------
+  //Update (ADMIN)
   async update(idVoucherTipo: number, dto: UpdateVoucherTipoDto): Promise<VoucherTipo> {
     const exists = await (this.prisma as any)[this.MODEL].findUnique({
       where: { [this.ID_FIELD]: idVoucherTipo },
@@ -111,7 +111,7 @@ export class VoucherTipoService {
     }
   }
 
-  // ---------- Update activa (ADMIN) ----------
+  //Update activa (ADMIN)
   async updateActiva(idVoucherTipo: number, dto: UpdateActivaVoucherTipoDto) {
     const exists = await (this.prisma as any)[this.MODEL].findUnique({
       where: { [this.ID_FIELD]: idVoucherTipo },

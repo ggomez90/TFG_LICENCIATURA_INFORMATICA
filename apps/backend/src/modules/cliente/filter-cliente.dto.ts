@@ -10,5 +10,5 @@ export class FilterClienteDto extends PaginationDto {
 }
 
 export class OrderClienteDto extends OrderDto {
-  // sortBy sugeridos: 'idCliente','puntos'
+
 }

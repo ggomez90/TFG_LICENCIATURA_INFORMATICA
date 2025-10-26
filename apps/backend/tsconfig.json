@@ -22,8 +22,8 @@
     "strictBindCallApply": false,
     "noFallthroughCasesInSwitch": false,
 
-    "types": ["node"]          // <- agrega los tipos de Node
+    "types": ["node"]          //agrega los tipos de Node
   },
-  "include": ["src/**/*.ts"],   // <- asegura que incluye los .ts del backend
+  "include": ["src/**/*.ts"],   //asegura que incluye los .ts del backend
   "exclude": ["dist", "node_modules"]
 }

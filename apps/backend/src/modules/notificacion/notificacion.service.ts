@@ -15,7 +15,7 @@ export class NotificacionService {
   private readonly MODEL = 'notificacion' as const;
   private readonly ID_FIELD = 'idNotificacion' as const;
 
-  // ----------------- Helpers fechas -----------------
+  //Helpers fechas
   private coerceCreate(dto: CreateNotificacionDto) {
     const data: any = { ...dto };
     if (dto.fechaCreacion) data.fechaCreacion = new Date(dto.fechaCreacion);
@@ -27,7 +27,7 @@ export class NotificacionService {
     return data;
   }
 
-  // ================== ADMIN: List ===================
+  // ADMIN List
   async findAll(filter: FilterNotificacionDto) {
     const {
       limit = 20,
@@ -69,7 +69,7 @@ export class NotificacionService {
     return { items, total, limit: take, offset: skip, sortBy, order: sortOrder };
   }
 
-  // ================== ADMIN: Create =================
+  //ADMIN Create
   async create(dto: CreateNotificacionDto) {
     const data = this.coerceCreate(dto);
     try {
@@ -82,7 +82,7 @@ export class NotificacionService {
     }
   }
 
-  // ================== ADMIN: Update =================
+  //ADMIN Update
   async update(idNotificacion: number, dto: UpdateNotificacionDto) {
     const exists = await (this.prisma as any)[this.MODEL].findUnique({
       where: { [this.ID_FIELD]: idNotificacion },
@@ -104,7 +104,7 @@ export class NotificacionService {
     }
   }
 
-  // ============== ADMIN: Update visible =============
+  //ADMIN Update visible
   async updateVisible(idNotificacion: number, dto: UpdateVisibleNotificacionDto) {
     const exists = await (this.prisma as any)[this.MODEL].findUnique({
       where: { [this.ID_FIELD]: idNotificacion },
@@ -118,13 +118,7 @@ export class NotificacionService {
     });
   }
 
-  // ============ OPERARIO/CLIENTE: listado ===========
-  /**
-   * Lista notificaciones para el rol del usuario autenticado:
-   *  - visible = true
-   *  - orden = fechaCreacion DESC
-   *  - opcionalmente rango por fechaCreacion (desde/hasta)
-   */
+  //OPERARIO/CLIENTE listado
 async listPublic(dto: ListNotificacionPublicDto) {
   const { limit = 20, offset = 0, desde, hasta } = dto as any;
 
@@ -143,7 +137,7 @@ async listPublic(dto: ListNotificacionPublicDto) {
   const [items, total] = await this.prisma.$transaction([
     this.prisma.notificacion.findMany({
       where,
-      orderBy: { fechaCreacion: 'desc' }, // siempre más nuevas primero
+      orderBy: { fechaCreacion: 'desc' }, // siempre mas nuevas primero
       skip: Number(offset),
       take: Number(limit),
       select: {
@@ -152,7 +146,7 @@ async listPublic(dto: ListNotificacionPublicDto) {
         mensaje: true,
         fechaCreacion: true,
         visible: true,
-        idRolUsuario: true, // si no lo querés exponer, quítalo del select
+        idRolUsuario: true,
       },
     }),
     this.prisma.notificacion.count({ where }),

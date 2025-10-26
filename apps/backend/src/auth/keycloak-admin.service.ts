@@ -1,10 +1,5 @@
-// apps/backend/src/auth/keycloak-admin.service.ts
 import { Injectable } from '@nestjs/common';
 
-/**
- * Servicio mínimo para hablar con la Admin REST API de Keycloak.
- * Usa fetch nativo (Node 18+).
- */
 @Injectable()
 export class KeycloakAdminService {
   private base = process.env.KEYCLOAK_URL?.replace(/\/+$/, '') || 'http://keycloak:8081';
@@ -50,7 +45,23 @@ export class KeycloakAdminService {
       const txt = await res.text();
       throw new Error(`POST ${url} -> ${res.status} ${res.statusText} ${txt}`);
     }
-    return res.text(); // KC suele devolver vacío (204/201)
+    return res.text();
+  }
+
+  private async putJson(url: string, token: string, json: unknown) {
+    const res = await fetch(url, {
+      method: 'PUT',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(json),
+    });
+    if (!res.ok && res.status !== 204) {
+      const txt = await res.text();
+      throw new Error(`PUT ${url} -> ${res.status} ${res.statusText} ${txt}`);
+    }
+    return res.text();
   }
 
   private async getAdminToken(): Promise<string> {
@@ -76,42 +87,39 @@ export class KeycloakAdminService {
     return this.getJson(url, token);
   }
 
-private async addRealmRoleToUser(userId: string, roleRep: any, token: string) {
-  const url = `${this.base}/admin/realms/${this.realm}/users/${userId}/role-mappings/realm`;
-  const res = await fetch(url, {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${token}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify([roleRep]),
-  });
+  private async addRealmRoleToUser(userId: string, roleRep: any, token: string) {
+    const url = `${this.base}/admin/realms/${this.realm}/users/${userId}/role-mappings/realm`;
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify([roleRep]),
+    });
 
-  if (res.ok) return res.text();
+    if (res.ok) return res.text();
 
-  // Keycloak a veces devuelve 400/409 cuando el rol ya está asignado.
-  const txt = await res.text();
-  const lower = txt.toLowerCase();
-  const looksLikeDuplicate =
-    res.status === 409 ||
-    (res.status === 400 &&
-      (lower.includes('duplicate') ||
-       lower.includes('already') ||
-       lower.includes('could not add user role mappings')));
+    // Keycloak devuelve 400/409 cuando el rol ya está asignado.
+    const txt = await res.text();
+    const lower = txt.toLowerCase();
+    const looksLikeDuplicate =
+      res.status === 409 ||
+      (res.status === 400 &&
+        (lower.includes('duplicate') ||
+         lower.includes('already') ||
+         lower.includes('could not add user role mappings')));
 
-  if (looksLikeDuplicate) {
-    // No lo tratamos como error: ya estaba asignado, seguimos.
-    return '';
+    if (looksLikeDuplicate) {
+      // No lo tratamos como error: ya estaba asignado
+      return '';
+    }
+
+    throw new Error(`POST ${url} -> ${res.status} ${res.statusText} ${txt}`);
   }
 
-  throw new Error(`POST ${url} -> ${res.status} ${res.statusText} ${txt}`);
-}
-
-
-  /**
-   * Asegura que el usuario (por username) tenga el rol de realm indicado.
-   * Si ya lo tiene, KC lo ignora; si no, lo asigna.
-   */
+   // Asegura que el usuario (por username) tenga el rol de realm indicado.
+   // Si ya lo tiene, KC lo ignora; si no, lo asigna.
   async ensureUserHasRole(username: string, roleName: string): Promise<void> {
     const token = await this.getAdminToken();
 
@@ -126,5 +134,63 @@ private async addRealmRoleToUser(userId: string, roleRep: any, token: string) {
     }
 
     await this.addRealmRoleToUser(userId, { id: role.id, name: role.name }, token);
+  }
+
+  // Crea un usuario en KC y devuelve su id 
+  async createUser(params: {
+    username: string;
+    email: string;
+    firstName?: string;
+    lastName?: string;
+    enabled?: boolean;
+    emailVerified?: boolean;
+    requiredActions?: string[]; // ['VERIFY_EMAIL','UPDATE_PASSWORD']
+  }): Promise<{ id: string }> {
+    const token = await this.getAdminToken();
+
+    const payload = {
+      username: params.username,
+      email: params.email,
+      firstName: params.firstName ?? '',
+      lastName: params.lastName ?? '',
+      enabled: params.enabled ?? true,
+      emailVerified: params.emailVerified ?? false,
+      requiredActions: params.requiredActions ?? [],
+    };
+
+    const url = `${this.base}/admin/realms/${this.realm}/users`;
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+    });
+
+    if (res.status !== 201) {
+      const txt = await res.text();
+      throw new Error(`POST ${url} -> ${res.status} ${res.statusText} ${txt}`);
+    }
+
+    const location = res.headers.get('location') || '';
+    const id = location.split('/').pop() ?? '';
+    if (!id) throw new Error('No se pudo obtener el id del usuario creado en KC');
+    return { id };
+  }
+
+  // manda email para ejecutar acciones (verificar email, actualizar password)
+  async executeActionsEmail(userId: string, actions: string[]) {
+    const token = await this.getAdminToken();
+    const url = `${this.base}/admin/realms/${this.realm}/users/${userId}/execute-actions-email`;
+    await this.putJson(url, token, actions);
+  }
+
+  // Asigna un rol de realm directo por userId
+  async assignRealmRoleByUserId(userId: string, roleName: string) {
+    const token = await this.getAdminToken();
+    const role = await this.getRoleByName(roleName, token);
+    const url = `${this.base}/admin/realms/${this.realm}/users/${userId}/role-mappings/realm`;
+    await this.postJson(url, token, [{ id: role.id, name: role.name }]);
   }
 }

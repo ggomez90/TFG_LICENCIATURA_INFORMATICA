@@ -21,11 +21,9 @@ import { KeycloakAuthGuard, RolesGuard, Roles, User } from '../../auth';
 export class InscripcionController {
   constructor(private readonly inscripcionService: InscripcionService) {}
 
-  // =====================================================
   // Listado (login requerido)
-  // - Cliente: ve solo sus inscripciones
-  // - Operario/Admin: ven todas
-  // =====================================================
+  // - Cliente ve solo sus inscripciones
+  // - Operario/Admin ven todas
   @Get()
   @UseGuards(KeycloakAuthGuard, RolesGuard)
   @Roles('ADMIN', 'OPERARIO', 'CLIENTE')
@@ -37,9 +35,7 @@ export class InscripcionController {
     return this.inscripcionService.findAll(filter, { actorRole, identifier });
   }
 
-  // =====================================================
   // Crear (ADMIN o CLIENTE)
-  // =====================================================
   @Post()
   @UseGuards(KeycloakAuthGuard, RolesGuard)
   @Roles('ADMIN', 'CLIENTE')
@@ -51,9 +47,7 @@ export class InscripcionController {
     return this.inscripcionService.create(dto, { actorRole, identifier });
   }
 
-  // =====================================================
   // Update (ADMIN o CLIENTE)
-  // =====================================================
   @Patch(':id')
   @UseGuards(KeycloakAuthGuard, RolesGuard)
   @Roles('ADMIN', 'CLIENTE')
@@ -69,9 +63,7 @@ export class InscripcionController {
     return this.inscripcionService.update(idInscripcionDesafio, dto, { actorRole, identifier });
   }
 
-  // =====================================================
   // Update Estado (ADMIN o CLIENTE)
-  // =====================================================
   @Patch(':id/estado')
   @UseGuards(KeycloakAuthGuard, RolesGuard)
   @Roles('ADMIN', 'CLIENTE')
@@ -87,7 +79,7 @@ export class InscripcionController {
     return this.inscripcionService.updateEstado(idInscripcionDesafio, dto, { actorRole, identifier });
   }
 
-  // ---------------- helpers ----------------
+  //helpers
   private pickRole(user: any): 'ADMIN' | 'OPERARIO' | 'CLIENTE' {
     const roles =
       user?.realm_access?.roles ??

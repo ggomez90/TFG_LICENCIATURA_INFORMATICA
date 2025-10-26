@@ -3,7 +3,7 @@ import { IsDateString, IsInt, IsOptional, IsString, Length, Min } from 'class-va
 export class CreateRespuestaEncuestaDto {
   @IsInt() @Min(1) idEncuesta!: number;
 
-  @IsOptional() @IsInt() @Min(1) idUsuario?: number; // nullable (invitado)
+  @IsOptional() @IsInt() @Min(1) idUsuario?: number; // nullable por si es invitado
   @IsOptional() @IsString() @Length(0, 100) datosInvitado?: string;
   @IsOptional() @IsString() @Length(0, 20) dniCuilCuitInvitado?: string;
 

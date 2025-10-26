@@ -29,5 +29,5 @@ export class FilterInscripcionDto extends PaginationDto {
 }
 
 export class OrderInscripcionDto extends OrderDto {
-  // sortBy sugeridos: 'idInscripcionDesafio', 'idCliente', 'idDesafio', 'idEstadoDesafio'
+  // sortBy 'idInscripcionDesafio', 'idCliente', 'idDesafio', 'idEstadoDesafio'
 }

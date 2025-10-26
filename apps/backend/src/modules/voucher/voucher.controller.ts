@@ -20,23 +20,19 @@ import { KeycloakAuthGuard, RolesGuard, Roles, User } from '../../auth';
 export class VoucherController {
   constructor(private readonly voucherService: VoucherService) {}
 
-  // =====================================================
   // Listado (login requerido) — ADMIN y CLIENTE
-  // =====================================================
   @Get()
   @UseGuards(KeycloakAuthGuard, RolesGuard)
   @Roles('ADMIN', 'CLIENTE')
   async findAll(@User() user: any, @Query() filter: FilterVoucherDto) {
-    const actorRole = this.pickRole(user); // 'ADMIN' | 'CLIENTE'
+    const actorRole = this.pickRole(user); // 'ADMIN' o 'CLIENTE'
     const identifier =
       user?.preferred_username ?? user?.email ?? user?.username ?? user?.sub;
 
     return this.voucherService.findAll(filter, { actorRole, identifier });
   }
 
-  // =====================================================
   // Crear (login requerido) — ADMIN y CLIENTE
-  // =====================================================
   @Post()
   @UseGuards(KeycloakAuthGuard, RolesGuard)
   @Roles('ADMIN', 'CLIENTE')
@@ -48,9 +44,7 @@ export class VoucherController {
     return this.voucherService.create(dto, { actorRole, identifier });
   }
 
-  // =====================================================
   // Update-estado (login requerido) — ADMIN y CLIENTE
-  // =====================================================
   @Patch(':id/estado')
   @UseGuards(KeycloakAuthGuard, RolesGuard)
   @Roles('ADMIN', 'CLIENTE')
@@ -66,7 +60,7 @@ export class VoucherController {
     return this.voucherService.updateEstado(idVoucher, dto, { actorRole, identifier });
   }
 
-  // ---------------- helpers ----------------
+  //helpers
   private pickRole(user: any): 'ADMIN' | 'CLIENTE' {
     const roles =
       user?.realm_access?.roles ??
@@ -74,6 +68,6 @@ export class VoucherController {
       user?.roles ??
       [];
     if (Array.isArray(roles) && roles.includes('ADMIN')) return 'ADMIN';
-    return 'CLIENTE'; // OPERARIO está excluido a nivel @Roles, por si acaso devolvemos CLIENTE por defecto
+    return 'CLIENTE'; // OPERARIO esta excluido a nivel @Roles, por si acaso devolvemos CLIENTE por defecto
   }
 }

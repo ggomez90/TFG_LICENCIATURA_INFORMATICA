@@ -1,13 +1,12 @@
-// src/modules/usuario/enable-usuario.dto.ts
 import { IsInt, IsOptional, IsString, MaxLength } from 'class-validator';
 
 export class HabilitarUsuarioDto {
-  /** Estado nuevo del usuario (1=PENDIENTE, 2=HABILITADO, 3=BANEADO) */
+  // Estado nuevo del usuario (1=PENDIENTE, 2=HABILITADO, 3=BANEADO)
   @IsOptional()
   @IsInt()
   idEstadoUsuario?: number;
 
-  /** Observación o comentario opcional sobre la habilitación */
+  //comentario opcional sobre la habilitacion
   @IsOptional()
   @IsString()
   @MaxLength(300)

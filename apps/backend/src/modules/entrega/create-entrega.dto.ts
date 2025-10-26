@@ -6,7 +6,7 @@ export class CreateEntregaDto {
   @IsInt() @Min(1) idInscripcionDesafio!: number;
 
   @IsDateString() fechaCreacion!: string;
-  @IsDateString() fechaVencimiento!: string; // +15 días (lo podés calcular en servicio)
+  @IsDateString() fechaVencimiento!: string; // +15 días
   @IsOptional() @IsDateString() fechaValidacion?: string;
 
   @IsDecimal() cantidadDeclarada!: any;

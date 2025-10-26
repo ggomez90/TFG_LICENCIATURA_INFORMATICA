@@ -11,7 +11,7 @@ export class ProvinciaService {
       q,
       page = 1,
       pageSize = 50,
-      order = 'ASC', // hereda de OrderDto si así lo definiste
+      order = 'ASC',
       sortBy = 'nombre',
     } = dto;
 
@@ -24,7 +24,7 @@ export class ProvinciaService {
         }
       : {};
 
-    // Sólo permitimos ordenar por campos conocidos. Por simplicidad: nombre o idProvincia
+    //ordenar por nombre o idProvincia
     const safeSort = ['nombre', 'idProvincia'].includes(sortBy) ? sortBy : 'nombre';
     const direction = order === 'DESC' ? 'desc' : 'asc';
 

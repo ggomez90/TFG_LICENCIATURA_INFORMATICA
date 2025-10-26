@@ -1,7 +1,7 @@
 import { IsInt, IsOptional, IsString, Length, Min } from 'class-validator';
 
 export class CreateClienteDto {
-  // PK = idUsuario (uno a uno con Usuario cuyo rol=CLIENTE). Se recibe explícito o se infiere del token.
+  // PK = idUsuario (uno a uno con Usuario cuyo rol=CLIENTE)
   @IsInt()
   @Min(1)
   idCliente!: number;
@@ -30,5 +30,5 @@ export class CreateClienteDto {
 
   @IsInt()
   @Min(0)
-  puntos!: number; // default 0 (también podés setearlo en servicio)
+  puntos!: number; // default 0
 }

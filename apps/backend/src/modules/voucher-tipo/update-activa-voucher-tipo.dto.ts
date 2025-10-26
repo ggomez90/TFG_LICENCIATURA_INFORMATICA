@@ -4,4 +4,4 @@ export class UpdateActivaVoucherTipoDto {
   @IsBoolean()
   activa!: boolean;
 }
-// El idVoucherTipo viaja por la URL (p.ej. PATCH /voucher-tipo/:id/activa)
+//idVoucherTipo viaja por la URL PATCH /voucher-tipo/:id/activa

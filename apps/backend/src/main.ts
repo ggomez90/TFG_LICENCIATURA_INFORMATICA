@@ -1,4 +1,3 @@
-// apps/backend/src/main.ts
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
@@ -6,11 +5,7 @@ import { AppModule } from './app.module';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  // ===========================
-  // CORS (Frontend ↔ Backend)
-  // ===========================
-  // Permitimos el frontend Angular en localhost:4200 (y 127.0.0.1:4200)
-  // Si más adelante despliegas en otra URL, podés agregarla en .env -> FRONTEND_ORIGIN=https://tusitio.com
+  // frontend Angular en localhost:4200 y 127.0.0.1:4200
   const FRONTEND_ORIGIN = process.env.FRONTEND_ORIGIN?.trim();
   const allowedOrigins = [
     'http://localhost:4200',
@@ -20,7 +15,7 @@ async function bootstrap() {
 
   app.enableCors({
     origin: (origin, callback) => {
-      // Permitir sin origen (Postman, cURL)
+      // Permitir sin origen (Postman o cURL)
       if (!origin) return callback(null, true);
       if (allowedOrigins.includes(origin)) return callback(null, true);
       console.warn(`CORS bloqueado para origen no permitido: ${origin}`);
@@ -37,9 +32,7 @@ async function bootstrap() {
     ],
   });
 
-  // ===========================
-  // Validación global DTOs
-  // ===========================
+  // Validacion global DTOs
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,           // elimina campos no declarados en DTO
@@ -48,11 +41,9 @@ async function bootstrap() {
     }),
   );
 
-  // ===========================
   // Servidor backend
-  // ===========================
 const port = process.env.PORT ? Number(process.env.PORT) : 3000;
-await app.listen(port, '0.0.0.0');  // ← importante en Docker
+await app.listen(port, '0.0.0.0');  // importante en Docker
 console.log(`✅ Backend escuchando en http://localhost:${port}`);
 }
 

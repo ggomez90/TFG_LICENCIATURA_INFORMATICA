@@ -14,6 +14,7 @@ import {
 
 import { UsuarioService } from './usuario.service';
 import { CreateUsuarioDto } from './create-usuario.dto';
+import { AdminCreateUsuarioDto } from './admin-create-usuario.dto';
 import { UpdateUsuarioDto } from './update-usuario.dto';
 import { HabilitarUsuarioDto } from './enable-usuario.dto';
 import { BanearUsuarioDto } from './ban-usuario.dto';
@@ -25,27 +26,23 @@ import { KeycloakAuthGuard, RolesGuard, Roles, User } from '../../auth';
 export class UsuarioController {
   constructor(private readonly usuarioService: UsuarioService) {}
 
-  // ============================
-  // Público (sin login)
-  // ============================
+  // Publico
   @Post()
   @HttpCode(HttpStatus.CREATED)
   async createPublic(@Body() dto: CreateUsuarioDto) {
     return this.usuarioService.create(dto);
   }
 
-  // ============================
   // Autenticado (cualquier rol)
-  // ============================
 
-  // Idempotente: crea/actualiza el usuario local en BD según el token
+  // crea/actualiza el usuario local en BD según el token
   @Get('me/sync')
   @UseGuards(KeycloakAuthGuard)
   async syncMe(@User() user: any) {
     return this.usuarioService.meAndSync(user);
   }
 
-  // Perfil "propio" (reutiliza sync para garantizar que existe)
+  // Perfil propio
   @Get('me')
   @UseGuards(KeycloakAuthGuard)
   async me(@User() user: any) {
@@ -60,19 +57,27 @@ export class UsuarioController {
     return this.usuarioService.updateSelf(identifier, dto);
   }
 
-  // ============================
   // Solo ADMIN
-  // ============================
+
+  //Alta por administrador (crea en KC + asigna rol + envía mail + crea en BD con estado PENDIENTE).
+  @Post('admin')
+  @UseGuards(KeycloakAuthGuard, RolesGuard)
+  @Roles('ADMIN', 'ADMINISTRADOR')
+  @HttpCode(HttpStatus.CREATED)
+  async createByAdmin(@Body() dto: AdminCreateUsuarioDto) {
+    return this.usuarioService.createByAdmin(dto);
+  }
+
   @Get()
   @UseGuards(KeycloakAuthGuard, RolesGuard)
-  @Roles('ADMIN')
+  @Roles('ADMIN', 'ADMINISTRADOR')
   async findAll(@Query() filter: FilterUsuarioDto) {
     return this.usuarioService.findAll(filter);
   }
 
   @Patch(':id/enable')
   @UseGuards(KeycloakAuthGuard, RolesGuard)
-  @Roles('ADMIN')
+  @Roles('ADMIN', 'ADMINISTRADOR')
   async enable(
     @Param('id', ParseIntPipe) id: number,
     @Body() dto: HabilitarUsuarioDto,
@@ -82,7 +87,7 @@ export class UsuarioController {
 
   @Patch(':id/ban')
   @UseGuards(KeycloakAuthGuard, RolesGuard)
-  @Roles('ADMIN')
+  @Roles('ADMIN', 'ADMINISTRADOR')
   async ban(
     @Param('id', ParseIntPipe) id: number,
     @Body() dto: BanearUsuarioDto,
@@ -92,7 +97,7 @@ export class UsuarioController {
 
   @Patch(':id')
   @UseGuards(KeycloakAuthGuard, RolesGuard)
-  @Roles('ADMIN')
+  @Roles('ADMIN', 'ADMINISTRADOR')
   async updateByAdmin(
     @Param('id', ParseIntPipe) id: number,
     @Body() dto: UpdateUsuarioDto,

@@ -23,18 +23,14 @@ import { KeycloakAuthGuard, RolesGuard, Roles } from '../../auth';
 export class DesafioController {
   constructor(private readonly desafioService: DesafioService) {}
 
-  // =====================================================
   // Listado (cualquier rol autenticado)
-  // =====================================================
   @Get()
   @UseGuards(KeycloakAuthGuard)
   async findAll(@Query() filter: FilterDesafioDto) {
     return this.desafioService.findAll(filter);
   }
 
-  // =====================================================
   // ADMIN
-  // =====================================================
   @Post()
   @UseGuards(KeycloakAuthGuard, RolesGuard)
   @Roles('ADMIN')

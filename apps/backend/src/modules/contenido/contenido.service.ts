@@ -1,4 +1,3 @@
-// src/modules/contenido/contenido.service.ts
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { Prisma } from '@prisma/client';
@@ -30,7 +29,7 @@ export class ContenidoService {
     return data;
   }
 
-  // Público
+  // Publico
   async listPublic(): Promise<ListContenidoEducativoDto[]> {
     const now = new Date();
 
@@ -46,7 +45,7 @@ export class ContenidoService {
     return rows as ListContenidoEducativoDto[];
   }
 
-  // ADMIN: listado con filtros + orden + paginación (confiando en DTO)
+  // ADMIN: listado con filtros + orden + paginación
   async listAdmin(filter: FilterContenidoAdminDto) {
     const {
       limit = 20,
@@ -104,7 +103,7 @@ export class ContenidoService {
     return { items, total, limit: take, offset: skip, sortBy, order: sortOrder };
   }
 
-  // ADMIN: create/update/visible (sin cambios)
+  // ADMIN: create/update/visible
   async create(dto: CreateContenidoEducativoDto) {
     const data = this.coerceCreate(dto);
     try {

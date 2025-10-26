@@ -23,17 +23,13 @@ import { KeycloakAuthGuard, RolesGuard, Roles } from '../../auth';
 export class EncuestaController {
   constructor(private readonly encuestaService: EncuestaService) {}
 
-  // ============================
-  // Público (sin login)
-  // ============================
+  // Público
   @Get()
   async listPublic(@Query() filter: FilterEncuestaPublicDto) {
     return this.encuestaService.listPublic(filter);
   }
 
-  // ============================
   // Solo ADMIN
-  // ============================
   @Post()
   @UseGuards(KeycloakAuthGuard, RolesGuard)
   @Roles('ADMIN')

@@ -6,7 +6,7 @@ import { CreateRespuestaEncuestaDto } from './create-respuesta-encuesta.dto';
 import { UpdateRespuestaEncuestaDto } from './update-respuesta-encuesta.dto';
 import { FilterRespuestaDto } from './filter-respuesta.dto';
 
-type ActorCtx = { identifier: string }; // preferred_username | email | username | sub
+type ActorCtx = { identifier: string };
 
 @Injectable()
 export class RespuestaService {
@@ -15,7 +15,7 @@ export class RespuestaService {
   private readonly MODEL = 'respuestaEncuesta' as const;
   private readonly ID_FIELD = 'idRespuesta' as const;
 
-  // ---------- helpers: usuario ----------
+  //helpers usuario
   private async findUsuarioByIdentifier(idOrIdentifier: number | string): Promise<Usuario> {
     let usuario: Usuario | null = null;
 
@@ -45,17 +45,17 @@ export class RespuestaService {
   }
 
   private async isAdmin(ctx: ActorCtx): Promise<boolean> {
-    // Regla dada: admin si idUsuario === 1
+    //Es admin si idUsuario === 1
     const myId = await this.resolveMyUserId(ctx);
     return myId === 1;
   }
 
-  // ---------- Create público ----------
+  //Create público
   async create(dto: CreateRespuestaEncuestaDto): Promise<RespuestaEncuesta> {
     const data: any = { ...dto };
     if (dto.fechaRespuesta) data.fechaRespuesta = new Date(dto.fechaRespuesta);
 
-    // Si llega idUsuario, opcionalmente podés validar que exista:
+    // Si llega idUsuario validar que exista
     if (dto.idUsuario) {
       const exists = await this.prisma.usuario.findUnique({ where: { idUsuario: dto.idUsuario } });
       if (!exists) throw new BadRequestException('idUsuario no válido.');
@@ -71,7 +71,7 @@ export class RespuestaService {
     }
   }
 
-  // ---------- List (login requerido) ----------
+  //List login requerido
   async findAll(filter: FilterRespuestaDto, ctx: ActorCtx) {
     const {
       limit = 20,
@@ -92,7 +92,7 @@ export class RespuestaService {
     if (admin) {
       if (idUsuario) (where as any).idUsuario = Number(idUsuario);
     } else {
-      // usuario común: solo sus respuestas
+      // usuario comun solo sus respuestas
       const myId = await this.resolveMyUserId(ctx);
       (where as any).idUsuario = myId;
     }
@@ -134,7 +134,7 @@ export class RespuestaService {
     return { items, total, limit: take, offset: skip, sortBy, order: sortOrder };
   }
 
-  // ---------- Update (login requerido) ----------
+  //Update login requerido
   async update(idRespuesta: number, dto: UpdateRespuestaEncuestaDto, ctx: ActorCtx): Promise<RespuestaEncuesta> {
     const current = await (this.prisma as any)[this.MODEL].findUnique({
       where: { [this.ID_FIELD]: idRespuesta },
@@ -144,7 +144,7 @@ export class RespuestaService {
     const admin = await this.isAdmin(ctx);
 
     if (!admin) {
-      // solo el dueño puede editar; si fue invitado (null), no puede
+      // solo el dueño puede editar, si fue invitado (null) no puede
       const myId = await this.resolveMyUserId(ctx);
       if (!current.idUsuario || current.idUsuario !== myId) {
         throw new ForbiddenException('No autorizado para editar esta respuesta.');

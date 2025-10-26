@@ -4,10 +4,10 @@ export class CreateInscripcionDesafioDto {
   @IsInt() @Min(1) idCliente!: number;
   @IsInt() @Min(1) idDesafio!: number;
 
-  @IsDateString() fechaAdhesion!: string; // default "hoy" en servicio si querés
+  @IsDateString() fechaAdhesion!: string; 
   @IsOptional() @IsDateString() fechaBaja?: string;
 
-  @IsDecimal() progreso!: any; // o @IsNumber() según cómo lo manejes en controlador
+  @IsDecimal() progreso!: any;
   @IsInt() @Min(0) puntosAcumulados!: number;
 
   @IsInt() @Min(1) estado!: number; // EstadoDesafio (1=ACTIVO)

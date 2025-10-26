@@ -22,22 +22,18 @@ import { KeycloakAuthGuard, RolesGuard, Roles, User } from '../../auth';
 export class NotificacionController {
   constructor(private readonly notificacionService: NotificacionService) {}
 
-  // =====================================================
   // Público autenticado (OPERARIO / CLIENTE)
   // - visible=true (forzado en service)
   // - orden: fechaCreacion desc
   // - filtrado por rol del usuario autenticado
-  // =====================================================
 @Get('mias')
 @UseGuards(KeycloakAuthGuard, RolesGuard)
 @Roles('OPERARIO', 'CLIENTE')
 async listForMyRole(@User() user: any, @Query() dto: ListNotificacionPublicDto) {
-  return this.notificacionService.listPublic(dto); // <- nuevo nombre sugerido
+  return this.notificacionService.listPublic(dto);
 }
 
-  // =====================================================
   // ADMIN: CRUD + listado con filtros completos
-  // =====================================================
   @Get()
   @UseGuards(KeycloakAuthGuard, RolesGuard)
   @Roles('ADMIN')
@@ -72,7 +68,7 @@ async listForMyRole(@User() user: any, @Query() dto: ListNotificacionPublicDto) 
     return this.notificacionService.updateVisible(idNotificacion, dto);
   }
 
-  // --------------- helper ---------------
+  //helper
   private pickRole(user: any): 'ADMIN' | 'OPERARIO' | 'CLIENTE' {
     const roles =
       user?.realm_access?.roles ??

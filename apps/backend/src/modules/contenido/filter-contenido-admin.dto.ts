@@ -1,10 +1,9 @@
-// src/modules/contenido/filter-contenido-admin.dto.ts
 import { IsBoolean, IsDateString, IsIn, IsInt, IsOptional, IsString, Min } from 'class-validator';
 import { PaginationDto } from '../common/pagination.dto';
 import { OrderDto } from '../common/order.dto';
 
 export class FilterContenidoAdminDto extends PaginationDto {
-  // ---- Orden ----
+  // Orden
   @IsOptional()
   @IsIn(['fechaPublicacion', 'idContenido', 'visible', 'idAdmin', 'titulo'])
   declare sortBy?: string;
@@ -13,7 +12,7 @@ export class FilterContenidoAdminDto extends PaginationDto {
   @IsIn(['asc', 'desc'])
   order?: 'asc' | 'desc' = 'desc';
 
-  // ---- Filtros ----
+  // Filtros
   @IsOptional()
   @IsInt()
   @Min(1)
@@ -33,5 +32,5 @@ export class FilterContenidoAdminDto extends PaginationDto {
 
   @IsOptional()
   @IsString()
-  q?: string; // buscar por título/descripcion
+  q?: string; // buscar por titulo/descripcion
 }

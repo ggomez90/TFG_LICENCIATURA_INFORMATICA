@@ -3,8 +3,7 @@ import { IsDateString, IsInt, IsOptional, IsString, Length, Min } from 'class-va
 export class CreateMovimientoPuntosDto {
   @IsInt() @Min(1) idCliente!: number;
 
-  @IsDateString() fecha!: string; // o lo seteás por servicio = hoy
-
+  @IsDateString() fecha!: string;
   @IsInt() @Min(1) tipo!: number;    // FK TipoMovimiento (1/2)
   @IsInt() @Min(1) origen!: number;  // FK OrigenMovimiento (ENTREGA/VOUCHER/AJUSTE)
 

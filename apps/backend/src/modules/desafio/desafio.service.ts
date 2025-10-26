@@ -14,7 +14,7 @@ export class DesafioService {
   private readonly MODEL = 'desafio' as const;
   private readonly ID_FIELD = 'idDesafio' as const;
 
-  // ------------------------ Helpers: coerción de fechas ------------------------
+  //Helpers: coerción de fechas 
   private coerceCreate(dto: CreateDesafioDto) {
     const data: any = { ...dto };
     if (dto.fechaInicio) data.fechaInicio = new Date(dto.fechaInicio);
@@ -29,24 +29,20 @@ export class DesafioService {
     return data;
   }
 
-  // ------------------------ List (cualquier rol autenticado) -------------------
+  // List (cualquier rol autenticado)
   async findAll(filter: FilterDesafioDto) {
     const {
       limit = 20,
       offset = 0,
-      sortBy = 'fechaInicio',         // confiar en OrderDto si lo extendés en el futuro
+      sortBy = 'fechaInicio',
       order = 'desc',
-      estado,                         // number | undefined
-      // Podés extender FilterDesafioDto con fechas si luego querés rango
+      estado,
     } = filter as any;
 
     const where: Prisma.DesafioWhereInput = {};
 
     if (typeof estado !== 'undefined' && estado !== null) {
-      // En CreateDesafioDto el campo es "estado" (FK EstadoDesafio)
-      // Si tu schema usa "idEstadoDesafio" en vez de "estado", cambia esta línea:
       (where as any).estado = Number(estado);
-      // (where as any).idEstadoDesafio = Number(estado);
     }
 
     const sortField = (sortBy ?? 'fechaInicio') as keyof Prisma.DesafioOrderByWithRelationInput;
@@ -69,7 +65,7 @@ export class DesafioService {
     return { items, total, limit: take, offset: skip, sortBy, order: sortOrder };
   }
 
-  // ------------------------ Create (ADMIN) -------------------------------------
+  //Create (ADMIN)
   async create(dto: CreateDesafioDto): Promise<Desafio> {
     const data = this.coerceCreate(dto);
 
@@ -84,7 +80,7 @@ export class DesafioService {
     }
   }
 
-  // ------------------------ Update (ADMIN) -------------------------------------
+  //Update (ADMIN)
   async update(idDesafio: number, dto: UpdateDesafioDto): Promise<Desafio> {
     const exists = await (this.prisma as any)[this.MODEL].findUnique({
       where: { [this.ID_FIELD]: idDesafio },
@@ -106,18 +102,15 @@ export class DesafioService {
     }
   }
 
-  // ------------------------ Update Estado (ADMIN) ------------------------------
+  //Update Estado (ADMIN
   async updateEstado(idDesafio: number, dto: UpdateEstadoDesafioDto): Promise<Desafio> {
     const exists = await (this.prisma as any)[this.MODEL].findUnique({
       where: { [this.ID_FIELD]: idDesafio },
     });
     if (!exists) throw new NotFoundException('Desafío no encontrado');
 
-    // Create usa "estado" (FK). El DTO trae "idEstadoDesafio": lo mapeamos.
     const data: any = {
       estado: dto.idEstadoDesafio,
-      // Si tu columna se llama idEstadoDesafio, usá:
-      // idEstadoDesafio: dto.idEstadoDesafio,
     };
 
     return await (this.prisma as any)[this.MODEL].update({

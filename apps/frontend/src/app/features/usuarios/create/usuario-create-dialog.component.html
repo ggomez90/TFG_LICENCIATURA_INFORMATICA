@@ -1,0 +1,65 @@
+<!-- Backdrop (cierra al click) -->
+<div class="modal__backdrop" (click)="cancel()"></div>
+
+<!-- Panel centrado -->
+<div class="modal__panel" (click)="$event.stopPropagation()">
+  <section class="modal__card" role="dialog" aria-modal="true" aria-labelledby="dlg-title">
+    <header class="modal__header">
+      <h3 id="dlg-title">Nuevo usuario</h3>
+      <button type="button" class="icon-btn close" (click)="cancel()" aria-label="Cerrar">×</button>
+    </header>
+
+    <div class="modal__body">
+      <p class="hint">Completá los datos y elegí el rol. Se enviará correo de verificación y solicitud de contraseña.</p>
+
+      <form [formGroup]="form" class="form" (ngSubmit)="submit()">
+        <div class="grid">
+          <label class="field">
+            <span class="lbl">Nombres *</span>
+            <input type="text" formControlName="nombres" #firstInput />
+            <small class="err" *ngIf="f['nombres'].touched && f['nombres'].invalid">Campo requerido</small>
+          </label>
+
+          <label class="field">
+            <span class="lbl">Apellidos *</span>
+            <input type="text" formControlName="apellidos" />
+            <small class="err" *ngIf="f['apellidos'].touched && f['apellidos'].invalid">Campo requerido</small>
+          </label>
+
+          <label class="field">
+            <span class="lbl">Usuario *</span>
+            <input type="text" formControlName="usuario" />
+            <small class="err" *ngIf="f['usuario'].touched && f['usuario'].invalid">3 a 40 caracteres</small>
+          </label>
+
+          <label class="field">
+            <span class="lbl">Email *</span>
+            <input type="email" formControlName="email" />
+            <small class="err" *ngIf="f['email'].touched && f['email'].invalid">Email inválido</small>
+          </label>
+
+          <label class="field field--full">
+            <span class="lbl">DNI/CUIT/CUIL (opcional)</span>
+            <input type="text" formControlName="dniCuitCuil" />
+          </label>
+
+          <label class="field">
+            <span class="lbl">Rol *</span>
+            <select formControlName="idRolUsuario">
+              <option [ngValue]="1">ADMINISTRADOR</option>
+              <option [ngValue]="2">OPERARIO</option>
+              <option [ngValue]="3">CLIENTE</option>
+            </select>
+          </label>
+        </div>
+
+        <footer class="modal__footer">
+          <button type="button" class="dsf-btn dsf-btn--ghost" (click)="cancel()">Cancelar</button>
+          <button type="submit" class="dsf-btn" [disabled]="loading">
+            {{ loading ? 'Creando…' : 'Crear' }}
+          </button>
+        </footer>
+      </form>
+    </div>
+  </section>
+</div>

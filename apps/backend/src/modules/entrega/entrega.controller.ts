@@ -21,11 +21,9 @@ import { KeycloakAuthGuard, RolesGuard, Roles, User } from '../../auth';
 export class EntregaController {
   constructor(private readonly entregaService: EntregaService) {}
 
-  // =====================================================
-  // Listado (login requerido)
-  // - Cliente: ve solo sus entregas
-  // - Operario/Admin: ven todas
-  // =====================================================
+  //Listado (login requerido)
+  //Cliente: ve solo sus entregas
+  // Operario/Admin ven todas
   @Get()
   @UseGuards(KeycloakAuthGuard, RolesGuard)
   @Roles('ADMIN', 'OPERARIO', 'CLIENTE')
@@ -37,9 +35,7 @@ export class EntregaController {
     return this.entregaService.findAll(filter, { actorRole, identifier });
   }
 
-  // =====================================================
   // Crear (ADMIN o CLIENTE)
-  // =====================================================
   @Post()
   @UseGuards(KeycloakAuthGuard, RolesGuard)
   @Roles('ADMIN', 'CLIENTE')
@@ -51,9 +47,7 @@ export class EntregaController {
     return this.entregaService.create(dto, { actorRole, identifier });
   }
 
-  // =====================================================
   // Update (ADMIN o CLIENTE) — solo si estado actual == CREADA (1)
-  // =====================================================
   @Patch(':id')
   @UseGuards(KeycloakAuthGuard, RolesGuard)
   @Roles('ADMIN', 'CLIENTE')
@@ -69,9 +63,7 @@ export class EntregaController {
     return this.entregaService.update(idEntrega, dto, { actorRole, identifier });
   }
 
-  // =====================================================
   // Update Estado (ADMIN, OPERARIO o CLIENTE)
-  // =====================================================
   @Patch(':id/estado')
   @UseGuards(KeycloakAuthGuard, RolesGuard)
   @Roles('ADMIN', 'OPERARIO', 'CLIENTE')
@@ -87,7 +79,7 @@ export class EntregaController {
     return this.entregaService.updateEstado(idEntrega, dto, { actorRole, identifier });
   }
 
-  // ---------------- helpers ----------------
+  //helpers
   private pickRole(user: any): 'ADMIN' | 'OPERARIO' | 'CLIENTE' {
     const roles =
       user?.realm_access?.roles ??

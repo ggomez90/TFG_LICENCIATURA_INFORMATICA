@@ -27,6 +27,6 @@ export class FilterNotificacionDto extends PaginationDto {
 }
 
 export class OrderNotificacionDto extends OrderDto {
-  // sortBy sugeridos: 'fechaCreacion' | 'idNotificacion' | 'titulo'
-  // sortDir: 'asc' | 'desc'
+  // sortBy sugeridos fechaCreacion, idNotificacion, titulo
+  // sortDir asc o desc
 }

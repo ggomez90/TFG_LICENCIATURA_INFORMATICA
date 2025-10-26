@@ -20,17 +20,13 @@ import { KeycloakAuthGuard, User } from '../../auth';
 export class RespuestaController {
   constructor(private readonly respuestaService: RespuestaService) {}
 
-  // ============================
-  // Público (sin login)
-  // ============================
+  // Publico sin login
   @Post()
   async createPublic(@Body() dto: CreateRespuestaEncuestaDto) {
     return this.respuestaService.create(dto);
   }
 
-  // ============================
-  // Login requerido (cualquier rol)
-  // ============================
+  // Login requerido cualquier rol
   @Get()
   @UseGuards(KeycloakAuthGuard)
   async findAll(@User() user: any, @Query() filter: FilterRespuestaDto) {

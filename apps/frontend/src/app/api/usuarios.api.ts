@@ -15,17 +15,40 @@ export interface UsuarioDto {
   idEstadoUsuario: number;
 }
 
+/** DTO para alta por administrador (alineado al backend) */
+export interface AdminCreateUsuarioDto {
+  nombres: string;
+  apellidos: string;
+  usuario: string;
+  email: string;
+  dniCuitCuil?: string | null;
+  /** 1=ADMIN, 2=OPERARIO, 3=CLIENTE */
+  idRolUsuario: 1 | 2 | 3;
+}
+
+/** Respuesta típica del backend al crear por admin */
+export interface AdminCreateUsuarioResp {
+  kcUserId?: string;
+  message?: string;
+  usuario?: UsuarioDto;
+}
+
 @Injectable({ providedIn: 'root' })
 export class UsuariosApi {
   private http = inject(HttpClient);
 
-  /** Crea/sincroniza el usuario local a partir del token actual. */
+  /** Sincroniza el usuario autenticado actual (Keycloak → BD) */
   syncMe(): Observable<UsuarioDto> {
     return this.http.get<UsuarioDto>(apiUrl('/usuarios/me/sync'));
   }
 
-  /** Traer mi perfil ya sincronizado. */
+  /** Devuelve el perfil del usuario autenticado */
   me(): Observable<UsuarioDto> {
     return this.http.get<UsuarioDto>(apiUrl('/usuarios/me'));
+  }
+
+  /** Crea un usuario desde el panel administrador */
+  createByAdmin(dto: AdminCreateUsuarioDto): Observable<AdminCreateUsuarioResp> {
+    return this.http.post<AdminCreateUsuarioResp>(apiUrl('/usuarios/admin'), dto);
   }
 }

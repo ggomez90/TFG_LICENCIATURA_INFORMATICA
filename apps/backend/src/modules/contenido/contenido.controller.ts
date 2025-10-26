@@ -1,4 +1,3 @@
-// src/modules/contenido/contenido.controller.ts
 import {
   Body,
   Controller,
@@ -24,13 +23,13 @@ import { KeycloakAuthGuard, RolesGuard, Roles } from '../../auth';
 export class ContenidoController {
   constructor(private readonly contenidoService: ContenidoService) {}
 
-  // Público
+  // Publico
   @Get()
   async listPublic() {
     return this.contenidoService.listPublic();
   }
 
-  // Solo ADMIN: listado completo con filtros/orden/paginación
+  // Solo ADMIN: listado completo con filtros/orden/paginacion
   @Get('admin')
   @UseGuards(KeycloakAuthGuard, RolesGuard)
   @Roles('ADMIN')

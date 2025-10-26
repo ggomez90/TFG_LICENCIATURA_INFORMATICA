@@ -17,13 +17,9 @@ export class FilterVoucherDto extends PaginationDto {
   @IsInt()
   @Min(1)
   idEstadoVoucher?: number;
-
-  // Podrías ampliar más adelante con:
-  // - rango de fechas (fechaAdquisicion / fechaUso)
-  // - por tipo de voucher
 }
 
 export class OrderVoucherDto extends OrderDto {
-  // sortBy sugeridos: 'idVoucher' | 'fechaAdquisicion' | 'fechaUso'
-  // sortDir: 'asc' | 'desc'
+  // sortBy idVoucher, fechaAdquisicion, fechaUso
+  // sortDir asc o desc
 }

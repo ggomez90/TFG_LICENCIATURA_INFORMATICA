@@ -9,7 +9,7 @@ import { FilterInscripcionDto } from './filter-inscripcion.dto';
 
 type ActorCtx = {
   actorRole: 'ADMIN' | 'OPERARIO' | 'CLIENTE';
-  identifier: string; // preferred_username | email | username | sub
+  identifier: string;
 };
 
 @Injectable()
@@ -19,7 +19,7 @@ export class InscripcionService {
   private readonly MODEL = 'inscripcionDesafio' as const;
   private readonly ID_FIELD = 'idInscripcionDesafio' as const;
 
-  // -------------------- helpers: usuario/cliente --------------------
+  //helpers usuario/cliente
   private async findUsuarioByIdentifier(idOrIdentifier: number | string): Promise<Usuario> {
     let usuario: Usuario | null = null;
 
@@ -46,11 +46,10 @@ export class InscripcionService {
 
   private async resolveClienteIdFromIdentifier(identifier: string): Promise<number> {
     const usuario = await this.findUsuarioByIdentifier(identifier);
-    // En tu diseño, idCliente = idUsuario (1:1)
     return usuario.idUsuario;
   }
 
-  // -------------------- create (ADMIN o CLIENTE) --------------------
+  //create (ADMIN o CLIENTE)
   async create(dto: CreateInscripcionDesafioDto, ctx: ActorCtx): Promise<InscripcionDesafio> {
     if (!['ADMIN', 'CLIENTE'].includes(ctx.actorRole)) {
       throw new ForbiddenException('No autorizado para crear inscripciones.');
@@ -58,7 +57,7 @@ export class InscripcionService {
 
     const data: any = { ...dto };
 
-    // Si quien crea es CLIENTE, forzamos su propio idCliente
+    // Si quien crea es CLIENTE va su propio idCliente
     if (ctx.actorRole === 'CLIENTE') {
       const myIdCliente = await this.resolveClienteIdFromIdentifier(ctx.identifier);
       if (dto.idCliente !== myIdCliente) {
@@ -66,7 +65,7 @@ export class InscripcionService {
       }
     }
 
-    // Coerción de fechas
+    // fechas
     if (dto.fechaAdhesion) data.fechaAdhesion = new Date(dto.fechaAdhesion);
     if (dto.fechaBaja) data.fechaBaja = new Date(dto.fechaBaja);
 
@@ -80,12 +79,11 @@ export class InscripcionService {
     }
   }
 
-  // -------------------- findAll (rol-aware) --------------------
+  //findAll
   async findAll(filter: FilterInscripcionDto, ctx: ActorCtx) {
     const {
       limit = 20,
       offset = 0,
-      // Aunque FilterInscripcionDto no extiende OrderDto, aceptamos sortBy/order si llegan:
       sortBy = 'idInscripcionDesafio',
       order = 'desc',
       idInscripcionDesafio,
@@ -132,7 +130,7 @@ export class InscripcionService {
     return { items, total, limit: take, offset: skip, sortBy, order: sortOrder };
     }
 
-  // -------------------- update (ADMIN o CLIENTE) --------------------
+  //update (ADMIN o CLIENTE)
   async update(idInscripcionDesafio: number, dto: UpdateInscripcionDesafioDto, ctx: ActorCtx): Promise<InscripcionDesafio> {
     if (!['ADMIN', 'CLIENTE'].includes(ctx.actorRole)) {
       throw new ForbiddenException('No autorizado para actualizar inscripciones.');
@@ -143,7 +141,7 @@ export class InscripcionService {
     });
     if (!current) throw new NotFoundException('Inscripción no encontrada');
 
-    // Si es CLIENTE: solo su propia inscripción
+    // Si es CLIENTE solo su propia inscripción
     if (ctx.actorRole === 'CLIENTE') {
       const myIdCliente = await this.resolveClienteIdFromIdentifier(ctx.identifier);
       if (current.idCliente !== myIdCliente) {
@@ -168,14 +166,14 @@ export class InscripcionService {
     }
   }
 
-  // -------------------- updateEstado (ADMIN o CLIENTE) --------------------
+  //updateEstado (ADMIN o CLIENTE)
   async updateEstado(idInscripcionDesafio: number, dto: UpdateEstadoInscripcionDto, ctx: ActorCtx): Promise<InscripcionDesafio> {
     const current = await (this.prisma as any)[this.MODEL].findUnique({
       where: { [this.ID_FIELD]: idInscripcionDesafio },
     });
     if (!current) throw new NotFoundException('Inscripción no encontrada');
 
-    // Si es CLIENTE: solo su propia inscripción
+    // Si es CLIENTE solo su propia inscripción
     if (ctx.actorRole === 'CLIENTE') {
       const myIdCliente = await this.resolveClienteIdFromIdentifier(ctx.identifier);
       if (current.idCliente !== myIdCliente) {
@@ -184,9 +182,7 @@ export class InscripcionService {
     }
 
     const data: any = {
-      // si tu columna real fuera idEstadoDesafio, reemplaza la línea
       idEstadoDesafio: Number(dto.idEstadoDesafio),
-      // estado: Number(dto.idEstadoDesafio),
     };
 
     return await (this.prisma as any)[this.MODEL].update({

@@ -20,20 +20,13 @@ import { KeycloakAuthGuard, RolesGuard, Roles, User } from '../../auth';
 export class ClienteController {
   constructor(private readonly clienteService: ClienteService) {}
 
-  // =====================================================
-  // Crear cliente (requiere login de cualquier rol)
-  // Nota: CreateClienteDto exige idCliente; el frontend debe enviarlo.
-  // Si querés inferirlo del token, puedo darte una variante de endpoint.
-  // =====================================================
   @Post()
   @UseGuards(KeycloakAuthGuard)
   async create(@Body() dto: CreateClienteDto) {
     return this.clienteService.create(dto);
   }
 
-  // =====================================================
   // Solo ADMIN
-  // =====================================================
   @Get()
   @UseGuards(KeycloakAuthGuard, RolesGuard)
   @Roles('ADMIN')
@@ -58,9 +51,7 @@ export class ClienteController {
     return this.clienteService.update(id, dto);
   }
 
-  // =====================================================
   // Login requerido (cualquier rol) - perfil propio
-  // =====================================================
   @Get('me')
   @UseGuards(KeycloakAuthGuard)
   async me(@User() user: any) {

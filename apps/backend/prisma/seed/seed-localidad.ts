@@ -369,7 +369,7 @@ export async function seedLocalidad(prisma: PrismaClient) {
   const placeholders = provincias
     .filter((p) => p.idProvincia !== ID_SANTA_FE)
     .map((p) => ({
-      idLocalidad: 900000 + p.idProvincia, // id “alto” para no chocar
+      idLocalidad: 900000 + p.idProvincia, // id ficticio para no chocar
       nombre: 'LOCALIDADES NO DISPONIBLE',
       idProvincia: p.idProvincia,
     }));

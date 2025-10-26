@@ -53,7 +53,7 @@
 
     <div class="filters__right">
       <button type="button" class="dsf-btn dsf-btn--ghost" (click)="cargarDemo()">Cargar datos demo</button>
-      <button type="button" class="dsf-btn">+ Nuevo usuario</button>
+      <button type="button" class="dsf-btn" (click)="onNuevaCuenta()">+ Nuevo usuario</button>
     </div>
   </div>
 
@@ -89,12 +89,10 @@
             </td>
             <td class="right">
               <button type="button" class="icon-btn" (click)="verUsuario(u)" aria-label="Ver usuario">
-                <!-- ojo -->
                 <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor"
                   d="M12 5c-7 0-10 7-10 7s3 7 10 7 10-7 10-7-3-7-10-7zm0 11a4 4 0 1 1 .001-8.001A4 4 0 0 1 12 16z"/></svg>
               </button>
               <button type="button" class="icon-btn" (click)="editarUsuario(u)" aria-label="Editar usuario">
-                <!-- lápiz -->
                 <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor"
                   d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zm14.71-9.04c.39-.39.39-1.02 0-1.41L15.2 3.29a.9959.9959 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.8-1.66z"/></svg>
               </button>
@@ -125,4 +123,11 @@
       </div>
     </div>
   </div>
+
+  <!-- ===== Modal crear usuario ===== -->
+  <app-usuario-create-dialog
+    *ngIf="showCreate()"
+    (close)="onCreateClosed()"
+    (saved)="onCreateSaved()"
+  />
 </section>

@@ -9,7 +9,7 @@ import { FilterEntregaDto } from './filter-entrega.dto';
 
 type ActorCtx = {
   actorRole: 'ADMIN' | 'OPERARIO' | 'CLIENTE';
-  identifier: string; // preferred_username | email | username | sub
+  identifier: string;
 };
 
 const ESTADO = {
@@ -28,7 +28,7 @@ export class EntregaService {
   private readonly MODEL = 'entrega' as const;
   private readonly ID_FIELD = 'idEntrega' as const;
 
-  // -------------------- helpers: usuario/cliente --------------------
+  //helpers usuario/cliente
   private async findUsuarioByIdentifier(idOrIdentifier: number | string): Promise<Usuario> {
     let usuario: Usuario | null = null;
 
@@ -55,28 +55,27 @@ export class EntregaService {
 
   private async resolveClienteIdFromIdentifier(identifier: string): Promise<number> {
     const usuario = await this.findUsuarioByIdentifier(identifier);
-    // En tu diseño, idCliente = idUsuario (1:1)
     return usuario.idUsuario;
   }
 
-  // -------------------- create --------------------
+  //create
   async create(dto: CreateEntregaDto, ctx: ActorCtx): Promise<Entrega> {
     // ADMIN o CLIENTE
     if (!['ADMIN', 'CLIENTE'].includes(ctx.actorRole)) {
       throw new ForbiddenException('No autorizado para crear entregas.');
     }
 
-    // Si quien crea es CLIENTE, forzamos su propio idCliente
+    // Si quien crea es CLIENTE va su propio idCliente
     let data: any = { ...dto };
     if (ctx.actorRole === 'CLIENTE') {
       const myIdCliente = await this.resolveClienteIdFromIdentifier(ctx.identifier);
       if (dto.idCliente !== myIdCliente) {
-        // Forzamos su idCliente para evitar suplantación
+        // Forzamos su idCliente
         data.idCliente = myIdCliente;
       }
     }
 
-    // Coerción de fechas (los DTO son DateString)
+    // Coercion de fechas (los DTO son DateString)
     data.fechaCreacion = new Date(dto.fechaCreacion);
     data.fechaVencimiento = new Date(dto.fechaVencimiento);
     if (dto.fechaValidacion) data.fechaValidacion = new Date(dto.fechaValidacion);
@@ -91,7 +90,7 @@ export class EntregaService {
     }
   }
 
-  // -------------------- findAll --------------------
+  //findAll
   async findAll(filter: FilterEntregaDto, ctx: ActorCtx) {
     const {
       limit = 20,
@@ -101,7 +100,6 @@ export class EntregaService {
       idCliente,
       idDesafio,
       estado,
-      // opcionales si aplicaste el patch del DTO:
       idInscripcionDesafio,
       fechaDesde,
       fechaHasta,
@@ -110,7 +108,7 @@ export class EntregaService {
     const where: Prisma.EntregaWhereInput = {};
 
     if (ctx.actorRole === 'CLIENTE') {
-      // El cliente solo puede ver sus entregas: resolvemos su idCliente por token
+      // El cliente solo puede ver sus entregas
       const myIdCliente = await this.resolveClienteIdFromIdentifier(ctx.identifier);
       where.idCliente = myIdCliente;
     } else {
@@ -149,7 +147,7 @@ export class EntregaService {
     return { items, total, limit: take, offset: skip, sortBy, order: sortOrder };
   }
 
-  // -------------------- update (ADMIN o CLIENTE) --------------------
+  // update (ADMIN o CLIENTE)
   async update(idEntrega: number, dto: UpdateEntregaDto, ctx: ActorCtx): Promise<Entrega> {
     if (!['ADMIN', 'CLIENTE'].includes(ctx.actorRole)) {
       throw new ForbiddenException('No autorizado para actualizar entregas.');
@@ -160,12 +158,12 @@ export class EntregaService {
     });
     if (!entrega) throw new NotFoundException('Entrega no encontrada');
 
-    // Regla: solo editable si estado actual == CREADA (1)
+    // solo editable si estado actual == CREADA (1)
     if (entrega.estado !== ESTADO.CREADA) {
       throw new BadRequestException('Solo puede editarse una entrega en estado CREADA.');
     }
 
-    // Si es CLIENTE: solo su propia entrega
+    // Si es CLIENTE solo su propia entrega
     if (ctx.actorRole === 'CLIENTE') {
       const myIdCliente = await this.resolveClienteIdFromIdentifier(ctx.identifier);
       if (entrega.idCliente !== myIdCliente) {
@@ -173,7 +171,7 @@ export class EntregaService {
       }
     }
 
-    // Coerción de fechas si vienen
+    // Coercion de fechas si vienen
     const data: any = { ...dto };
     if (dto.fechaCreacion) data.fechaCreacion = new Date(dto.fechaCreacion as any);
     if (dto.fechaVencimiento) data.fechaVencimiento = new Date(dto.fechaVencimiento as any);
@@ -192,14 +190,14 @@ export class EntregaService {
     }
   }
 
-  // -------------------- updateEstado (ADMIN/OPERARIO/CLIENTE) --------------------
+  //updateEstado (ADMIN/OPERARIO/CLIENTE)
   async updateEstado(idEntrega: number, dto: UpdateEstadoEntregaDto, ctx: ActorCtx): Promise<Entrega> {
     const entrega = await (this.prisma as any)[this.MODEL].findUnique({
       where: { [this.ID_FIELD]: idEntrega },
     });
     if (!entrega) throw new NotFoundException('Entrega no encontrada');
 
-    // Si cliente: solo su entrega
+    // Si cliente solo su entrega
     if (ctx.actorRole === 'CLIENTE') {
       const myIdCliente = await this.resolveClienteIdFromIdentifier(ctx.identifier);
       if (entrega.idCliente !== myIdCliente) {
@@ -216,10 +214,9 @@ export class EntregaService {
 
     const data: any = { estado: to };
 
-    // Reglas útiles: setear marca temporal si valida/rechaza, o limpiar operario/observaciones según casos.
+    //setear marca temporal si valida/rechaza, o limpiar operario/observaciones según casos.
     if (to === ESTADO.VALIDADA || to === ESTADO.RECHAZADA) {
-      data.fechaValidacion = new Date(); // si querés registrar cuándo se validó/rechazó
-      // data.idOperarioValidador = ?? // si querés registrar quién (podemos resolverlo por token si lo necesitás)
+      data.fechaValidacion = new Date();
     }
 
     return await (this.prisma as any)[this.MODEL].update({
@@ -228,7 +225,7 @@ export class EntregaService {
     });
   }
 
-  // -------------------- allowed transitions --------------------
+  // allowed transitions
   private isTransitionAllowed(
     role: 'ADMIN' | 'OPERARIO' | 'CLIENTE',
     from: number,

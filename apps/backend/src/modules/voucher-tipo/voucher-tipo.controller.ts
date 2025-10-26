@@ -23,9 +23,7 @@ import { KeycloakAuthGuard, RolesGuard, Roles } from '../../auth';
 export class VoucherTipoController {
   constructor(private readonly voucherTipoService: VoucherTipoService) {}
 
-  // ============================
   // Solo ADMIN
-  // ============================
   @Get()
   @UseGuards(KeycloakAuthGuard, RolesGuard)
   @Roles('ADMIN')
