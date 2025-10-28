@@ -1,11 +1,10 @@
-// apps/frontend/src/app/shared/http-error.util.ts
 import { HttpErrorResponse } from '@angular/common/http';
 
 export function normalizeHttpError(err: unknown): string {
   if (err instanceof HttpErrorResponse) {
     const status = err.status || 0;
 
-    // Mensaje más específico si backend envía { message: string | string[] }
+    // EL msj de error es mas especifico si backend envia message: string/string[]
     const body = err.error;
     const msg =
       (typeof body === 'string' && body) ||
@@ -14,7 +13,7 @@ export function normalizeHttpError(err: unknown): string {
       err.statusText ||
       '';
 
-    // Casos frecuentes
+    // Casos de errores frecuentes
     if (status === 0) return 'No se pudo conectar con el servidor.';
     if (status === 401) return msg || 'No autorizado (401). Iniciá sesión nuevamente.';
     if (status === 403) return msg || 'Acceso denegado (403).';

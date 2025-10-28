@@ -1,6 +1,6 @@
 :host { display: contents; }
 
-/* ---------- TOPBAR ---------- */
+/*TOPBAR */
 .topbar{
   position: sticky; top:0; z-index: 20;
   display:flex; align-items:center; gap:12px;
@@ -89,7 +89,7 @@
   }
 }
 
-/* ---------- NAV PRIMARIO (debajo del header) ---------- */
+/*NAV PRIMARIO abajo del header */
 .primary-nav{
   position: sticky; top:64px; /* queda justo debajo del header */
   z-index: 15;
@@ -107,7 +107,7 @@
   flex-wrap: nowrap;
 }
 
-/* Estilo de tab tipo enlace con subrayado (sin “recuadro de botón”) */
+/* Estilo de tab tipo enlace con subrayado */
 .tab{
   position:relative;
   display:inline-block;
@@ -128,7 +128,7 @@
     color:#065f46;
   }
   &.active::after{
-    background:#10b981; /* emerald-500 */
+    background:#10b981;
   }
 }
 
@@ -137,12 +137,12 @@
   justify-content:center; color:#64748b; min-height:48px;
 }
 
-/* ---------- CONTENIDO ---------- */
+/* CONTENIDO */
 .content{ padding:16px; }
 
-/* ---------- RESPONSIVE ---------- */
+/* RESPONSIVE */
 
-/* Tablet: reducir tamaños y permitir scroll si no entra */
+/* Tablet */
 @media (max-width: 1024px){
   .brand .logo{ height:56px; }
 }
@@ -164,7 +164,7 @@
   .tab{ font-size:12px; padding:10px 2px; }
 }
 
-/* Móvil: más compacto */
+/* Móvil más compacto */
 @media (max-width: 600px){
   .topbar{ padding:6px 12px; }
   .brand .logo{ height:42px; }
@@ -176,17 +176,17 @@
   .tab{ font-size:11px; padding:8px 2px; }
 }
 
-/* --- Toggle + comportamiento --- */
-.nav-toggle{ position:absolute; left:-9999px; }   /* checkbox oculto */
+/* Toggle + comportamiento */
+.nav-toggle{ position:absolute; left:-9999px; }
 
-/* Hamburgesa SIEMPRE visible (vos pediste dejarla permanente) */
+/* Hamburgesa SIEMPRE visible */
 .hamburger{ display:inline-flex; }
 
-/* Menú oculto por defecto; se muestra sólo al togglear */
+/* Menú oculto por defecto, se muestra sólo al togglear */
 .primary-nav{ display:none; }
 .nav-toggle:checked ~ .primary-nav{ display:block; }
 
-/* Mantener anclaje bajo el header en desktop */
+/* Anclaje bajo el header en escritorio */
 .primary-nav{
   position: sticky; top:64px; z-index:15;
   background: rgba(255,255,255,0.9);
@@ -194,8 +194,8 @@
   border-bottom:1px solid rgba(16,185,129,0.15);
 }
 
-/* ====== Responsive ====== */
-/* En ≤900px el menú se despliega en columna (vertical) */
+/* Responsive */
+/* En ≤900px el menú se despliega en columna */
 @media (max-width: 900px){
   .primary-nav{ display:none; }                         /* sigue oculto por defecto */
   .nav-toggle:checked ~ .primary-nav{ display:block; }  /* visible al togglear */
@@ -222,14 +222,12 @@
   }
 }
 
-/* Ajuste del top en header compacto (ya lo tenías) */
+/* Ajuste del top en header compacto */
 @media (max-width: 600px){
   .nav-toggle:checked ~ .primary-nav{ top:56px; }
 }
 
-/* =========================================================================
-   FOOTER (franja tipo header, fondo verde y letras blancas)
-   ========================================================================= */
+/* FOOTER con franja tipo header, fondo verde y letras blancas */
 .app-footer{
   margin-top: 16px;
   background: linear-gradient(180deg, #059669 0%, #047857 100%);
@@ -245,7 +243,7 @@
   padding: 16px 24px;
   display: grid;
   gap: 16px;
-  grid-template-columns: 1fr;   /* mobile: una columna */
+  grid-template-columns: 1fr;   /* en version movil una columna */
   align-items: stretch;         /* cada columna ocupa el alto total del footer */
 }
 
@@ -267,7 +265,7 @@
 }
 .f-title--center{ text-align: center; }
 
-/* --- Sección 1: marca (escudo + “Gobierno de la Ciudad / de Ceres”) --- */
+/* Sección 1: marca escudo + “Gobierno de la Ciudad / de Ceres” */
 .f-col--brand{
   align-items: flex-start;  /* centro-izquierda */
 }
@@ -296,7 +294,7 @@
   white-space: nowrap;
 }
 
-/* --- Listas / enlaces (secciones 2 y 5) --- */
+/*Listas / enlaces (secciones 2 y 5)*/
 .f-list{
   list-style: none;
   padding: 0; margin: 0;
@@ -316,7 +314,7 @@
   padding-left: 18px;
 }
 
-/* --- Redes sociales (sección 3) --- */
+/*Redes sociales en sección 3 */
 .f-social{
   display: flex;
   gap: 18px;
@@ -342,7 +340,7 @@
   .f-soc img{ width: 40px; height: 40px; }
 }
 
-/* --- Stores (sección 4): SVG uno debajo del otro, más grandes, sin “marcos” --- */
+/*Stores (sección 4): SVG uno debajo del otro, más grandes y sin marcos*/
 .f-stores{
   display: flex;
   flex-direction: column;   /* uno debajo del otro */
@@ -366,20 +364,20 @@
 }
 .f-store__img{
   display: block;
-  height: 60px;            /* más grande en mobile */
+  height: 60px;            /* más grande en version movil */
   width: auto;
   background: transparent !important;
   border: 0 !important;
   box-shadow: none !important;
   outline: none !important;
-  object-fit: contain;     /* evita “marcos” por desborde */
+  object-fit: contain;     /* evita marcos por desborde */
 }
 .f-store span{ display: none; } /* oculta textos redundantes */
 @media (min-width: 900px){
-  .f-store__img{ height: 40px; } /* aún más grande en desktop */
+  .f-store__img{ height: 40px; } /* mas grande en desktop */
 }
 
-/* --- Copy final --- */
+/*Copy final */
 .app-footer__copy{
   text-align: center;
   font-size: 13px; font-weight: 600;
@@ -392,7 +390,7 @@
 /* --- Desktop (≥900px): redistribución de anchos (menos ancho a 1, más a 2 y 5) --- */
 @media (min-width: 900px){
   .app-footer__wrap{
-    /* ↓ Ajuste de proporciones:
+    /* proporciones:
        - Sección 1 (brand): 1.4fr (menos ancho, como pediste)
        - Sección 2 (contacto): 2.3fr (más ancho para que todo entre en un renglón)
        - Sección 3 (redes): 1fr
@@ -404,7 +402,7 @@
     gap: 18px;
   }
 
-  /* Leve desplazamiento a la derecha para 2 y 5, como pediste */
+  /* Leve desplazamiento a la derecha para 2 y 5 */
   .app-footer__wrap > .f-col:nth-child(2),
   .app-footer__wrap > .f-col:nth-child(5){
     padding-left: 18px;
@@ -413,7 +411,7 @@
   .f-escudo{ width: 110px; }
 }
 
-/* Ajuste leve también en mobile para 2 y 5 (apenas a la derecha) */
+/* Ajuste leve también en mobile para 2 y 5 */
 .app-footer__wrap > .f-col:nth-child(2),
 .app-footer__wrap > .f-col:nth-child(5){
   padding-left: 8px;

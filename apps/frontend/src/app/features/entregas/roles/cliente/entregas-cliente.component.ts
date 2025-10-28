@@ -1,3 +1,4 @@
+//El codigo no posee logica para esta feature, los datos son estaticos y solo decorativos para simular una vista
 import { Component, computed, signal } from '@angular/core';
 import { CommonModule, DatePipe} from '@angular/common';
 import { RouterModule } from '@angular/router';
@@ -21,7 +22,7 @@ interface EntregaCliente {
   styleUrls: ['./entregas-cliente.component.scss'],
 })
 export class EntregasClienteComponent {
-  // Búsqueda y filtro
+  // Busqueda y filtro
   q = signal<string>('');
   estado = signal<EstadoEntrega | 'todos'>('todos');
 

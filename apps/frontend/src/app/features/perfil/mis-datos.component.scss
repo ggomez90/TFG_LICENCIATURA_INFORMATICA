@@ -1,6 +1,6 @@
 :host { display:block; }
 
-/* Contenedor con look&feel DSF (igual que Editar Perfil) */
+/* Contenedor igual que Editar Perfil */
 .dsf-wrap{
   display:grid; gap:12px;
   background:
@@ -52,7 +52,7 @@ label{
   font-size:12px; color:#065f46; font-weight:700; margin-bottom:4px; display:block;
 }
 
-/* Campo solo-lectura (similar a input pero no editable) */
+/* Campo solo-lectura, no editable */
 .ro-field{
   min-height: 38px;
   border:1px solid rgba(16,185,129,.28);

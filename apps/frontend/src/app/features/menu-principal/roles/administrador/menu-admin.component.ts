@@ -30,7 +30,7 @@ export class MenuAdminComponent {
   vouchersEntregados = signal(86);
   entregasPendientes = signal(4);
 
-  // Porcentajes precalculados (evitamos usar Math en el template)
+  // Porcentajes precalculados
   pctAdmins = computed(() => this.safePct(this.usuariosAdmin(), this.usuariosTotal()));
   pctOperarios = computed(() => this.safePct(this.usuariosOperarios(), this.usuariosTotal()));
   pctClientes = computed(() => this.safePct(this.usuariosClientes(), this.usuariosTotal()));
@@ -40,7 +40,7 @@ export class MenuAdminComponent {
     return (part / total) * 100;
   }
 
-  // --- Accesos rápidos (routerLink de ejemplo, ajusta a tus rutas reales) ---
+  //Accesos rapidos (routerLink de ejemplo, ajusta a tus rutas reales)
   links = signal<QuickLink[]>([
     { title: 'Usuarios', desc: 'Altas, bajas, edición y búsqueda', route: '/admin/usuarios', iconPath: 'M12 12c2.761 0 5-2.239 5-5s-2.239-5-5-5-5 2.239-5 5 2.239 5 5 5zm0 2c-4.418 0-8 2.239-8 5v3h16v-3c0-2.761-3.582-5-8-5z' },
     { title: 'Operarios', desc: 'Gestión del personal de validación', route: '/admin/operarios', iconPath: 'M12 2a5 5 0 0 0-5 5v2h10V7a5 5 0 0 0-5-5zm-7 9v9h14v-9H5zm4 2h2v5H9v-5z' },
@@ -52,7 +52,7 @@ export class MenuAdminComponent {
     { title: 'Configuración', desc: 'Parámetros del sistema', route: '/admin/config', iconPath: 'M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8z' },
   ]);
 
-  // --- Actividad reciente (ficticia) ---
+  //Actividad reciente (ficticia)
   ultUsuarios = signal<UsuarioMini[]>([
     { id: 221, nombre: 'María Díaz', tipo: 'CLIENTE', email: 'm.diaz@example.com' },
     { id: 222, nombre: 'Juan Pérez', tipo: 'OPERARIO', email: 'j.perez@example.com' },

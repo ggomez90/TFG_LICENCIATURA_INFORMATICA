@@ -1,4 +1,3 @@
-// apps/frontend/src/app/features/menu-principal/menu-principal.component.ts
 import { Component, HostListener, computed, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, RouterLinkActive, RouterOutlet, Router } from '@angular/router';
@@ -29,18 +28,18 @@ type MenuItem = { label: string; path: string };
 export class MenuPrincipalComponent {
   kc = keycloak;
   profileOpen = signal(false);
-  mobileOpen  = signal(false);   // << nuevo: estado del menú móvil
+  mobileOpen  = signal(false);   // para movil
   notifCount  = signal<number>(0);
 
   constructor(private roles: RolesService, private router: Router) {}
 
-  /** Home exacto: solo /menu-principal (sin hijos) */
+  //Home solo /menu-principal sin hijos
   isHome(): boolean {
     const path = this.router.url.split('#')[0].split('?')[0];
     return path === '/menu-principal' || path === '/menu-principal/';
   }
 
-  // Flags por rol (por si querés condicionar algo)
+  //Flags por rol
   isAdmin    = computed(() => this.roles.hasAnyRole(['ADMIN', 'ADMINISTRADOR']));
   isOperario = computed(() => this.roles.hasRole('OPERARIO'));
   isCliente  = computed(() => this.roles.hasRole('CLIENTE'));

@@ -16,7 +16,7 @@ type ActorCtx = {
   identifier: string;
 };
 
-// ID de tabla catálogo
+// ID de tabla catalogo
 const ESTADO = {
   CREADO: 1,
   ADQUIRIDO: 2,

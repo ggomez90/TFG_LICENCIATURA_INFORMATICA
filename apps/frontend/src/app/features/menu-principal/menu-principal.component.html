@@ -35,7 +35,7 @@
       </div>
     </div>
 
-    <!-- Botón hamburguesa (se muestra en responsive según el SCSS) -->
+    <!-- Botón tipo hamburguesa (se muestra en responsive según el SCSS) -->
     <label for="nav-toggle" class="icon-btn hamburger" aria-label="Menú">
       <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
         <path fill="currentColor" d="M3 6h18v2H3V6zm0 5h18v2H3v-2zm0 5h18v2H3v-2z"/>
@@ -44,10 +44,10 @@
   </div>
 </header>
 
-<!-- Toggle del menú responsive (debe estar antes del nav para que el SCSS lo controle) -->
+<!-- Toggle del menú responsive -->
 <input type="checkbox" id="nav-toggle" class="nav-toggle" hidden>
 
-<!-- NAV PRIMARIO (debajo del header) -->
+<!-- NAV PRIMARIO -->
 <nav class="primary-nav" *ngIf="centerMenu().length; else noMenu">
   <div class="tabs" role="tablist">
     <a
@@ -80,7 +80,7 @@
 
 <footer class="app-footer">
   <div class="app-footer__wrap">
-    <!-- 1) Gobierno de la Ciudad de Ceres -->
+    <!--Gobierno de la Ciudad de Ceres -->
     <section class="f-col f-col--brand">
       <div class="f-brand">
         <img src="/assets/img/escudo-muni.png" alt="Escudo Gobierno de la Ciudad de Ceres" class="f-escudo" />
@@ -91,7 +91,7 @@
       </div>
     </section>
 
-    <!-- 2) Contacto (título centrado + items ancho completo) -->
+    <!--Contacto -->
     <section class="f-col">
       <h3 class="f-title f-title--center">Contacto</h3>
       <ul class="f-list f-list--full">
@@ -103,7 +103,7 @@
       </ul>
     </section>
 
-    <!-- 3) Nuestras redes (título centrado + íconos desde assets) -->
+    <!--Nuestras redes-->
     <section class="f-col">
       <h3 class="f-title f-title--center">Nuestras redes</h3>
       <div class="f-social f-social--center">
@@ -128,7 +128,7 @@
       </div>
     </section>
 
-    <!-- 4) Descargá la App (título centrado + íconos desde assets) -->
+    <!--Descargá la App-->
     <section class="f-col">
       <h3 class="f-title f-title--center">Descargá la App</h3>
       <div class="f-stores f-stores--center">
@@ -141,7 +141,7 @@
       </div>
     </section>
 
-    <!-- 5) Términos y condiciones (título centrado + items ancho completo) -->
+    <!--Términos y condiciones-->
     <section class="f-col">
       <h3 class="f-title f-title--center">Términos y condiciones</h3>
       <ul class="f-list f-list--full">

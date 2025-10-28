@@ -1,4 +1,3 @@
-// apps/frontend/src/app/auth/keycloak-init.factory.ts
 import { inject, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { keycloak } from './keycloak';
@@ -10,19 +9,19 @@ export function initializeKeycloak() {
   return async () => {
     if (!isBrowser) return true;
 
-    // Si por alguna razón quedó algún estilo viejo que ocultaba el root, lo quitamos.
+    // Si por alguna razon quedo algún estilo viejo que ocultaba el root es limpiado
     const stale = document.getElementById('app-wait-style');
     if (stale) stale.remove();
 
     try {
-      // Fuerza login si no hay sesión. Durante este tiempo el root está oculto por CSS.
+      // Fuerza login si no hay sesion. Durante este tiempo el root está oculto por CSS.
       await keycloak.init({
         onLoad: 'login-required',
         pkceMethod: 'S256',
         checkLoginIframe: false,
       });
 
-      // Útil para debug
+      //para debug
       (window as any).kc = keycloak;
 
       // Auto-refresh cada 20s si faltan <= 60s
@@ -32,7 +31,7 @@ export function initializeKeycloak() {
 
       return true;
     } finally {
-      // *** CLAVE: al terminar el init (tras volver del login) mostramos la app
+      //al terminar el init tras volver del login mostramos la app
       document.documentElement.classList.add('app-ready');
     }
   };

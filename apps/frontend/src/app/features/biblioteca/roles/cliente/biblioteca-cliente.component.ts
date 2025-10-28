@@ -1,3 +1,4 @@
+//El codigo no posee logica para esta feature, los datos son estaticos y solo decorativos para simular una vista
 import { Component, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
@@ -7,7 +8,7 @@ type Recurso = {
   tipo: 'Guía' | 'Video' | 'Infografía' | 'FAQ';
   titulo: string;
   desc: string;
-  icon: string; // SVG path (currentColor)
+  icon: string;
 };
 
 @Component({

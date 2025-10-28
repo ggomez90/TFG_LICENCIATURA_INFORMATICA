@@ -100,7 +100,7 @@ export class KeycloakAdminService {
 
     if (res.ok) return res.text();
 
-    // Keycloak devuelve 400/409 cuando el rol ya está asignado.
+    // Keycloak devuelve 400/409 cuando el rol ya esta asignado.
     const txt = await res.text();
     const lower = txt.toLowerCase();
     const looksLikeDuplicate =
@@ -111,7 +111,6 @@ export class KeycloakAdminService {
          lower.includes('could not add user role mappings')));
 
     if (looksLikeDuplicate) {
-      // No lo tratamos como error: ya estaba asignado
       return '';
     }
 
@@ -119,7 +118,7 @@ export class KeycloakAdminService {
   }
 
    // Asegura que el usuario (por username) tenga el rol de realm indicado.
-   // Si ya lo tiene, KC lo ignora; si no, lo asigna.
+   // Si ya lo tiene KC lo ignora y sino lo asigna.
   async ensureUserHasRole(username: string, roleName: string): Promise<void> {
     const token = await this.getAdminToken();
 

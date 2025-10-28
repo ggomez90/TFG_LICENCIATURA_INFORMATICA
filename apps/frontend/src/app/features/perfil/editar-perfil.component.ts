@@ -1,3 +1,4 @@
+//por el momento los datos son estaticos, este es el proximo modulo a desarrollar 
 import { Component, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
@@ -21,7 +22,7 @@ type FormUsuario = {
   styleUrls: ['./editar-perfil.component.scss'],
 })
 export class EditarPerfilComponent {
-  // 🔹 Mock: inicializar con los datos actuales
+  //Mock: inicializar con los datos actuales
   form = signal<FormUsuario>({
     nombres: 'María',
     apellidos: 'Gómez',
@@ -40,7 +41,7 @@ export class EditarPerfilComponent {
   }
 
   guardar() {
-    // TODO: llamar a backend (PUT /perfil)
+    //llamar a backend (PUT /perfil)
     console.log('Guardar perfil →', this.form());
     alert('Perfil guardado (mock).');
   }

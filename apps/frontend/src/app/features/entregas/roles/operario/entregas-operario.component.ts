@@ -1,3 +1,4 @@
+//El codigo no posee logica para esta feature, los datos son estaticos y solo decorativos para simular una vista
 import { Component, computed, signal } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 
@@ -22,7 +23,7 @@ interface EntregaOperario {
 })
 export class EntregasOperarioComponent {
   q = signal<string>('');
-  estado = signal<EstadoEntrega | 'todos'>('pendiente'); // operario entra viendo "pendiente"
+  estado = signal<EstadoEntrega | 'todos'>('pendiente'); // operario entra viendo pendiente
 
   private readonly base = signal<EntregaOperario[]>([
     { id: 'R-101', ciudadano: 'María López', desafio: 'Papel y cartón limpio', fecha: '2025-10-05', pesoKg: 3.2, estado: 'pendiente' },

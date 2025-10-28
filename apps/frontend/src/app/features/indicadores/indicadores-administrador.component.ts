@@ -1,3 +1,4 @@
+//El codigo no posee logica para esta feature, los datos son estaticos y solo decorativos para simular una vista
 import { Component, computed, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
@@ -43,7 +44,7 @@ export class IndicadoresAdministradorComponent {
     return arr;
   }
 
-  // Series diarias (ejemplo)
+  // Series diarias de ejemplo
   serieUsuariosNuevos = signal<SeriePunto[]>(this.generarSerie(180, 6));
   serieVouchersAdquiridos = signal<SeriePunto[]>(this.generarSerie(180, 12));
   serieVouchersCanjeados = signal<SeriePunto[]>(this.generarSerie(180, 7));
@@ -52,7 +53,7 @@ export class IndicadoresAdministradorComponent {
     this.generarSerie(180, 70, 0.08).map(p => ({ ...p, valor: Math.min(100, Math.max(40, p.valor)) }))
   );
 
-  // Distribución por material (kg) – ficticia
+  // Distribución por material (kg) - ficticia
   materiales = signal([
     { material: 'Plástico PET', kg: 1280 },
     { material: 'Cartón', kg: 980 },
@@ -61,7 +62,7 @@ export class IndicadoresAdministradorComponent {
     { material: 'Papel blanco', kg: 520 },
   ]);
 
-  // Top desafíos – ficticio
+  // Top desafíos - ficticio
   topDesafios = signal<DesafioTop[]>([
     { nombre: 'Mes Verde Septiembre', entregas: 312, kg: 420, cumplimientoPct: 0.82 },
     { nombre: 'Reto Botellas PET', entregas: 266, kg: 355, cumplimientoPct: 0.74 },
@@ -70,7 +71,7 @@ export class IndicadoresAdministradorComponent {
     { nombre: 'Vidrio x Barrio', entregas: 141, kg: 176, cumplimientoPct: 0.58 },
   ]);
 
-  // Totales por rol – ficticios
+  // Totales por rol ficticios
   totalUsuarios = signal(3250);
   totalPorRol = signal<Record<Rol, number>>({
     ADMIN: 4,
@@ -78,7 +79,7 @@ export class IndicadoresAdministradorComponent {
     CLIENTE: 3228,
   });
 
-  // === Computados según rango ===
+  //Computados según rango
   private filtrarRango = (serie: SeriePunto[]) => {
     const dias = this.rangoDias();
     const desde = new Date(this.hoy);
@@ -107,15 +108,15 @@ export class IndicadoresAdministradorComponent {
 
   totalKg = computed(() => this.materiales().reduce((acc, m) => acc + m.kg, 0));
 
-  // === Handlers ===
+  //Handlers
 onRangoChange(v: string) {
   const n = Number(v);
   if (n === 30 || n === 90 || n === 180) {
-    this.rangoDias.set(n);   // <-- escribir en el signal
+    this.rangoDias.set(n);
   }
 }
 
-  // === Utilidades ===
+  //Utilidades
   formatPct(n: number): string {
     return `${n}%`;
   }
@@ -124,7 +125,7 @@ onRangoChange(v: string) {
   }
 
 
-  // Evita usar Math directamente en el template
+  //para no usar Math directamente en el template
 totalKgSafe = computed(() => Math.max(1, this.totalKg()));
   pct(kg: number): number {
   return (kg / this.totalKgSafe()) * 100;

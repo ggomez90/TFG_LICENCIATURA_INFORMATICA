@@ -1,3 +1,5 @@
+//El codigo no posee logica para esta feature, los datos son estaticos y solo decorativos para simular una vista
+
 import { Component, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';

@@ -1,4 +1,4 @@
-// apps/frontend/src/app/features/vouchers/roles/cliente/vouchers-cliente.component.ts
+//El codigo no posee logica para esta feature, los datos son estaticos y solo decorativos para simular una vista
 import { Component, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
@@ -20,7 +20,7 @@ type Voucher = {
   styleUrls: ['./vouchers-cliente.component.scss'],
 })
 export class VouchersClienteComponent {
-  // Simulación de puntos del usuario
+  // Simulacion de puntos del usuario
   misPuntos = signal(1280);
 
   // Dataset de ejemplo (mock)

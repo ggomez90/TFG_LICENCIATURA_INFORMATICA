@@ -5,7 +5,7 @@ import { CatalogosService } from './catalogos.service';
 import { AuthGuard, RolesGuard } from '../../auth';
 import { Roles } from '../../auth/roles.decorator';
 
-// Import DTO de cada catálogo
+// Import DTO de cada catalogo
 import { CreateEstadoDesafioDto, UpdateEstadoDesafioDto, FilterEstadoDesafioDto } from './estado-desafio.dto';
 import { CreateEstadoEntregaDto, UpdateEstadoEntregaDto, FilterEstadoEntregaDto } from './estado-entrega.dto';
 import { CreateEstadoUsuarioDto, UpdateEstadoUsuarioDto, FilterEstadoUsuarioDto } from './estado-usuario.dto';

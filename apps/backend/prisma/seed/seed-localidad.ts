@@ -2,7 +2,7 @@ import { PrismaClient } from '@prisma/client';
 
 const ID_SANTA_FE = 21;
 
-// Lista de localidades de SANTA FE (21) en MAYÚSCULAS:
+// Lista de localidades de SANTA FE (21) en MAYUSCULAS:
 const SANTA_FE_LOCALIDADES = [
   'AARON CASTELLANOS',
   'ACEBAL',

@@ -14,5 +14,5 @@ export class AdminCreateUsuarioDto {
   @IsInt() @Min(1)
   idRolUsuario!: number;
 
-  // Estado siempre PENDIENTE al crear por admin (se habilita tras verificación)
+  // Estado siempre PENDIENTE al crear por admin (se habilita tras verificacion)
 }

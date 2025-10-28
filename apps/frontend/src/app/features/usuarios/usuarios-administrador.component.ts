@@ -8,7 +8,7 @@ type FiltroRol = 'todos' | Rol;
 interface Usuario {
   id: number;
   nombreUsuario: string;
-  propietario: string;        // Razón social o nombre completo del propietario
+  propietario: string; // Razón social o nombre completo del propietario
   dniCuitCuil: string;
   email: string;
   tipo: Rol;
@@ -23,14 +23,14 @@ interface Usuario {
 })
 export class UsuariosAdministradorComponent {
 
-  // ===== Estado / filtros / paginación =====
+  //Estado, filtros y paginacion
   readonly pageSize = 50;
 
-  // Arranca vacío (cuando integremos backend, seteamos aquí el resultado del endpoint)
+  // Arranca vacío
   all = signal<Usuario[]>([]);
 
-  q = signal<string>('');                      // búsqueda
-  filtroRol = signal<FiltroRol>('todos');      // filtro por rol
+  q = signal<string>('');  // búsqueda
+  filtroRol = signal<FiltroRol>('todos'); // filtro por rol
   page = signal<number>(1);
 
   // Modal crear
@@ -61,8 +61,6 @@ export class UsuariosAdministradorComponent {
   }
   onCreateSaved() {
     this.showCreate.set(false);
-    // Aquí podrías refrescar el listado real si luego conectamos un endpoint de list.
-    // Por ahora, queda como hook.
   }
 
   // Contadores
@@ -108,7 +106,7 @@ export class UsuariosAdministradorComponent {
     if (page >= 1 && page <= max) this.page.set(page);
   }
 
-  // Acciones (por ahora, placeholders)
+  // Acciones
   verUsuario(u: Usuario) {
     console.log('Ver usuario', u);
   }
@@ -117,7 +115,7 @@ export class UsuariosAdministradorComponent {
     console.log('Editar usuario', u);
   }
 
-  // ===== Demo helper opcional (si querés ver datos sin backend) =====
+  //Demo helper opcional
   cargarDemo() {
     const demo: Usuario[] = Array.from({ length: 123 }).map((_, i) => {
       const id = i + 1;

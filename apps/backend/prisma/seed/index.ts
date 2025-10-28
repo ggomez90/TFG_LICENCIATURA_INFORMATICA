@@ -23,7 +23,7 @@ async function main() {
   await seedOrigenMovimiento(prisma);
   await seedTipoCliente(prisma);
 
-  // Geográficos
+  // Geograficos
   await seedProvincia(prisma);
   await seedLocalidad(prisma); // usa ids de Provincia
 }

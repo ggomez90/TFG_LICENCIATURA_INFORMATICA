@@ -11,7 +11,7 @@ import { ProvinciaService } from './provincia.service';
 import { AuthGuard } from 'nest-keycloak-connect';
 import { FilterProvinciaDto } from './provincia.dto';
 
-@UseGuards(AuthGuard) //exige token válido para cualquier rol
+@UseGuards(AuthGuard) //exige token valido para cualquier rol
 @Controller('provincia')
 export class ProvinciaController {
   constructor(private readonly provinciaService: ProvinciaService) {}

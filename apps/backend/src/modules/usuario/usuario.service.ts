@@ -36,7 +36,7 @@ export class UsuarioService {
     private readonly kcAdmin: KeycloakAdminService,
   ) {}
 
-  // Público
+  // Publico
   async create(dto: CreateUsuarioDto) {
     return this.prisma.usuario.create({
       data: {

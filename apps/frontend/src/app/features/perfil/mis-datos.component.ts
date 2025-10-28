@@ -1,3 +1,4 @@
+//proximo modulo a desarrollar, por el momento solo datos estaticos para mostrar en la vista
 import { Component, signal } from '@angular/core';
 import { CommonModule, NgIf } from '@angular/common';
 import { RouterModule } from '@angular/router';
@@ -26,7 +27,7 @@ type Usuario = {
   styleUrls: ['./mis-datos.component.scss'],
 })
 export class MisDatosComponent {
-  // 🔹 Mock: reemplazar luego con datos reales del backend
+  //reemplazar luego con datos reales del backend
   usuario = signal<Usuario>({
     idUsuario: 101,
     nombres: 'María',

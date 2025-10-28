@@ -21,7 +21,7 @@ const PUBLIC_AUTH_SERVER_URL = 'http://localhost:8081';
       clientId: CLIENT_ID,
       secret: CLIENT_SECRET,
       realmPublicKey: REALM_PUBKEY,
-      tokenValidation: TokenValidation.OFFLINE,         // validación por firma sin ir a KC
+      tokenValidation: TokenValidation.OFFLINE,         // validacion por firma sin ir a KC
       policyEnforcement: PolicyEnforcementMode.PERMISSIVE,
     }),
   ],

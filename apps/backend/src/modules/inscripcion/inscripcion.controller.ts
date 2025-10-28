@@ -22,8 +22,8 @@ export class InscripcionController {
   constructor(private readonly inscripcionService: InscripcionService) {}
 
   // Listado (login requerido)
-  // - Cliente ve solo sus inscripciones
-  // - Operario/Admin ven todas
+  //Cliente ve solo sus inscripciones
+  //Operario/Admin ven todas
   @Get()
   @UseGuards(KeycloakAuthGuard, RolesGuard)
   @Roles('ADMIN', 'OPERARIO', 'CLIENTE')

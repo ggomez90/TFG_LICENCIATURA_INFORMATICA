@@ -50,7 +50,7 @@ export class RespuestaService {
     return myId === 1;
   }
 
-  //Create público
+  //Create publico
   async create(dto: CreateRespuestaEncuestaDto): Promise<RespuestaEncuesta> {
     const data: any = { ...dto };
     if (dto.fechaRespuesta) data.fechaRespuesta = new Date(dto.fechaRespuesta);

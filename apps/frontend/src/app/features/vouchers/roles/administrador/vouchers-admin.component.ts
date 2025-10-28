@@ -1,4 +1,4 @@
-// apps/frontend/src/app/features/vouchers/roles/administrador/vouchers-admin.component.ts
+//El codigo no posee logica para esta feature, los datos son estaticos y solo decorativos para simular una vista
 import { Component, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 

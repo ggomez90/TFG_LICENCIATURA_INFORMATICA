@@ -66,7 +66,7 @@ export class LocalidadService {
   }
 
   async create(dto: CreateLocalidadDto) {
-    // asume validación de unicidad (nombre + provincia) en el DTO/DB si aplica
+    // asume validacion de unicidad (nombre + provincia) 
     return this.prisma.localidad.create({
       data: {
         idLocalidad: dto.idLocalidad,

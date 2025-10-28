@@ -1,4 +1,3 @@
-// apps/frontend/src/app/auth/role.guard.ts
 import { CanActivateFn, Router, UrlTree } from '@angular/router';
 import { inject } from '@angular/core';
 import { RolesService } from './roles.service';

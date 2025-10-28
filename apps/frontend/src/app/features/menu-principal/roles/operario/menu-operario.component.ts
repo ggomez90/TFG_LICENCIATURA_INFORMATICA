@@ -15,13 +15,13 @@ type EntregaMini = { id: number; cliente: string; desafio: string; punto: string
 })
 export class MenuOperarioComponent {
 
-  // ====== Métricas rápidas (ficticias) ======
+  // Métricas rápidas (ficticias)
   entregasPendientesAsignadas = signal(7);
   retirosHoy = signal(5);
   kgProcesadosSemana = signal(168);
   incidenciasAbiertas = signal(1);
 
-  // ====== Accesos rápidos ======
+  //Accesos rápidos
   links = signal<QuickLink[]>([
     { title: 'Validar entrega', desc: 'Escanear ticket o ingresar código', route: '/operario/entregas', iconPath: 'M3 6h18v2H3zM6 10h12v2H6zM8 14h8v2H8z' },
     { title: 'Registrar retiro', desc: 'Cargar materiales retirados', route: '/operario/retiros', iconPath: 'M4 4h16v4H4V4zm0 6h10v10H4V10zm12 0h4v10h-4V10z' },
@@ -29,7 +29,7 @@ export class MenuOperarioComponent {
     { title: 'Mi historial', desc: 'Validaciones y retiros previos', route: '/operario/historial', iconPath: 'M5 4h14v2H5V4zm0 4h14v2H5V8zm0 4h10v2H5v-2z' },
   ]);
 
-  // ====== Tareas asignadas (ficticias) ======
+  //Tareas asignadas (ficticias)
   tareas = signal<TareaAsignada[]>([
     { punto: 'Punto Verde Centro', pendientes: 3, direccion: 'San Martín 250' },
     { punto: 'Escuela N° 412', pendientes: 2, direccion: 'Belgrano 890' },
@@ -39,7 +39,7 @@ export class MenuOperarioComponent {
 
   totalPendientes = computed(() => this.tareas().reduce((acc, t) => acc + t.pendientes, 0));
 
-  // Creamos una versión con porcentaje para evitar usar Math en el template
+  //Versión con porcentaje para no usar Math en el template
   tareasConPct = computed(() => {
     const tot = this.totalPendientes() || 1;
     return this.tareas().map(t => ({
@@ -48,7 +48,7 @@ export class MenuOperarioComponent {
     }));
   });
 
-  // ====== Actividad reciente (ficticia) ======
+  //Actividad reciente (ficticia)
   ultPendientes = signal<EntregaMini[]>([
     { id: 1101, cliente: 'María Díaz',  desafio: 'EcoBotellas',   punto: 'Centro', estado: 'PENDIENTE', fecha: '2025-10-05' },
     { id: 1102, cliente: 'Juan Pérez',  desafio: 'Papel & Cartón', punto: 'Escuela 412', estado: 'PENDIENTE', fecha: '2025-10-05' },

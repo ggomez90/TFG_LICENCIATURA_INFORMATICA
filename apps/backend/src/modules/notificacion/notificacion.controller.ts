@@ -22,7 +22,7 @@ import { KeycloakAuthGuard, RolesGuard, Roles, User } from '../../auth';
 export class NotificacionController {
   constructor(private readonly notificacionService: NotificacionService) {}
 
-  // Público autenticado (OPERARIO / CLIENTE)
+  // Pub autenticado (OPERARIO / CLIENTE)
   // - visible=true (forzado en service)
   // - orden: fechaCreacion desc
   // - filtrado por rol del usuario autenticado

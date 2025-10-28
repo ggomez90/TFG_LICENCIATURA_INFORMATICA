@@ -1,4 +1,4 @@
-@use './mis-datos.component.scss' as *; /* si están en mismo nivel podés importarlo; si no, copiá estilos DSF. */
+@use './mis-datos.component.scss' as *; /* importa estilos de mis-datos */
 
 .form-grid{
   display:grid; gap:12px;

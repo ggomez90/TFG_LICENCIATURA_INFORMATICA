@@ -1,6 +1,6 @@
 :host { display:block; }
 
-/* ======== BASE (idéntico a “Desafíos”) ======== */
+/* base identico a desafios */
 .dsf-wrap{
   display:grid; gap:12px;
   background:
@@ -70,7 +70,7 @@
   .dsf-card{ grid-column: span 4; }
 }
 
-/* ======== EXTRAS (filtros/menú interno, look & feel consistente) ======== */
+/* EXTRAS para filtros/menú interno, look y feel consistente */
 .va-filters{
   display:grid; gap:10px; margin-top:6px;
 }

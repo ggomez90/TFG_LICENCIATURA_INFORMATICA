@@ -1,16 +1,16 @@
 :host { display:block; }
 
-/* ==== Fondo del área de contenido (verde suave, mobile-first) ==== */
+/*Fondo del área de contenido*/
 :host-context(.content) {
   background:
     radial-gradient(1200px 800px at 0% -10%, rgba(16,185,129,.10) 0%, rgba(16,185,129,0) 60%),
     radial-gradient(900px 600px at 100% 110%, rgba(34,197,94,.10) 0%, rgba(34,197,94,0) 60%),
     linear-gradient(180deg, #f0fdf4 0%, #ffffff 50%, #ecfdf5 100%);
-  padding: 8px; /* respira sin tocar tus paddings globales */
+  padding: 8px;
   border-radius: 12px;
 }
 
-/* ===== Sección contenedora con más color ===== */
+/*Sección contenedora con mas color*/
 .mc-section {
   margin-bottom: 16px;
   padding: 12px;
@@ -38,13 +38,13 @@
 }
 .mc-section__more:hover{ text-decoration:underline; }
 
-/* ===== Grid de cards ===== */
+/*Grid de cards*/
 .mc-cards{
   display:grid; gap:12px;
   grid-template-columns: repeat(12, 1fr);
 }
 
-/* ===== Card con más presencia ===== */
+/*Card con mas presencia*/
 .mc-card{
   grid-column: span 12;
   display:flex; flex-direction:column;
@@ -60,7 +60,7 @@
 }
 .mc-card:hover{ transform: translateY(-2px); box-shadow: 0 14px 28px rgba(16,185,129,.16), 0 3px 12px rgba(2,6,23,.10); }
 
-/* Media/imagen (ícono) cuadrada */
+/* Media/imagen */
 .mc-card__media{
   width:100%;
   aspect-ratio: 1 / 1;
@@ -75,7 +75,7 @@
 }
 .mc-card__icon{ width: 48px; height: 48px; color: rgba(6,95,70, .9); }
 
-/* Título / descripción */
+/* Título y descripción */
 .mc-card__title{ margin:0; font-weight:800; color:#065f46; font-size:16px; }
 .mc-card__desc{ margin:6px 0 0; color:#065f46; opacity:.9; font-size:14px; }
 
@@ -96,7 +96,7 @@
 }
 .mc-card__btn:hover{ background:#047857; border-color:#047857; }
 
-/* ===== Breakpoints ===== */
+/*Breakpoints*/
 @media (min-width: 600px){
   .mc-card{ grid-column: span 6; }
 }

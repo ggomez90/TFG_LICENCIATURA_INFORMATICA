@@ -1,6 +1,6 @@
 :host { display:block; }
 
-/* ======== BASE (idéntico a “Desafíos”) ======== */
+/* base del scss de desafios*/
 .dsf-wrap{
   display:grid; gap:12px;
   background:
@@ -70,7 +70,7 @@
   .dsf-card{ grid-column: span 4; }
 }
 
-/* ======== EXTRAS (filtros cliente) ======== */
+/*EXTRAS para filtros cliente */
 .vc-filters{
   display:grid; gap:10px; margin-top:6px;
 }
@@ -106,7 +106,7 @@
   box-shadow:0 8px 18px rgba(16,185,129,.18);
 }
 
-/* Switch “Solo disponibles” */
+/* Switch Solo disponibles */
 .switch{
   display:inline-flex; align-items:center; gap:8px;
   font-size:13px; font-weight:700; color:#065f46;

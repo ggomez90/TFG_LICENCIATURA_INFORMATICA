@@ -5,7 +5,7 @@ import { HttpClient } from '@angular/common/http';
 export class PingService {
   private http = inject(HttpClient);
 
-  // Pasa por Nginx (http://localhost) ⇒ usamos rutas relativas
+  // Pasa por Nginx (http://localhost) usando rutas relativas
   pingSecure() {
     return this.http.get<{ ok: boolean; secure: boolean }>('/api/secure/ping');
   }

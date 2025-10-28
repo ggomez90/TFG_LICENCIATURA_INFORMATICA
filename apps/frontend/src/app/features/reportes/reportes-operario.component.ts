@@ -1,3 +1,4 @@
+//El codigo no posee logica para esta feature, los datos son estaticos y solo decorativos para simular una vista
 import { Component, computed, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
@@ -23,7 +24,7 @@ interface EntregaRpt {
 })
 export class ReportesOperarioComponent {
 
-  // ===== Utilidades de fecha =====
+  //Utilidades de fecha
   private toDate(d: string): Date {
     // Espera YYYY-MM-DD
     const [y, m, day] = d.split('-').map(Number);
@@ -36,7 +37,7 @@ export class ReportesOperarioComponent {
     return `${d.getFullYear()}-${mm}-${dd}`;
   }
 
-  // ====== Filtros ======
+  //Filtros
   desde = signal<string>('2025-10-01');
   hasta  = signal<string>(this.todayStr());
   estado = signal<EstadoFiltro>('TODAS');
@@ -55,7 +56,7 @@ export class ReportesOperarioComponent {
     }
   }
 
-  // ====== Datos ficticios ======
+  //Datos ficticios
   private base = signal<EntregaRpt[]>([
     { id: 1401, fecha: '2025-10-01', cliente: 'Juan Pérez',   punto: 'Centro',       desafio: 'EcoBotellas',   estado: 'VALIDADA',  kg: 3.2 },
     { id: 1402, fecha: '2025-10-01', cliente: 'Ana Ruiz',     punto: 'Plaza Norte',  desafio: 'Vidrio Limpio', estado: 'RECHAZADA', kg: 0.0 },
@@ -71,7 +72,7 @@ export class ReportesOperarioComponent {
     { id: 1412, fecha: '2025-10-06', cliente: 'Mati S.',      punto: 'Escuela 412',  desafio: 'Papel & Cartón',estado: 'VALIDADA',  kg: 3.7 },
   ]);
 
-  // ====== Filtrado ======
+  //Filtrado
   filtradas = computed(() => {
     const d = this.toDate(this.desde());
     const h = this.toDate(this.hasta());
@@ -84,7 +85,7 @@ export class ReportesOperarioComponent {
     });
   });
 
-  // ====== Métricas ======
+  //Metricas
   totalReg   = computed(() => this.filtradas().length);
   totalKg    = computed(() => this.filtradas().reduce((acc, r) => acc + r.kg, 0));
   cantVal    = computed(() => this.filtradas().filter(r => r.estado === 'VALIDADA').length);
@@ -104,7 +105,7 @@ export class ReportesOperarioComponent {
     return (this.cantPend() / tot) * 100;
   });
 
-  // ====== Paginación ======
+  //Paginacion
   page = signal(1);
   pageSize = signal(10);
   totalPages = computed(() => Math.max(1, Math.ceil(this.totalReg() / this.pageSize())));
@@ -123,7 +124,7 @@ setPage(p: number) {
   prevPage() { this.setPage(this.page() - 1); }
   nextPage() { this.setPage(this.page() + 1); }
 
-  // ====== Exportar CSV ======
+  //Exportar CSV
   exportCSV() {
     const rows = [
       ['ID','Fecha','Cliente','Punto','Desafío','Estado','Kg'],

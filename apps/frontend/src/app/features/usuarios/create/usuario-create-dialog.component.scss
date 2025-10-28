@@ -1,6 +1,6 @@
 :host { display: contents; }
 
-/* Backdrop con blur suave */
+/* Backdrop */
 .modal__backdrop{
   position: fixed; inset: 0;
   background: rgba(2,6,23,.45);
@@ -28,7 +28,7 @@
   border: 1px solid rgba(16,185,129,.28);
   border-radius: 14px;
   box-shadow: 0 16px 32px rgba(16,185,129,.15), 0 8px 16px rgba(2,6,23,.06);
-  overflow: hidden; /* evita que el contenido “rompa” los bordes */
+  overflow: hidden; /* evita que el contenido rompa los bordes */
 }
 
 /* Header */

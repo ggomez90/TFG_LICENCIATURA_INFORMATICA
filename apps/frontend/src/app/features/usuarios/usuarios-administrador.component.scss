@@ -1,6 +1,6 @@
 :host { display:block; }
 
-/* === Estilo base (mismo look & feel que “desafíos” / vouchers) === */
+/*Estilo base desafíos y vouchers */
 .dsf-wrap{
   display:grid; gap:12px;
   background:
@@ -29,14 +29,14 @@
   box-shadow: 0 10px 22px rgba(16,185,129,.12), 0 2px 8px rgba(2,6,23,.08);
 }
 
-/* === Stats === */
+/*Stats*/
 .stats .stat { grid-column: span 12; display:grid; gap:6px; place-items:center; }
 .stat__num{ font-size:28px; font-weight:900; color:#065f46; line-height:1; }
 .stat__label{ font-size:12px; color:#065f46; opacity:.9; }
 @media (min-width: 700px){ .stats .stat{ grid-column: span 6; } }
 @media (min-width: 1100px){ .stats .stat{ grid-column: span 3; } }
 
-/* === Filtros / acciones === */
+/*Filtros y acciones*/
 .filters{
   display:flex; gap:12px; align-items:flex-end; justify-content:space-between; flex-wrap:wrap;
 }
@@ -61,7 +61,7 @@ input[type="search"], select{
   background:rgba(16,185,129,.08);
 }
 
-/* === Tabla === */
+/*Tabla*/
 .tbl{ display:grid; gap:10px; }
 .tbl__scroll{ overflow:auto; border:1px solid rgba(16,185,129,.28); border-radius:12px; }
 table{ width:100%; border-collapse:separate; border-spacing:0; min-width:880px; }

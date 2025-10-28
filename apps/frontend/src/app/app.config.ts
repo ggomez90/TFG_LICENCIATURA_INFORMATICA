@@ -1,4 +1,3 @@
-// apps/frontend/src/app/app.config.ts
 import { ApplicationConfig, APP_INITIALIZER, isDevMode } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { routes } from './app.routes';
@@ -8,8 +7,6 @@ import { provideHttpClient, withInterceptors, withFetch } from '@angular/common/
 import { provideZonelessChangeDetection } from '@angular/core';
 import { authInterceptor } from './auth/auth.interceptor';
 import { initializeKeycloak } from './auth/keycloak-init.factory';
-
-// 👉 asegurate de importar estos dos:
 import { UsuariosApi } from './api/usuarios.api';
 import { syncUserOnBootFactory } from './api/user-sync.init';
 

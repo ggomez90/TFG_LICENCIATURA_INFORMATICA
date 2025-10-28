@@ -1,4 +1,3 @@
-// apps/frontend/src/app/auth/keycloak.ts
 import Keycloak, { KeycloakInstance } from 'keycloak-js';
 
 // Detección de entorno sin DI (SSR-safe)
@@ -6,12 +5,12 @@ const isBrowser = typeof window !== 'undefined';
 
 let _kc: KeycloakInstance | null = null;
 
-// Export público (en SSR exporta un stub inofensivo)
+//Export público
 export const keycloak: KeycloakInstance = (() => {
   if (!isBrowser) return {} as unknown as KeycloakInstance;
   if (_kc) return _kc;
   _kc = new (Keycloak as any)({
-    // Desde el navegador usamos localhost (no el hostname del contenedor)
+    // Desde el navegador usa localhost
     url: 'http://localhost:8081',
     realm: 'yo-reciclo',
     clientId: 'angular-yo-reciclo',
@@ -19,11 +18,7 @@ export const keycloak: KeycloakInstance = (() => {
   return _kc!;
 })();
 
-/**
- * Inicialización segura (no usa window en SSR).
- * - check-sso: si hay sesión vuelve con token, si no hay NO redirige.
- * - programa auto-refresh del token.
- */
+//Inicialización segura (no usa window en SSR). check-sso: si hay sesión vuelve con token, si no hay NO redirige, programa auto-refresh del token
 export async function ensureKeycloakInit(): Promise<boolean> {
   if (!isBrowser) return true;
 
@@ -40,7 +35,7 @@ export async function ensureKeycloakInit(): Promise<boolean> {
       try {
         await keycloak.updateToken(60);
       } catch {
-        // Si falla el refresh, no forzamos login acá (lo hará el guard si navegan)
+        // Si falla el refresh, el guard va a forzar el login
       }
     }, 20_000);
 
@@ -51,7 +46,7 @@ export async function ensureKeycloakInit(): Promise<boolean> {
   }
 }
 
-/** Helper opcional, por si querés forzar login desde algún componente/servicio. */
+//Helper opcional para forzar login desde algún componente/servicio.
 export async function loginIfNeeded(): Promise<void> {
   if (!isBrowser) return;
   if (!(keycloak as any).authenticated) {

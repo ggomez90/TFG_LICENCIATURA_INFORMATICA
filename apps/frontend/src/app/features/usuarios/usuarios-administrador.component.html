@@ -4,7 +4,7 @@
     <p class="dsf-sub">Gestión de usuarios: creación, listado, búsqueda, visualización y edición.</p>
   </header>
 
-  <!-- Resumen / Contadores -->
+  <!-- Resumen y Contadores -->
   <div class="dsf-grid stats">
     <article class="dsf-card stat">
       <div class="stat__num">{{ total() }}</div>
@@ -124,7 +124,7 @@
     </div>
   </div>
 
-  <!-- ===== Modal crear usuario ===== -->
+  <!--Modal crear usuario-->
   <app-usuario-create-dialog
     *ngIf="showCreate()"
     (close)="onCreateClosed()"

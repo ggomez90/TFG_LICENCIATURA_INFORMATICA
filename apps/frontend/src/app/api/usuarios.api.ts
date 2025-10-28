@@ -1,4 +1,3 @@
-// apps/frontend/src/app/api/usuarios.api.ts
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
@@ -15,18 +14,17 @@ export interface UsuarioDto {
   idEstadoUsuario: number;
 }
 
-/** DTO para alta por administrador (alineado al backend) */
+//DTO para alta por administrador alineado con el del back
 export interface AdminCreateUsuarioDto {
   nombres: string;
   apellidos: string;
   usuario: string;
   email: string;
   dniCuitCuil?: string | null;
-  /** 1=ADMIN, 2=OPERARIO, 3=CLIENTE */
-  idRolUsuario: 1 | 2 | 3;
+  idRolUsuario: 1 | 2 | 3; //1=ADMIN, 2=OPERARIO, 3=CLIENTE
 }
 
-/** Respuesta típica del backend al crear por admin */
+//Respuesta del backend al crear por admin
 export interface AdminCreateUsuarioResp {
   kcUserId?: string;
   message?: string;
@@ -37,17 +35,17 @@ export interface AdminCreateUsuarioResp {
 export class UsuariosApi {
   private http = inject(HttpClient);
 
-  /** Sincroniza el usuario autenticado actual (Keycloak → BD) */
+  //Sincroniza el usuario autenticado actual (Keycloak y BD)
   syncMe(): Observable<UsuarioDto> {
     return this.http.get<UsuarioDto>(apiUrl('/usuarios/me/sync'));
   }
 
-  /** Devuelve el perfil del usuario autenticado */
+  //Devuelve el perfil del usuario autenticado
   me(): Observable<UsuarioDto> {
     return this.http.get<UsuarioDto>(apiUrl('/usuarios/me'));
   }
 
-  /** Crea un usuario desde el panel administrador */
+  //Crea un usuario desde el panel administrador
   createByAdmin(dto: AdminCreateUsuarioDto): Observable<AdminCreateUsuarioResp> {
     return this.http.post<AdminCreateUsuarioResp>(apiUrl('/usuarios/admin'), dto);
   }

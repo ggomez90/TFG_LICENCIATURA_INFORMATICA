@@ -37,7 +37,7 @@ async function bootstrap() {
     new ValidationPipe({
       whitelist: true,           // elimina campos no declarados en DTO
       forbidNonWhitelisted: true, // lanza error si llegan campos no permitidos
-      transform: true,           // convierte tipos automáticamente
+      transform: true,           // convierte tipos automaticamente
     }),
   );
 

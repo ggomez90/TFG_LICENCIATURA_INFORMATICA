@@ -22,7 +22,7 @@ export class ClienteService {
         throw new BadRequestException('Ya existe un Cliente con ese idCliente.');
       }
       if (error?.code === 'P2003') {
-        // FK inválida
+        // FK invalida
         throw new BadRequestException('Alguna referencia es inválida (Provincia/Localidad/TipoCliente).');
       }
       throw error;

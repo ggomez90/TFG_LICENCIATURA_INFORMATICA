@@ -35,7 +35,7 @@ export class UsuarioController {
 
   // Autenticado (cualquier rol)
 
-  // crea/actualiza el usuario local en BD según el token
+  // crea/actualiza el usuario local en BD segun el token
   @Get('me/sync')
   @UseGuards(KeycloakAuthGuard)
   async syncMe(@User() user: any) {
@@ -59,7 +59,7 @@ export class UsuarioController {
 
   // Solo ADMIN
 
-  //Alta por administrador (crea en KC + asigna rol + envía mail + crea en BD con estado PENDIENTE).
+  //Alta por administrador (crea en KC + asigna rol + envia mail + crea en BD con estado PENDIENTE).
   @Post('admin')
   @UseGuards(KeycloakAuthGuard, RolesGuard)
   @Roles('ADMIN', 'ADMINISTRADOR')

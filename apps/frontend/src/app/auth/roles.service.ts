@@ -34,27 +34,27 @@ export class RolesService {
   hasRole(role: string): boolean {
     if (!role) return false;
 
-    // 1) Primero, roles reales del JWT
+    //1-Primero, roles reales del JWT
     const jwtHas = this.allRolesFromJwt().has(this.norm(role));
     if (jwtHas) return true;
 
-    // 2) Fallback: mapear rol de BD a nombre de rol
+    //2-Fallback: mapear rol de BD a nombre de rol
     return this.appRole.matchesRoleName(role);
   }
 
   hasAnyRole(roles: string[]): boolean {
     if (!roles?.length) return false;
 
-    // 1) JWT
+    // 1- JWT
     const all = this.allRolesFromJwt();
     if (roles.some((r) => all.has(this.norm(r)))) return true;
 
-    // 2) Fallback BD
+    // 2- Fallback BD
     return this.appRole.matchesAny(roles);
   }
 
   list(): string[] {
-    // lista “visible” combinada: JWT + (fallback)
+    // lista visible combinada: JWT + fallback
     const out = this.allRolesFromJwt();
 
     const id = this.appRole.currentId();

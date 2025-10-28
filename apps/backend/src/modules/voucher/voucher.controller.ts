@@ -25,7 +25,7 @@ export class VoucherController {
   @UseGuards(KeycloakAuthGuard, RolesGuard)
   @Roles('ADMIN', 'CLIENTE')
   async findAll(@User() user: any, @Query() filter: FilterVoucherDto) {
-    const actorRole = this.pickRole(user); // 'ADMIN' o 'CLIENTE'
+    const actorRole = this.pickRole(user); // ADMIN o CLIENTE
     const identifier =
       user?.preferred_username ?? user?.email ?? user?.username ?? user?.sub;
 

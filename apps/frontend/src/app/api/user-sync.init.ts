@@ -10,11 +10,11 @@ async function doSync(usuariosApi: UsuariosApi, appRole: AppRoleService) {
     const synced = await firstValueFrom(usuariosApi.syncMe());
     console.log('[user-sync] Usuario sincronizado:', synced);
 
-    // 🧠 Guardar rol de BD como fallback inmediato (1=ADMIN,2=OPERARIO,3=CLIENTE)
+    //Guarda rol de BD como fallback inmediato (1=ADMIN,2=OPERARIO,3=CLIENTE)
     appRole.setFromBackend(Number(synced?.idRolUsuario ?? null));
 
-    // 🔄 Forzar refresh del access token para que traiga los realm roles recién asignados.
-    // Usamos minValidity alto para OBLIGAR refresh aunque el token no esté por expirar.
+    //Fuerza el refresh del access token para que traiga los realm roles recien asignados.
+    //minValidity alto para OBLIGAR refresh aunque el token no este por expirar.
     try {
       const refreshed = await keycloak.updateToken(3600); // 1 hora de margen => fuerza refresh
       console.log('[user-sync] Token refrescado (forzado):', refreshed);
@@ -22,7 +22,7 @@ async function doSync(usuariosApi: UsuariosApi, appRole: AppRoleService) {
       console.warn('[user-sync] updateToken(forzado) falló:', e);
     }
 
-    // (Opcional) traer perfil
+    //traer perfil
     try {
       const me = await firstValueFrom(usuariosApi.me());
       console.log('[user-sync] Perfil actual:', me);
@@ -57,9 +57,6 @@ export function syncUserOnBootFactory() {
       console.log('[user-sync] onAuthSuccess → sincronizando…');
       void doSync(usuariosApi, appRole);
     };
-
-    // (Opcional) Si implementás un hook de logout, acordate de limpiar el fallback:
-    // keycloak.onAuthLogout = () => appRole.clear();
 
     return true;
   };
