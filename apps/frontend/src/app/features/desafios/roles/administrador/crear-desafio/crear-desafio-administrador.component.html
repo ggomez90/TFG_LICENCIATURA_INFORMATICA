@@ -1,0 +1,279 @@
+<section class="dsf-wrap crear-desafio">
+  <!-- CABECERA -->
+  <header class="dsf-header">
+    <h1 class="dsf-title">Nuevo desafío</h1>
+    <p class="dsf-sub">
+      Cargá un nuevo desafío para la ciudadanía. Definí metas, puntajes y fechas.
+    </p>
+  </header>
+
+  <!-- FORMULARIO -->
+  <form class="dsf-form" (ngSubmit)="onCrear()">
+    <div class="dsf-card dsf-card--form">
+      <div class="dsf-card__body">
+        <!-- TOOLBAR (TÍTULO + DESCRIPCIÓN) -->
+        <div class="editor-toolbar">
+          <button type="button" class="dsf-toolbar__btn" (click)="format('bold')"><strong>B</strong></button>
+          <button type="button" class="dsf-toolbar__btn" (click)="format('italic')"><em>I</em></button>
+          <button type="button" class="dsf-toolbar__btn" (click)="format('underline')"><span class="u">U</span></button>
+
+          <span class="sep"></span>
+
+          <button type="button" class="dsf-toolbar__btn" (click)="format('justifyLeft')" title="Alinear a la izquierda">↞</button>
+          <button type="button" class="dsf-toolbar__btn" (click)="format('justifyCenter')" title="Centrar">↔</button>
+          <button type="button" class="dsf-toolbar__btn" (click)="format('justifyRight')" title="Alinear a la derecha">↠</button>
+          <button type="button" class="dsf-toolbar__btn" (click)="format('justifyFull')" title="Justificar">☰</button>
+
+          <span class="sep"></span>
+
+          <button type="button" class="dsf-toolbar__btn" (click)="format('insertUnorderedList')">• Lista</button>
+
+          <span class="sep"></span>
+
+          <select (change)="onFontFamilyChange($event)">
+            <option value="">Fuente</option>
+            <option value="system-ui">Sistema</option>
+            <option value="Arial">Arial</option>
+            <option value="Georgia">Georgia</option>
+            <option value="Times New Roman">Times</option>
+            <option value="Verdana">Verdana</option>
+          </select>
+
+          <select (change)="onFontSizeChange($event)">
+            <option value="">Tamaño</option>
+            <option value="2">Pequeño</option>
+            <option value="3">Normal</option>
+            <option value="4">Grande</option>
+            <option value="5">Muy grande</option>
+          </select>
+
+          <label class="color-picker-label">
+            <span>Color</span>
+            <input type="color" (change)="onColorChange($event)" [value]="currentColor" />
+          </label>
+
+          <span class="sep"></span>
+
+          <button type="button" class="dsf-toolbar__btn" (click)="clearFormat()" title="Limpiar formato">🧹 Limpiar</button>
+        </div>
+
+        <!-- TÍTULO -->
+        <label class="dsf-field dsf-field--wide">
+          <span class="dsf-field__label">
+            Título
+            <small class="dsf-field__hint">(opcional, máx. 300 caracteres)</small>
+          </span>
+          <div
+            #tituloEditor
+            class="editor-area editor-area--title"
+            contenteditable="true"
+            (focus)="setActiveEditor('titulo')"
+            (input)="onTituloChange($event)"
+          ></div>
+        </label>
+
+        <!-- DESCRIPCIÓN -->
+        <label class="dsf-field dsf-field--wide">
+          <span class="dsf-field__label">
+            Descripción
+            <small class="dsf-field__hint">(opcional, máx. 500 caracteres — admite formato)</small>
+          </span>
+          <div
+            #descripcionEditor
+            class="editor-area editor-area--descripcion"
+            contenteditable="true"
+            (focus)="setActiveEditor('descripcion')"
+            (input)="onDescripcionChange($event)"
+          ></div>
+        </label>
+
+        <!-- CAMPOS BÁSICOS (2 columnas que ocupan todo el ancho) -->
+        <div class="dsf-fields-row two-wide">
+          <label class="dsf-field">
+            <span class="dsf-field__label">Tipo de residuo</span>
+            <input
+              type="text"
+              class="dsf-input dsf-input--lg"
+              name="tipoResiduo"
+              maxlength="60"
+              [(ngModel)]="form.tipoResiduo"
+            />
+          </label>
+
+          <label class="dsf-field">
+            <span class="dsf-field__label">Unidad de medida</span>
+            <input
+              type="text"
+              class="dsf-input dsf-input--lg"
+              name="unidadMedida"
+              maxlength="40"
+              [(ngModel)]="form.unidadMedida"
+            />
+          </label>
+        </div>
+
+        <!-- NUMÉRICOS (4 en una fila, tamaños ya OK) -->
+        <div class="num-grid">
+          <!-- META (decimal, 2 decimales) -->
+          <label class="dsf-field">
+            <span class="dsf-field__label">Meta</span>
+            <input
+              type="text"
+              inputmode="decimal"
+              pattern="^[0-9]+(\\.[0-9]{1,2})?$"
+              class="dsf-input num-input"
+              name="meta"
+              placeholder="0.00"
+              [value]="form.meta"
+              (keydown)="decimalKeydown($event, form.meta)"
+              (input)="onMetaInput($event)"
+            />
+          </label>
+
+          <!-- PUNTOS TOTALES (entero) -->
+          <label class="dsf-field">
+            <span class="dsf-field__label">Puntos totales</span>
+            <input
+              type="text"
+              inputmode="numeric"
+              pattern="^[0-9]+$"
+              class="dsf-input num-input"
+              name="puntosTotales"
+              placeholder="0"
+              [value]="form.puntosTotales"
+              (keydown)="integerKeydown($event)"
+              (input)="onPuntosTotalesInput($event)"
+            />
+          </label>
+
+          <!-- PUNTOS POR UNIDAD (decimal, 2 decimales) -->
+          <label class="dsf-field">
+            <span class="dsf-field__label">Puntos por unidad</span>
+            <input
+              type="text"
+              inputmode="decimal"
+              pattern="^[0-9]+(\\.[0-9]{1,2})?$"
+              class="dsf-input num-input"
+              name="puntosPorUnidad"
+              placeholder="0.00"
+              [value]="form.puntosPorUnidad"
+              (keydown)="decimalKeydown($event, form.puntosPorUnidad)"
+              (input)="onPuntosUnidadInput($event)"
+            />
+          </label>
+
+          <!-- BONIFICACIÓN (entero) -->
+          <label class="dsf-field">
+            <span class="dsf-field__label">Bonificación (desafío completo)</span>
+            <input
+              type="text"
+              inputmode="numeric"
+              pattern="^[0-9]+$"
+              class="dsf-input num-input"
+              name="bonificacionDesafioCompleto"
+              placeholder="0"
+              [value]="form.bonificacionDesafioCompleto"
+              (keydown)="integerKeydown($event)"
+              (input)="onBonificacionInput($event)"
+            />
+          </label>
+        </div>
+
+        <!-- SWITCHES -->
+        <div class="switches-row">
+          <label class="dsf-switch-field">
+            <input
+              type="checkbox"
+              name="requiereInscripcion"
+              [(ngModel)]="form.requiereInscripcion"
+            />
+            <span class="dsf-switch__track"><span class="dsf-switch__thumb"></span></span>
+            <span class="dsf-switch__text">Requiere inscripción</span>
+          </label>
+
+          <label class="dsf-switch-field">
+            <input
+              type="checkbox"
+              name="otorgaPuntosParcial"
+              [checked]="form.otorgaPuntosParcial"
+              (change)="onToggleParcial($event)"
+            />
+            <span class="dsf-switch__track"><span class="dsf-switch__thumb"></span></span>
+            <span class="dsf-switch__text">Otorga puntos parciales</span>
+          </label>
+        </div>
+
+        <!-- FECHAS -->
+        <div class="dsf-fields-row">
+          <label class="dsf-field dsf-field--half">
+            <span class="dsf-field__label">Fecha de inicio <span class="dsf-field__required">*</span></span>
+            <input
+              type="date"
+              class="dsf-input date-like"
+              name="fechaInicio"
+              required
+              [min]="minFechaInicio"
+              [(ngModel)]="form.fechaInicio"
+            />
+          </label>
+
+          <label class="dsf-field dsf-field--half">
+            <span class="dsf-field__label">Fecha de fin (opcional)</span>
+            <input
+              type="date"
+              class="dsf-input date-like"
+              name="fechaFin"
+              [min]="getMinFechaFin()"
+              [(ngModel)]="form.fechaFin"
+            />
+          </label>
+        </div>
+
+        <!-- ESTADO + ID RECURSO (mismo ancho que fechas) -->
+        <div class="dsf-fields-row">
+          <label class="dsf-field dsf-field--half">
+            <span class="dsf-field__label">Estado</span>
+            <select name="estado" class="dsf-input date-like" [(ngModel)]="form.estado">
+              <option [ngValue]="1">ACTIVO</option>
+              <option [ngValue]="2">PAUSADO</option>
+              <option [ngValue]="3">FINALIZADO</option>
+            </select>
+          </label>
+
+          <label class="dsf-field dsf-field--half">
+            <span class="dsf-field__label">ID recurso educativo (opcional)</span>
+            <input
+              type="text"
+              inputmode="numeric"
+              pattern="^[0-9]+$"
+              class="dsf-input date-like num-input"
+              name="idRecursoEducativo"
+              placeholder="Ej: 42"
+              [value]="form.idRecursoEducativo"
+              (keydown)="integerKeydown($event)"
+              (input)="onIdRecursoChange($event)"
+            />
+          </label>
+        </div>
+
+        <p class="dsf-note">
+          El identificador del administrador (<code>idAdmin</code>) se tomará automáticamente
+          del usuario autenticado.
+        </p>
+      </div>
+    </div>
+
+    <!-- ACCIONES -->
+    <footer class="dsf-form__actions">
+      <button type="button" class="dsf-btn dsf-btn--ghost" (click)="onVolver()">← Volver</button>
+      <button type="button" class="dsf-btn dsf-btn--ghost" (click)="onBorrar()">🧹 Borrar</button>
+
+      <span class="dsf-form__spacer"></span>
+
+      <button type="button" class="dsf-btn dsf-btn--outline" (click)="onPrevisualizar()">👁️ Previsualizar</button>
+      <button type="submit" class="dsf-btn dsf-btn--primary" [disabled]="loading">
+        {{ loading ? 'Creando…' : 'Crear desafío' }}
+      </button>
+    </footer>
+  </form>
+</section>

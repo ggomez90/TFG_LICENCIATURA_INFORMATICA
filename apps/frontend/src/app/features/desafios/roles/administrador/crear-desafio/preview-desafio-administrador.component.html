@@ -1,0 +1,113 @@
+<section class="dsf-wrap preview-desafio">
+  <!-- CABECERA -->
+  <header class="dsf-header">
+    <h1 class="dsf-title">Previsualización del desafío</h1>
+    <p class="dsf-sub">
+      Así se verá el desafío para los usuarios. Verificá el contenido antes de guardarlo.
+    </p>
+  </header>
+
+  <!-- CARD PRINCIPAL -->
+  <div class="dsf-card dsf-card--preview">
+    <div class="dsf-card__body">
+      <!-- TÍTULO RICO -->
+      <h2 class="pv-title" [innerHTML]="tituloHtml || '(Sin título)'"></h2>
+
+      <!-- SUBTÍTULO / ESTADO + BADGES -->
+      <div class="pv-metadata">
+        <span class="pv-badge"
+              [class.pv-badge--ok]="borrador?.requiereInscripcion"
+              [class.pv-badge--muted]="!borrador?.requiereInscripcion">
+          {{ borrador?.requiereInscripcion ? 'Requiere inscripción' : 'Sin inscripción' }}
+        </span>
+
+        <span class="pv-badge"
+              [class.pv-badge--ok]="borrador?.otorgaPuntosParcial"
+              [class.pv-badge--muted]="!borrador?.otorgaPuntosParcial">
+          {{ borrador?.otorgaPuntosParcial ? 'Otorga puntos parciales' : 'Sin puntos parciales' }}
+        </span>
+
+        <span class="pv-chip"
+              [class.pv-chip--activo]="borrador?.estado === 1"
+              [class.pv-chip--pausado]="borrador?.estado === 2"
+              [class.pv-chip--finalizado]="borrador?.estado === 3">
+          {{ borrador?.estado === 1 ? 'ACTIVO' : (borrador?.estado === 2 ? 'PAUSADO' : 'FINALIZADO') }}
+        </span>
+      </div>
+
+      <!-- GRID DE ATRIBUTOS CLAVE -->
+      <div class="pv-grid">
+        <article class="pv-card stat">
+          <div class="stat__label">Tipo de residuo</div>
+          <div class="stat__value">{{ borrador?.tipoResiduo || '-' }}</div>
+        </article>
+
+        <article class="pv-card stat">
+          <div class="stat__label">Unidad de medida</div>
+          <div class="stat__value">{{ borrador?.unidadMedida || '-' }}</div>
+        </article>
+
+        <article class="pv-card stat">
+          <div class="stat__label">Meta</div>
+          <div class="stat__value">{{ borrador?.meta || '-' }}</div>
+        </article>
+
+        <article class="pv-card stat">
+          <div class="stat__label">Puntos totales</div>
+          <div class="stat__value">{{ borrador?.puntosTotales }}</div>
+        </article>
+
+        <article class="pv-card stat">
+          <div class="stat__label">Puntos por unidad</div>
+          <div class="stat__value">{{ borrador?.puntosPorUnidad || '-' }}</div>
+        </article>
+
+        <article class="pv-card stat">
+          <div class="stat__label">Bonificación por desafío completo</div>
+          <div class="stat__value">{{ borrador?.bonificacionDesafioCompleto || '-' }}</div>
+        </article>
+      </div>
+
+      <!-- FECHAS -->
+      <div class="pv-dates">
+        <div class="pv-date">
+          <div class="pv-date__label">Inicio</div>
+          <div class="pv-date__value">{{ borrador?.fechaInicio | date:'dd/MM/yyyy' }}</div>
+        </div>
+
+        <div class="pv-date">
+          <div class="pv-date__label">Fin</div>
+          <div class="pv-date__value">
+            {{ borrador?.fechaFin ? (borrador?.fechaFin | date:'dd/MM/yyyy') : '—' }}
+          </div>
+        </div>
+
+        <div class="pv-date">
+          <div class="pv-date__label">Recurso educativo asociado</div>
+          <div class="pv-date__value">
+            {{ (borrador?.idRecursoEducativo?.trim?.() || '-') }}
+          </div>
+        </div>
+      </div>
+
+      <!-- DESCRIPCIÓN RICA -->
+      <div class="pv-section">
+        <h3 class="pv-section__title">Descripción</h3>
+        <div class="pv-body" [innerHTML]="descripcionHtml || '(Sin descripción)'"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ACCIONES -->
+  <footer class="pv-actions">
+    <button type="button" class="dsf-btn dsf-btn--ghost" (click)="onVolverAEditar()">
+      ← Volver a editar
+    </button>
+
+    <span class="pv-actions__spacer"></span>
+
+    <button type="button" class="dsf-btn dsf-btn--primary" (click)="onGuardar()">
+      ✅ Guardar desafío
+    </button>
+  </footer>
+</section>

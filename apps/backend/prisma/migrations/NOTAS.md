@@ -1,0 +1,1 @@
+Nuevas migraciones con actualizaciones de campos de tipo String, se extienden la cantidad de caracteres

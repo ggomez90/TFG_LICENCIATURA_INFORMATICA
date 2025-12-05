@@ -1,4 +1,4 @@
-import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
+import { CanActivate, ExecutionContext, Injectable, Logger } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { ROLES_KEY, Role } from './roles.decorator';
 
@@ -6,25 +6,52 @@ import { ROLES_KEY, Role } from './roles.decorator';
 export class RolesGuard implements CanActivate {
   constructor(private readonly reflector: Reflector) {}
 
+  private readonly logger = new Logger(RolesGuard.name);
+
   canActivate(context: ExecutionContext): boolean {
-    // Lee los roles requeridos puestos por @Roles
+    // Roles requeridos por @Roles en handler/clase
     const requiredRoles = this.reflector.getAllAndOverride<Role[]>(ROLES_KEY, [
       context.getHandler(),
       context.getClass(),
-    ]);
-    if (!requiredRoles || requiredRoles.length === 0) return true;
+    ]) ?? [];
 
     const req = context.switchToHttp().getRequest();
-    const user = req.user;
+    const user = req?.user ?? {};
+    const method = req?.method;
+    const url = req?.originalUrl ?? req?.url;
 
-    // Extrae roles del token de Keycloak (realm + client)
+    // Si la ruta no exige roles, permitir y loguear
+    if (requiredRoles.length === 0) {
+      this.logger.verbose(`ALLOW (no roles required) route=${method} ${url}`);
+      return true;
+    }
+
+    // Roles del token (realm + client específico)
     const realmRoles: string[] = user?.realm_access?.roles ?? [];
     const clientId = process.env.KEYCLOAK_CLIENT_ID || 'api-yo-reciclo';
     const clientRoles: string[] = user?.resource_access?.[clientId]?.roles ?? [];
-
     const tokenRoles = new Set<string>([...realmRoles, ...clientRoles]);
 
-    // Autoriza si el usuario tiene al menos uno de los roles requeridos
-    return requiredRoles.some((r) => tokenRoles.has(r));
+    // Log de diagnóstico
+    this.logger.warn(
+      `ROLES CHECK route=${method} ${url} need=${JSON.stringify(requiredRoles)} ` +
+      `have=${JSON.stringify(Array.from(tokenRoles))} ` +
+      `realm=${JSON.stringify(realmRoles)} client(${clientId})=${JSON.stringify(clientRoles)}`
+    );
+
+    // Tiene al menos uno de los roles requeridos?
+    const allowed = requiredRoles.some(r => tokenRoles.has(r));
+
+    if (!allowed) {
+      this.logger.warn(
+        `DENY route=${method} ${url} need=${JSON.stringify(requiredRoles)} have=${JSON.stringify(Array.from(tokenRoles))}`
+      );
+    } else {
+      this.logger.verbose(
+        `ALLOW route=${method} ${url} matched=${requiredRoles.find(r => tokenRoles.has(r))}`
+      );
+    }
+
+    return allowed;
   }
 }

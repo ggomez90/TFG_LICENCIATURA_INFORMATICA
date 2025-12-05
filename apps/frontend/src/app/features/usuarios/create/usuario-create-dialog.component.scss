@@ -12,7 +12,7 @@
 .modal__panel{
   position: fixed; inset: 0;
   display: grid; place-items: center;
-  padding: 16px; /* margen interior para que no pegue contra los bordes en mobile */
+  padding: 16px;
   z-index: 90;
   box-sizing: border-box;
 }
@@ -28,7 +28,7 @@
   border: 1px solid rgba(16,185,129,.28);
   border-radius: 14px;
   box-shadow: 0 16px 32px rgba(16,185,129,.15), 0 8px 16px rgba(2,6,23,.06);
-  overflow: hidden; /* evita que el contenido rompa los bordes */
+  overflow: hidden;
 }
 
 /* Header */
@@ -65,7 +65,7 @@
 
 .grid{
   display:grid; gap:12px; 
-  grid-template-columns: 1fr; /* mobile una columna */
+  grid-template-columns: 1fr;
 }
 
 @media (min-width: 700px){
@@ -80,8 +80,8 @@
 input, select{
   appearance:none;
   width: 100%;
-  min-width: 0;               /* clave para que no exceda el contenedor */
-  box-sizing: border-box;     /* incluye padding/borde en el ancho */
+  min-width: 0;
+  box-sizing: border-box;
   border:1px solid rgba(16,185,129,.35);
   border-radius:10px;
   padding:10px 12px;

@@ -1,0 +1,126 @@
+<section class="dsf-wrap preview-desafio">
+  <!-- TEMPLATE DE CARGA -->
+  <ng-template #cargando>
+    <div class="dsf-card dsf-card--preview">
+      <div class="dsf-card__body">Cargando desafío...</div>
+    </div>
+  </ng-template>
+
+  <!-- CABECERA -->
+  <header class="dsf-header">
+    <h1 class="dsf-title">Detalle del desafío</h1>
+    <p class="dsf-sub">
+      Vista pública del desafío tal como la verán las personas usuarias.
+    </p>
+  </header>
+
+  <!-- ERRORES -->
+  <div *ngIf="errorMsg as err" class="dsf-alert dsf-alert--error" style="margin-bottom: 1rem;">
+    {{ err }}
+  </div>
+
+  <!-- CARD PRINCIPAL -->
+  <div class="dsf-card dsf-card--preview" *ngIf="data as d; else cargando">
+    <div class="dsf-card__body">
+      <!-- TÍTULO -->
+      <h2 class="pv-title" [innerHTML]="tituloHtml || '(Sin título)'"></h2>
+
+      <!-- METADATA -->
+      <div class="pv-metadata">
+        <span class="pv-badge"
+              [class.pv-badge--ok]="d.requiereInscripcion"
+              [class.pv-badge--muted]="!d.requiereInscripcion">
+          {{ d.requiereInscripcion ? 'Requiere inscripción' : 'Sin inscripción' }}
+        </span>
+
+        <span class="pv-badge"
+              [class.pv-badge--ok]="d.otorgaPuntosParcial"
+              [class.pv-badge--muted]="!d.otorgaPuntosParcial">
+          {{ d.otorgaPuntosParcial ? 'Otorga puntos parciales' : 'Sin puntos parciales' }}
+        </span>
+
+        <span class="pv-chip"
+              [class.pv-chip--activo]="d.estado === 1"
+              [class.pv-chip--pausado]="d.estado === 2"
+              [class.pv-chip--finalizado]="d.estado === 3">
+          {{ d.estado === 1 ? 'ACTIVO' : (d.estado === 2 ? 'PAUSADO' : 'FINALIZADO') }}
+        </span>
+      </div>
+
+      <!-- GRID ATRIBUTOS -->
+      <div class="pv-grid">
+        <article class="pv-card stat">
+          <div class="stat__label">Tipo de residuo</div>
+          <div class="stat__value">{{ d.tipoResiduo || '-' }}</div>
+        </article>
+
+        <article class="pv-card stat">
+          <div class="stat__label">Unidad de medida</div>
+          <div class="stat__value">{{ d.unidadMedida || '-' }}</div>
+        </article>
+
+        <article class="pv-card stat">
+          <div class="stat__label">Meta</div>
+          <div class="stat__value">{{ d.meta }}</div>
+        </article>
+
+        <article class="pv-card stat">
+          <div class="stat__label">Puntos totales</div>
+          <div class="stat__value">{{ d.puntosTotales }}</div>
+        </article>
+
+        <article class="pv-card stat">
+          <div class="stat__label">Puntos por unidad</div>
+          <div class="stat__value">
+            {{ d.puntosPorUnidad != null ? d.puntosPorUnidad : '-' }}
+          </div>
+        </article>
+
+        <article class="pv-card stat">
+          <div class="stat__label">Bonificación por desafío completo</div>
+          <div class="stat__value">
+            {{ d.bonificacionDesafioCompleto != null ? d.bonificacionDesafioCompleto : '-' }}
+          </div>
+        </article>
+      </div>
+
+      <!-- FECHAS -->
+      <div class="pv-dates">
+        <div class="pv-date">
+          <div class="pv-date__label">Inicio</div>
+          <div class="pv-date__value">{{ d.fechaInicio | date:'dd/MM/yyyy' }}</div>
+        </div>
+
+        <div class="pv-date">
+          <div class="pv-date__label">Fin</div>
+          <div class="pv-date__value">
+            {{ d.fechaFin ? (d.fechaFin | date:'dd/MM/yyyy') : '—' }}
+          </div>
+        </div>
+
+        <div class="pv-date">
+          <div class="pv-date__label">Recurso educativo asociado</div>
+          <div class="pv-date__value">
+            <ng-container *ngIf="recursoUrl as url; else sinRecurso">
+              <a [href]="url" target="_blank" rel="noopener noreferrer">{{ url }}</a>
+            </ng-container>
+            <ng-template #sinRecurso>—</ng-template>
+          </div>
+        </div>
+      </div>
+
+      <!-- DESCRIPCIÓN -->
+      <div class="pv-section">
+        <h3 class="pv-section__title">Descripción</h3>
+        <div class="pv-body" [innerHTML]="descripcionHtml || '(Sin descripción)'"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ACCIONES -->
+  <footer class="pv-actions pv-actions--left">
+    <button type="button" class="dsf-btn dsf-btn--ghost" (click)="onVolver()">
+      ← Volver
+    </button>
+  </footer>
+</section>

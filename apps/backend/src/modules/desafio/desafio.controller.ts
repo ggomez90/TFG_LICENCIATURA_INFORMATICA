@@ -10,6 +10,7 @@ import {
   UseGuards,
   HttpCode,
   HttpStatus,
+  Req,
 } from '@nestjs/common';
 import { DesafioService } from './desafio.service';
 import { CreateDesafioDto } from './create-desafio.dto';
@@ -23,25 +24,38 @@ import { KeycloakAuthGuard, RolesGuard, Roles } from '../../auth';
 export class DesafioController {
   constructor(private readonly desafioService: DesafioService) {}
 
-  // Listado (cualquier rol autenticado)
+  // Listado (cualquier rol que este autenticado)
   @Get()
   @UseGuards(KeycloakAuthGuard)
   async findAll(@Query() filter: FilterDesafioDto) {
     return this.desafioService.findAll(filter);
   }
 
-  // ADMIN
+  //Kpis para el dashboard del admin
+  @Get('admin/summary')
+  @UseGuards(KeycloakAuthGuard, RolesGuard)
+  @Roles('ADMIN', 'ADMINISTRADOR')
+  async getSummary() {
+    return this.desafioService.getSummary();
+  }
+
   @Post()
   @UseGuards(KeycloakAuthGuard, RolesGuard)
-  @Roles('ADMIN')
+  @Roles('ADMIN', 'ADMINISTRADOR')
   @HttpCode(HttpStatus.CREATED)
-  async create(@Body() dto: CreateDesafioDto) {
-    return this.desafioService.create(dto);
+  async create(@Req() req: any, @Body() dto: CreateDesafioDto) {
+    // toma id numérico del token (el claim custom idUsuario)
+    const idFromToken = Number(req?.user?.idUsuario);
+
+    // Si no está en el token se toma el que llega en el body (ya validado por DTO)
+    const resolvedIdAdmin = Number.isFinite(idFromToken) ? idFromToken : dto.idAdmin;
+
+    return this.desafioService.createWithAdmin(resolvedIdAdmin, dto);
   }
 
   @Patch(':id')
   @UseGuards(KeycloakAuthGuard, RolesGuard)
-  @Roles('ADMIN')
+  @Roles('ADMIN', 'ADMINISTRADOR')
   async update(
     @Param('id', ParseIntPipe) idDesafio: number,
     @Body() dto: UpdateDesafioDto,
@@ -51,7 +65,7 @@ export class DesafioController {
 
   @Patch(':id/estado')
   @UseGuards(KeycloakAuthGuard, RolesGuard)
-  @Roles('ADMIN')
+  @Roles('ADMIN', 'ADMINISTRADOR')
   async updateEstado(
     @Param('id', ParseIntPipe) idDesafio: number,
     @Body() dto: UpdateEstadoDesafioDto,

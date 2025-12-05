@@ -1,0 +1,88 @@
+<section class="dsf-wrap preview-contenido">
+  <header class="dsf-header">
+    <h1 class="dsf-title">Previsualización del contenido educativo</h1>
+    <p class="dsf-sub">
+      Así se verá el recurso en la biblioteca educativa de Yo Reciclo.
+    </p>
+  </header>
+
+  <div class="dsf-card dsf-card--preview">
+    <div class="dsf-card__body">
+      <!-- TÍTULO -->
+      <h2 class="preview-title" [innerHTML]="tituloHtml"></h2>
+
+      <!-- METADATOS -->
+      <div class="preview-meta" *ngIf="borrador">
+        <span class="preview-meta__item">
+          Publicación:
+          <strong>{{ borrador.fechaPublicacion | date: 'dd/MM/yyyy' }}</strong>
+        </span>
+
+        <span class="preview-meta__item" *ngIf="borrador.fechaBaja">
+          Baja:
+          <strong>{{ borrador.fechaBaja | date: 'dd/MM/yyyy' }}</strong>
+        </span>
+
+        <span
+          class="preview-badge"
+          [class.preview-badge--ok]="borrador.visible"
+          [class.preview-badge--muted]="!borrador.visible"
+        >
+          {{ borrador.visible ? 'Visible al público' : 'Oculto' }}
+        </span>
+      </div>
+
+      <!-- VIDEO / RECURSO -->
+      <div class="preview-media" *ngIf="videoEmbedUrl || borrador?.urlRecurso">
+        <ng-container *ngIf="videoEmbedUrl; else linkSolo">
+          <div class="preview-media__frame">
+            <iframe
+              [src]="videoEmbedUrl"
+              title="Recurso educativo"
+              frameborder="0"
+              allowfullscreen
+            ></iframe>
+          </div>
+          <p class="preview-media__link">
+            Ver en YouTube:
+            <a [href]="borrador?.urlRecurso" target="_blank" rel="noopener">
+              {{ borrador?.urlRecurso }}
+            </a>
+          </p>
+        </ng-container>
+
+        <ng-template #linkSolo>
+          <p class="preview-media__link">
+            Recurso:
+            <a [href]="borrador?.urlRecurso" target="_blank" rel="noopener">
+              {{ borrador?.urlRecurso }}
+            </a>
+          </p>
+        </ng-template>
+      </div>
+
+      <!-- DESCRIPCIÓN -->
+      <div class="preview-body" [innerHTML]="descripcionHtml"></div>
+    </div>
+  </div>
+
+  <footer class="preview-actions">
+    <button
+      type="button"
+      class="dsf-btn dsf-btn--ghost"
+      (click)="onVolverAEditar()"
+    >
+      ← Volver a editar
+    </button>
+
+    <span class="preview-actions__spacer"></span>
+
+    <button
+      type="button"
+      class="dsf-btn dsf-btn--primary"
+      (click)="onConfirmarPublicar()"
+    >
+      ✅ Confirmar y volver
+    </button>
+  </footer>
+</section>

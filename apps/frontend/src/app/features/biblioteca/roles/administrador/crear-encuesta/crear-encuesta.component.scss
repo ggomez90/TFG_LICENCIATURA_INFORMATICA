@@ -1,0 +1,452 @@
+@use '../../cliente/biblioteca-cliente.component' as *;
+
+.crear-contenido {
+  .dsf-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .dsf-card--form {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 1.75rem 1.5rem;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.04);
+    border: 1px solid rgba(0, 128, 0, 0.06);
+  }
+
+  .dsf-card__body {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  .dsf-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  .dsf-field__label {
+    font-weight: 600;
+    color: #0b3b25;
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.4rem;
+  }
+
+  .dsf-field__hint {
+    font-size: 0.8rem;
+    color: #5e7a6a;
+  }
+
+  .dsf-field__required {
+    color: #c0392b;
+    font-weight: 700;
+  }
+
+  .dsf-input,
+  .dsf-textarea {
+    border-radius: 999px;
+    border: 1px solid #d3e4d8;
+    padding: 0.7rem 1rem;
+    font-size: 0.95rem;
+    outline: none;
+    transition:
+      border-color 0.15s ease,
+      box-shadow 0.15s ease,
+      background-color 0.15s ease;
+    background: #f9fdfb;
+  }
+
+  .dsf-input--lg,
+  .dsf-textarea--lg {
+    width: 100%;
+  }
+
+  .dsf-textarea {
+    border-radius: 18px;
+    resize: vertical;
+    min-height: 140px;
+  }
+
+  .dsf-input:focus,
+  .dsf-textarea:focus {
+    border-color: #2e8b57;
+    box-shadow: 0 0 0 2px rgba(46, 139, 87, 0.18);
+    background: #ffffff;
+  }
+
+  .dsf-fields-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .dsf-field--half {
+    flex: 1 1 220px;
+  }
+
+  .dsf-field--half .dsf-input {
+    max-width: 260px;
+  }
+
+  .dsf-field--wide {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  /* SWITCH */
+  .dsf-field--switch {
+    margin-top: 0.5rem;
+  }
+
+  .dsf-switch-field {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    cursor: pointer;
+  }
+
+  .dsf-switch-field input {
+    display: none;
+  }
+
+  .dsf-switch__track {
+    width: 46px;
+    height: 24px;
+    border-radius: 999px;
+    background: #d3e4d8;
+    position: relative;
+    transition: background 0.15s ease;
+  }
+
+  .dsf-switch__thumb {
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #ffffff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.16);
+    transition: transform 0.15s ease;
+  }
+
+  .dsf-switch-field input:checked + .dsf-switch__track {
+    background: #2e8b57;
+  }
+
+  .dsf-switch-field input:checked + .dsf-switch__track .dsf-switch__thumb {
+    transform: translateX(22px);
+  }
+
+  .dsf-switch__text {
+    font-weight: 500;
+    color: #0b3b25;
+  }
+
+  .dsf-note {
+    font-size: 0.8rem;
+    color: #6b7f70;
+    margin-top: 0.5rem;
+  }
+
+  .dsf-form__actions {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-top: 0.5rem;
+  }
+
+  .dsf-form__actions .dsf-btn {
+    min-height: 40px;
+    padding-top: 0.4rem;
+    padding-bottom: 0.4rem;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .dsf-form__spacer {
+    flex: 1;
+  }
+
+  /* TOOLBAR clonado crear-contenido */
+
+  .editor-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.4rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .dsf-toolbar__btn {
+    border: 1px solid #d3e4d8;
+    background: #f5fbf7;
+    border-radius: 999px;
+    padding: 0.5rem 0.85rem;
+    font-size: 1rem;
+    cursor: pointer;
+    color: #0b3b25;
+    font-weight: 500;
+    line-height: 1;
+    transition:
+      background 0.15s ease,
+      border-color 0.15s ease,
+      transform 0.05s ease;
+  }
+
+  .dsf-toolbar__btn strong,
+  .dsf-toolbar__btn em {
+    font-size: 1rem;
+  }
+
+  .dsf-toolbar__btn .u {
+    text-decoration: underline;
+  }
+
+  .dsf-toolbar__btn:hover {
+    background: #e3f5ea;
+    border-color: #2e8b57;
+    transform: translateY(-0.5px);
+  }
+
+  .editor-toolbar select {
+    padding: 0.5rem 0.85rem;
+    border-radius: 999px;
+    border: 1px solid #d3e4d8;
+    background: #ffffff;
+    font-size: 1rem;
+    color: #0b3b25;
+    outline: none;
+  }
+
+  .editor-toolbar select:focus {
+    border-color: #2e8b57;
+    box-shadow: 0 0 0 2px rgba(46, 139, 87, 0.18);
+  }
+
+  .editor-toolbar .color-picker-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 1.2rem;
+    color: #0b3b25;
+
+    input[type='color'] {
+      width: 28px;
+      height: 28px;
+      padding: 0;
+      border-radius: 999px;
+      border: 1px solid #cfe8d3;
+      background: transparent;
+      cursor: pointer;
+    }
+  }
+
+  .editor-toolbar .sep {
+    width: 1px;
+    height: 22px;
+    background: #cfe8d3;
+    margin: 0 0.25rem;
+  }
+
+  /* ÁREAS DE EDICIÓN RICA */
+
+  .editor-area {
+    border: 1px solid #d3e4d8;
+    background: #f9fdfb;
+    border-radius: 18px;
+    min-height: 80px;
+    padding: 0.6rem 1rem;
+    font-size: 0.95rem;
+    line-height: 1.5rem;
+    outline: none;
+    transition:
+      border-color 0.15s ease,
+      box-shadow 0.15s ease,
+      background-color 0.15s ease;
+  }
+
+  .editor-area.editor-area--descripcion {
+    min-height: 180px;
+  }
+
+  .editor-area:focus {
+    border-color: #2e8b57;
+    box-shadow: 0 0 0 2px rgba(46, 139, 87, 0.18);
+    background: #ffffff;
+  }
+
+  //AJUSTES RESPONSIVE
+  @media (max-width: 768px) {
+    .dsf-card--form {
+      padding: 1.25rem 1rem;
+    }
+
+    /* Toolbar de formato apila mejor en mobile */
+    .editor-toolbar {
+      flex-direction: column;
+      align-items: stretch;
+
+      button {
+        min-width: 100%;
+        justify-content: center;
+      }
+
+      select {
+        width: 100%;
+      }
+
+      .color-picker-label {
+        justify-content: space-between;
+      }
+
+      .sep {
+        display: none;
+      }
+    }
+
+    /* Campos de fecha uno debajo del otro */
+    .dsf-fields-row {
+      flex-direction: column;
+    }
+
+    .dsf-field--half {
+      flex: 1 1 100%;
+    }
+
+    /* Botones de acciones que puedan saltar de línea prolijamente */
+    .dsf-form__actions {
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 0.5rem;
+
+      .dsf-btn {
+        min-width: 140px;
+        text-align: center;
+      }
+
+      .dsf-form__spacer {
+        display: none; /* no deforma el wrap en mobile */
+      }
+    }
+  }
+}
+
+/* Opciones de respuesta*/
+
+.opt-panel {
+  margin-top: 0.5rem;
+  padding: 0.75rem 0.75rem 0.5rem;
+  border: 1px dashed #cfe8d3;
+  border-radius: 14px;
+  background: #f8fdf9;
+}
+
+.opt-add-row {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 0.75rem;
+
+  .dsf-input {
+    flex: 1 1 260px;
+    min-width: 220px;
+  }
+
+  .dsf-btn {
+    min-height: 40px;
+    display: inline-flex;
+    align-items: center;
+  }
+}
+
+.opt-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.opt-item {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.45rem 0.6rem;
+  background: #ffffff;
+  border: 1px solid #e3efe7;
+  border-radius: 12px;
+
+  &__control {
+    display: inline-flex;
+    align-items: center;
+
+    input[type='checkbox'],
+    input[type='radio'] {
+      width: 18px;
+      height: 18px;
+      accent-color: #2e7d32;
+      cursor: default;
+    }
+  }
+
+  &__text {
+    font-size: 0.95rem;
+    color: #0b3b25;
+    line-height: 1.35;
+    word-break: break-word;
+  }
+
+  &__remove {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.25rem;
+    border-radius: 999px;
+    padding: 0.35rem 0.65rem;
+    border: 1px solid #e8efe9;
+    background: #f7fbf8;
+    cursor: pointer;
+    font-size: 0.9rem;
+
+    &:hover {
+      background: #eef8f1;
+      border-color: #cfe8d3;
+    }
+
+    .trash {
+      font-size: 1rem;
+      line-height: 1;
+    }
+  }
+}
+
+/* Toggle de tipo (una/múltiples) */
+.tipo-toggle {
+  display: inline-flex;
+  gap: 0.5rem;
+  align-items: center;
+  padding: 0.35rem 0.6rem;
+  border: 1px solid #d3e4d8;
+  border-radius: 999px;
+  background: #ffffff;
+
+  select {
+    border: none;
+    outline: none;
+    font-size: 0.95rem;
+    padding: 0.25rem 0.15rem;
+    background: transparent;
+    color: #0b3b25;
+  }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .opt-item {
+    grid-template-columns: auto 1fr auto;
+  }
+}

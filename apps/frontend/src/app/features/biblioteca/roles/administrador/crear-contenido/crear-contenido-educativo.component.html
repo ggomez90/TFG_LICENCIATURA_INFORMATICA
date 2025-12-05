@@ -1,0 +1,275 @@
+<section class="dsf-wrap crear-contenido">
+  <!-- CABECERA -->
+  <header class="dsf-header">
+    <h1 class="dsf-title">Nuevo contenido educativo</h1>
+    <p class="dsf-sub">
+      Cargá un recurso educativo (artículo, guía, video, etc.) para la biblioteca de Yo Reciclo.
+    </p>
+  </header>
+
+  <!-- FORMULARIO -->
+  <form class="dsf-form" (ngSubmit)="onPublicar()">
+    <div class="dsf-card dsf-card--form">
+      <div class="dsf-card__body">
+        <!-- TOOLBAR COMPARTIDA (TÍTULO + DESCRIPCIÓN) -->
+        <div class="editor-toolbar">
+          <!-- BÁSICO -->
+          <button
+            type="button"
+            class="dsf-toolbar__btn"
+            (click)="format('bold')"
+          >
+            <strong>B</strong>
+          </button>
+          <button
+            type="button"
+            class="dsf-toolbar__btn"
+            (click)="format('italic')"
+          >
+            <em>I</em>
+          </button>
+          <button
+            type="button"
+            class="dsf-toolbar__btn"
+            (click)="format('underline')"
+          >
+            <span class="u">U</span>
+          </button>
+
+          <span class="sep"></span>
+
+          <!-- ALINEACIÓN -->
+          <button
+            type="button"
+            class="dsf-toolbar__btn"
+            (click)="format('justifyLeft')"
+            title="Alinear a la izquierda"
+          >
+            ↞
+          </button>
+          <button
+            type="button"
+            class="dsf-toolbar__btn"
+            (click)="format('justifyCenter')"
+            title="Centrar"
+          >
+            ↔
+          </button>
+          <button
+            type="button"
+            class="dsf-toolbar__btn"
+            (click)="format('justifyRight')"
+            title="Alinear a la derecha"
+          >
+            ↠
+          </button>
+          <button
+            type="button"
+            class="dsf-toolbar__btn"
+            (click)="format('justifyFull')"
+            title="Justificar"
+          >
+            ☰
+          </button>
+
+          <span class="sep"></span>
+
+          <!-- LISTA -->
+          <button
+            type="button"
+            class="dsf-toolbar__btn"
+            (click)="format('insertUnorderedList')"
+          >
+            • Lista
+          </button>
+
+          <span class="sep"></span>
+
+          <!-- FUENTE -->
+          <select (change)="onFontFamilyChange($event)">
+            <option value="">Fuente</option>
+            <option value="system-ui">Sistema</option>
+            <option value="Arial">Arial</option>
+            <option value="Georgia">Georgia</option>
+            <option value="Times New Roman">Times</option>
+            <option value="Verdana">Verdana</option>
+          </select>
+
+          <!-- TAMAÑO -->
+          <select (change)="onFontSizeChange($event)">
+            <option value="">Tamaño</option>
+            <option value="2">Pequeño</option>
+            <option value="3">Normal</option>
+            <option value="4">Grande</option>
+            <option value="5">Muy grande</option>
+          </select>
+
+          <!-- COLOR -->
+          <label class="color-picker-label">
+            <span>Color</span>
+            <input
+              type="color"
+              (change)="onColorChange($event)"
+              [value]="currentColor"
+            />
+          </label>
+
+          <span class="sep"></span>
+
+          <!-- LIMPIAR -->
+          <button
+            type="button"
+            class="dsf-toolbar__btn"
+            (click)="clearFormat()"
+            title="Limpiar formato"
+          >
+            🧹 Limpiar
+          </button>
+        </div>
+
+        <!-- TÍTULO -->
+        <label class="dsf-field dsf-field--wide">
+          <span class="dsf-field__label">
+            Título
+            <small class="dsf-field__hint">
+              (opcional, máx. 300 caracteres)
+            </small>
+          </span>
+          <div
+            #tituloEditor
+            class="editor-area editor-area--title"
+            contenteditable="true"
+            (focus)="setActiveEditor('titulo')"
+            (input)="onTituloChange($event)"
+          ></div>
+        </label>
+
+        <!-- DESCRIPCIÓN CON FORMATO -->
+        <label class="dsf-field dsf-field--wide">
+          <span class="dsf-field__label">
+            Descripción
+            <small class="dsf-field__hint">
+              (opcional, máx. 500 caracteres — admite formato)
+            </small>
+          </span>
+          <div
+            #descripcionEditor
+            class="editor-area editor-area--descripcion"
+            contenteditable="true"
+            (focus)="setActiveEditor('descripcion')"
+            (input)="onDescripcionChange($event)"
+          ></div>
+        </label>
+
+        <!-- URL DEL RECURSO -->
+        <label class="dsf-field dsf-field--wide url-field">
+          <span class="dsf-field__label">
+            URL del recurso
+            <small class="dsf-field__hint">
+              (opcional, máx. 200 caracteres. Enlace a PDF, video, etc.)
+            </small>
+          </span>
+          <input
+            type="url"
+            class="dsf-input dsf-input--lg"
+            name="urlRecurso"
+            maxlength="200"
+            placeholder="https://ejemplo.com/recurso.pdf"
+            [(ngModel)]="form.urlRecurso"
+          />
+        </label>
+
+        <!-- BLOQUE DE FECHAS -->
+        <div class="dsf-fields-row">
+          <!-- FECHA PUBLICACIÓN -->
+          <label class="dsf-field dsf-field--half">
+            <span class="dsf-field__label">
+              Fecha de publicación
+              <span class="dsf-field__required">*</span>
+            </span>
+            <input
+              type="date"
+              class="dsf-input"
+              name="fechaPublicacion"
+              required
+              [min]="minFechaPublicacion"
+              [(ngModel)]="form.fechaPublicacion"
+            />
+          </label>
+
+          <!-- FECHA BAJA -->
+          <label class="dsf-field dsf-field--half">
+            <span class="dsf-field__label">
+              Fecha de baja
+              <small class="dsf-field__hint">
+                (opcional, debe ser posterior a la fecha de publicación)
+              </small>
+            </span>
+            <input
+              type="date"
+              class="dsf-input"
+              name="fechaBaja"
+              [min]="getMinFechaBaja()"
+              [(ngModel)]="form.fechaBaja"
+            />
+          </label>
+        </div>
+
+        <!-- VISIBLE (CON SWITCH) -->
+        <div class="dsf-field dsf-field--switch">
+          <label class="dsf-switch-field">
+            <input
+              type="checkbox"
+              id="visibleSwitch"
+              name="visible"
+              [(ngModel)]="form.visible"
+            />
+            <span class="dsf-switch__track">
+              <span class="dsf-switch__thumb"></span>
+            </span>
+            <span class="dsf-switch__text">
+              Visible al público
+            </span>
+          </label>
+          <p class="dsf-field__hint">
+            Si está activo, el contenido aparecerá en la biblioteca (respetando
+            las fechas de publicación y baja).
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ACCIONES -->
+    <footer class="dsf-form__actions">
+      <button
+        type="button"
+        class="dsf-btn dsf-btn--ghost"
+        (click)="onVolver()"
+      >
+        ← Volver
+      </button>
+
+      <button
+        type="button"
+        class="dsf-btn dsf-btn--ghost"
+        (click)="onBorrar()"
+      >
+        🧹 Borrar
+      </button>
+
+      <span class="dsf-form__spacer"></span>
+
+      <button
+        type="button"
+        class="dsf-btn dsf-btn--outline"
+        (click)="onPrevisualizar()"
+      >
+        👁️ Previsualizar
+      </button>
+
+      <button type="submit" class="dsf-btn dsf-btn--primary">
+        Publicar contenido
+      </button>
+    </footer>
+  </form>
+</section>

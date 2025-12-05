@@ -1,0 +1,307 @@
+@use '../../biblioteca/roles/cliente/biblioteca-cliente.component.scss' as *;
+
+/* Cabecera y textos */
+.desafios-admin {
+  .dsf-header { margin-bottom: 2rem; }
+  .dsf-title  { color: #1b5e20; }
+  .dsf-sub    { color: #2e7d32; }
+}
+
+/* Panel contenedor */
+.dsf-panel {
+  background: #ffffff;
+  border-radius: 12px;
+  border: 1px solid #c8e6c9;
+  box-shadow: 0 10px 25px rgba(56, 142, 60, 0.08);
+  padding: 1.25rem;
+}
+
+/* FILTROS */
+.dsf-filters {
+  margin-bottom: 1rem;
+  padding: 0.75rem 1rem;
+  border-radius: 0.75rem;
+  background: #f1f8e9;
+  border: 1px dashed #c5e1a5;
+}
+
+// Fila de filtros: En escritorio una o dos líneas, sin superposiciones, con gaps constantes y en celu: se apilan en columna
+.dsf-filters__row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem 0.75rem;
+  align-items: end;
+  min-width: 0;
+}
+
+.dsf-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  min-width: 120px;
+  flex: 0 0 auto;
+}
+
+.dsf-field__label {
+  font-weight: 600;
+  color: #0b3b25;
+  display: inline-flex;
+  justify-content: flex-start;
+  font-size: 0.9rem;
+}
+
+/* Dimensiones y proporciones de cada control */
+$ctrl-h: 42px;
+
+.dsf-input,
+select.dsf-input {
+  height: $ctrl-h;
+  border-radius: 999px;
+  border: 1px solid #d3e4d8;
+  padding: 0.55rem 1rem;
+  font-size: 0.95rem;
+  outline: none;
+  transition: border-color .15s ease, box-shadow .15s ease, background-color .15s ease;
+  background: #f9fdfb;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.dsf-input:focus,
+select.dsf-input:focus {
+  border-color: #2e8b57;
+  box-shadow: 0 0 0 2px rgba(46,139,87,.18);
+  background: #fff;
+}
+
+/* Campo Buscar */
+.dsf-field--search {
+  flex: 1 1 360px;
+  min-width: 280px;
+  max-width: 520px;
+}
+.dsf-field--search .dsf-input--lg { width: 100%; }
+
+/* Campos compactos a la derecha del buscador */
+.dsf-field--tipo   { flex: 0 0 200px; max-width: 240px; }
+.dsf-field--date   { flex: 0 0 160px; max-width: 180px; }
+.dsf-field--select { flex: 0 0 170px; max-width: 190px; }
+
+/* Botones a la derecha y con la misma altura que los inputs */
+.dsf-filters__buttons {
+  display: flex;
+  gap: .5rem;
+  margin-left: auto;
+  flex: 0 0 auto;
+  align-items: center;
+}
+.dsf-btn {
+  border-radius: 999px;
+  padding: 0 .95rem;
+  font-size: .9rem;
+  font-weight: 500;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: background-color .15s ease, color .15s ease, border-color .15s ease;
+  height: $ctrl-h;
+  display: inline-flex;
+  align-items: center;
+}
+.dsf-btn--outline { background: #fff; color: #2e7d32; border-color: #2e7d32; }
+.dsf-btn--outline:hover { background: #e8f5e9; }
+.dsf-btn--ghost { background: transparent; color: #2e7d32; border-color: transparent; }
+.dsf-btn--ghost:hover { background: #e8f5e9; }
+.dsf-btn:disabled { opacity: .5; cursor: default; background: #f5f5f5; color: #9e9e9e; }
+
+/* TABLA  */
+.dsf-table-wrap {
+  overflow-x: auto;                  /* scroll horizontal si no entra */
+  -webkit-overflow-scrolling: touch; /* inercia en iOS */
+}
+
+.dsf-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+  table-layout: fixed;
+  min-width: 920px; /* fuerza scroll horizontal en pantallas angostas sin deformar columnas */
+}
+
+.dsf-table thead th {
+  text-align: center;
+  font-size: 1rem;
+  letter-spacing: 0.04em;
+  color: #2e7d32;
+  background: #f1f8e9;
+  text-transform: uppercase;
+}
+
+.dsf-table th, .dsf-table td {
+  padding: 0.7rem 0.9rem;
+  border-bottom: 1px solid #e0e0e0;
+  vertical-align: middle;
+}
+.dsf-td--center { text-align: center; }
+.dsf-td--title  { text-align: left; }
+.dsf-table__cell--strong { font-weight: 700; color: #1b5e20; }
+
+/* Anchos pensados + aire entre Inscripción y Acciones */
+.dsf-table thead th:nth-child(1),
+.dsf-table tbody td:nth-child(1) { width: 12%; } /* Inicio */
+.dsf-table thead th:nth-child(2),
+.dsf-table tbody td:nth-child(2) { width: 12%; } /* Fin */
+.dsf-table thead th:nth-child(3),
+.dsf-table tbody td:nth-child(3) { width: 40%; } /* Título */
+.dsf-table thead th:nth-child(4),
+.dsf-table tbody td:nth-child(4) { width: 14%; } /* Estado */
+.dsf-table thead th:nth-child(5),
+.dsf-table tbody td:nth-child(5) { width: 10%; } /* Inscripción */
+.dsf-table thead th:nth-child(6),
+.dsf-table tbody td:nth-child(6) { width: 12%; } /* Acciones */
+
+.dsf-table__th--actions { text-align: center; }
+.dsf-table__cell--actions { text-align: center; padding-right: 0.6rem; }
+
+.dsf-actions-inline {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  height: 36px;
+}
+
+/* Icon buttons */
+.dsf-icon-btn {
+  width: 32px;
+  height: 32px;
+  border: 1px solid #d3e4d8;
+  background: #f5fbf7;
+  border-radius: 8px;
+  font-size: 16px;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background .15s ease, border-color .15s ease, transform .05s ease;
+}
+.dsf-icon-btn:hover {
+  background: #e3f5ea;
+  border-color: #2e7d32;
+  transform: translateY(-1px);
+}
+
+/* Badges */
+.dsf-badge { display: inline-flex; align-items: center; padding: 0.15rem 0.6rem; border-radius: 999px; font-weight: 600; font-size: 0.8rem; }
+.dsf-badge--ok    { background: #e8f5e9; color: #2e7d32; } /* Activo / Sí */
+.dsf-badge--muted { background: #eeeeee; color: #616161; } /* Finalizado / No */
+.dsf-badge--warn  { background: #fff7ed; color: #9a3412; } /* Pausado */
+
+/* ESTADOS VACÍOS / LOADING */
+.dsf-empty { border-radius: 0.75rem; padding: 1rem; background: #fff; border: 1px dashed #c5e1a5; text-align: center; color: #2e7d32; font-size: 0.95rem; }
+.dsf-empty--loading {
+  background: linear-gradient(90deg,#ffffff 0%,#f1f8e9 50%,#ffffff 100%);
+  background-size: 200% 100%;
+  animation: dsf-skeleton 1.5s infinite linear;
+}
+.dsf-empty__text { margin: 0; }
+@keyframes dsf-skeleton { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+/* PAGINACIÓN */
+.dsf-pagination {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 1rem;
+  margin-top: 0.5rem;
+  border-top: 1px solid rgba(0,120,60,0.12);
+  font-size: 0.9rem;
+}
+.dsf-pagination__buttons { display: flex; gap: 0.5rem; }
+.dsf-pagination__buttons .dsf-btn {
+  padding: 0.7rem 1.2rem;
+  min-height: 42px;
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.95rem;
+}
+.dsf-pagination__info strong { color: #126b3f; }
+
+/* RESPONSIVE */
+
+/* Laptops/Tablet grandes */
+@media (max-width: 1200px) {
+  .dsf-field--search { flex: 1 1 320px; max-width: 520px; }
+  .dsf-field--tipo   { flex: 0 0 190px; }
+  .dsf-field--date   { flex: 0 0 150px; }
+  .dsf-field--select { flex: 0 0 160px; }
+}
+
+/* ≤ 992px */
+@media (max-width: 992px) {
+  .dsf-filters__row { gap: 0.6rem 0.7rem; }
+  .dsf-filters__buttons { margin-left: auto; }
+}
+
+/* ≤ 768px */
+@media (max-width: 768px) {
+  .dsf-filters__row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .dsf-field,
+  .dsf-field--search,
+  .dsf-field--tipo,
+  .dsf-field--date,
+  .dsf-field--select {
+    flex: 1 1 auto;
+    max-width: none;
+    width: 100%;
+  }
+  .dsf-filters__buttons {
+    justify-content: flex-end;
+    margin-left: 0;
+  }
+
+  .dsf-table-wrap { -webkit-overflow-scrolling: touch; }
+  .dsf-table { table-layout: auto; }
+  .dsf-table th, .dsf-table td { padding: 0.55rem 0.6rem; }
+  .dsf-table thead th { font-size: 0.95rem; }
+
+  .dsf-td--title > * {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .dsf-table__cell--actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 6px;
+  }
+  .dsf-actions-inline { gap: 8px; height: auto; }
+}
+
+/* ≤ 560px */
+@media (max-width: 560px) {
+  .dsf-input { font-size: 0.9rem; }
+  .dsf-table thead th { font-size: 0.9rem; }
+  .dsf-table th, .dsf-table td { padding: 0.45rem 0.5rem; }
+  .dsf-icon-btn { transform: scale(0.95); }
+  .dsf-badge { font-size: 0.78rem; }
+
+  .dsf-pagination {
+    flex-direction: column;
+    gap: 0.6rem;
+    align-items: stretch;
+  }
+  .dsf-pagination__buttons { justify-content: space-between; }
+}
+
+/* ≤ 400px */
+@media (max-width: 400px) {
+  .dsf-td--title > * { -webkit-line-clamp: 3; }
+  .dsf-icon-btn { transform: scale(0.9); }
+}

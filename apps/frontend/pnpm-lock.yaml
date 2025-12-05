@@ -91,6 +91,8 @@ importers:
         specifier: ~5.9.2
         version: 5.9.2
 
+  ../backend: {}
+
 packages:
 
   '@algolia/abtesting@1.1.0':

@@ -1,0 +1,178 @@
+
+@use '../../../../biblioteca/roles/administrador/crear-contenido/preview-contenido-educativo.component.scss' as *;
+
+.preview-desafio {
+  .dsf-card--preview {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 1.75rem 1.5rem;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.04);
+    border: 1px solid rgba(0, 128, 0, 0.06);
+  }
+
+  .dsf-card__body {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  .pv-title {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #0b3b25;
+    line-height: 1.2;
+  }
+
+  /* Badges y estado */
+  .pv-metadata {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .5rem .75rem;
+    align-items: center;
+  }
+
+  .pv-badge {
+    border-radius: 999px;
+    padding: .25rem .7rem;
+    font-size: .8rem;
+    font-weight: 700;
+    border: 1px solid transparent;
+    background: #ecf0f1;
+    color: #475d52;
+  }
+
+  .pv-badge--ok {
+    background: #e3f7ec;
+    color: #145a32;
+    border-color: #c9ecd4;
+  }
+  .pv-badge--muted {
+    background: #f3f4f6;
+    color: #6b7280;
+    border-color: #e5e7eb;
+  }
+
+  .pv-chip {
+    margin-left: auto;
+    border-radius: 999px;
+    padding: .3rem .8rem;
+    font-size: .75rem;
+    font-weight: 900;
+    letter-spacing: .03em;
+    border: 1px solid transparent;
+    background: #eef2ff;
+    color: #3730a3;
+  }
+  .pv-chip--activo {
+    background: #dcfce7; color: #065f46; border-color: #bbf7d0;
+  }
+  .pv-chip--pausado {
+    background: #fff7ed; color: #9a3412; border-color: #fed7aa;
+  }
+  .pv-chip--finalizado {
+    background: #f3f4f6; color: #374151; border-color: #e5e7eb;
+  }
+
+  /* Grid de atributos */
+  .pv-grid {
+    display: grid;
+    gap: 12px;
+    grid-template-columns: repeat(12, 1fr);
+  }
+
+  .pv-card.stat {
+    grid-column: span 6;
+    background:
+      radial-gradient(60% 80% at 0% 0%, rgba(16,185,129,.10) 0%, rgba(16,185,129,0) 70%),
+      #ffffff;
+    border: 1px solid rgba(16,185,129,.20);
+    border-radius: 14px;
+    padding: 12px 14px;
+  }
+
+  .stat__label {
+    font-size: .80rem;
+    color: #0b3b25;
+    opacity: .8;
+    margin-bottom: 6px;
+  }
+
+  .stat__value {
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: #065f46;
+    line-height: 1.1;
+    word-break: break-word;
+  }
+
+  /* Fechas / Recurso */
+  .pv-dates {
+    display: grid;
+    gap: 12px;
+    grid-template-columns: repeat(12, 1fr);
+  }
+
+  .pv-date {
+    grid-column: span 4;
+    background: #f9fdfb;
+    border: 1px solid #d3e4d8;
+    border-radius: 12px;
+    padding: 10px 12px;
+  }
+
+  .pv-date__label {
+    font-size: .8rem;
+    color: #476556;
+    margin-bottom: 4px;
+  }
+  .pv-date__value {
+    font-weight: 800;
+    color: #0b3b25;
+  }
+
+  /* Descripción rica */
+  .pv-section {
+    display: grid;
+    gap: .5rem;
+  }
+  .pv-section__title {
+    margin: 0;
+    font-size: 1.05rem;
+    font-weight: 800;
+    color: #0b3b25;
+  }
+  .pv-body {
+    border: 1px solid #d3e4d8;
+    background: #ffffff;
+    border-radius: 14px;
+    padding: .8rem 1rem;
+    line-height: 1.6;
+    color: #23402e;
+    /* contenido enriquecido */
+    h1,h2,h3 { margin: .5rem 0; }
+    ul,ol { margin: .5rem 0 .5rem 1.2rem; }
+    strong { font-weight: 800; color: #0b3b25; }
+    em { color: #0b3b25; }
+    a { color: #2e8b57; text-decoration: underline; }
+  }
+
+  /* Acciones (mismos estilos que preview de contenido) */
+  .pv-actions {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: .75rem;
+    margin-top: 1rem;
+  }
+  .pv-actions__spacer { flex: 1; }
+
+  /* Responsive */
+  @media (max-width: 900px) {
+    .pv-card.stat { grid-column: span 12; }
+    .pv-date { grid-column: span 6; }
+  }
+  @media (max-width: 600px) {
+    .pv-date { grid-column: span 12; }
+  }
+}

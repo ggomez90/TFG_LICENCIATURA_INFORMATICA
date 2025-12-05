@@ -4,13 +4,13 @@ import { Prisma, Cliente, Usuario } from '@prisma/client';
 
 import { CreateClienteDto } from './create-cliente.dto';
 import { UpdateClienteDto } from './update-cliente.dto';
-import { FilterClienteDto } from './filter-cliente.dto';
+import { FilterClienteDto, FilterClienteAdminDto } from './filter-cliente.dto';
 
 @Injectable()
 export class ClienteService {
   constructor(private readonly prisma: PrismaService) {}
 
-  // Create (login requerido – controller
+  // Create para clientes (login requerido + controller)
   async create(dto: CreateClienteDto): Promise<Cliente> {
     try {
       return await this.prisma.cliente.create({
@@ -28,8 +28,8 @@ export class ClienteService {
       throw error;
     }
   }
-  // List (solo ADMIN)
-  // FilterClienteDto y OrderDto
+
+  // Listado completo solo para admin con FilterClienteDto y OrderDto
   async findAll(filter: FilterClienteDto) {
     const {
       limit = 20,
@@ -77,7 +77,7 @@ export class ClienteService {
     return { items, total, limit: take, offset: skip };
   }
 
-  // leer por id (solo ADMIN)
+  // leer por id para admin
   async findOne(idCliente: number): Promise<Cliente> {
     const found = await this.prisma.cliente.findUnique({
       where: { idCliente },
@@ -110,7 +110,7 @@ export class ClienteService {
     return usuario;
   }
 
-  // Perfil propio (login requerido
+  // Perfil propio (login requerido)
   async findMe(identifier: string): Promise<Cliente> {
     const usuario = await this.findUsuarioByIdentifier(identifier);
 
@@ -159,5 +159,78 @@ export class ClienteService {
       }
       throw error;
     }
+  }
+
+  //listado de usuarios de tipo cliente filtrados por tipoCliente
+  async findAdminClientesFiltered(dto: FilterClienteAdminDto) {
+    // paginacion normalizada, muestra de a 50 resultados por pagina
+    const page = (dto as any).page ?? 1;
+    const pageSize = (dto as any).pageSize ?? 50;
+    const offset = (dto as any).offset ?? (page - 1) * pageSize;
+    const limit = (dto as any).limit ?? pageSize;
+
+    const {
+      q,
+      idEstadoUsuario,
+      // tipoCliente viene SIEMPRE como string: 'todos', 'pendiente', '1', '2' o '3'
+      tipoCliente = 'todos',
+      sortBy = 'idUsuario',
+      order = 'desc',
+    } = dto;
+
+    // WHERE base para usuarios rol CLIENTE (idRolUsuario = 3)
+    const whereBase: any = {
+      idRolUsuario: 3,
+    };
+
+    // Estado (opcional)
+    if (typeof idEstadoUsuario === 'number') {
+      whereBase.idEstadoUsuario = idEstadoUsuario;
+    }
+
+    // Busqueda libre (opcional)
+    if (q && q.trim()) {
+      const term = q.trim();
+      whereBase.OR = [
+        { usuario:   { contains: term, mode: 'insensitive' } },
+        { email:     { contains: term, mode: 'insensitive' } },
+        { nombres:   { contains: term, mode: 'insensitive' } },
+        { apellidos: { contains: term, mode: 'insensitive' } },
+        { dniCuitCuil: { contains: term, mode: 'insensitive' } },
+      ];
+    }
+
+    // subfiltro de tipoCliente, si el parametro vino pendiente son los registros cuyo campo tipoCliente aun es NULL
+    // todos va sin condicion y si es 1, 2 o 3 se transforma a numero ya que el campo en la bd es int
+    if (tipoCliente === 'pendiente') {
+      whereBase.cliente = { is: { idTipoCliente: null } };
+    } else if (tipoCliente === '1' || tipoCliente === '2' || tipoCliente === '3') {
+      whereBase.cliente = { is: { idTipoCliente: Number(tipoCliente) } };
+    }
+
+    // Conteo total
+    const total = await this.prisma.usuario.count({
+      where: whereBase,
+    });
+
+    // Items
+    const items = await this.prisma.usuario.findMany({
+      where: whereBase,
+      include: {
+        cliente: true, // para mostrar el tipoCliente en la grilla
+      },
+      orderBy: { [sortBy]: order },
+      skip: offset,
+      take: limit,
+    });
+
+    return {
+      items,
+      total,
+      limit,
+      offset,
+      sortBy,
+      order,
+    };
   }
 }

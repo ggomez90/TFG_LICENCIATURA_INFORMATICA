@@ -1,0 +1,157 @@
+@use '../roles/cliente/biblioteca-cliente.component' as *;
+
+.ver-encuesta {
+  .dsf-card--preview {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 1.75rem 1.5rem;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.04);
+    border: 1px solid rgba(0, 128, 0, 0.06);
+  }
+
+  .dsf-card__header {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .dsf-card__title {
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: #0b3b25;
+    margin: 0;
+  }
+
+  .preview-chips {
+    display: inline-flex;
+    gap: 0.4rem;
+    align-items: center;
+
+    .dsf-badge--ok { background: #e8f5e9; color: #2e7d32; }
+    .dsf-badge--muted { background: #eeeeee; color: #616161; }
+    .dsf-badge--kind { background: #eef6ff; color: #23588a; }
+  }
+
+  .dsf-card__body {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  /*separación entre botones */
+.dsf-card__actions {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem; /* antes 0.6 */
+}
+
+/* botón VOLVER */
+.dsf-card__actions .dsf-btn--ghost {
+  background: #2e7d32;   /* igual que primary */
+  color: #ffffff;
+  border-color: #2e7d32;
+}
+
+.dsf-card__actions .dsf-btn--ghost:hover {
+  background: #1b5e20;
+  border-color: #1b5e20;
+}
+
+
+  .dsf-descripcion {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: #23402e;
+  }
+
+  .dsf-section-title {
+    font-size: 1rem;
+    margin: 0.25rem 0 0.35rem 0;
+    color: #1b5e20;
+    font-weight: 600;
+  }
+
+  /* Opciones como clonadas del preview */
+  .opt-preview {
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+
+    &__item {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+      padding: 0.4rem 0.6rem;
+      border: 1px solid #e3efe7;
+      border-radius: 12px;
+      background: #ffffff;
+
+      input[type='checkbox'],
+      input[type='radio'] {
+        width: 18px;
+        height: 18px;
+        accent-color: #2e7d32;
+      }
+    }
+
+    &__text {
+      color: #0b3b25;
+      font-size: 0.95rem;
+    }
+
+    &__detalle {
+      color: #4c6655;
+      margin-left: .25rem;
+    }
+  }
+
+  /* Acciones clonadas a ver contenido */
+  .preview-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-top: 1rem;
+  }
+  .preview-actions__spacer { flex: 1; }
+
+  .dsf-btn {
+    border-radius: 999px;
+    padding: 0.55rem 1.1rem;
+    font-size: 0.95rem;
+    font-weight: 500;
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+  }
+  .dsf-btn--ghost { background: transparent; color: #2e7d32; }
+  .dsf-btn--ghost:hover { background: #e8f5e9; }
+  .dsf-btn--primary { background: #2e7d32; color: #fff; border-color: #2e7d32; }
+  .dsf-btn--primary:disabled { opacity: .6; cursor: not-allowed; }
+
+  /* Loading */
+  .dsf-empty {
+    border-radius: 0.75rem;
+    padding: 1rem;
+    background: #ffffff;
+    border: 1px dashed #c5e1a5;
+    text-align: center;
+    color: #2e7d32;
+    font-size: 0.95rem;
+  }
+  .dsf-empty--loading {
+    background: linear-gradient(90deg,#ffffff 0%,#f1f8e9 50%,#ffffff 100%);
+    background-size: 200% 100%;
+    animation: dsf-skeleton 1.5s infinite linear;
+  }
+  @keyframes dsf-skeleton {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .dsf-card--preview { padding: 1.25rem 1rem; }
+    .preview-actions { flex-wrap: wrap; gap: .6rem; }
+  }
+}

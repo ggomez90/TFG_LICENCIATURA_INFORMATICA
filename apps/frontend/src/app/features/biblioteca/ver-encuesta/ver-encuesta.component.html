@@ -1,0 +1,88 @@
+<section class="dsf-wrap ver-encuesta">
+  <header class="dsf-header">
+    <h1 class="dsf-title">Encuesta</h1>
+    <p class="dsf-sub" *ngIf="data">
+      Detalle de la encuesta seleccionada. Publicada el
+      <strong>{{ fmtFecha(data.fechaPublicacion) }}</strong>
+      <ng-container *ngIf="data.fechaCierre">
+        · Cierre
+        <strong>{{ fmtFecha(data.fechaCierre) }}</strong>
+      </ng-container>
+    </p>
+  </header>
+
+  <!-- LOADING -->
+  <div *ngIf="loading" class="dsf-empty dsf-empty--loading">
+    <p class="dsf-empty__text">Cargando encuesta...</p>
+  </div>
+
+  <!-- ERROR -->
+  <div *ngIf="!loading && errorMsg" class="dsf-alert dsf-alert--error">
+    {{ errorMsg }}
+  </div>
+
+  <!-- DETALLE -->
+  <ng-container *ngIf="!loading && !errorMsg && data">
+    <article class="dsf-card">
+      <header class="dsf-card__head">
+        <h2 class="dsf-card__title" [innerHTML]="tituloHtml"></h2>
+
+        <div class="preview-chips">
+          <span class="dsf-badge" [ngClass]="data.activa ? 'dsf-badge--ok' : 'dsf-badge--muted'">
+            {{ data.activa ? 'Activa' : 'Cerrada' }}
+          </span>
+          <span class="dsf-badge dsf-badge--kind">
+            {{ isMultiple ? 'Múltiples respuestas' : 'Una sola respuesta' }}
+          </span>
+        </div>
+      </header>
+
+      <!-- meta fechas -->
+      <div class="dsf-card__meta">
+        <div><strong>Publicación:</strong> {{ fmtFecha(data.fechaPublicacion) }}</div>
+        <div><strong>Cierre:</strong> {{ fmtFecha(data.fechaCierre) }}</div>
+      </div>
+
+      <div class="dsf-card__body">
+        <!-- Descripción con formato -->
+        <div class="dsf-descripcion" [innerHTML]="descripcionHtml"></div>
+
+        <!-- Opciones -->
+        <div class="opt-preview" *ngIf="opciones.length > 0; else sinOpcionesTpl">
+          <div class="opt-preview__item" *ngFor="let opt of opciones">
+            <input
+              [attr.type]="isMultiple ? 'checkbox' : 'radio'"
+              [disabled]="locked"
+              [checked]="isChecked(opt.id)"
+              (change)="onSeleccionChange($any($event.target).checked, opt.id)"
+              name="encuesta-options"
+            />
+            <span class="opt-preview__text">{{ opt.texto }}</span>
+            <small class="opt-preview__detalle" *ngIf="opt.detalle">{{ opt.detalle }}</small>
+          </div>
+        </div>
+
+        <ng-template #sinOpcionesTpl>
+          <p class="dsf-hint">Esta encuesta no tiene opciones cargadas.</p>
+        </ng-template>
+      </div>
+
+      <footer class="dsf-card__actions">
+        <button type="button" class="dsf-btn dsf-btn--ghost" (click)="onVolver()">
+          ← Volver a la biblioteca
+        </button>
+
+        <span class="spacer"></span>
+
+        <button
+          type="button"
+          class="dsf-btn dsf-btn--primary"
+          [disabled]="locked || selectedIds.size === 0"
+          (click)="onEnviarRespuesta()"
+        >
+          Enviar respuesta
+        </button>
+      </footer>
+    </article>
+  </ng-container>
+</section>

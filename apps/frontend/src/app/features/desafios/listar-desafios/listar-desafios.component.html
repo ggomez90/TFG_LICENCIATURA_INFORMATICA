@@ -1,0 +1,186 @@
+<section class="dsf-wrap desafios-admin">
+  <header class="dsf-header">
+    <h1 class="dsf-title">Desafíos</h1>
+    <p class="dsf-sub">
+      Listado completo de desafíos creados para la ciudadanía.
+    </p>
+  </header>
+
+  <!--FILTROS -->
+  <section class="dsf-panel">
+    <form class="dsf-filters" (ngSubmit)="onAplicarFiltros()">
+      <div class="dsf-filters__row dsf-filters__row--one-line">
+        <!-- BUSCAR -->
+        <label class="dsf-field dsf-field--search">
+          <span class="dsf-field__label">Buscar</span>
+          <input
+            type="text"
+            class="dsf-input dsf-input--lg"
+            placeholder="Título o descripción"
+            [(ngModel)]="filtro.q"
+            name="q"
+          />
+        </label>
+
+        <!-- TIPO DE RESIDUO -->
+        <label class="dsf-field dsf-field--tipo">
+          <span class="dsf-field__label">Tipo de residuo</span>
+          <input
+            type="text"
+            class="dsf-input"
+            [(ngModel)]="filtro.tipoResiduo"
+            name="tipoResiduo"
+            placeholder="Ej: Plástico"
+          />
+        </label>
+
+        <!-- DESDE -->
+        <label class="dsf-field dsf-field--date">
+          <span class="dsf-field__label">Desde</span>
+          <input
+            type="date"
+            class="dsf-input"
+            [(ngModel)]="filtro.fechaDesde"
+            name="fechaDesde"
+            [max]="filtro.fechaHasta || null"
+          />
+        </label>
+
+        <!-- HASTA -->
+        <label class="dsf-field dsf-field--date">
+          <span class="dsf-field__label">Hasta</span>
+          <input
+            type="date"
+            class="dsf-input"
+            [(ngModel)]="filtro.fechaHasta"
+            name="fechaHasta"
+            [min]="filtro.fechaDesde || null"
+          />
+        </label>
+
+        <!-- ESTADO -->
+        <label class="dsf-field dsf-field--select">
+          <span class="dsf-field__label">Estado</span>
+          <select class="dsf-input" [(ngModel)]="filtro.estado" name="estado">
+            <option [ngValue]="null">Todos</option>
+            <option [ngValue]="1">Activo</option>
+            <option [ngValue]="2">Pausado</option>
+            <option [ngValue]="3">Finalizado</option>
+          </select>
+        </label>
+
+        <!-- INSCRIPCIÓN -->
+        <label class="dsf-field dsf-field--select">
+          <span class="dsf-field__label">Inscripción</span>
+          <select class="dsf-input" [(ngModel)]="filtro.requiereInscripcion" name="requiereInscripcion">
+            <option [ngValue]="null">Todos</option>
+            <option [ngValue]="1">Requiere</option>
+            <option [ngValue]="0">No requiere</option>
+          </select>
+        </label>
+
+        <!-- BOTONES A LA DERECHA -->
+        <div class="dsf-filters__buttons">
+          <button type="submit" class="dsf-btn dsf-btn--outline">Aplicar</button>
+          <button type="button" class="dsf-btn dsf-btn--outline" (click)="onLimpiarFiltros()">Limpiar</button>
+        </div>
+      </div>
+    </form>
+  </section>
+
+  <!--RESULTADOS-->
+  <section class="dsf-panel">
+    <!-- LOADING -->
+    <div *ngIf="loading" class="dsf-empty dsf-empty--loading">
+      <p class="dsf-empty__text">Cargando desafíos...</p>
+    </div>
+
+    <!-- ERROR -->
+    <div *ngIf="!loading && errorMsg" class="dsf-empty">
+      {{ errorMsg }}
+    </div>
+
+    <!-- SIN RESULTADOS -->
+    <div *ngIf="!loading && !errorMsg && items.length === 0" class="dsf-empty">
+      <p class="dsf-empty__text">
+        No se encontraron desafíos con los filtros seleccionados.
+      </p>
+    </div>
+
+    <!-- TABLA -->
+    <div *ngIf="!loading && !errorMsg && items.length > 0" class="dsf-table-wrap">
+      <table class="dsf-table">
+        <thead>
+          <tr>
+            <th>Inicio</th>
+            <th>Fin</th>
+            <th>Título</th>
+            <th>Estado</th>
+            <th>Inscripción</th>
+            <th class="dsf-table__th--actions">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let d of items">
+            <td class="dsf-td--center">{{ d.fechaInicio | date:'dd/MM/yyyy' }}</td>
+            <td class="dsf-td--center">{{ d.fechaFin ? (d.fechaFin | date:'dd/MM/yyyy') : '—' }}</td>
+            <td class="dsf-table__cell--strong dsf-td--title">{{ getTituloPlano(d.titulo) }}</td>
+
+            <td class="dsf-td--center">
+              <span
+                class="dsf-badge"
+                [ngClass]="{
+                  'dsf-badge--ok': d.estado === 1,
+                  'dsf-badge--warn': d.estado === 2,
+                  'dsf-badge--muted': d.estado === 3
+                }"
+              >
+                {{ d.estado === 1 ? 'ACTIVO' : (d.estado === 2 ? 'PAUSADO' : 'FINALIZADO') }}
+              </span>
+            </td>
+
+            <td class="dsf-td--center">
+              <span class="dsf-badge" [ngClass]="d.requiereInscripcion ? 'dsf-badge--ok' : 'dsf-badge--muted'">
+                {{ d.requiereInscripcion ? 'Requiere' : 'No' }}
+              </span>
+            </td>
+
+            <td class="dsf-table__cell--actions">
+              <div class="dsf-actions-inline">
+                <button type="button" class="dsf-icon-btn" (click)="onVer(d)" title="Ver">👁️</button>
+                <button *ngIf="isAdmin" type="button" class="dsf-icon-btn" (click)="onEditar(d)" title="Editar">✏️</button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- PAGINACIÓN -->
+      <footer class="dsf-pagination">
+        <span class="dsf-pagination__info">
+          Mostrando
+          <strong *ngIf="items.length > 0">{{ offset + 1 }} - {{ offset + items.length }}</strong>
+          <strong *ngIf="items.length === 0">0</strong>
+          de <strong>{{ total }}</strong> registros
+        </span>
+
+        <div class="dsf-pagination__buttons">
+          <button type="button" class="dsf-btn dsf-btn--ghost" (click)="onVolver()">← Volver</button>
+
+          <button type="button" class="dsf-btn dsf-btn--ghost" (click)="paginaAnterior()" [disabled]="offset === 0">
+            ← Anterior
+          </button>
+
+          <button
+            type="button"
+            class="dsf-btn dsf-btn--ghost"
+            (click)="paginaSiguiente()"
+            [disabled]="offset + limit >= total"
+          >
+            Siguiente →
+          </button>
+        </div>
+      </footer>
+    </div>
+  </section>
+</section>

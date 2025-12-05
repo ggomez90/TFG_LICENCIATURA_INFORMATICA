@@ -9,22 +9,47 @@ import { MenuClienteComponent } from './features/menu-principal/roles/cliente/me
 import { DesafiosClienteComponent } from './features/desafios/roles/cliente/desafios-cliente.component';
 import { MenuAdminComponent } from './features/menu-principal/roles/administrador/menu-admin.component';
 import { MenuOperarioComponent } from './features/menu-principal/roles/operario/menu-operario.component';
-import { DesafiosAdminComponent } from './features/desafios/roles/administrador/desafios-admin.component';
+import { DesafiosAdministradorComponent } from './features/desafios/roles/administrador/desafios-admin.component';
+
 import { VouchersClienteComponent } from './features/vouchers/roles/cliente/vouchers-cliente.component';
 import { VouchersAdminComponent } from './features/vouchers/roles/administrador/vouchers-admin.component';
+
 import { BibliotecaClienteComponent } from './features/biblioteca/roles/cliente/biblioteca-cliente.component';
 import { BibliotecaAdministradorComponent } from './features/biblioteca/roles/administrador/biblioteca-administrador.component';
+
+import { ListarContenidoEducativoComponent } from './features/biblioteca/listar-contenido/listar-contenido-educativo.component';
+import { ListarEncuestaComponent } from './features/biblioteca/listar-encuesta/listar-encuesta.component';
+
+import { CrearContenidoEducativoComponent } from './features/biblioteca/roles/administrador/crear-contenido/crear-contenido-educativo.component';
+import { CrearEncuestaComponent } from './features/biblioteca/roles/administrador/crear-encuesta/crear-encuesta.component';
+import { PreviewContenidoEducativoComponent } from './features/biblioteca/roles/administrador/crear-contenido/preview-contenido-educativo.component';
+
 import { EntregasOperarioComponent } from './features/entregas/roles/operario/entregas-operario.component';
 import { EntregasClienteComponent } from './features/entregas/roles/cliente/entregas-cliente.component';
+
 import { UsuariosAdministradorComponent } from './features/usuarios/usuarios-administrador.component';
 import { IndicadoresAdministradorComponent } from './features/indicadores/indicadores-administrador.component';
 import { ReportesOperarioComponent } from './features/reportes/reportes-operario.component';
+
 import { MisDatosComponent } from './features/perfil/mis-datos.component';
 import { EditarPerfilComponent } from './features/perfil/editar-perfil.component';
+
 import { LoginBridgePage } from './pages/login-bridge.page';
 
+import { VerContenidoComponent } from './features/biblioteca/ver-contenido/ver-contenido.component';
+import { EditarContenidoEducativoComponent } from './features/biblioteca/roles/administrador/editar-contenido/editar-contenido-educativo.component';
+
+import { PreviewEncuestaComponent } from './features/biblioteca/roles/administrador/crear-encuesta/preview-encuesta.component';
+import { EditarEncuestaComponent } from './features/biblioteca/roles/administrador/editar-encuesta/editar-encuesta.component';
+import { VerEncuestaComponent } from './features/biblioteca/ver-encuesta/ver-encuesta.component';
+
+import { CrearDesafioAdministradorComponent } from './features/desafios/roles/administrador/crear-desafio/crear-desafio-administrador.component';
+import { PreviewDesafioAdministradorComponent } from './features/desafios/roles/administrador/crear-desafio/preview-desafio-administrador.component';
+import { VerDesafioComponent } from './features/desafios/ver-desafio/ver-desafio.component';
+import { EditarDesafioAdministradorComponent } from './features/desafios/roles/administrador/editar-desafio/editar-desafio-administrador.component';
+import { ListarDesafiosComponent } from './features/desafios/listar-desafios/listar-desafios.component';
+
 export const routes: Routes = [
-  // Ruta raiz con bridge para redirigir segun rol
   {
     path: '',
     pathMatch: 'full',
@@ -32,18 +57,22 @@ export const routes: Routes = [
     canActivate: [authGuard],
   },
 
-  // area protegida con sesión activa
   {
     path: 'menu-principal',
     component: MenuPrincipalComponent,
     canActivate: [authGuard],
     children: [
-      //HOME POR ROL
+      // HOME POR ROL
       { path: 'cliente', component: MenuClienteComponent },
       { path: 'operario', component: MenuOperarioComponent },
 
-      // ADMIN: protegido
-      { path: 'admin', component: MenuAdminComponent, canActivate: [hasRoleGuard], data: { roles: ['ADMIN', 'ADMINISTRADOR'] } },
+      // ADMIN
+      {
+        path: 'admin',
+        component: MenuAdminComponent,
+        canActivate: [hasRoleGuard],
+        data: { roles: ['ADMIN', 'ADMINISTRADOR'] },
+      },
 
       // PERFIL
       { path: 'perfil', component: MisDatosComponent },
@@ -55,22 +84,166 @@ export const routes: Routes = [
       { path: 'cliente/biblioteca', component: BibliotecaClienteComponent },
       { path: 'cliente/entregas', component: EntregasClienteComponent },
 
-      // ADMINISTRADOR (todas protegidas por roles)
-      { path: 'admin/desafios', component: DesafiosAdminComponent, canActivate: [hasRoleGuard], data: { roles: ['ADMIN', 'ADMINISTRADOR'] } },
-      { path: 'admin/vouchers', component: VouchersAdminComponent, canActivate: [hasRoleGuard], data: { roles: ['ADMIN', 'ADMINISTRADOR'] } },
-      { path: 'admin/biblioteca', component: BibliotecaAdministradorComponent, canActivate: [hasRoleGuard], data: { roles: ['ADMIN', 'ADMINISTRADOR'] } },
-      { path: 'admin/usuarios', component: UsuariosAdministradorComponent, canActivate: [hasRoleGuard], data: { roles: ['ADMIN', 'ADMINISTRADOR'] } },
-      { path: 'admin/indicadores', component: IndicadoresAdministradorComponent, canActivate: [hasRoleGuard], data: { roles: ['ADMIN', 'ADMINISTRADOR'] } },
+      // ADMINISTRADOR
+      {
+        path: 'admin/desafios',
+        component: DesafiosAdministradorComponent,
+        canActivate: [hasRoleGuard],
+        data: { roles: ['ADMIN', 'ADMINISTRADOR'] },
+      },
+      //crear y preview de desafíos
+      {
+        path: 'admin/desafios/nuevo',
+        component: CrearDesafioAdministradorComponent,
+        canActivate: [hasRoleGuard],
+        data: { roles: ['ADMIN', 'ADMINISTRADOR'] },
+      },
+      {
+        path: 'admin/desafios/nuevo/preview',
+        component: PreviewDesafioAdministradorComponent,
+        canActivate: [hasRoleGuard],
+        data: { roles: ['ADMIN', 'ADMINISTRADOR'] },
+      },
+      {
+        path: 'admin/desafios/ver/:idDesafio',
+        component: VerDesafioComponent,
+        canActivate: [hasRoleGuard],
+        data: { roles: ['ADMIN', 'ADMINISTRADOR'] },
+      },
+      {
+        path: 'admin/desafios/editar/:idDesafio',
+        component: EditarDesafioAdministradorComponent,
+        canActivate: [hasRoleGuard],
+        data: { roles: ['ADMIN', 'ADMINISTRADOR'] },
+      },
+      {
+        path: 'admin/desafios/listado',
+        component: ListarDesafiosComponent,
+        canActivate: [hasRoleGuard],
+        data: { roles: ['ADMIN', 'ADMINISTRADOR'] },
+      },
 
-      //OPERARIO
+      {
+        path: 'admin/vouchers',
+        component: VouchersAdminComponent,
+        canActivate: [hasRoleGuard],
+        data: { roles: ['ADMIN', 'ADMINISTRADOR'] },
+      },
+      {
+        path: 'admin/biblioteca',
+        component: BibliotecaAdministradorComponent,
+        canActivate: [hasRoleGuard],
+        data: { roles: ['ADMIN', 'ADMINISTRADOR'] },
+      },
+      {
+        path: 'admin/usuarios',
+        component: UsuariosAdministradorComponent,
+        canActivate: [hasRoleGuard],
+        data: { roles: ['ADMIN', 'ADMINISTRADOR'] },
+      },
+      {
+        path: 'admin/indicadores',
+        component: IndicadoresAdministradorComponent,
+        canActivate: [hasRoleGuard],
+        data: { roles: ['ADMIN', 'ADMINISTRADOR'] },
+      },
+      // BIBLIOTECA
+
+      // LISTADOS COMPARTIDOS (cliente y admin)
+      {
+        path: 'biblioteca/contenidos',
+        component: ListarContenidoEducativoComponent,
+      },
+      {
+        path: 'biblioteca/encuestas',
+        component: ListarEncuestaComponent,
+      },
+
+      // CLIENTE/ADMIN: ver contenido
+      {
+        path: 'biblioteca/contenidos/ver/:idContenido',
+        component: VerContenidoComponent,
+      },
+      {
+        path: 'admin/biblioteca/contenidos/ver/:idContenido',
+        component: VerContenidoComponent,
+        canActivate: [hasRoleGuard],
+        data: { roles: ['ADMIN', 'ADMINISTRADOR'] },
+      },
+
+      // ADMIN: crear/editar/preview contenido
+      {
+        path: 'admin/biblioteca/contenidos/nuevo',
+        component: CrearContenidoEducativoComponent,
+        canActivate: [hasRoleGuard],
+        data: { roles: ['ADMIN', 'ADMINISTRADOR'] },
+      },
+      {
+        path: 'admin/biblioteca/contenidos/editar/:idContenido',
+        component: EditarContenidoEducativoComponent,
+        canActivate: [hasRoleGuard],
+        data: { roles: ['ADMIN', 'ADMINISTRADOR'] },
+      },
+      {
+        path: 'admin/biblioteca/contenidos/preview',
+        component: PreviewContenidoEducativoComponent,
+        canActivate: [hasRoleGuard],
+        data: { roles: ['ADMIN', 'ADMINISTRADOR'] },
+      },
+
+      // ENCUESTAS
+
+      // ADMIN: crear encuesta
+      {
+        path: 'admin/biblioteca/encuestas/nueva',
+        component: CrearEncuestaComponent,
+        canActivate: [hasRoleGuard],
+        data: { roles: ['ADMIN', 'ADMINISTRADOR'] },
+      },
+
+      // ADMIN: preview encuesta
+      {
+        path: 'admin/biblioteca/encuestas/preview',
+        component: PreviewEncuestaComponent,
+        canActivate: [hasRoleGuard],
+        data: { roles: ['ADMIN', 'ADMINISTRADOR'] },
+      },
+
+      // ADMIN: editar encuesta
+      {
+        path: 'admin/biblioteca/encuestas/editar/:idEncuesta',
+        component: EditarEncuestaComponent,
+        canActivate: [hasRoleGuard],
+        data: { roles: ['ADMIN', 'ADMINISTRADOR'] },
+      },
+
+      // CLIENTE/ADMIN: ver encuesta (pública)
+      {
+        path: 'biblioteca/encuestas/ver/:idEncuesta',
+        component: VerEncuestaComponent,
+      },
+
+      // ADMIN: ver encuesta con guard (ruta paralela por consistencia)
+      {
+        path: 'admin/biblioteca/encuestas/ver/:idEncuesta',
+        component: VerEncuestaComponent,
+        canActivate: [hasRoleGuard],
+        data: { roles: ['ADMIN', 'ADMINISTRADOR'] },
+      },
+
+      // OPERARIO
       { path: 'operario/entregas', component: EntregasOperarioComponent },
       { path: 'operario/reportes', component: ReportesOperarioComponent },
     ],
   },
 
-  // Forbidden para acceso denegado
-  { path: 'forbidden', component: ForbiddenPage },
+  // Recurso educativo publico
+  { 
+    path: 'public/recursos/:idContenido', 
+    component: VerContenidoComponent, 
+    data: { public: true},
+  },
 
-  // Cualquier otra ruta manda al raiz
+  { path: 'forbidden', component: ForbiddenPage },
   { path: '**', redirectTo: '' },
 ];

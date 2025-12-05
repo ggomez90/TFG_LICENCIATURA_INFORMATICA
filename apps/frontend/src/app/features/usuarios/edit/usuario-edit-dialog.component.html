@@ -1,0 +1,82 @@
+<div class="modal__backdrop" (click)="cancel()"></div>
+<div class="modal__panel" (click)="$event.stopPropagation()">
+  <section class="modal__card" role="dialog" aria-modal="true" aria-labelledby="dlg-title">
+    <header class="modal__header">
+      <h3 id="dlg-title">Editar usuario</h3>
+      <button type="button" class="icon-btn close" (click)="cancel()" aria-label="Cerrar">×</button>
+    </header>
+
+    <div class="modal__body">
+      <form [formGroup]="form" class="form" (ngSubmit)="submit()">
+        <div class="grid">
+          <label class="field">
+            <span class="lbl">Nombres</span>
+            <input type="text" formControlName="nombres" />
+          </label>
+
+          <label class="field">
+            <span class="lbl">Apellidos</span>
+            <input type="text" formControlName="apellidos" />
+          </label>
+
+          <label class="field">
+            <span class="lbl">Usuario *</span>
+            <input type="text" formControlName="usuario" />
+          </label>
+
+          <label class="field">
+            <span class="lbl">Email (no editable)</span>
+            <input type="text" formControlName="email" />
+          </label>
+
+          <label class="field field--full">
+            <span class="lbl">DNI/CUIT/CUIL</span>
+            <input type="text" formControlName="dniCuitCuil" />
+          </label>
+
+          <label class="field">
+            <span class="lbl">Rol *</span>
+            <select formControlName="idRolUsuario">
+              <option [ngValue]="1">ADMINISTRADOR</option>
+              <option [ngValue]="2">OPERARIO</option>
+              <option [ngValue]="3">CLIENTE</option>
+            </select>
+          </label>
+
+          <!-- Estado editable -->
+          <label class="field">
+            <span class="lbl">Estado *</span>
+            <select formControlName="idEstadoUsuario" (change)="onEstadoChange()">
+              <option [ngValue]="2">HABILITADO</option>
+              <option [ngValue]="3">BANEADO</option>
+            </select>
+          </label>
+        </div>
+
+        <!-- Bloque de motivo de ban -->
+        <div *ngIf="showBanReason" class="ban-box" role="note" aria-live="polite">
+          <div class="ban-title">
+            Motivo del ban {{ banMotivoReadonly ? '(solo lectura)' : '(obligatorio)' }}
+          </div>
+          <textarea
+            [(ngModel)]="banMotivo"
+            [ngModelOptions]="{standalone: true}"
+            [readonly]="banMotivoReadonly"
+            [disabled]="banMotivoReadonly"
+            maxlength="300"
+            rows="3"
+            placeholder="Escribí el motivo (máx. 300 caracteres)…"
+          ></textarea>
+          <div class="ban-hint">{{ banMotivo.length }}/300</div>
+        </div>
+
+        <footer class="modal__footer">
+          <button type="button" class="dsf-btn dsf-btn--ghost" (click)="cancel()">Cancelar</button>
+          <button type="submit" class="dsf-btn" [disabled]="loading">
+            {{ loading ? 'Guardando…' : 'Guardar' }}
+          </button>
+        </footer>
+      </form>
+    </div>
+  </section>
+</div>

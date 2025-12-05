@@ -1,36 +1,69 @@
-import { IsBoolean, IsDateString, IsIn, IsInt, IsOptional, IsString, Min } from 'class-validator';
-import { PaginationDto } from '../common/pagination.dto';
-import { OrderDto } from '../common/order.dto';
+import {
+  IsOptional,
+  IsString,
+  IsInt,
+  Min,
+  IsIn,
+  IsBoolean,
+  IsDateString,
+} from 'class-validator';
+import { Type, Transform } from 'class-transformer';
 
-export class FilterContenidoAdminDto extends PaginationDto {
-  // Orden
+export class FilterContenidoAdminDto {
+  // Paginación
   @IsOptional()
-  @IsIn(['fechaPublicacion', 'idContenido', 'visible', 'idAdmin', 'titulo'])
-  declare sortBy?: string;
+  @Type(() => Number)
+  @IsInt()
+  @Min(0)
+  limit?: number;
 
   @IsOptional()
-  @IsIn(['asc', 'desc'])
-  order?: 'asc' | 'desc' = 'desc';
+  @Type(() => Number)
+  @IsInt()
+  @Min(0)
+  offset?: number;
 
-  // Filtros
+  // Ordenamiento
   @IsOptional()
+  @IsString()
+  sortBy?: string;
+
+  @IsOptional()
+  @IsString()
+  @IsIn(['asc', 'desc', 'ASC', 'DESC'])
+  order?: string;
+
+  // Filtros específicos
+  @IsOptional()
+  @Type(() => Number)
   @IsInt()
   @Min(1)
   idAdmin?: number;
 
+  // necesidad de transformar 1 o 0 (true o false) en un dato boolean
   @IsOptional()
+  @Transform(({ value }) => {
+    if (value === '1' || value === 1) return true;
+    if (value === '0' || value === 0) return false;
+    if (typeof value === 'string') {
+      const v = value.trim().toLowerCase();
+      if (v === 'true') return true;
+      if (v === 'false') return false;
+    }
+    return value;
+  })
   @IsBoolean()
   visible?: boolean;
 
   @IsOptional()
   @IsDateString()
-  fechaDesde?: string; // inclusive
+  fechaDesde?: string;
 
   @IsOptional()
   @IsDateString()
-  fechaHasta?: string; // inclusive
+  fechaHasta?: string;
 
   @IsOptional()
   @IsString()
-  q?: string; // buscar por titulo/descripcion
+  q?: string;
 }

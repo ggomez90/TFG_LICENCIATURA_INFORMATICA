@@ -7,7 +7,7 @@ export class AdminCreateUsuarioDto {
   @IsOptional() @IsString() @Length(0, 20)
   dniCuitCuil?: string;
 
-  @IsString() @Length(1, 80) usuario!: string;
+  @IsString() @Length(6, 80) usuario!: string;
   @IsEmail()  @Length(1, 120) email!: string;
 
   // Rol OBLIGATORIO (1=ADMIN,2=OPERARIO,3=CLIENTE)

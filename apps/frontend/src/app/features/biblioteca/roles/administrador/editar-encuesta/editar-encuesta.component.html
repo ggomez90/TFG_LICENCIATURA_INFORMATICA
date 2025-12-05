@@ -1,0 +1,193 @@
+<section class="dsf-wrap editar-encuesta">
+  <header class="dsf-header">
+    <h1 class="dsf-title">Editar encuesta</h1>
+    <p class="dsf-sub">Modificá la consigna, opciones, fecha de cierre y estado.</p>
+  </header>
+
+  <!-- LOADING -->
+  <div *ngIf="loading" class="dsf-empty dsf-empty--loading">
+    <p class="dsf-empty__text">Cargando encuesta...</p>
+  </div>
+
+  <!-- ERROR -->
+  <div *ngIf="!loading && errorMsg" class="dsf-alert dsf-alert--error">
+    {{ errorMsg }}
+  </div>
+
+  <!-- FORM -->
+  <form *ngIf="!loading && !errorMsg" class="dsf-form" (ngSubmit)="onGuardar()">
+    <div class="dsf-card dsf-card--form">
+      <div class="dsf-card__body">
+
+        <!-- TOOLBAR COMPARTIDA (TÍTULO + DESCRIPCIÓN) -->
+        <div class="editor-toolbar">
+          <!-- BÁSICO -->
+          <button type="button" class="dsf-toolbar__btn" (click)="format('bold')"><strong>B</strong></button>
+          <button type="button" class="dsf-toolbar__btn" (click)="format('italic')"><em>I</em></button>
+          <button type="button" class="dsf-toolbar__btn" (click)="format('underline')">
+            <span class="u">U</span>
+          </button>
+
+          <span class="sep"></span>
+
+          <!-- ALINEACIÓN -->
+          <button type="button" class="dsf-toolbar__btn" (click)="format('justifyLeft')" title="Alinear a la izquierda">↞</button>
+          <button type="button" class="dsf-toolbar__btn" (click)="format('justifyCenter')" title="Centrar">↔</button>
+          <button type="button" class="dsf-toolbar__btn" (click)="format('justifyRight')" title="Alinear a la derecha">↠</button>
+          <button type="button" class="dsf-toolbar__btn" (click)="format('justifyFull')" title="Justificar">☰</button>
+
+          <span class="sep"></span>
+
+          <!-- LISTA -->
+          <button type="button" class="dsf-toolbar__btn" (click)="format('insertUnorderedList')">• Lista</button>
+
+          <span class="sep"></span>
+
+          <!-- FUENTE -->
+          <select (change)="onFontFamilyChange($event)">
+            <option value="">Fuente</option>
+            <option value="system-ui">Sistema</option>
+            <option value="Arial">Arial</option>
+            <option value="Georgia">Georgia</option>
+            <option value="Times New Roman">Times</option>
+            <option value="Verdana">Verdana</option>
+          </select>
+
+          <!-- TAMAÑO -->
+          <select (change)="onFontSizeChange($event)">
+            <option value="">Tamaño</option>
+            <option value="2">Pequeño</option>
+            <option value="3">Normal</option>
+            <option value="4">Grande</option>
+            <option value="5">Muy grande</option>
+          </select>
+
+          <!-- COLOR -->
+          <label class="color-picker-label">
+            <span>Color</span>
+            <input type="color" (change)="onColorChange($event)" [value]="currentColor" />
+          </label>
+
+          <span class="sep"></span>
+
+          <!-- LIMPIAR -->
+          <button type="button" class="dsf-toolbar__btn" (click)="clearFormat()" title="Limpiar formato">🧹 Limpiar</button>
+        </div>
+
+        <!-- TÍTULO -->
+        <label class="dsf-field dsf-field--wide">
+          <span class="dsf-field__label">
+            Título
+            <small class="dsf-field__hint">(opcional, máx. 300 caracteres)</small>
+          </span>
+          <div
+            #tituloEditor
+            class="editor-area editor-area--title"
+            contenteditable="true"
+            dir="ltr"
+            (focus)="setActiveEditor('titulo')"
+            (input)="onTituloChange($event)"
+          ></div>
+        </label>
+
+        <!-- DESCRIPCIÓN-->
+        <label class="dsf-field dsf-field--wide">
+          <span class="dsf-field__label">
+            Descripción / Consigna
+            <small class="dsf-field__hint">(opcional, máx. 5000 caracteres — admite formato)</small>
+          </span>
+          <div
+            #descripcionEditor
+            class="editor-area editor-area--descripcion"
+            contenteditable="true"
+            dir="ltr"
+            (focus)="setActiveEditor('descripcion')"
+            (input)="onDescripcionChange($event)"
+          ></div>
+        </label>
+
+
+        <!-- FECHAS -->
+        <div class="dsf-fields-row">
+          <!-- PUBLICACIÓN (solo display y deshabilitado) -->
+          <label class="dsf-field dsf-field--half">
+            <span class="dsf-field__label">Fecha de publicación</span>
+            <input
+              type="date"
+              class="dsf-input"
+              [value]="form.fechaPublicacion"
+              disabled
+            />
+            <small class="dsf-field__hint">No se puede editar.</small>
+          </label>
+
+          <!-- CIERRE (editable) -->
+          <label class="dsf-field dsf-field--half">
+            <span class="dsf-field__label">
+              Fecha de cierre <span class="dsf-field__required">*</span>
+            </span>
+            <input
+              type="date"
+              class="dsf-input"
+              name="fechaCierre"
+              required
+              [(ngModel)]="form.fechaCierre"
+              [min]="getMinFechaCierre()"
+            />
+          </label>
+        </div>
+
+        <!-- ACTIVA (SWITCH) -->
+        <div class="dsf-field dsf-field--switch">
+          <label class="dsf-switch-field">
+            <input type="checkbox" name="activa" [(ngModel)]="form.activa" />
+            <span class="dsf-switch__track"><span class="dsf-switch__thumb"></span></span>
+            <span class="dsf-switch__text">Encuesta activa</span>
+          </label>
+          <p class="dsf-field__hint">Si está activa, estará visible para la ciudadanía (según fechas).</p>
+        </div>
+
+        <!-- OPCIONES -->
+        <div class="dsf-card dsf-card--form" style="margin-top:.5rem;">
+          <div class="dsf-card__body">
+            <div class="dsf-fields-row" style="align-items:center;">
+              <strong>Opciones</strong>
+              <button type="button" class="dsf-btn dsf-btn--outline" (click)="addOpcion()">+ Añadir opción</button>
+              <button type="button" class="dsf-btn dsf-btn--ghost" (click)="toggleTipoSeleccion()">
+                Tipo: {{ form.tipoSeleccion === 'single' ? 'Una sola respuesta' : 'Múltiples respuestas' }}
+              </button>
+            </div>
+
+            <ul *ngIf="form.opciones.length > 0; else noOptions" class="opt-list">
+              <li *ngFor="let op of form.opciones" class="opt-item">
+                <span class="opt-item__control">
+                  <input [type]="form.tipoSeleccion === 'multiple' ? 'checkbox' : 'radio'" disabled />
+                </span>
+                <span class="opt-item__text">{{ op.texto }}</span>
+                <button type="button" class="opt-item__remove" (click)="removeOpcion(op.id)">
+                  <span class="trash">🗑️</span> Quitar
+                </button>
+              </li>
+            </ul>
+            <ng-template #noOptions>
+              <p class="dsf-field__hint">Aún no hay opciones definidas.</p>
+            </ng-template>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ACCIONES -->
+    <footer class="dsf-form__actions">
+      <!-- Mismo estilo que Guardar cambios -->
+      <button type="button" class="dsf-btn dsf-btn--primary" (click)="onVolver()">← Volver</button>
+
+      <span class="dsf-form__spacer"></span>
+
+      <button type="submit" class="dsf-btn dsf-btn--primary" [disabled]="saving">
+        {{ saving ? 'Guardando…' : 'Guardar cambios' }}
+      </button>
+    </footer>
+  </form>
+</section>

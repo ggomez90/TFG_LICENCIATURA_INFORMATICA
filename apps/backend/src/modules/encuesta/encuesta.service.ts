@@ -125,4 +125,13 @@ export class EncuestaService {
       select: { [this.ID_FIELD]: true, activa: true } as any,
     });
   }
+
+  // busqueda de encuesta por id
+  async getOne(idEncuesta: number) {
+    const item = await (this.prisma as any)[this.MODEL].findUnique({
+      where: { [this.ID_FIELD]: idEncuesta },
+    });
+    if (!item) throw new NotFoundException('Encuesta no encontrada');
+    return item;
+  }
 }

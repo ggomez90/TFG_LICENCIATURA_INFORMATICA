@@ -1,54 +1,152 @@
-<!--La vista es solo decorativa, no posee logica-->
 <section class="dsf-wrap">
   <header class="dsf-header">
     <h1 class="dsf-title">Desafíos (Administrador)</h1>
-    <p class="dsf-sub">ACA VAN LOS DESAFÍOS PARA EL ADMINISTRADOR</p>
+    <p class="dsf-sub">Gestión de desafíos: creación, listado, búsqueda, visualización y edición.</p>
   </header>
 
-  <div class="dsf-grid">
-    <article class="dsf-card">
-      <div class="dsf-card__media">
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path fill="currentColor" d="M5 3h14a2 2 0 0 1 2 2v2H3V5a2 2 0 0 1 2-2zm16 6v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9h18z"/>
-        </svg>
-      </div>
-      <div class="dsf-card__body">
-        <h2 class="dsf-card__title">Crear desafío</h2>
-        <p class="dsf-card__desc">Alta de un nuevo desafío con fecha y puntaje.</p>
-        <div class="dsf-card__actions">
-          <button type="button" class="dsf-btn">VER MÁS →</button>
-        </div>
-      </div>
+  <!-- ===== KPIs (estilo usuarios, a todo el ancho) ===== -->
+  <div class="dsf-grid stats">
+    <article class="dsf-card stat">
+      <div class="stat__num">{{ loadingSummary() ? '—' : (summary()?.total ?? 0) }}</div>
+      <div class="stat__label">Total</div>
     </article>
 
-    <article class="dsf-card">
-      <div class="dsf-card__media">
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path fill="currentColor" d="M12 7a5 5 0 1 0 0 10A5 5 0 0 0 12 7z"/>
-        </svg>
-      </div>
-      <div class="dsf-card__body">
-        <h2 class="dsf-card__title">Gestionar inscriptos</h2>
-        <p class="dsf-card__desc">Revisá participantes y su progreso.</p>
-        <div class="dsf-card__actions">
-          <button type="button" class="dsf-btn">VER MÁS →</button>
-        </div>
-      </div>
+    <article class="dsf-card stat">
+      <div class="stat__num">{{ loadingSummary() ? '—' : (summary()?.activos ?? 0) }}</div>
+      <div class="stat__label">Activos</div>
     </article>
 
-    <article class="dsf-card">
-      <div class="dsf-card__media">
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path fill="currentColor" d="M8 5v14l11-7L8 5z"/>
-        </svg>
-      </div>
-      <div class="dsf-card__body">
-        <h2 class="dsf-card__title">Reportes</h2>
-        <p class="dsf-card__desc">Indicadores y rendimiento de desafíos.</p>
-        <div class="dsf-card__actions">
-          <button type="button" class="dsf-btn">VER MÁS →</button>
-        </div>
-      </div>
+    <article class="dsf-card stat">
+      <div class="stat__num">{{ loadingSummary() ? '—' : (summary()?.pausados ?? 0) }}</div>
+      <div class="stat__label">Pausados</div>
     </article>
+
+    <article class="dsf-card stat">
+      <div class="stat__num">{{ loadingSummary() ? '—' : (summary()?.finalizados ?? 0) }}</div>
+      <div class="stat__label">Finalizados</div>
+    </article>
+
+    <article class="dsf-card stat">
+      <div class="stat__num">{{ loadingSummary() ? '—' : (summary()?.inscripcionesTotales ?? 0) }}</div>
+      <div class="stat__label">Inscripciones</div>
+    </article>
+  </div>
+
+  <div *ngIf="errorSummary()" class="empty">
+    <div class="empty__box">
+      <div class="empty__title">No se pudieron cargar los indicadores</div>
+      <div class="empty__sub">Intenta nuevamente más tarde.</div>
+    </div>
+  </div>
+
+
+  <!-- ===== Filtros (Buscar | Estado | Botones a la derecha) ===== -->
+  <div class="filters dsf-card filters--row">
+    <div class="filters__row filters__row--desafios">
+      <label class="field field--grow">
+        <span class="field__label field__label--em">Buscar</span>
+        <input
+          type="search"
+          class="search--wide"
+          placeholder="título o descripción…"
+          #qInput
+          (input)="onBuscar(qInput.value)"
+          [value]="q()"
+        />
+      </label>
+
+      <label class="field field--fixed">
+        <span class="field__label field__label--em">Estado</span>
+        <select #estSel (change)="onEstadoChange(estSel.value)">
+          <option value="todos">Todos</option>
+          <option value="activo">Activo</option>
+          <option value="pausado">Pausado</option>
+          <option value="finalizado">Finalizado</option>
+        </select>
+      </label>
+
+      <div class="filters__cta filters__cta--right">
+        <button type="button" class="dsf-btn dsf-btn--ghost" (click)="onLimpiar()">Limpiar</button>
+        <button type="button" class="dsf-btn dsf-btn--ghost" (click)="onVerTodos()">Ver todos</button>
+        <button type="button" class="dsf-btn" (click)="onNuevo()">+ Nuevo desafío</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== Tabla (widget últimos 10 por ID desc) ===== -->
+  <div class="tbl dsf-card">
+    <div class="tbl__scroll">
+      <table>
+        <thead>
+          <tr>
+            <th>Título</th>
+            <th style="width:140px">Estado</th>
+            <th style="width:140px">Inicio</th>
+            <th style="width:140px">Fin</th>
+            <th style="width:140px">Inscripción</th>
+            <th style="width:180px" class="dsf-table__th--actions">Acciones</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr *ngIf="loadingLatest()">
+            <td class="empty" colspan="6">
+              <div class="empty__box">
+                <div class="empty__title">Cargando…</div>
+                <div class="empty__sub">Obteniendo desafíos</div>
+              </div>
+            </td>
+          </tr>
+
+          <tr *ngIf="!loadingLatest() && errorLatest()">
+            <td class="empty" colspan="6">
+              <div class="empty__box">
+                <div class="empty__title">No se pudieron cargar los desafíos</div>
+                <div class="empty__sub">Intenta nuevamente más tarde.</div>
+              </div>
+            </td>
+          </tr>
+
+          <tr *ngFor="let d of latest(); trackBy: trackById">
+            <td class="td-strong">{{ d.titulo }}</td>
+            <td><span [class]="estadoBadge(d).cls">{{ estadoBadge(d).text }}</span></td>
+            <td>{{ d.fechaInicio | date:'dd/MM/yyyy' }}</td>
+            <td>{{ d.fechaFin ? (d.fechaFin | date:'dd/MM/yyyy') : '—' }}</td>
+            <td>{{ d.requiereInscripcion ? 'Sí' : 'No' }}</td>
+
+            <td class="dsf-table__cell--actions">
+              <div class="dsf-actions-inline">
+                <button
+                  type="button"
+                  class="dsf-icon-btn"
+                  (click)="onVer(d)"
+                  title="Ver"
+                >
+                  👁️
+                </button>
+
+                <button
+                  type="button"
+                  class="dsf-icon-btn"
+                  (click)="onEditar(d)"
+                  title="Editar"
+                >
+                  ✏️
+                </button>
+              </div>
+            </td>
+          </tr>
+
+          <tr *ngIf="!loadingLatest() && !errorLatest() && latest().length === 0">
+            <td class="empty" colspan="6">
+              <div class="empty__box">
+                <div class="empty__title">No hay desafíos para mostrar</div>
+                <div class="empty__sub">Ajustá los filtros o creá un nuevo desafío.</div>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 </section>

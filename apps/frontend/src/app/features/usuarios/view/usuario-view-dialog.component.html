@@ -1,0 +1,64 @@
+<div class="modal__backdrop" (click)="cancel()"></div>
+<div class="modal__panel" (click)="$event.stopPropagation()">
+  <section class="modal__card" role="dialog" aria-modal="true" aria-labelledby="dlg-title">
+    <header class="modal__header">
+      <h3 id="dlg-title">Ver usuario</h3>
+      <button type="button" class="icon-btn close" (click)="cancel()" aria-label="Cerrar">×</button>
+    </header>
+
+    <div class="modal__body">
+      <div class="form">
+        <div class="grid">
+          <label class="field">
+            <span class="lbl">Nombres</span>
+            <input type="text" [value]="nombres" readonly />
+          </label>
+
+          <label class="field">
+            <span class="lbl">Apellidos</span>
+            <input type="text" [value]="apellidos" readonly />
+          </label>
+
+          <label class="field">
+            <span class="lbl">Usuario</span>
+            <input type="text" [value]="usuario.nombreUsuario" readonly />
+          </label>
+
+          <label class="field">
+            <span class="lbl">Email</span>
+            <input type="text" [value]="usuario.email" readonly />
+          </label>
+
+          <label class="field field--full">
+            <span class="lbl">DNI/CUIT/CUIL</span>
+            <input type="text" [value]="usuario.dniCuitCuil" readonly />
+          </label>
+
+          <label class="field">
+            <span class="lbl">Rol</span>
+            <input type="text" [value]="usuario.tipo.toUpperCase()" readonly />
+          </label>
+
+          <label class="field">
+            <span class="lbl">Estado</span>
+            <input
+              type="text"
+              [value]="usuario.estadoId === 3 ? 'BANEADO' : (usuario.estadoId === 2 ? 'HABILITADO' : 'PENDIENTE')"
+              readonly
+            />
+          </label>
+        </div>
+
+        <!-- Motivo del ban (solo si está baneado y hay motivo) -->
+        <div *ngIf="usuario.estadoId === 3 && usuario.motivoBan" class="ban-box" role="note" aria-live="polite">
+          <div class="ban-title">Motivo del ban</div>
+          <div class="ban-text">{{ usuario.motivoBan }}</div>
+        </div>
+      </div>
+    </div>
+
+    <footer class="modal__footer">
+      <button type="button" class="dsf-btn" (click)="cancel()">Cerrar</button>
+    </footer>
+  </section>
+</div>

@@ -1,0 +1,283 @@
+@use '../roles/cliente/biblioteca-cliente.component.scss' as *;
+
+/* Cabecera y textos */
+.biblioteca-admin {
+  .dsf-header { margin-bottom: 2rem; }
+  .dsf-title  { color: #1b5e20; }
+  .dsf-sub    { color: #2e7d32; }
+}
+
+/* Panel contenedor */
+.dsf-panel {
+  background: #ffffff;
+  border-radius: 12px;
+  border: 1px solid #c8e6c9;
+  box-shadow: 0 10px 25px rgba(56, 142, 60, 0.08);
+  padding: 1.25rem;
+}
+
+/* Filtros */
+.dsf-filters {
+  margin-bottom: 1rem;
+  padding: 0.75rem 1rem;
+  border-radius: 0.75rem;
+  background: #f1f8e9;
+  border: 1px dashed #c5e1a5;
+}
+.dsf-filters__row { display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center; }
+.dsf-field { display: flex; flex-direction: column; gap: 0.4rem; min-width: 140px; }
+.dsf-field--search { flex: 0 0 520px; max-width: 520px; }
+.dsf-field__label { font-weight: 600; color: #0b3b25; display: inline-flex; justify-content: center; font-size: 0.95rem; width: 100%; }
+.dsf-input {
+  border-radius: 999px;
+  border: 1px solid #d3e4d8;
+  padding: 0.7rem 1rem;
+  font-size: 0.95rem;
+  outline: none;
+  transition: border-color .15s ease, box-shadow .15s ease, background-color .15s ease;
+  background: #f9fdfb;
+}
+.dsf-input--lg { width: 100%; }
+.dsf-field--search .dsf-input--lg { width: 100%; max-width: 520px; }
+.dsf-input:focus { border-color: #2e8b57; box-shadow: 0 0 0 2px rgba(46,139,87,.18); background: #fff; }
+.dsf-filters__buttons { display: flex; gap: .5rem; margin-left: auto; }
+
+/* Botones */
+.dsf-btn { border-radius: 999px; padding: .35rem .9rem; font-size: .85rem; font-weight: 500; border: 1px solid transparent; cursor: pointer; transition: background-color .15s ease, color .15s ease, border-color .15s ease; }
+.dsf-btn--primary { background: #2e7d32; color: #fff; border-color: #2e7d32; }
+.dsf-btn--primary:hover { background: #1b5e20; border-color: #1b5e20; }
+.dsf-btn--outline { background: #fff; color: #2e7d32; border-color: #2e7d32; }
+.dsf-btn--outline:hover { background: #e8f5e9; }
+.dsf-btn--ghost { background: transparent; color: #2e7d32; border-color: transparent; }
+.dsf-btn--ghost:hover { background: #e8f5e9; }
+.dsf-btn:disabled { opacity: .5; cursor: default; background: #f5f5f5; color: #9e9e9e; }
+
+/*  RESULTADOS + TABLA (clonada de biblioteca-educativa) */
+.dsf-table-wrap { overflow-x: auto; }
+
+.dsf-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+  table-layout: fixed; /* anchos consistentes */
+}
+
+/* Encabezados centrados y en mayúsculas */
+.dsf-table thead th {
+  text-align: center;
+  font-size: 1rem;
+  letter-spacing: 0.04em;
+  color: #2e7d32;
+  background: #f1f8e9;
+  text-transform: uppercase;
+}
+
+/* Celdas comunes */
+.dsf-table th, .dsf-table td {
+  padding: 0.6rem 0.8rem;
+  border-bottom: 1px solid #e0e0e0;
+  vertical-align: middle;
+}
+
+/* Alineaciones */
+.dsf-td--center { text-align: center; }
+.dsf-td--title  { text-align: left; }
+
+/* Título fuerte */
+.dsf-table__cell--strong { font-weight: 700; color: #1b5e20; }
+
+/* Anchos idénticos (Fecha 20%, Título 50%, Estado 15%, Acciones 15%) */
+.dsf-table thead th:nth-child(1),
+.dsf-table tbody td:nth-child(1) { width: 20%; }
+.dsf-table thead th:nth-child(2),
+.dsf-table tbody td:nth-child(2) { width: 50%; }
+.dsf-table thead th:nth-child(3),
+.dsf-table tbody td:nth-child(3) { width: 15%; }
+.dsf-table thead th:nth-child(4),
+.dsf-table tbody td:nth-child(4) { width: 15%; }
+
+/* Acciones */
+.dsf-table__th--actions { text-align: center; }
+.dsf-table__cell--actions { text-align: center; padding-right: 0.6rem; }
+.dsf-actions-inline {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  height: 36px;
+}
+
+/* Icon buttons (el ojito y lápiz) */
+.dsf-icon-btn {
+  width: 32px;
+  height: 32px;
+  border: 1px solid #d3e4d8;
+  background: #f5fbf7;
+  border-radius: 8px;
+  font-size: 16px;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background .15s ease, border-color .15s ease, transform .05s ease;
+}
+.dsf-icon-btn:hover {
+  background: #e3f5ea;
+  border-color: #2e7d32;
+  transform: translateY(-1px);
+}
+
+/* Toggle pill  */
+.dsf-icon-toggle { width: 32px; height: 32px; display: inline-flex; align-items: center; justify-content: center; position: relative; }
+.dsf-icon-toggle input { display: none; }
+.dsf-icon-toggle__pill {
+  width: 28px;
+  height: 16px;
+  border-radius: 999px;
+  background: #d3e4d8;
+  position: relative;
+  display: inline-block;
+  transition: background .15s ease;
+}
+.dsf-icon-toggle__pill::after {
+  content: '';
+  position: absolute;
+  top: 2px; left: 2px;
+  width: 12px; height: 12px;
+  border-radius: 50%;
+  background: #ffffff;
+  box-shadow: 0 1px 3px rgba(0,0,0,.18);
+  transition: transform .15s ease;
+}
+.dsf-icon-toggle input:checked + .dsf-icon-toggle__pill { background: #2e7d32; }
+.dsf-icon-toggle input:checked + .dsf-icon-toggle__pill::after { transform: translateX(12px); }
+
+/* Badges */
+.dsf-badge { display: inline-flex; align-items: center; padding: 0.15rem 0.6rem; border-radius: 999px; font-weight: 600; font-size: 0.8rem; }
+.dsf-badge--ok { background: #e8f5e9; color: #2e7d32; }
+.dsf-badge--muted { background: #eeeeee; color: #616161; }
+.dsf-table tbody td:nth-child(3) .dsf-badge { font-size: 0.9rem; }
+
+/* Estados vacíos y loading */
+.dsf-empty { border-radius: 0.75rem; padding: 1rem; background: #fff; border: 1px dashed #c5e1a5; text-align: center; color: #2e7d32; font-size: 0.95rem; }
+.dsf-empty--loading {
+  background: linear-gradient(90deg,#ffffff 0%,#f1f8e9 50%,#ffffff 100%);
+  background-size: 200% 100%;
+  animation: dsf-skeleton 1.5s infinite linear;
+}
+.dsf-empty__text { margin: 0; }
+@keyframes dsf-skeleton { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+/* Paginación */
+.dsf-pagination {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 1rem;
+  margin-top: 0.5rem;
+  border-top: 1px solid rgba(0,120,60,0.12);
+  font-size: 0.9rem;
+}
+.dsf-pagination__buttons { display: flex; gap: 0.5rem; }
+.dsf-pagination__buttons .dsf-btn {
+  padding: 0.7rem 1.2rem;
+  min-height: 42px;
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.95rem;
+}
+.dsf-pagination__info strong { color: #126b3f; }
+
+/* Responsive*/
+@media (max-width: 768px) {
+  .dsf-panel__header { flex-direction: column; align-items: flex-start; }
+  .dsf-filters__row { flex-direction: column; align-items: stretch; }
+  .dsf-filters__buttons { margin-left: 0; justify-content: flex-end; }
+
+  .dsf-table th, .dsf-table td { padding: 0.5rem 0.6rem; }
+
+  /* Priorizar título en mobile (igual que biblioteca-educativa) */
+  .dsf-table thead th:nth-child(1),
+  .dsf-table tbody td:nth-child(1) { width: 28%; }  /* Fecha */
+  .dsf-table thead th:nth-child(2),
+  .dsf-table tbody td:nth-child(2) { width: 44%; }  /* Título */
+  .dsf-table thead th:nth-child(3),
+  .dsf-table tbody td:nth-child(3) { width: 14%; }  /* Estado */
+  .dsf-table thead th:nth-child(4),
+  .dsf-table tbody td:nth-child(4) { width: 14%; }  /* Acciones */
+
+  .dsf-table__cell--actions { display: flex; flex-wrap: wrap; justify-content: center; }
+}
+
+/* Responsive para pantallas mas chicas */
+
+/* tablets */
+@media (max-width: 1024px) {
+  .dsf-field--search {
+    flex: 1 1 360px;
+    max-width: 360px;
+  }
+}
+
+/* móviles: inputs a una columna y mejor scroll/lectura de tabla */
+@media (max-width: 768px) {
+  .dsf-filters__row { gap: 0.65rem; }
+  .dsf-field { min-width: 100%; }
+  .dsf-field--search {
+    flex: 1 1 100%;
+    max-width: none;
+  }
+  .dsf-field__label { justify-content: flex-start; }
+
+  /* tabla más flexible y con scroll suave */
+  .dsf-table-wrap { -webkit-overflow-scrolling: touch; }
+  .dsf-table { table-layout: auto; }
+  .dsf-table th, .dsf-table td { padding: 0.5rem 0.55rem; }
+  .dsf-table thead th { font-size: 0.95rem; }
+
+  /* evitar desbordes de texto */
+  .dsf-table td { word-break: break-word; }
+
+  /* recortar título a 2 líneas para que no empuje el layout */
+  .dsf-td--title > * {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .dsf-table__cell--actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 6px;
+  }
+  .dsf-actions-inline { gap: 8px; height: auto; }
+}
+
+/* móviles chicos: compactar tipografías y paginación en columna */
+@media (max-width: 560px) {
+  .dsf-input { font-size: 0.9rem; }
+  .dsf-table thead th { font-size: 0.9rem; }
+  .dsf-table th, .dsf-table td { padding: 0.45rem 0.5rem; }
+
+  /* botones de acción */
+  .dsf-icon-btn { transform: scale(0.95); }
+  .dsf-badge { font-size: 0.78rem; }
+
+  .dsf-pagination {
+    flex-direction: column;
+    gap: 0.6rem;
+    align-items: stretch;
+  }
+  .dsf-pagination__buttons {
+    justify-content: space-between;
+  }
+}
+
+/* móviles muy chicos: título en 3 líneas y aún más compactación */
+@media (max-width: 400px) {
+  .dsf-td--title > * { -webkit-line-clamp: 3; }
+  .dsf-icon-btn { transform: scale(0.9); }
+}

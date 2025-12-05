@@ -14,35 +14,59 @@
 
       <form [formGroup]="form" class="form" (ngSubmit)="submit()">
         <div class="grid">
+
+          <!-- Nombres -->
           <label class="field">
             <span class="lbl">Nombres *</span>
             <input type="text" formControlName="nombres" #firstInput />
-            <small class="err" *ngIf="f['nombres'].touched && f['nombres'].invalid">Campo requerido</small>
+            <small class="err" *ngIf="f['nombres'].touched && f['nombres'].invalid">
+              Campo requerido
+            </small>
           </label>
 
+          <!-- Apellidos -->
           <label class="field">
             <span class="lbl">Apellidos *</span>
             <input type="text" formControlName="apellidos" />
-            <small class="err" *ngIf="f['apellidos'].touched && f['apellidos'].invalid">Campo requerido</small>
+            <small class="err" *ngIf="f['apellidos'].touched && f['apellidos'].invalid">
+              Campo requerido
+            </small>
           </label>
 
+          <!-- Usuario -->
           <label class="field">
             <span class="lbl">Usuario *</span>
             <input type="text" formControlName="usuario" />
-            <small class="err" *ngIf="f['usuario'].touched && f['usuario'].invalid">3 a 40 caracteres</small>
+            <small class="err" *ngIf="f['usuario'].touched && f['usuario'].invalid">
+              Usuario debe tener de 6 a 40 caracteres
+            </small>
+            <small class="err" *ngIf="f['usuario'].errors?.duplicate">
+              El nombre de usuario ya está registrado
+            </small>
           </label>
 
+          <!-- Email -->
           <label class="field">
             <span class="lbl">Email *</span>
             <input type="email" formControlName="email" />
-            <small class="err" *ngIf="f['email'].touched && f['email'].invalid">Email inválido</small>
+            <small class="err" *ngIf="f['email'].touched && f['email'].invalid">
+              Email inválido
+            </small>
+            <small class="err" *ngIf="f['email'].errors?.duplicate">
+              El email ya está registrado
+            </small>
           </label>
 
+          <!-- DNI/CUIT/CUIL -->
           <label class="field field--full">
             <span class="lbl">DNI/CUIT/CUIL (opcional)</span>
             <input type="text" formControlName="dniCuitCuil" />
+            <small class="err" *ngIf="f['dniCuitCuil'].errors?.duplicate">
+              El documento ya está registrado
+            </small>
           </label>
 
+          <!-- Rol -->
           <label class="field">
             <span class="lbl">Rol *</span>
             <select formControlName="idRolUsuario">

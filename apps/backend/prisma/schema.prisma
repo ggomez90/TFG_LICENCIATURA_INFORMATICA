@@ -298,8 +298,8 @@ model ContenidoEducativo {
   admin                Usuario  @relation("Contenido_Admin", fields: [idAdmin], references: [idUsuario], onDelete: Restrict, onUpdate: Cascade)
 
   titulo               String?  @db.VarChar(300)
-  descripcion          String?  @db.VarChar(500)
-  urlRecurso           String?  @db.VarChar(200)
+  descripcion          String?  @db.VarChar(2000)
+  urlRecurso           String?  @db.VarChar(300)
   fechaPublicacion     DateTime @default(now())
   fechaBaja            DateTime?
   visible              Boolean  @default(false)
@@ -312,8 +312,8 @@ model VoucherTipo {
   idAdmin           Int
   admin             Usuario  @relation("VoucherTipo_Admin", fields: [idAdmin], references: [idUsuario], onDelete: Restrict, onUpdate: Cascade)
 
-  titulo            String   @db.VarChar(100)
-  descripcion       String   @db.VarChar(200)
+  titulo            String   @db.VarChar(200)
+  descripcion       String   @db.VarChar(500)
   puntosRequeridos  Int
   montoBeneficio    Int
   fechaInicioVigencia DateTime
@@ -328,8 +328,8 @@ model Encuesta {
   idAdmin          Int
   admin            Usuario   @relation("Encuesta_Admin", fields: [idAdmin], references: [idUsuario], onDelete: Restrict, onUpdate: Cascade)
 
-  titulo           String    @db.VarChar(100)
-  descripcion      String    @db.VarChar(500)
+  titulo           String    @db.VarChar(300)
+  descripcion      String    @db.VarChar(5000)
   fechaPublicacion DateTime
   fechaCierre      DateTime
   activa           Boolean   @default(false)
@@ -359,11 +359,11 @@ model Desafio {
   idAdmin                   Int
   admin                     Usuario   @relation("Desafio_Admin", fields: [idAdmin], references: [idUsuario], onDelete: Restrict, onUpdate: Cascade)
 
-  titulo                    String    @db.VarChar(100)
-  descripcion               String    @db.VarChar(500)
-  tipoResiduo               String    @db.VarChar(100)
+  titulo                    String    @db.VarChar(500)
+  descripcion               String    @db.VarChar(5000)
+  tipoResiduo               String    @db.VarChar(200)
   requiereInscripcion       Boolean   @default(false)
-  unidadMedida              String    @db.VarChar(50)
+  unidadMedida              String    @db.VarChar(200)
   meta                      Decimal   @db.Decimal(12,3)
   puntosTotales             Int
   puntosPorUnidad           Decimal?  @db.Decimal(12,3)

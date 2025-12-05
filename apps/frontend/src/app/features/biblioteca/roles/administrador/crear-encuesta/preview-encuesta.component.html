@@ -1,0 +1,57 @@
+<section class="dsf-wrap preview-encuesta" *ngIf="borrador">
+  <header class="dsf-header">
+    <h1 class="dsf-title">Previsualización de encuesta</h1>
+    <p class="dsf-sub">Así la verá la ciudadanía.</p>
+  </header>
+
+  <article class="dsf-card dsf-card--preview">
+    <header class="dsf-card__header">
+      <h2 class="dsf-card__title" [innerHTML]="tituloHtml"></h2>
+
+      <p class="dsf-card__meta">
+        Publicación:
+        <strong>{{ borrador.fechaPublicacion | date:'dd/MM/yyyy' }}</strong>
+        &nbsp;·&nbsp;
+        Cierre:
+        <strong>{{ borrador.fechaCierre | date:'dd/MM/yyyy' }}</strong>
+      </p>
+
+      <div class="preview-chips">
+        <span class="dsf-badge" [ngClass]="borrador.activa ? 'dsf-badge--ok' : 'dsf-badge--muted'">
+          {{ borrador.activa ? 'Activa' : 'Cerrada' }}
+        </span>
+        <span class="dsf-badge dsf-badge--kind">
+          {{ isMultiple ? 'Múltiples respuestas' : 'Una sola respuesta' }}
+        </span>
+      </div>
+    </header>
+
+    <section class="dsf-card__body">
+      <div class="dsf-descripcion" [innerHTML]="descripcionHtml"></div>
+
+      <div class="opt-preview" *ngIf="borrador.opciones.length > 0">
+        <div class="opt-preview__item" *ngFor="let opt of borrador.opciones">
+          <input [attr.type]="isMultiple ? 'checkbox' : 'radio'" [disabled]="true" />
+          <span class="opt-preview__text">{{ opt.texto }}</span>
+          <small class="opt-preview__detalle" *ngIf="opt.detalle">{{ opt.detalle }}</small>
+        </div>
+      </div>
+
+      <p class="dsf-hint" *ngIf="borrador.opciones.length === 0">
+        Aún no cargaste opciones para esta encuesta.
+      </p>
+    </section>
+  </article>
+
+  <footer class="dsf-form__actions">
+    <button type="button" class="dsf-btn dsf-btn--ghost" (click)="onVolver()">
+      ← Volver a la edición
+    </button>
+
+    <span class="dsf-form__spacer"></span>
+
+    <button type="button" class="dsf-btn dsf-btn--primary" (click)="onConfirmarPublicar()">
+      Publicar encuesta
+    </button>
+  </footer>
+</section>

@@ -4,13 +4,21 @@ import { APP_GUARD } from '@nestjs/core';
 import { PrismaModule } from './prisma/prisma.module';
 import { AuthModule, KeycloakAuthGuard, RolesGuard } from './auth';
 import { UsuarioModule } from './modules/usuario/usuario.module';
+import { ContenidoModule } from './modules/contenido/contenido.module';
+import { EncuestaModule } from './modules/encuesta/encuesta.module';
+import { ClienteModule } from './modules/cliente';
+import { DesafioModule } from './modules/desafio';
 
 @Module({
   imports: [
-    // AuthModule registra y EXPORTA KeycloakConnectModule
+    // el AuthModule ya registra y exporta KeycloakConnectModule
     AuthModule,
     PrismaModule,
     UsuarioModule,
+    ContenidoModule,
+    EncuestaModule,
+    ClienteModule,
+    DesafioModule,
   ],
   controllers: [],
   providers: [

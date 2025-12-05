@@ -1,6 +1,7 @@
-import { IsBoolean, IsDateString, IsIn, IsInt, IsOptional, IsString, Min } from 'class-validator';
+import { IsBoolean, IsDateString, IsIn, IsOptional, IsString } from 'class-validator';
 import { PaginationDto } from '../common/pagination.dto';
 import { OrderDto } from '../common/order.dto';
+import { Transform } from 'class-transformer';
 
 export class FilterEncuestaPublicDto extends PaginationDto {
   // Orden
@@ -18,6 +19,17 @@ export class FilterEncuestaPublicDto extends PaginationDto {
   q?: string; // búsqueda por título (contains)
 
   @IsOptional()
+  @Transform(({ value }) => {
+    // Acepta '1'/'0', 1/0, 'true'/'false', true/false
+    if (value === '1' || value === 1) return true;
+    if (value === '0' || value === 0) return false;
+    if (typeof value === 'string') {
+      const v = value.trim().toLowerCase();
+      if (v === 'true') return true;
+      if (v === 'false') return false;
+    }
+    return value;
+  })
   @IsBoolean()
   activa?: boolean;
 
@@ -27,5 +39,5 @@ export class FilterEncuestaPublicDto extends PaginationDto {
 
   @IsOptional()
   @IsDateString()
-  fechaHasta?: string; // rango sobre fechaPublicacion (inclusive)
+  fechaHasta?: string;
 }

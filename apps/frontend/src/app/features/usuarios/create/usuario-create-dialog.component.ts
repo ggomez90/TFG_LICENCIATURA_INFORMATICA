@@ -4,6 +4,7 @@ import { ReactiveFormsModule, FormBuilder, Validators, FormGroup } from '@angula
 import { UsuariosApi, AdminCreateUsuarioDto } from '../../../api/usuarios.api';
 import { ToastService } from '../../../shared/toast.service';
 import { normalizeHttpError } from '../../../shared/http-error.util';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   standalone: true,
@@ -27,7 +28,7 @@ export class UsuarioCreateDialogComponent implements OnInit, OnDestroy {
   form: FormGroup = this.fb.group({
     nombres: ['', [Validators.required, Validators.maxLength(80)]],
     apellidos: ['', [Validators.required, Validators.maxLength(80)]],
-    usuario: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(40)]],
+    usuario: ['', [Validators.required, Validators.minLength(6), Validators.maxLength(40)]],
     email: ['', [Validators.required, Validators.email, Validators.maxLength(120)]],
     dniCuitCuil: [''],
     idRolUsuario: [3, [Validators.required]], // 1=ADMIN,2=OPERARIO,3=CLIENTE (default)
@@ -50,6 +51,21 @@ export class UsuarioCreateDialogComponent implements OnInit, OnDestroy {
   @HostListener('document:keydown.escape')
   onEsc() { this.cancel(); }
 
+  private markDuplicate(controlName: 'email' | 'usuario' | 'dniCuitCuil') {
+    const ctl = this.f[controlName];
+    if (!ctl) return;
+    // preserva otros errores si los hubiera
+    const prev = ctl.errors || {};
+    ctl.setErrors({ ...prev, duplicate: true });
+    ctl.markAsTouched();
+  }
+
+  private focusControl(controlName: 'email' | 'usuario' | 'dniCuitCuil') {
+    // intenta enfocar el input correspondiente si está en el DOM
+    const el = document.querySelector<HTMLInputElement>(`[formcontrolname="${controlName}"]`);
+    el?.focus();
+  }
+
   async submit() {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
@@ -68,15 +84,52 @@ export class UsuarioCreateDialogComponent implements OnInit, OnDestroy {
     this.loading = true;
     try {
       const resp = await this.api.createByAdmin(dto).toPromise();
-      const msg = resp?.message || 'Usuario creado. Se envió un correo de verificación y actualización de contraseña.';
+      const msg = (resp as any)?.message || 'Usuario creado. Se envió un correo de verificación y actualización de contraseña.';
       this.toast.success(msg);
       try { alert(msg); } catch {}
       this.saved.emit();
       this.close.emit();
     } catch (e) {
-      const msg = normalizeHttpError(e);
-      this.toast.error(msg);
-      try { alert(msg); } catch {}
+      // Mensaje base (fallback)
+      const fallback = normalizeHttpError(e);
+
+      // Intento extraer status y mensaje del backend
+      const httpErr = e as HttpErrorResponse;
+      const status = httpErr?.status;
+      const beMsg: string = (
+        (httpErr?.error?.message ?? httpErr?.error) ||
+        httpErr?.message ||
+        ''
+      ).toString();
+
+      // Si es 409 (duplicado) se mapea a los campos específicos
+      if (status === 409 && beMsg) {
+        const lower = beMsg.toLowerCase();
+
+        // Orden de chequeo: email / usuario / dni
+        if (lower.includes('email')) {
+          this.markDuplicate('email');
+          this.toast.error('El email ya está registrado.');
+          this.focusControl('email');
+        } else if (lower.includes('usuario')) {
+          this.markDuplicate('usuario');
+          this.toast.error('El nombre de usuario ya está registrado.');
+          this.focusControl('usuario');
+        } else if (lower.includes('dni') || lower.includes('cuit') || lower.includes('cuil')) {
+          this.markDuplicate('dniCuitCuil');
+          this.toast.error('El DNI/CUIT/CUIL ya está registrado.');
+          this.focusControl('dniCuitCuil');
+        } else {
+          this.toast.error(beMsg);
+        }
+
+        // mantiene alert
+        try { alert(beMsg); } catch {}
+      } else {
+        // Otros errores con flujo actual
+        this.toast.error(fallback);
+        try { alert(fallback); } catch {}
+      }
     } finally {
       this.loading = false;
     }

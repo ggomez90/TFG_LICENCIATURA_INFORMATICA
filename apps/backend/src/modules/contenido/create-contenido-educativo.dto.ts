@@ -2,10 +2,10 @@ import { IsBoolean, IsDateString, IsInt, IsOptional, IsString, Length, Min } fro
 
 export class CreateContenidoEducativoDto {
   @IsInt() @Min(1) idAdmin!: number;
-
+  //se incrementaron extensiones de datos string y se corrió migracion
   @IsOptional() @IsString() @Length(0, 300) titulo?: string;
-  @IsOptional() @IsString() @Length(0, 500) descripcion?: string;
-  @IsOptional() @IsString() @Length(0, 200) urlRecurso?: string;
+  @IsOptional() @IsString() @Length(0, 2000) descripcion?: string;
+  @IsOptional() @IsString() @Length(0, 300) urlRecurso?: string;
 
   @IsDateString() fechaPublicacion!: string;
   @IsOptional() @IsDateString() fechaBaja?: string;

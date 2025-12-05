@@ -1,0 +1,25 @@
+<div class="modal__backdrop" (click)="cancel()"></div>
+<div class="modal__panel" (click)="$event.stopPropagation()">
+  <section class="modal__card" role="dialog" aria-modal="true" aria-labelledby="dlg-title">
+    <header class="modal__header">
+      <h3 id="dlg-title">Banear usuario</h3>
+      <button type="button" class="icon-btn close" (click)="cancel()" aria-label="Cerrar">×</button>
+    </header>
+
+    <div class="modal__body">
+      <p class="hint">Ingresá el motivo del ban. El usuario quedará con estado <strong>BANEADO</strong>.</p>
+      <form [formGroup]="form" class="form" (ngSubmit)="submit()">
+        <label class="field field--full">
+          <span class="lbl">Motivo *</span>
+          <textarea rows="4" formControlName="motivo"></textarea>
+          <small class="err" *ngIf="f['motivo'].touched && f['motivo'].invalid">Entre 5 y 300 caracteres.</small>
+        </label>
+
+        <footer class="modal__footer">
+          <button type="button" class="dsf-btn dsf-btn--ghost" (click)="cancel()">Cancelar</button>
+          <button type="submit" class="dsf-btn" [disabled]="loading">{{ loading ? 'Aplicando…' : 'Confirmar ban' }}</button>
+        </footer>
+      </form>
+    </div>
+  </section>
+</div>

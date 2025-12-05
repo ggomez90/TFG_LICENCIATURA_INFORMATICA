@@ -1,24 +1,206 @@
-<!--La vista es solo decorativa, no posee logica-->
-<section class="dsf-wrap">
+<section class="dsf-wrap biblioteca-admin">
   <header class="dsf-header">
     <h1 class="dsf-title">Biblioteca educativa (Administrador)</h1>
-    <p class="dsf-sub">Publicación y gestión de contenidos educativos para la ciudadanía.</p>
+    <p class="dsf-sub">
+      Publicación y gestión de contenidos educativos y encuestas para la ciudadanía.
+    </p>
   </header>
 
-  <div class="dsf-grid">
-    <article class="dsf-card" *ngFor="let t of tiles()">
-      <div class="dsf-card__media">
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path fill="currentColor" [attr.d]="t.icon"></path>
-        </svg>
-      </div>
-      <div class="dsf-card__body">
-        <h2 class="dsf-card__title">{{ t.titulo }}</h2>
-        <p class="dsf-card__desc">{{ t.desc }}</p>
-        <div class="dsf-card__actions">
-          <button type="button" class="dsf-btn">{{ t.actionText }}</button>
+  <div class="dsf-sections-grid">
+    <!-- CONTENIDOS EDUCATIVOS  -->
+    <section class="dsf-panel">
+      <header class="dsf-panel__header">
+        <div>
+          <h2 class="dsf-panel__title">Contenidos educativos</h2>
         </div>
-      </div>
-    </article>
+
+        <div class="dsf-panel__actions">
+          <button
+            type="button"
+            class="dsf-btn dsf-btn--primary"
+            (click)="onVerMasContenidos()"
+          >
+            Ver más
+          </button>
+
+          <button
+            type="button"
+            class="dsf-btn dsf-btn--primary"
+            (click)="onCrearContenido()"
+          >
+            + Crear contenido
+          </button>
+        </div>
+      </header>
+
+      <!-- Estados + tabla CONTENIDOS -->
+      <ng-container *ngIf="loadingContenidos(); else contenidosLoadedTpl">
+        <div class="dsf-empty dsf-empty--loading">
+          <p class="dsf-empty__text">Cargando contenidos educativos...</p>
+        </div>
+      </ng-container>
+
+      <ng-template #contenidosLoadedTpl>
+        <div *ngIf="contenidos().length === 0" class="dsf-empty">
+          <p class="dsf-empty__text">No existen articulos para esta seccion.</p>
+        </div>
+
+        <div *ngIf="contenidos().length > 0" class="dsf-table-wrap">
+          <table class="dsf-table">
+            <thead>
+              <tr>
+                <th>Fecha publicación</th>
+                <th>Título</th>
+                <th>Visualización</th>
+                <th class="dsf-table__th--actions">Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let c of contenidos()">
+                <td class="dsf-td--center">{{ c.fechaPublicacion | date: 'dd/MM/yyyy' }}</td>
+                <td class="dsf-table__cell--strong dsf-td--title">{{ c.titulo }}</td>
+                <td class="dsf-td--center">
+                  <span
+                    class="dsf-badge"
+                    [ngClass]="c.visible ? 'dsf-badge--ok' : 'dsf-badge--muted'"
+                  >
+                    {{ c.visible ? 'Visible' : 'Oculto' }}
+                  </span>
+                </td>
+                <td class="dsf-table__cell--actions">
+                  <div class="dsf-actions-inline">
+                    <button
+                      type="button"
+                      class="dsf-icon-btn"
+                      (click)="onVerContenido(c)"
+                      title="Ver detalle"
+                    >
+                      👁️
+                    </button>
+                    <button
+                      type="button"
+                      class="dsf-icon-btn"
+                      (click)="onEditarContenido(c)"
+                      title="Editar"
+                    >
+                      ✏️
+                    </button>
+                    <label
+                      class="dsf-icon-toggle"
+                      [title]="c.visible ? 'Ocultar contenido' : 'Publicar contenido'"
+                    >
+                      <input
+                        type="checkbox"
+                        [checked]="c.visible"
+                        (change)="onToggleVisibleContenidoConfirm(c, $event)"
+                      />
+                      <span class="dsf-icon-toggle__pill"></span>
+                    </label>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </ng-template>
+    </section>
+
+    <!-- ENCUESTAS -->
+    <section class="dsf-panel">
+      <header class="dsf-panel__header">
+        <div>
+          <h2 class="dsf-panel__title">Encuestas</h2>
+        </div>
+
+        <div class="dsf-panel__actions">
+          <button
+            type="button"
+            class="dsf-btn dsf-btn--primary"
+            (click)="onVerMasEncuestas()"
+          >
+            Ver más
+          </button>
+
+          <button
+            type="button"
+            class="dsf-btn dsf-btn--primary"
+            (click)="onCrearEncuesta()"
+          >
+            + Crear encuesta
+          </button>
+        </div>
+      </header>
+
+      <!-- Estados + tabla ENCUESTAS -->
+      <ng-container *ngIf="loadingEncuestas(); else encuestasLoadedTpl">
+        <div class="dsf-empty dsf-empty--loading">
+          <p class="dsf-empty__text">Cargando encuestas...</p>
+        </div>
+      </ng-container>
+
+      <ng-template #encuestasLoadedTpl>
+        <div *ngIf="encuestas().length === 0" class="dsf-empty">
+          <p class="dsf-empty__text">No existen articulos para esta seccion.</p>
+        </div>
+
+        <div *ngIf="encuestas().length > 0" class="dsf-table-wrap">
+          <table class="dsf-table">
+            <thead>
+              <tr>
+                <th>Fecha publicación</th>
+                <th>Título</th>
+                <th>Visualización</th>
+                <th class="dsf-table__th--actions">Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let e of encuestas()">
+                <td class="dsf-td--center">{{ e.fechaPublicacion | date: 'dd/MM/yyyy' }}</td>
+                <td class="dsf-table__cell--strong dsf-td--title">{{ e.titulo }}</td>
+                <td class="dsf-td--center">
+                  <span
+                    class="dsf-badge"
+                    [ngClass]="e.activa ? 'dsf-badge--ok' : 'dsf-badge--muted'"
+                  >
+                    {{ e.activa ? 'Activa' : 'Cerrada' }}
+                  </span>
+                </td>
+                <td class="dsf-table__cell--actions">
+                  <div class="dsf-actions-inline">
+                    <button
+                      type="button"
+                      class="dsf-icon-btn"
+                      (click)="onVerEncuesta(e)"
+                      title="Ver detalle"
+                    >
+                      👁️
+                    </button>
+                    <button
+                      type="button"
+                      class="dsf-icon-btn"
+                      (click)="onEditarEncuesta(e)"
+                      title="Editar"
+                    >
+                      ✏️
+                    </button>
+                    <label
+                      class="dsf-icon-toggle"
+                      [title]="e.activa ? 'Cerrar encuesta' : 'Activar encuesta'"
+                    >
+                      <input
+                        type="checkbox"
+                        [checked]="e.activa"
+                        (change)="onToggleActivaEncuestaConfirm(e, $event)"
+                      />
+                      <span class="dsf-icon-toggle__pill"></span>
+                    </label>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </ng-template>
+    </section>
   </div>
 </section>

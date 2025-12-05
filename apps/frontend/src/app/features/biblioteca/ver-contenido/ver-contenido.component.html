@@ -1,0 +1,112 @@
+<section class="dsf-wrap ver-contenido">
+  <header class="dsf-header">
+    <h1 class="dsf-title">
+      Contenido educativo
+    </h1>
+    <p class="dsf-sub" *ngIf="contenido">
+      Publicado el
+      <strong>{{ contenido.fechaPublicacion | date: 'dd/MM/yyyy' }}</strong>
+      <ng-container *ngIf="contenido.fechaBaja">
+        · Vigente hasta
+        <strong>{{ contenido.fechaBaja | date: 'dd/MM/yyyy' }}</strong>
+      </ng-container>
+    </p>
+  </header>
+
+  <div class="dsf-card dsf-card--preview">
+    <div class="dsf-card__body">
+      <!-- LOADING -->
+      <p *ngIf="loading" class="dsf-empty dsf-empty--loading">
+        Cargando contenido educativo...
+      </p>
+
+      <!-- ERROR -->
+      <p *ngIf="!loading && errorMsg" class="dsf-empty">
+        {{ errorMsg }}
+      </p>
+
+      <!-- CONTENIDO -->
+      <ng-container *ngIf="!loading && !errorMsg && contenido">
+        <!-- TÍTULO -->
+        <h2 class="preview-title" [innerHTML]="tituloHtml"></h2>
+
+        <!-- METADATOS -->
+        <div class="preview-meta">
+          <span class="preview-meta__item">
+            Publicación:
+            <strong>
+              {{ contenido.fechaPublicacion | date: 'dd/MM/yyyy' }}
+            </strong>
+          </span>
+
+          <span class="preview-meta__item" *ngIf="contenido.fechaBaja">
+            Baja:
+            <strong>{{ contenido.fechaBaja | date: 'dd/MM/yyyy' }}</strong>
+          </span>
+
+          <span
+            class="preview-badge"
+            [class.preview-badge--ok]="contenido.visible"
+            [class.preview-badge--muted]="!contenido.visible"
+          >
+            {{
+              contenido.visible
+                ? 'Visible al público'
+                : 'Oculto (solo administración)'
+            }}
+          </span>
+        </div>
+
+        <!-- VIDEO / RECURSO -->
+        <div class="preview-media" *ngIf="videoEmbedUrl || contenido.urlRecurso">
+          <ng-container *ngIf="videoEmbedUrl; else linkSolo">
+            <div class="preview-media__frame">
+              <iframe
+                [src]="videoEmbedUrl"
+                title="Recurso educativo"
+                frameborder="0"
+                allowfullscreen
+              ></iframe>
+            </div>
+            <p class="preview-media__link">
+              Ver en YouTube:
+              <a
+                [href]="contenido.urlRecurso"
+                target="_blank"
+                rel="noopener"
+              >
+                {{ contenido.urlRecurso }}
+              </a>
+            </p>
+          </ng-container>
+
+          <ng-template #linkSolo>
+            <p class="preview-media__link">
+              Recurso:
+              <a
+                [href]="contenido.urlRecurso"
+                target="_blank"
+                rel="noopener"
+              >
+                {{ contenido.urlRecurso }}
+              </a>
+            </p>
+          </ng-template>
+        </div>
+
+        <!-- DESCRIPCIÓN / CUERPO -->
+        <div class="preview-body" [innerHTML]="descripcionHtml"></div>
+      </ng-container>
+    </div>
+  </div>
+
+  <footer class="preview-actions">
+    <button
+      type="button"
+      class="dsf-btn dsf-btn--ghost"
+      (click)="onVolver()"
+    >
+      ← Volver a la biblioteca
+    </button>
+  </footer>
+</section>

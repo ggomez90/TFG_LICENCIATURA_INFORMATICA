@@ -2,9 +2,9 @@ import { IsBoolean, IsDateString, IsInt, IsString, Length, Min } from 'class-val
 
 export class CreateEncuestaDto {
   @IsInt() @Min(1) idAdmin!: number;
-
-  @IsString() @Length(1, 100) titulo!: string;
-  @IsString() @Length(1, 500) descripcion!: string;
+  //se actualizaron extensiones de campos string respecto al modelo anterior
+  @IsString() @Length(1, 300) titulo!: string;
+  @IsString() @Length(1, 5000) descripcion!: string;
 
   @IsDateString() fechaPublicacion!: string;
   @IsDateString() fechaCierre!: string;

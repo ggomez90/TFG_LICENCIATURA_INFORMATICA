@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { Prisma } from '@prisma/client';
 
@@ -12,24 +16,27 @@ import { FilterContenidoAdminDto } from './filter-contenido-admin.dto';
 export class ContenidoService {
   constructor(private readonly prisma: PrismaService) {}
 
+  // constantes con nombre del modelo y campo ID reales
   private readonly MODEL = 'contenidoEducativo' as const;
-  private readonly ID_FIELD = 'idContenido' as const;
+  private readonly ID_FIELD = 'idContenidoEducativo' as const;
 
   private coerceCreate(dto: CreateContenidoEducativoDto) {
     const data: any = { ...dto };
-    if (dto.fechaPublicacion) data.fechaPublicacion = new Date(dto.fechaPublicacion);
+    if (dto.fechaPublicacion)
+      data.fechaPublicacion = new Date(dto.fechaPublicacion);
     if (dto.fechaBaja) data.fechaBaja = new Date(dto.fechaBaja);
     return data;
   }
 
   private coerceUpdate(dto: UpdateContenidoEducativoDto) {
     const data: any = { ...dto };
-    if (dto.fechaPublicacion) data.fechaPublicacion = new Date(dto.fechaPublicacion as any);
+    if (dto.fechaPublicacion)
+      data.fechaPublicacion = new Date(dto.fechaPublicacion as any);
     if (dto.fechaBaja) data.fechaBaja = new Date(dto.fechaBaja as any);
     return data;
   }
 
-  // Publico
+  // Listado público (solo visibles y vigentes)
   async listPublic(): Promise<ListContenidoEducativoDto[]> {
     const now = new Date();
 
@@ -39,28 +46,46 @@ export class ContenidoService {
         OR: [{ fechaBaja: null }, { fechaBaja: { gte: now } }],
       },
       orderBy: { fechaPublicacion: 'desc' },
-      select: { fechaPublicacion: true, titulo: true, visible: true },
+      select: {
+        fechaPublicacion: true,
+        titulo: true,
+        visible: true,
+      },
     });
 
     return rows as ListContenidoEducativoDto[];
   }
 
-  // ADMIN: listado con filtros + orden + paginación
+  // listado para admin con filtrado completo
   async listAdmin(filter: FilterContenidoAdminDto) {
+    const f: any = filter;
+
     const {
       limit = 20,
       offset = 0,
       sortBy = 'fechaPublicacion',
       order = 'desc',
       idAdmin,
-      visible,
       fechaDesde,
       fechaHasta,
       q,
-    } = filter as any;
+    } = f;
 
     const where: Prisma.ContenidoEducativoWhereInput = {};
 
+    // constante para la visibilidad
+    const rawVisible = (filter as any).visible;
+
+    if (typeof rawVisible === 'boolean') {
+      where.visible = rawVisible;
+    } else if (rawVisible !== undefined && rawVisible !== null && rawVisible !== '') {
+      // Por si llega como string, aunque en el front va un select no tipeo
+      const v = String(rawVisible).toLowerCase().trim();
+      if (v === 'true' || v === '1') where.visible = true;
+      else if (v === 'false' || v === '0') where.visible = false;
+    }
+
+    // bsqueda por texto en título / descripción
     if (q) {
       where.OR = [
         { titulo: { contains: q } },
@@ -68,14 +93,12 @@ export class ContenidoService {
       ];
     }
 
+    // Filtro por admin
     if (typeof idAdmin !== 'undefined' && idAdmin !== null) {
       where.idAdmin = Number(idAdmin);
     }
 
-    if (typeof visible === 'boolean') {
-      where.visible = visible;
-    }
-
+    // Rango de fechas (filtra por fechaPublicacion)
     if (fechaDesde || fechaHasta) {
       where.fechaPublicacion = {
         ...(fechaDesde ? { gte: new Date(fechaDesde) } : {}),
@@ -83,9 +106,16 @@ export class ContenidoService {
       };
     }
 
-    const sortField = sortBy as keyof Prisma.ContenidoEducativoOrderByWithRelationInput;
-    const sortOrder: Prisma.SortOrder = order.toLowerCase() === 'asc' ? 'asc' : 'desc';
-    const orderBy: Prisma.ContenidoEducativoOrderByWithRelationInput = { [sortField]: sortOrder };
+    // ORDEN Y PAGINACIÓN 
+    const sortField =
+      sortBy as keyof Prisma.ContenidoEducativoOrderByWithRelationInput;
+
+    const sortOrder: Prisma.SortOrder =
+      (order ?? 'desc').toLowerCase() === 'asc' ? 'asc' : 'desc';
+
+    const orderBy: Prisma.ContenidoEducativoOrderByWithRelationInput = {
+      [sortField]: sortOrder,
+    };
 
     const take = Number(limit);
     const skip = Number(offset);
@@ -100,22 +130,34 @@ export class ContenidoService {
       (this.prisma as any)[this.MODEL].count({ where }),
     ]);
 
-    return { items, total, limit: take, offset: skip, sortBy, order: sortOrder };
+    return {
+      items,
+      total,
+      limit: take,
+      offset: skip,
+      sortBy,
+      order: sortOrder,
+    };
   }
 
-  // ADMIN: create/update/visible
+  // METODOS ADMIN: CREATE, UPDATE Y VISIBLE
+
+  // Crear contenido, solo admin
   async create(dto: CreateContenidoEducativoDto) {
     const data = this.coerceCreate(dto);
     try {
       return await (this.prisma as any)[this.MODEL].create({ data });
     } catch (error: any) {
       if (error?.code === 'P2003') {
-        throw new BadRequestException('Alguna referencia es inválida (idAdmin u otra FK).');
+        throw new BadRequestException(
+          'Alguna referencia es inválida (idAdmin u otra FK).',
+        );
       }
       throw error;
     }
   }
 
+  // actualizar contenido
   async update(idContenido: number, dto: UpdateContenidoEducativoDto) {
     const exists = await (this.prisma as any)[this.MODEL].findUnique({
       where: { [this.ID_FIELD]: idContenido },
@@ -131,13 +173,19 @@ export class ContenidoService {
       });
     } catch (error: any) {
       if (error?.code === 'P2003') {
-        throw new BadRequestException('Alguna referencia es inválida (idAdmin u otra FK).');
+        throw new BadRequestException(
+          'Alguna referencia es inválida (idAdmin u otra FK).',
+        );
       }
       throw error;
     }
   }
 
-  async updateVisible(idContenido: number, dto: UpdateVisibleContenidoDto) {
+  // cambiar visibilidad
+  async updateVisible(
+    idContenido: number,
+    dto: UpdateVisibleContenidoDto,
+  ) {
     const exists = await (this.prisma as any)[this.MODEL].findUnique({
       where: { [this.ID_FIELD]: idContenido },
     });
@@ -147,6 +195,28 @@ export class ContenidoService {
       where: { [this.ID_FIELD]: idContenido },
       data: { visible: dto.visible },
       select: { [this.ID_FIELD]: true, visible: true } as any,
+    });
+  }
+
+  // DETALLE/BUSQUEDA POR ID
+
+  // Cliente obtiene un contenido solo si es visible y no está dado de baja
+  async getPublicById(idContenido: number) {
+    const now = new Date();
+
+    return (this.prisma as any)[this.MODEL].findFirst({
+      where: {
+        [this.ID_FIELD]: idContenido,
+        visible: true,
+        OR: [{ fechaBaja: null }, { fechaBaja: { gte: now } }],
+      },
+    });
+  }
+
+  // Admin obtiene un contenido por id (incluye ocultos)
+  async getAdminById(idContenido: number) {
+    return (this.prisma as any)[this.MODEL].findUnique({
+      where: { [this.ID_FIELD]: idContenido },
     });
   }
 }

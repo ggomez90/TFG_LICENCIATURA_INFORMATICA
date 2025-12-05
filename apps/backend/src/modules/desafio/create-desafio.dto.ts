@@ -2,15 +2,15 @@ import { IsBoolean, IsDateString, IsInt, IsNumber, IsOptional, IsString, Length,
 
 export class CreateDesafioDto {
   @IsInt() @Min(1) idAdmin!: number;
+  //se incrementaron extensiones de datos de tipo String y se corrio migracion
+  @IsString() @Length(1, 500) titulo!: string;
+  @IsString() @Length(1, 5000) descripcion!: string;
 
-  @IsString() @Length(1, 100) titulo!: string;
-  @IsString() @Length(1, 500) descripcion!: string;
-
-  @IsString() @Length(1, 100) tipoResiduo!: string;
+  @IsString() @Length(1, 200) tipoResiduo!: string;
 
   @IsBoolean() requiereInscripcion!: boolean;
 
-  @IsString() @Length(1, 50) unidadMedida!: string;
+  @IsString() @Length(1, 200) unidadMedida!: string;
 
   @IsNumber() meta!: number;
   @IsInt() @Min(0) puntosTotales!: number;
