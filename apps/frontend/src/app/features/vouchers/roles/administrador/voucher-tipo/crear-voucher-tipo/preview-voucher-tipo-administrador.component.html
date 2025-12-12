@@ -1,0 +1,94 @@
+<section class="dsf-wrap preview-voucher-tipo">
+  <!-- CABECERA -->
+  <header class="dsf-header">
+    <h1 class="dsf-title">Previsualización del tipo de voucher</h1>
+    <p class="dsf-sub">
+      Así se verá el tipo de voucher. Verificá los datos antes de crearlo.
+    </p>
+  </header>
+
+  <!-- CARD PRINCIPAL (gift card) -->
+  <div class="dsf-card dsf-card--preview voucher-preview-card">
+    <div class="voucher-frame">
+      <div class="voucher-content">
+        <!-- TÍTULO (centrado) -->
+        <h2 class="voucher-title">{{ data.titulo || '(Sin título)' }}</h2>
+
+        <!-- FILA CENTRAL: BENEFICIO - ESTADO - PUNTOS (centrados, misma línea) -->
+        <div class="voucher-values">
+          <div class="voucher-value">
+            <div class="label">Beneficio</div>
+            <div class="value">$ {{ data.montoBeneficio }}</div>
+          </div>
+
+          <div class="voucher-value">
+            <div class="label">Estado</div>
+            <div class="value">
+              <span
+                class="state-badge"
+                [class.state-badge--ok]="data.activa"
+                [class.state-badge--muted]="!data.activa"
+              >
+                {{ data.activa ? 'ACTIVO' : 'INACTIVO' }}
+              </span>
+            </div>
+          </div>
+
+          <div class="voucher-value">
+            <div class="label">Puntos requeridos</div>
+            <div class="value">{{ data.puntosRequeridos }}</div>
+          </div>
+        </div>
+
+        <!-- DESCRIPCIÓN (alineada a la izquierda) -->
+        <div class="voucher-description">
+          <h3>Descripción</h3>
+          <p>{{ data.descripcion || '(Sin descripción)' }}</p>
+        </div>
+
+        <!-- FILA INFERIOR: FECHAS (izquierda) + MARCA (derecha) -->
+        <div class="voucher-footer-row">
+          <div class="voucher-dates">
+            <div class="date-chip">
+              <span class="d-label">Inicio:</span>
+              <span class="d-value">{{ data.fechaInicioVigencia | date:'dd/MM/yyyy' }}</span>
+            </div>
+            <div class="date-chip">
+              <span class="d-label">Fin:</span>
+              <span class="d-value">{{ data.fechaFinVigencia | date:'dd/MM/yyyy' }}</span>
+            </div>
+          </div>
+
+          <div class="voucher-brand">
+            <img
+              src="/assets/img/escudo-muni.png"
+              alt="Escudo Gobierno de la Ciudad de Ceres"
+              class="f-escudo"
+            />
+            <div class="f-brand__text">
+              <span class="line1">Gobierno de la Ciudad</span>
+              <span class="line2">de Ceres</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ACCIONES (fuera del card) -->
+  <footer class="pv-actions">
+    <button type="button" class="dsf-btn dsf-btn--ghost" (click)="onVolver()">
+      ← Volver
+    </button>
+
+    <div class="pv-actions__spacer"></div>
+
+    <!-- Modo crear = GUARDAR / modo editar = ACTUALIZAR -->
+    <button
+      type="button"
+      class="dsf-btn dsf-btn--primary pv-save-btn"
+      (click)="onGuardarOActualizar()">
+      {{ isEditMode ? '💾 Actualizar' : '✅ Guardar voucher' }}
+    </button>
+  </footer>
+</section>

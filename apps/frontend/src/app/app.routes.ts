@@ -12,7 +12,6 @@ import { MenuOperarioComponent } from './features/menu-principal/roles/operario/
 import { DesafiosAdministradorComponent } from './features/desafios/roles/administrador/desafios-admin.component';
 
 import { VouchersClienteComponent } from './features/vouchers/roles/cliente/vouchers-cliente.component';
-import { VouchersAdminComponent } from './features/vouchers/roles/administrador/vouchers-admin.component';
 
 import { BibliotecaClienteComponent } from './features/biblioteca/roles/cliente/biblioteca-cliente.component';
 import { BibliotecaAdministradorComponent } from './features/biblioteca/roles/administrador/biblioteca-administrador.component';
@@ -48,6 +47,13 @@ import { PreviewDesafioAdministradorComponent } from './features/desafios/roles/
 import { VerDesafioComponent } from './features/desafios/ver-desafio/ver-desafio.component';
 import { EditarDesafioAdministradorComponent } from './features/desafios/roles/administrador/editar-desafio/editar-desafio-administrador.component';
 import { ListarDesafiosComponent } from './features/desafios/listar-desafios/listar-desafios.component';
+
+import { CrearVoucherTipoAdministradorComponent } from './features/vouchers/roles/administrador/voucher-tipo/crear-voucher-tipo/crear-voucher-tipo-administrador.component';
+import { PreviewVoucherTipoAdministradorComponent } from './features/vouchers/roles/administrador/voucher-tipo/crear-voucher-tipo/preview-voucher-tipo-administrador.component';
+import { VerVoucherTipoAdministradorComponent } from './features/vouchers/roles/administrador/voucher-tipo/ver-voucher-tipo/ver-voucher-tipo-administrador.component';
+import { AdministradorVouchersComponent } from './features/vouchers/roles/administrador/administrador-voucher-tipo.component';
+import { EditarVoucherTipoAdministradorComponent } from './features/vouchers/roles/administrador/voucher-tipo/editar-voucher-tipo/editar-voucher-tipo-administrador.component';
+import { ListarVoucherTipoAdministradorComponent } from './features/vouchers/roles/administrador/voucher-tipo/listar-voucher-tipo/listar-voucher-tipo-administrador.component';
 
 export const routes: Routes = [
   {
@@ -125,10 +131,45 @@ export const routes: Routes = [
 
       {
         path: 'admin/vouchers',
-        component: VouchersAdminComponent,
+        component: AdministradorVouchersComponent,
         canActivate: [hasRoleGuard],
         data: { roles: ['ADMIN', 'ADMINISTRADOR'] },
       },
+      {
+        path: 'admin/vouchers/voucher-tipo/crear',
+        component: CrearVoucherTipoAdministradorComponent,
+        canActivate: [hasRoleGuard],
+        data: { roles: ['ADMIN', 'ADMINISTRADOR'] },
+      },
+      {
+        path: 'admin/vouchers/voucher-tipo/preview',
+        component: PreviewVoucherTipoAdministradorComponent,
+        canActivate: [hasRoleGuard],
+        data: { roles: ['ADMIN', 'ADMINISTRADOR'] },
+      },
+      {
+        path: 'admin/vouchers/voucher-tipo/ver/:id',
+        component: VerVoucherTipoAdministradorComponent,
+        canActivate: [hasRoleGuard],
+        data: { roles: ['ADMIN', 'ADMINISTRADOR'] },
+      },
+      {
+        path: 'admin/vouchers/voucher-tipo/editar/:id',
+        component: EditarVoucherTipoAdministradorComponent,
+        canActivate: [hasRoleGuard],
+        data: { roles: ['ADMIN', 'ADMINISTRADOR'] },
+      },
+      {
+        path: 'admin/vouchers/voucher-tipo/listar',
+        component: ListarVoucherTipoAdministradorComponent,
+        canActivate: [hasRoleGuard],
+        data: { roles: ['ADMIN', 'ADMINISTRADOR'] },
+      },
+
+
+
+
+
       {
         path: 'admin/biblioteca',
         component: BibliotecaAdministradorComponent,

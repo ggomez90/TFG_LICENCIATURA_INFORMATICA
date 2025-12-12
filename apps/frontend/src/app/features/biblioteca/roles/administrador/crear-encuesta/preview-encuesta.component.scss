@@ -1,5 +1,18 @@
 @use '../../cliente/biblioteca-cliente.component.scss' as *;
 
+/* ===== FIX CRÍTICO: anular grid heredado de .dsf-wrap SOLO acá ===== */
+.dsf-wrap.preview-voucher-tipo {
+  display: block !important;      /* deja de ser grid */
+  column-gap: 0 !important;
+  row-gap: 0 !important;
+}
+.dsf-wrap.preview-voucher-tipo > * {
+  /* si por cascada quedara grid, obligamos a que todos los hijos ocupen el ancho completo */
+  grid-column: 1 / -1 !important;
+  width: 100%;
+}
+
+
 .preview-encuesta {
   .dsf-card--preview {
     background: #ffffff;

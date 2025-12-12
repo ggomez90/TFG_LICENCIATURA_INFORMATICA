@@ -1,13 +1,13 @@
-import { IsBoolean, IsDateString, IsInt, IsString, Length, Min } from 'class-validator';
+import { IsBoolean, IsDateString, IsInt, IsString, Length, Min, IsOptional } from 'class-validator';
 
 export class CreateVoucherTipoDto {
-  @IsInt() @Min(1) idAdmin!: number;
+  @IsOptional() @IsInt() @Min(1) idAdmin?: number;
 
   @IsString() @Length(1, 100) titulo!: string;
   @IsString() @Length(1, 500) descripcion!: string;
 
-  @IsInt() @Min(0) puntosRequeridos!: number;
-  @IsInt() @Min(0) montoBeneficio!: number;
+  @IsInt() @Min(1) puntosRequeridos!: number;
+  @IsInt() @Min(1) montoBeneficio!: number;
 
   @IsDateString() fechaInicioVigencia!: string;
   @IsDateString() fechaFinVigencia!: string;

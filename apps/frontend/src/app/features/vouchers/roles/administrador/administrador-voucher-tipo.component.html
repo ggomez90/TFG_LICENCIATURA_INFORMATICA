@@ -1,0 +1,138 @@
+<section class="dsf-wrap vouchers-admin">
+  <header class="dsf-header">
+    <h1 class="dsf-title">Vouchers (Administrador)</h1>
+    <p class="dsf-sub">
+      Gestión de Tipos de Voucher y Vouchers de clientes.
+    </p>
+  </header>
+
+  <div class="dsf-sections-grid">
+    <!-- ================== TIPOS DE VOUCHERS ================== -->
+    <section class="dsf-panel">
+      <header class="dsf-panel__header">
+        <div>
+          <h2 class="dsf-panel__title">Tipos de vouchers</h2>
+        </div>
+        <div class="dsf-panel__actions">
+          <button type="button" class="dsf-btn dsf-btn--primary" (click)="onVerMasTipos()">
+            Ver más
+          </button>
+          <button type="button" class="dsf-btn dsf-btn--primary" (click)="onCrearTipo()">
+            + Crear tipo
+          </button>
+        </div>
+      </header>
+
+      <!-- Estados + tabla TIPOS -->
+      <ng-container *ngIf="loadingTipos(); else tiposLoadedTpl">
+        <div class="dsf-empty dsf-empty--loading">
+          <p class="dsf-empty__text">Cargando tipos de voucher...</p>
+        </div>
+      </ng-container>
+
+      <ng-template #tiposLoadedTpl>
+        <div *ngIf="tipos().length === 0" class="dsf-empty">
+          <p class="dsf-empty__text">No existen tipos de voucher aún.</p>
+        </div>
+
+        <div *ngIf="tipos().length > 0" class="dsf-table-wrap">
+          <table class="dsf-table">
+            <thead>
+              <tr>
+                <th>Vigencia</th>
+                <th>Título</th>
+                <th>Estado</th>
+                <th class="dsf-table__th--actions">Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let t of tipos()">
+                <td class="dsf-td--center">{{ fmtVigencia(t) }}</td>
+                <td class="dsf-table__cell--strong dsf-td--title">{{ t.titulo }}</td>
+                <td class="dsf-td--center">
+                  <span class="dsf-badge" [ngClass]="t.activa ? 'dsf-badge--ok' : 'dsf-badge--muted'">
+                    {{ t.activa ? 'Activa' : 'Inactiva' }}
+                  </span>
+                </td>
+                <td class="dsf-table__cell--actions">
+                  <div class="dsf-actions-inline">
+                    <button type="button" class="dsf-icon-btn" (click)="onVerTipo(t)" title="Ver detalle">👁️</button>
+                    <button type="button" class="dsf-icon-btn" (click)="onEditarTipo(t)" title="Editar">✏️</button>
+
+                    <label class="dsf-icon-toggle" [title]="t.activa ? 'Desactivar tipo' : 'Activar tipo'">
+                      <input type="checkbox"
+                             [checked]="t.activa"
+                             (change)="onToggleActivaTipoConfirm(t, $event)"/>
+                      <span class="dsf-icon-toggle__pill"></span>
+                    </label>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </ng-template>
+    </section>
+
+    <!-- ================== VOUCHERS ================== -->
+    <section class="dsf-panel">
+      <header class="dsf-panel__header">
+        <div>
+          <h2 class="dsf-panel__title">Vouchers</h2>
+        </div>
+        <div class="dsf-panel__actions">
+          <button type="button" class="dsf-btn dsf-btn--primary" (click)="onVerMasVouchers()">
+            Ver más
+          </button>
+          <button type="button" class="dsf-btn dsf-btn--primary" (click)="onCrearVoucher()">
+            + Crear voucher
+          </button>
+        </div>
+      </header>
+
+      <!-- Estados + tabla VOUCHERS -->
+      <ng-container *ngIf="loadingVouchers(); else vouchersLoadedTpl">
+        <div class="dsf-empty dsf-empty--loading">
+          <p class="dsf-empty__text">Cargando vouchers...</p>
+        </div>
+      </ng-container>
+
+      <ng-template #vouchersLoadedTpl>
+        <div *ngIf="vouchers().length === 0" class="dsf-empty">
+          <p class="dsf-empty__text">No existen vouchers para esta sección.</p>
+        </div>
+
+        <div *ngIf="vouchers().length > 0" class="dsf-table-wrap">
+          <table class="dsf-table">
+            <thead>
+              <tr>
+                <th>Fecha adquisición</th>
+                <th>Tipo</th>
+                <th>Estado</th>
+                <th class="dsf-table__th--actions">Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let v of vouchers()">
+                <td class="dsf-td--center">{{ fmtFechaAdq(v) }}</td>
+                <td class="dsf-table__cell--strong dsf-td--title">{{ v.tituloTipo }}</td>
+                <td class="dsf-td--center">
+                  <span class="dsf-badge" [ngClass]="badgeClaseVoucher(v)">
+                    {{ v.estadoVoucher === 3 ? 'Utilizado' : (v.estadoVoucher === 4 ? 'Anulado' : (v.estadoVoucher === 2 ? 'Adquirido' : 'Creado')) }}
+                  </span>
+                </td>
+                <td class="dsf-table__cell--actions">
+                  <div class="dsf-actions-inline">
+                    <button type="button" class="dsf-icon-btn" (click)="onVerVoucher(v)" title="Ver detalle">👁️</button>
+                    <button type="button" class="dsf-icon-btn" (click)="onEditarVoucher(v)" title="Editar">✏️</button>
+                    <!-- Toggle de estado lo agregamos cuando definamos la política (anular, etc.) -->
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </ng-template>
+    </section>
+  </div>
+</section>

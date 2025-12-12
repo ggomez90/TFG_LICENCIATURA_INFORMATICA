@@ -8,6 +8,8 @@ import { ContenidoModule } from './modules/contenido/contenido.module';
 import { EncuestaModule } from './modules/encuesta/encuesta.module';
 import { ClienteModule } from './modules/cliente';
 import { DesafioModule } from './modules/desafio';
+import { VoucherTipoModule } from './modules/voucher-tipo';
+import { VoucherModule } from './modules/voucher';
 
 @Module({
   imports: [
@@ -19,6 +21,8 @@ import { DesafioModule } from './modules/desafio';
     EncuestaModule,
     ClienteModule,
     DesafioModule,
+    VoucherTipoModule,
+    VoucherModule,
   ],
   controllers: [],
   providers: [

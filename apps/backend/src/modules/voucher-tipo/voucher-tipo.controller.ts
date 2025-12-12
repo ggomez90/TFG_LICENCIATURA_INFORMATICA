@@ -10,6 +10,7 @@ import {
   UseGuards,
   HttpCode,
   HttpStatus,
+  Req,
 } from '@nestjs/common';
 import { VoucherTipoService } from './voucher-tipo.service';
 import { CreateVoucherTipoDto } from './create-voucher-tipo.dto';
@@ -26,22 +27,23 @@ export class VoucherTipoController {
   // Solo ADMIN
   @Get()
   @UseGuards(KeycloakAuthGuard, RolesGuard)
-  @Roles('ADMIN')
+  @Roles('ADMIN', 'ADMINISTRADOR')
   async findAll(@Query() filter: FilterVoucherTipoDto) {
     return this.voucherTipoService.findAll(filter);
   }
 
   @Post()
   @UseGuards(KeycloakAuthGuard, RolesGuard)
-  @Roles('ADMIN')
+  @Roles('ADMIN', 'ADMINISTRADOR')
   @HttpCode(HttpStatus.CREATED)
   async create(@Body() dto: CreateVoucherTipoDto) {
+    // el DTO ya trae idAdmin desde el front
     return this.voucherTipoService.create(dto);
   }
 
   @Patch(':id')
   @UseGuards(KeycloakAuthGuard, RolesGuard)
-  @Roles('ADMIN')
+  @Roles('ADMIN', 'ADMINISTRADOR')
   async update(
     @Param('id', ParseIntPipe) idVoucherTipo: number,
     @Body() dto: UpdateVoucherTipoDto,
@@ -51,11 +53,18 @@ export class VoucherTipoController {
 
   @Patch(':id/activa')
   @UseGuards(KeycloakAuthGuard, RolesGuard)
-  @Roles('ADMIN')
+  @Roles('ADMIN', 'ADMINISTRADOR')
   async updateActiva(
     @Param('id', ParseIntPipe) idVoucherTipo: number,
     @Body() dto: UpdateActivaVoucherTipoDto,
   ) {
     return this.voucherTipoService.updateActiva(idVoucherTipo, dto);
+  }
+
+  @Get(':id')
+  @UseGuards(KeycloakAuthGuard, RolesGuard)
+  @Roles('ADMIN', 'ADMINISTRADOR')
+  async findOne(@Param('id', ParseIntPipe) idVoucherTipo: number) {
+    return this.voucherTipoService.findOne(idVoucherTipo);
   }
 }

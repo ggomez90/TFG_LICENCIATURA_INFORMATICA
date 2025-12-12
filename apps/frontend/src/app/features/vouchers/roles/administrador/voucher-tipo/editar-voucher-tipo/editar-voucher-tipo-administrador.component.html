@@ -1,0 +1,132 @@
+<section class="dsf-wrap crear-voucher-tipo">
+  <!-- CABECERA -->
+  <header class="dsf-header">
+    <h1 class="dsf-title">Editar tipo de voucher</h1>
+    <p class="dsf-sub">
+      Modificá los datos del tipo de voucher y guardá los cambios.
+    </p>
+  </header>
+
+  <!-- FORMULARIO -->
+  <form class="dsf-form" (ngSubmit)="onActualizar()">
+    <div class="dsf-card dsf-card--form">
+      <div class="dsf-card__body">
+
+        <!-- TÍTULO (sin toolbar rica) -->
+        <label class="dsf-field dsf-field--wide">
+          <span class="dsf-field__label">
+            Título <span class="dsf-field__required">*</span>
+          </span>
+          <input
+            type="text"
+            class="dsf-input dsf-input--lg"
+            name="titulo"
+            maxlength="300"
+            [(ngModel)]="form.titulo"
+            required
+            placeholder="Ej.: DESCUENTO EN IMPUESTOS LOCALES"
+          />
+        </label>
+
+        <!-- DESCRIPCIÓN (simple) -->
+        <label class="dsf-field dsf-field--wide">
+          <span class="dsf-field__label">
+            Descripción <span class="dsf-field__required">*</span>
+          </span>
+          <textarea
+            class="dsf-textarea dsf-textarea--lg"
+            name="descripcion"
+            maxlength="500"
+            [(ngModel)]="form.descripcion"
+            required
+            placeholder="Detalle del beneficio del tipo de voucher..."
+          ></textarea>
+        </label>
+
+        <!-- FILA NÚMEROS -->
+        <div class="dsf-fields-row">
+          <label class="dsf-field dsf-field--half">
+            <span class="dsf-field__label">Puntos requeridos <span class="dsf-field__required">*</span></span>
+            <input
+              type="number"
+              class="dsf-input"
+              name="puntosRequeridos"
+              min="1"
+              step="1"
+              inputmode="numeric"
+              (keydown)="onNumberKeydown($event)"
+              [(ngModel)]="form.puntosRequeridos"
+              required
+            />
+          </label>
+
+          <label class="dsf-field dsf-field--half">
+            <span class="dsf-field__label">Monto del beneficio ($) <span class="dsf-field__required">*</span></span>
+            <input
+              type="number"
+              class="dsf-input"
+              name="montoBeneficio"
+              min="1"
+              step="1"
+              inputmode="numeric"
+              (keydown)="onNumberKeydown($event)"
+              [(ngModel)]="form.montoBeneficio"
+              required
+            />
+          </label>
+        </div>
+
+        <!-- FILA FECHAS -->
+        <div class="dsf-fields-row">
+          <label class="dsf-field dsf-field--half">
+            <span class="dsf-field__label">Fecha de inicio de vigencia</span>
+            <input
+              type="date"
+              class="dsf-input"
+              name="fechaInicioVigencia"
+              [value]="form.fechaInicioVigencia"
+              disabled
+            />
+            <small class="dsf-field__hint">No editable: fecha de emisión</small>
+          </label>
+
+          <label class="dsf-field dsf-field--half">
+            <span class="dsf-field__label">Fecha de fin de vigencia <span class="dsf-field__required">*</span></span>
+            <input
+              type="date"
+              class="dsf-input"
+              name="fechaFinVigencia"
+              [min]="minFechaFinEditar()"
+              [(ngModel)]="form.fechaFinVigencia"
+              required
+            />
+            <small class="dsf-field__hint">Debe ser al menos mañana.</small>
+          </label>
+        </div>
+
+        <!-- SWITCH ACTIVA -->
+        <div class="dsf-field dsf-field--switch">
+          <label class="dsf-switch-field">
+            <input type="checkbox" name="activa" [(ngModel)]="form.activa" />
+            <span class="dsf-switch__track"><span class="dsf-switch__thumb"></span></span>
+            <span class="dsf-switch__text">Activo</span>
+          </label>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ACCIONES -->
+    <footer class="dsf-form__actions">
+      <button type="button" class="dsf-btn dsf-btn--ghost" (click)="onVolver()">← Volver</button>
+
+      <button type="button" class="dsf-btn dsf-btn--ghost" (click)="onRestablecer()">↺ Restablecer</button>
+
+      <span class="dsf-form__spacer"></span>
+
+      <button type="button" class="dsf-btn dsf-btn--outline" (click)="onPrevisualizar()">👁️ Previsualizar</button>
+
+      <button type="submit" class="dsf-btn dsf-btn--primary">💾 Actualizar</button>
+    </footer>
+  </form>
+</section>

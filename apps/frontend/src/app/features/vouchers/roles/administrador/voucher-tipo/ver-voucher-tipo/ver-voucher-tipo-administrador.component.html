@@ -1,0 +1,83 @@
+<section class="dsf-wrap ver-voucher-tipo">
+  <!-- Estados de carga / error -->
+  <div *ngIf="loading">Cargando...</div>
+  <div *ngIf="!loading && error" class="dsf-note">{{ error }}</div>
+
+  <ng-container *ngIf="!loading && !error && data">
+    <!-- CARD PRINCIPAL (idéntico al preview) -->
+    <div class="dsf-card dsf-card--preview voucher-preview-card">
+      <div class="voucher-frame">
+        <div class="voucher-content">
+          <!-- TÍTULO -->
+          <h2 class="voucher-title">{{ data.titulo || '(Sin título)' }}</h2>
+
+          <!-- FILA CENTRAL: Beneficio | Estado | Puntos -->
+          <div class="voucher-values">
+            <div class="voucher-value">
+              <div class="label">Beneficio</div>
+              <div class="value">{{ fmtARS(data.montoBeneficio) }}</div>
+            </div>
+
+            <div class="voucher-value">
+              <div class="label">Estado</div>
+              <div class="value">
+                <span
+                  class="state-badge"
+                  [class.state-badge--ok]="data.activa"
+                  [class.state-badge--muted]="!data.activa"
+                >
+                  {{ data.activa ? 'ACTIVO' : 'INACTIVO' }}
+                </span>
+              </div>
+            </div>
+
+            <div class="voucher-value">
+              <div class="label">Puntos requeridos</div>
+              <div class="value">{{ data.puntosRequeridos }}</div>
+            </div>
+          </div>
+
+          <!-- DESCRIPCIÓN -->
+          <div class="voucher-description">
+            <h3>Descripción</h3>
+            <p>{{ data.descripcion || '(Sin descripción)' }}</p>
+          </div>
+
+          <!-- FILA INFERIOR: Fechas + Marca -->
+          <div class="voucher-footer-row">
+            <div class="voucher-dates">
+              <div class="date-chip">
+                <span class="d-label">Inicio:</span>
+                <span class="d-value">{{ fmtDate(data.fechaInicioVigencia) }}</span>
+              </div>
+              <div class="date-chip">
+                <span class="d-label">Fin:</span>
+                <span class="d-value">{{ fmtDate(data.fechaFinVigencia) }}</span>
+              </div>
+            </div>
+
+            <div class="voucher-brand">
+              <img
+                src="/assets/img/escudo-muni.png"
+                alt="Escudo Gobierno de la Ciudad de Ceres"
+                class="f-escudo"
+              />
+              <div class="f-brand__text">
+                <span class="line1">Gobierno de la Ciudad</span>
+                <span class="line2">de Ceres</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ACCIONES (solo volver) -->
+    <footer class="pv-actions">
+      <span class="pv-actions__spacer"></span>
+      <button type="button" class="dsf-btn dsf-btn--ghost" (click)="onVolver()">
+        ← Volver
+      </button>
+    </footer>
+  </ng-container>
+</section>

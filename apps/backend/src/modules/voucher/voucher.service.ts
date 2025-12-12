@@ -123,12 +123,14 @@ export class VoucherService {
       idVoucher,
       idCliente,
       idEstadoVoucher,
+      idVoucherTipo,          // ⬅️ NUEVO
     } = filter as any;
 
     const where: Prisma.VoucherWhereInput = {};
 
     if (idVoucher) (where as any).idVoucher = Number(idVoucher);
 
+    // Si el actor es CLIENTE, forzamos sus propios vouchers
     if (ctx.actorRole === 'CLIENTE') {
       const myIdCliente = await this.resolveClienteIdFromIdentifier(ctx.identifier);
       where.idCliente = myIdCliente;
@@ -137,6 +139,9 @@ export class VoucherService {
     }
 
     if (idEstadoVoucher) (where as any).idEstadoVoucher = Number(idEstadoVoucher);
+
+    // ⬇️ NUEVO: filtro por tipo
+    if (idVoucherTipo) (where as any).idVoucherTipo = Number(idVoucherTipo);
 
     const sortField = (sortBy ?? 'fechaAdquisicion') as keyof Prisma.VoucherOrderByWithRelationInput;
     const sortOrder: Prisma.SortOrder = (order ?? 'desc').toLowerCase() === 'asc' ? 'asc' : 'desc';
@@ -152,6 +157,7 @@ export class VoucherService {
 
     return { items, total, limit: take, offset: skip, sortBy, order: sortOrder };
   }
+
 
   //Update Estado
   async updateEstado(idVoucher: number, dto: UpdateEstadoVoucherDto, ctx: ActorCtx): Promise<Voucher> {
@@ -185,4 +191,11 @@ export class VoucherService {
       data,
     });
   }
+
+    async existsForTipo(idVoucherTipo: number): Promise<boolean> {
+      const count = await this.prisma.voucher.count({
+        where: { idVoucherTipo: Number(idVoucherTipo) },
+      });
+      return count > 0;
+    }
 }

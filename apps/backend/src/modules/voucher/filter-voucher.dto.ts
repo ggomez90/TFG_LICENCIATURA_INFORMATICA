@@ -3,6 +3,7 @@ import { PaginationDto } from '../common/pagination.dto';
 import { OrderDto } from '../common/order.dto';
 
 export class FilterVoucherDto extends PaginationDto {
+
   @IsOptional()
   @IsInt()
   @Min(1)
@@ -17,9 +18,13 @@ export class FilterVoucherDto extends PaginationDto {
   @IsInt()
   @Min(1)
   idEstadoVoucher?: number;
+
+  // ⬅️⬅️⬅️ ESTE CAMPO FALTABA
+  @IsOptional()
+  @IsInt()
+  @Min(1)
+  idVoucherTipo?: number;
 }
 
-export class OrderVoucherDto extends OrderDto {
-  // sortBy idVoucher, fechaAdquisicion, fechaUso
-  // sortDir asc o desc
-}
+// opcional
+export class OrderVoucherDto extends OrderDto {}

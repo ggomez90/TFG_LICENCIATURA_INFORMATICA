@@ -1,0 +1,155 @@
+<section class="dsf-wrap crear-voucher-tipo">
+  <!-- CABECERA -->
+  <header class="dsf-header">
+    <h1 class="dsf-title">Nuevo tipo de voucher</h1>
+    <p class="dsf-sub">
+      Definí un tipo de voucher (título, descripción, vigencia y valores) para que los clientes puedan canjearlo con puntos.
+    </p>
+  </header>
+
+  <!-- FORMULARIO -->
+  <form class="dsf-form" (ngSubmit)="onCrear()">
+    <div class="dsf-card dsf-card--form">
+      <div class="dsf-card__body">
+        <!-- TÍTULO (texto simple, sin toolbar) -->
+        <label class="dsf-field dsf-field--wide">
+          <span class="dsf-field__label">
+            Título
+            <span class="dsf-field__required">*</span>
+            <small class="dsf-field__hint">(requerido, máx. 200 caracteres)</small>
+          </span>
+          <input
+            type="text"
+            class="dsf-input dsf-input--lg"
+            name="titulo"
+            maxlength="200"
+            [(ngModel)]="form.titulo"
+            required
+            placeholder="Ej.: Descuento en tienda asociada"
+          />
+        </label>
+
+        <!-- DESCRIPCIÓN (texto simple, sin toolbar) -->
+        <label class="dsf-field dsf-field--wide">
+          <span class="dsf-field__label">
+            Descripción
+            <span class="dsf-field__required">*</span>
+            <small class="dsf-field__hint">(requerido, máx. 500 caracteres)</small>
+          </span>
+          <textarea
+            class="dsf-textarea dsf-textarea--lg"
+            name="descripcion"
+            maxlength="500"
+            rows="5"
+            [(ngModel)]="form.descripcion"
+            required
+            placeholder="Detallá el beneficio, condiciones y alcance…"
+          ></textarea>
+        </label>
+
+        <!-- BLOQUE DE NÚMEROS -->
+        <div class="dsf-fields-row">
+          <!-- PUNTOS REQUERIDOS -->
+          <label class="dsf-field dsf-field--half">
+            <span class="dsf-field__label">Puntos requeridos <span class="dsf-field__required">*</span></span>
+            <input
+              type="number"
+              class="dsf-input"
+              name="puntosRequeridos"
+              required
+              min="1"
+              step="1"
+              pattern="[0-9]*"
+              inputmode="numeric"
+              [(ngModel)]="form.puntosRequeridos"
+              (keydown)="onNumberKeydown($event)"
+            />
+          </label>
+
+          <!-- MONTO BENEFICIO (ARS) -->
+          <label class="dsf-field dsf-field--half">
+            <span class="dsf-field__label">Monto beneficio ($AR) <span class="dsf-field__required">*</span></span>
+            <input
+              type="number"
+              class="dsf-input"
+              name="montoBeneficio"
+              required
+              min="1"
+              step="1"
+              pattern="[0-9]*"
+              inputmode="numeric"
+              [(ngModel)]="form.montoBeneficio"
+              (keydown)="onNumberKeydown($event)"
+            />
+          </label>
+        </div>
+
+        <!-- BLOQUE DE FECHAS -->
+        <div class="dsf-fields-row">
+          <!-- FECHA INICIO -->
+          <label class="dsf-field dsf-field--half">
+            <span class="dsf-field__label">
+              Inicio de vigencia
+              <span class="dsf-field__required">*</span>
+            </span>
+            <input
+              type="date"
+              class="dsf-input"
+              name="fechaInicioVigencia"
+              required
+              [min]="minFechaInicio()"
+              [(ngModel)]="form.fechaInicioVigencia"
+            />
+          </label>
+
+          <!-- FECHA FIN -->
+          <label class="dsf-field dsf-field--half">
+            <span class="dsf-field__label">
+              Fin de vigencia
+              <span class="dsf-field__required">*</span>
+              <small class="dsf-field__hint">(debe ser posterior o igual al inicio)</small>
+            </span>
+            <input
+              type="date"
+              class="dsf-input"
+              name="fechaFinVigencia"
+              required
+              [min]="getMinFechaFin()"
+              [(ngModel)]="form.fechaFinVigencia"
+            />
+          </label>
+        </div>
+
+        <!-- ACTIVA (SWITCH) -->
+        <div class="dsf-field dsf-field--switch">
+          <label class="dsf-switch-field" for="activaSwitch">
+            <input
+              id="activaSwitch"
+              type="checkbox"
+              name="activa"
+              [(ngModel)]="form.activa"
+            />
+            <span class="dsf-switch__track">
+              <span class="dsf-switch__thumb"></span>
+            </span>
+            <span class="dsf-switch__text">Tipo activo</span>
+          </label>
+          <p class="dsf-field__hint">Si está activo, podrá ser canjeado por los clientes (en su vigencia).</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ACCIONES -->
+    <footer class="dsf-form__actions">
+      <button type="button" class="dsf-btn dsf-btn--ghost" (click)="onVolver()">← Volver</button>
+
+      <button type="button" class="dsf-btn dsf-btn--ghost" (click)="onBorrar()">🧹 Borrar</button>
+
+      <span class="dsf-form__spacer"></span>
+
+      <button type="button" class="dsf-btn dsf-btn--outline" (click)="onPrevisualizar()">👁️ Previsualizar</button>
+
+      <button type="submit" class="dsf-btn dsf-btn--primary">Crear tipo de voucher</button>
+    </footer>
+  </form>
+</section>

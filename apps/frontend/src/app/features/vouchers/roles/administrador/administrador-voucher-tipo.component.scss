@@ -1,0 +1,239 @@
+@use '../../../biblioteca/roles/cliente/biblioteca-cliente.component.scss' as *;
+
+/* Encabezado general */
+.vouchers-admin {
+  .dsf-header {
+    margin-bottom: 2rem;
+    text-align: left;
+  }
+
+  .dsf-title {
+    font-size: 1.75rem;
+    line-height: 1.25;
+    color: #1b5e20;
+    margin: 0 0 .25rem 0;
+  }
+
+  .dsf-sub {
+    font-size: 1rem;
+    color: #2e7d32;
+    margin: 0;
+  }
+}
+
+/* Secciones */
+.dsf-sections-grid {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.dsf-panel {
+  background: #ffffff;
+  border-radius: 12px;
+  border: 1px solid #c8e6c9;
+  box-shadow: 0 10px 25px rgba(56, 142, 60, 0.08);
+  padding: 1.25rem;
+}
+
+.dsf-panel__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.dsf-panel__title {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: #1b5e20;
+  margin: 0;
+}
+
+.dsf-panel__actions {
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+/* Botones */
+.dsf-btn {
+  border-radius: 999px;
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+.dsf-btn--primary { background: #2e7d32; color: #ffffff; border-color: #2e7d32; }
+.dsf-btn--primary:hover { background: #1b5e20; border-color: #1b5e20; }
+
+/* Tabla */
+.dsf-table-wrap { overflow-x: auto; }
+
+.dsf-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+  table-layout: fixed;
+}
+
+/* Encabezados centrados y en MAYÚSCULAS */
+.dsf-table thead th {
+  text-align: center;
+  font-size: 1rem;
+  letter-spacing: 0.04em;
+  color: #2e7d32;
+  background: #f1f8e9;
+  text-transform: uppercase;
+}
+
+/* Celdas comunes */
+.dsf-table th,
+.dsf-table td {
+  padding: 0.6rem 0.8rem;
+  border-bottom: 1px solid #e0e0e0;
+  vertical-align: middle;
+}
+
+/* Alineaciones por tipo de contenido */
+.dsf-td--center { text-align: center; }
+.dsf-td--title  { text-align: left; }
+
+.dsf-table__cell--strong { font-weight: 700; color: #1b5e20; }
+
+/* Anchos de columnas — TIPOS (Vigencia | Título | Estado | Acciones) */
+.dsf-panel:nth-of-type(1) .dsf-table thead th:nth-child(1),
+.dsf-panel:nth-of-type(1) .dsf-table tbody td:nth-child(1) { width: 28%; }
+
+.dsf-panel:nth-of-type(1) .dsf-table thead th:nth-child(2),
+.dsf-panel:nth-of-type(1) .dsf-table tbody td:nth-child(2) { width: 42%; }
+
+.dsf-panel:nth-of-type(1) .dsf-table thead th:nth-child(3),
+.dsf-panel:nth-of-type(1) .dsf-table tbody td:nth-child(3) { width: 15%; }
+
+.dsf-panel:nth-of-type(1) .dsf-table thead th:nth-child(4),
+.dsf-panel:nth-of-type(1) .dsf-table tbody td:nth-child(4) { width: 15%; }
+
+/* Anchos de columnas — VOUCHERS (Fecha | Tipo | Estado | Acciones) */
+.dsf-panel:nth-of-type(2) .dsf-table thead th:nth-child(1),
+.dsf-panel:nth-of-type(2) .dsf-table tbody td:nth-child(1) { width: 28%; }
+
+.dsf-panel:nth-of-type(2) .dsf-table thead th:nth-child(2),
+.dsf-panel:nth-of-type(2) .dsf-table tbody td:nth-child(2) { width: 42%; }
+
+.dsf-panel:nth-of-type(2) .dsf-table thead th:nth-child(3),
+.dsf-panel:nth-of-type(2) .dsf-table tbody td:nth-child(3) { width: 15%; }
+
+.dsf-panel:nth-of-type(2) .dsf-table thead th:nth-child(4),
+.dsf-panel:nth-of-type(2) .dsf-table tbody td:nth-child(4) { width: 15%; }
+
+/* Acciones centradas */
+.dsf-table__th--actions { text-align: center; }
+.dsf-table__cell--actions { text-align: center; padding-right: 0.6rem; }
+
+/* Acciones en línea */
+.dsf-actions-inline {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  height: 36px;
+}
+
+/* Icono botón */
+.dsf-icon-btn {
+  width: 32px;
+  height: 32px;
+  border: 1px solid #d3e4d8;
+  background: #f5fbf7;
+  border-radius: 8px;
+  font-size: 16px;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease, transform 0.05s ease;
+}
+.dsf-icon-btn:hover { background: #e3f5ea; border-color: #2e7d32; transform: translateY(-1px); }
+
+/* Toggle (para activar/desactivar tipo) */
+.dsf-icon-toggle {
+  width: 32px; height: 32px; display: inline-flex; align-items: center; justify-content: center; position: relative;
+}
+.dsf-icon-toggle input { display: none; }
+.dsf-icon-toggle__pill {
+  width: 28px; height: 16px; border-radius: 999px; background: #d3e4d8; position: relative; display: inline-block; transition: background 0.15s ease;
+}
+.dsf-icon-toggle__pill::after {
+  content: ''; position: absolute; top: 2px; left: 2px; width: 12px; height: 12px; border-radius: 50%;
+  background: #ffffff; box-shadow: 0 1px 3px rgba(0,0,0,.18); transition: transform 0.15s ease;
+}
+.dsf-icon-toggle input:checked + .dsf-icon-toggle__pill { background: #2e7d32; }
+.dsf-icon-toggle input:checked + .dsf-icon-toggle__pill::after { transform: translateX(12px); }
+
+/* Badges de estado */
+.dsf-badge {
+  display: inline-flex; align-items: center; padding: 0.15rem 0.6rem; border-radius: 999px; font-weight: 600; font-size: 0.8rem;
+}
+.dsf-badge--ok { background: #e8f5e9; color: #2e7d32; }
+.dsf-badge--muted { background: #eeeeee; color: #616161; }
+
+.dsf-panel:nth-of-type(2) .dsf-table tbody td:nth-child(3) .dsf-badge { font-size: 0.9rem; }
+
+/* Estados vacíos y loading */
+.dsf-empty {
+  border-radius: 0.75rem;
+  padding: 1rem;
+  background: #ffffff;
+  border: 1px dashed #c5e1a5;
+  text-align: center;
+  color: #2e7d32;
+  font-size: 0.95rem;
+}
+.dsf-empty--loading {
+  background: linear-gradient(90deg,#ffffff 0%,#f1f8e9 50%,#ffffff 100%);
+  background-size: 200% 100%;
+  animation: dsf-skeleton 1.5s infinite linear;
+}
+.dsf-empty__text { margin: 0; }
+@keyframes dsf-skeleton {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .dsf-kpis { grid-template-columns: repeat(2, 1fr); }
+
+  .dsf-panel__header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: .75rem;
+  }
+  .dsf-panel__actions { justify-content: flex-start; }
+  .dsf-table th, .dsf-table td { padding: 0.5rem 0.6rem; }
+
+  /* Ajuste de proporciones en móvil para priorizar título */
+  /* TIPOS */
+  .dsf-panel:nth-of-type(1) .dsf-table thead th:nth-child(1),
+  .dsf-panel:nth-of-type(1) .dsf-table tbody td:nth-child(1) { width: 28%; }  /* Vigencia */
+  .dsf-panel:nth-of-type(1) .dsf-table thead th:nth-child(2),
+  .dsf-panel:nth-of-type(1) .dsf-table tbody td:nth-child(2) { width: 44%; }  /* Título */
+  .dsf-panel:nth-of-type(1) .dsf-table thead th:nth-child(3),
+  .dsf-panel:nth-of-type(1) .dsf-table tbody td:nth-child(3) { width: 14%; }  /* Estado */
+  .dsf-panel:nth-of-type(1) .dsf-table thead th:nth-child(4),
+  .dsf-panel:nth-of-type(1) .dsf-table tbody td:nth-child(4) { width: 14%; }  /* Acciones */
+
+  /* VOUCHERS */
+  .dsf-panel:nth-of-type(2) .dsf-table thead th:nth-child(1),
+  .dsf-panel:nth-of-type(2) .dsf-table tbody td:nth-child(1) { width: 28%; }  /* Fecha */
+  .dsf-panel:nth-of-type(2) .dsf-table thead th:nth-child(2),
+  .dsf-panel:nth-of-type(2) .dsf-table tbody td:nth-child(2) { width: 44%; }  /* Tipo */
+  .dsf-panel:nth-of-type(2) .dsf-table thead th:nth-child(3),
+  .dsf-panel:nth-of-type(2) .dsf-table tbody td:nth-child(3) { width: 14%; }  /* Estado */
+  .dsf-panel:nth-of-type(2) .dsf-table thead th:nth-child(4),
+  .dsf-panel:nth-of-type(2) .dsf-table tbody td:nth-child(4) { width: 14%; }  /* Acciones */
+}

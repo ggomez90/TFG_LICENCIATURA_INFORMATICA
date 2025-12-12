@@ -14,7 +14,7 @@ export class VoucherTipoService {
   private readonly MODEL = 'voucherTipo' as const;
   private readonly ID_FIELD = 'idVoucherTipo' as const;
 
-  //helpers fechas
+  // helpers fechas
   private coerceCreate(dto: CreateVoucherTipoDto) {
     const data: any = { ...dto };
     if (dto.fechaInicioVigencia) data.fechaInicioVigencia = new Date(dto.fechaInicioVigencia);
@@ -47,18 +47,15 @@ export class VoucherTipoService {
     if (typeof activa === 'boolean') where.activa = activa;
 
     if (desde || hasta) {
-    // Rango de fechas de vigencia
-    if (desde && hasta) {
-        // Si se especifican ambas fechas
+      // Rango de fechas de vigencia
+      if (desde && hasta) {
         where.fechaInicioVigencia = { gte: new Date(desde) };
         where.fechaFinVigencia = { lte: new Date(hasta) };
-    } else if (desde) {
-        // Solo se especifica desde
+      } else if (desde) {
         where.fechaInicioVigencia = { gte: new Date(desde) };
-    } else if (hasta) {
-        // Solo se especifica hasta
+      } else if (hasta) {
         where.fechaFinVigencia = { lte: new Date(hasta) };
-    }
+      }
     }
 
     const sortField = (sortBy ?? 'fechaInicioVigencia') as keyof Prisma.VoucherTipoOrderByWithRelationInput;
@@ -76,7 +73,7 @@ export class VoucherTipoService {
     return { items, total, limit: take, offset: skip, sortBy, order: sortOrder };
   }
 
-  //Create (ADMIN)
+  // Create (legacy: si alguna vez lo usás directo)
   async create(dto: CreateVoucherTipoDto): Promise<VoucherTipo> {
     const data = this.coerceCreate(dto);
     try {
@@ -89,7 +86,7 @@ export class VoucherTipoService {
     }
   }
 
-  //Update (ADMIN)
+  // Update (ADMIN)
   async update(idVoucherTipo: number, dto: UpdateVoucherTipoDto): Promise<VoucherTipo> {
     const exists = await (this.prisma as any)[this.MODEL].findUnique({
       where: { [this.ID_FIELD]: idVoucherTipo },
@@ -111,7 +108,7 @@ export class VoucherTipoService {
     }
   }
 
-  //Update activa (ADMIN)
+  // Update activa (ADMIN)
   async updateActiva(idVoucherTipo: number, dto: UpdateActivaVoucherTipoDto) {
     const exists = await (this.prisma as any)[this.MODEL].findUnique({
       where: { [this.ID_FIELD]: idVoucherTipo },
@@ -123,5 +120,13 @@ export class VoucherTipoService {
       data: { activa: dto.activa },
       select: { [this.ID_FIELD]: true, activa: true } as any,
     });
+  }
+
+  async findOne(idVoucherTipo: number) {
+    const item = await (this.prisma as any)[this.MODEL].findUnique({
+      where: { [this.ID_FIELD]: idVoucherTipo },
+    });
+    if (!item) throw new NotFoundException('Tipo de voucher no encontrado');
+    return item;
   }
 }
