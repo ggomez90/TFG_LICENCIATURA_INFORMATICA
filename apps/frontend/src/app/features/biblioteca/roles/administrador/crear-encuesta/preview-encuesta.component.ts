@@ -90,7 +90,7 @@ export class PreviewEncuestaComponent implements OnInit {
 
     const encuestaJSON = {
       __meta: 'encuesta:v1',
-      tipoSeleccion: this.borrador.tipoSeleccion, // 'single' | 'multiple'
+      tipoSeleccion: this.borrador.tipoSeleccion, // simple/multiple
       opciones: this.borrador.opciones.map(o => ({ id: o.id, texto: o.texto, detalle: o.detalle ?? undefined })),
     };
 

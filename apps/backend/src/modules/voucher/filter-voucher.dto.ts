@@ -19,7 +19,6 @@ export class FilterVoucherDto extends PaginationDto {
   @Min(1)
   idEstadoVoucher?: number;
 
-  // ⬅️⬅️⬅️ ESTE CAMPO FALTABA
   @IsOptional()
   @IsInt()
   @Min(1)

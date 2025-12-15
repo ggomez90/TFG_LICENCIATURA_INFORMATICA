@@ -2,10 +2,10 @@
 
 /* Anular grid heredado en el wrapper para que el footer ocupe 100% */
 .ver-voucher-tipo {
-  display: block; /* neutraliza display:grid heredado si existiera */
+  display: block;
 }
 
-/* Card base y estilos (idénticos al preview ajustado) */
+/* Card base y estilos - clonado de preview */
 .ver-voucher-tipo {
   .voucher-preview-card {
     background: #ffffff;
@@ -168,7 +168,7 @@
     border-color: #e0e0e0;
   }
 
-  /* Acciones (solo volver) */
+  /* Acciones */
   .pv-actions {
     display: flex;
     align-items: center;

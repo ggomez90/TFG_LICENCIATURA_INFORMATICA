@@ -60,7 +60,7 @@ export class UserSessionService {
   isOperario(): boolean { return this.me?.idRolUsuario === 2; }
   isCliente(): boolean { return this.me?.idRolUsuario === 3; }
 
-  // === NUEVO: ID de usuario actual (o null si no hay sesión) ===
+  // ID de usuario actual
   getIdUsuario(): number | null {
     return this.me?.idUsuario ?? null;
   }

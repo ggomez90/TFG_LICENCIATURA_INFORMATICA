@@ -54,26 +54,24 @@
   flex: 1 1 auto;
 }
 
-/* Asegura contexto de posicionamiento para ubicar botones respecto al form */
 .dsf-filters { position: relative; }
 
-/* Botones alineados a la derecha del formulario y centrados verticalmente */
 .dsf-filters__buttons--right {
   position: absolute;
-  right: 1rem;           /* alineado al borde derecho del form */
-  top: 95%;              /* centrado vertical */
+  right: 1rem;
+  top: 95%;
   transform: translateY(-50%);
   display: flex;
   gap: .5rem;
 }
 
-/* En pantallas chicas, volvemos a flujo normal (debajo de los filtros) */
+/* para pantallas mas chicas */
 @media (max-width: 768px) {
   .dsf-filters__buttons--right {
     position: static;
     transform: none;
     margin-top: .5rem;
-    justify-content: flex-end; /* a la derecha dentro del flujo */
+    justify-content: flex-end;
   }
 }
 
@@ -114,7 +112,7 @@
 /* Fuerte */
 .dsf-table__cell--strong { font-weight: 700; color: #1b5e20; }
 
-/* Anchos (sin columna ID) */
+/* Anchos */
 .dsf-table thead th:nth-child(1),
 .dsf-table tbody td:nth-child(1) { width: 45%; } /* Título */
 .dsf-table thead th:nth-child(2),

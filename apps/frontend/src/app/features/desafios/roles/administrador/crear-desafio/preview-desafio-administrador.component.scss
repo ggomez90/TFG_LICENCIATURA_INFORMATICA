@@ -1,14 +1,13 @@
 
 @use '../../../../biblioteca/roles/administrador/crear-contenido/preview-contenido-educativo.component.scss' as *;
 
-/* ===== FIX CRÍTICO: anular grid heredado de .dsf-wrap SOLO acá ===== */
+/* Anular grid heredado de .dsf-wrap*/
 .dsf-wrap.preview-voucher-tipo {
-  display: block !important;      /* deja de ser grid */
+  display: block !important;
   column-gap: 0 !important;
   row-gap: 0 !important;
 }
 .dsf-wrap.preview-voucher-tipo > * {
-  /* si por cascada quedara grid, obligamos a que todos los hijos ocupen el ancho completo */
   grid-column: 1 / -1 !important;
   width: 100%;
 }

@@ -28,7 +28,7 @@ export class VoucherTipoService {
     return data;
   }
 
-  // List (ADMIN)
+  // Listado (ADMIN)
   async findAll(filter: FilterVoucherTipoDto) {
     const {
       limit = 20,
@@ -73,7 +73,7 @@ export class VoucherTipoService {
     return { items, total, limit: take, offset: skip, sortBy, order: sortOrder };
   }
 
-  // Create (legacy: si alguna vez lo usás directo)
+  // Crear tipo de voucher
   async create(dto: CreateVoucherTipoDto): Promise<VoucherTipo> {
     const data = this.coerceCreate(dto);
     try {
@@ -86,7 +86,7 @@ export class VoucherTipoService {
     }
   }
 
-  // Update (ADMIN)
+  // Update 
   async update(idVoucherTipo: number, dto: UpdateVoucherTipoDto): Promise<VoucherTipo> {
     const exists = await (this.prisma as any)[this.MODEL].findUnique({
       where: { [this.ID_FIELD]: idVoucherTipo },
@@ -108,7 +108,7 @@ export class VoucherTipoService {
     }
   }
 
-  // Update activa (ADMIN)
+  // Update activa
   async updateActiva(idVoucherTipo: number, dto: UpdateActivaVoucherTipoDto) {
     const exists = await (this.prisma as any)[this.MODEL].findUnique({
       where: { [this.ID_FIELD]: idVoucherTipo },

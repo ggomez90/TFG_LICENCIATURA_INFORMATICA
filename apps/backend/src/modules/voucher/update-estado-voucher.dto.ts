@@ -5,4 +5,4 @@ export class UpdateEstadoVoucherDto {
   @Min(1)
   idEstadoVoucher!: number;
 }
-//idVoucher viaja en la URL PATCH /vouchers/:id/estado
+//idVoucher viaja en la URL /vouchers/:id/estado

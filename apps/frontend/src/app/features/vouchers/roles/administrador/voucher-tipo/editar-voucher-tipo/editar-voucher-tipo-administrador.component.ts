@@ -48,7 +48,6 @@ export class EditarVoucherTipoAdministradorComponent implements OnInit {
       this.onVolver();
       return;
     }
-    // >>> ESTE ERA EL FALTANTE CLAVE <<<
     this.id = id;
     this.backTo = (history.state?.backTo === 'listar') ? 'listar' : 'dashboard';
 
@@ -82,7 +81,7 @@ export class EditarVoucherTipoAdministradorComponent implements OnInit {
           return isNaN(d.getTime()) ? '' : d.toISOString().slice(0, 10);
         };
 
-        // Seteamos TODO el form en un solo paso y forzamos CD
+        // setea todo el form
         this.form = {
           titulo: raw?.titulo ?? '',
           descripcion: raw?.descripcion ?? '',
@@ -94,9 +93,8 @@ export class EditarVoucherTipoAdministradorComponent implements OnInit {
         };
         this.original = { ...this.form };
 
-        // Forzar render (caso de plantillas con ngModel en inputs)
+        // Forzar render
         this.cdr.detectChanges();
-        // parche extra por si hay zonas fuera de Angular
         setTimeout(() => this.cdr.detectChanges(), 0);
       },
       error: (err) => {
@@ -107,7 +105,7 @@ export class EditarVoucherTipoAdministradorComponent implements OnInit {
     });
   }
 
-  // ===== Navegación / Acciones
+  // Navegación y Acciones
   onVolver(): void {
     if (this.backTo === 'listar') {
       this.router.navigate(['/menu-principal/admin/vouchers/voucher-tipo/listar']);
@@ -173,7 +171,7 @@ export class EditarVoucherTipoAdministradorComponent implements OnInit {
     });
   }
 
-  // ===== Helpers
+  //Helpers
   minFechaInicio(): string {
     const hoy = new Date();
     return hoy.toISOString().slice(0, 10);

@@ -82,7 +82,7 @@ export class PreviewContenidoEducativoComponent implements OnInit {
     );
   }
 
-  /** Convierte 'YYYY-MM-DD' en ISO válido para IsDateString() */
+  // Convierte 'YYYY-MM-DD' en ISO válido para IsDateString()
   private toIsoDate(dateStr: string | null): string | null {
     if (!dateStr) return null;
     if (dateStr.includes('T')) return dateStr;

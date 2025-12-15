@@ -10,7 +10,7 @@ type ViewData = {
   puntosRequeridos: number;
   montoBeneficio: number;
   fechaInicioVigencia: string;       // ISO
-  fechaFinVigencia: string | null;   // ISO | null
+  fechaFinVigencia: string | null;   // ISO o null
   activa: boolean;
 };
 
@@ -62,8 +62,8 @@ export class VerVoucherTipoAdministradorComponent implements OnInit {
 
         this.loading = false;
 
-        // <- clave para evitar el delay visual
-        this.cdr.detectChanges();   // o markForCheck(), detectChanges() es más inmediato
+        //evita diley visual
+        this.cdr.detectChanges();
       },
 
       error: (err) => {

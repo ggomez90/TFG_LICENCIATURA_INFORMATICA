@@ -31,7 +31,6 @@ interface TiposFilter {
   vigenciaHasta: string | null; // yyyy-MM-dd
   activa: boolean | null;       // null=todos
   q: string;                    // título o descripción
-  // NUEVO: RANGOS
   puntosMin: number | null;
   puntosMax: number | null;
   beneficioMin: number | null;
@@ -87,7 +86,7 @@ export class ListarVoucherTipoAdministradorComponent implements OnInit {
     this.cargar();
   }
 
-  // ===== Helpers =====
+  //Helpers
   getTituloPlano(titulo: string | null | undefined): string {
     if (!titulo) return 'Sin título';
     const sinTags = titulo.replace(/<[^>]+>/g, '').trim();
@@ -122,7 +121,7 @@ export class ListarVoucherTipoAdministradorComponent implements OnInit {
     if (this.filtro.vigenciaHasta) {
       r = r.filter(e => {
         const ff = this.dateOnly(e.fechaFinVigencia ?? '');
-        if (!ff) return true; // sin fecha fin => lo mantenemos
+        if (!ff) return true; // sin fecha fin
         return ff <= this.filtro.vigenciaHasta!;
       });
     }
@@ -141,7 +140,7 @@ export class ListarVoucherTipoAdministradorComponent implements OnInit {
       );
     }
 
-    // NUEVO: Rango puntos
+    // Rango puntos
     if (Number.isInteger(this.filtro.puntosMin as any)) {
       r = r.filter(e => e.puntosRequeridos >= Number(this.filtro.puntosMin));
     }
@@ -149,7 +148,7 @@ export class ListarVoucherTipoAdministradorComponent implements OnInit {
       r = r.filter(e => e.puntosRequeridos <= Number(this.filtro.puntosMax));
     }
 
-    // NUEVO: Rango beneficio
+    // Rango beneficio
     if (Number.isInteger(this.filtro.beneficioMin as any)) {
       r = r.filter(e => e.montoBeneficio >= Number(this.filtro.beneficioMin));
     }
@@ -160,7 +159,7 @@ export class ListarVoucherTipoAdministradorComponent implements OnInit {
     return r;
   }
 
-  // ===== Navegación =====
+  //Navegación
   onVolver(): void {
     if (this.isAdmin) {
       this.router.navigate(['/menu-principal/admin/vouchers']);
@@ -171,7 +170,7 @@ export class ListarVoucherTipoAdministradorComponent implements OnInit {
     }
   }
 
-  // ===== Filtros + paginación =====
+  //Filtros + paginación
   onAplicarFiltros(): void {
     this.offset = 0;
     this.cargar();
@@ -204,13 +203,13 @@ export class ListarVoucherTipoAdministradorComponent implements OnInit {
     this.cargar();
   }
 
-  // ===== Acciones por fila =====
+  //Acciones por fila
   onVer(item: AdminVoucherTipoListItem): void {
     if (!item.idVoucherTipo) return;
 
     this.router.navigate(
       ['/menu-principal', 'admin', 'vouchers', 'voucher-tipo', 'ver', item.idVoucherTipo],
-      { state: { backTo: 'listar' } }   // <-- UNIFICADO
+      { state: { backTo: 'listar' } }
     );
   }
 
@@ -219,7 +218,7 @@ export class ListarVoucherTipoAdministradorComponent implements OnInit {
 
     this.router.navigate(
       ['/menu-principal', 'admin', 'vouchers', 'voucher-tipo', 'editar', item.idVoucherTipo],
-      { state: { backTo: 'listar' } }   // <-- UNIFICADO
+      { state: { backTo: 'listar' } }
     );
   }
 
@@ -259,7 +258,7 @@ export class ListarVoucherTipoAdministradorComponent implements OnInit {
     });
   }
 
-  // ===== Carga HTTP =====
+  //Carga HTTP
   private cargar(): void {
     this.loading = true;
     this.errorMsg = null;

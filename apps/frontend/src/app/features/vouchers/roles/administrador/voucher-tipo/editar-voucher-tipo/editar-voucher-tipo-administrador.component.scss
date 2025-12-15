@@ -82,7 +82,6 @@
   /* Evitar desbordes en filas flex */
   .dsf-fields-row > * { min-width: 0; }
 
-  /* Asegurar ancho en columnas */
   .dsf-field--half .dsf-input,
   .dsf-field--half .dsf-textarea { width: 100%; }
 

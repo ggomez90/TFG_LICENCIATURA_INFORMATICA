@@ -1,17 +1,15 @@
 @use '../../../../../biblioteca/roles/administrador/crear-contenido/preview-contenido-educativo.component.scss' as *;
 
-/* ===== FIX CRÍTICO: anular grid heredado de .dsf-wrap SOLO acá ===== */
+/* Anular grid heredado de .dsf-wrap */
 .dsf-wrap.preview-voucher-tipo {
-  display: block !important;      /* deja de ser grid */
+  display: block !important;
   column-gap: 0 !important;
   row-gap: 0 !important;
 }
 .dsf-wrap.preview-voucher-tipo > * {
-  /* si por cascada quedara grid, obligamos a que todos los hijos ocupen el ancho completo */
   grid-column: 1 / -1 !important;
   width: 100%;
 }
-/* =================================================================== */
 
 .preview-voucher-tipo {
   /* Card base */
@@ -21,7 +19,7 @@
     border-radius: 18px;
     border: none;
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
-    font-size: 1.05rem; /* un paso más grande global */
+    font-size: 1.05rem;
     width: 100%;
   }
 
@@ -53,7 +51,7 @@
 
   /* Título */
   .voucher-title {
-    font-size: 1.8rem; /* un poco más grande */
+    font-size: 1.8rem;
     font-weight: 800;
     color: #1b5e20;
     text-align: center;
@@ -73,13 +71,13 @@
   }
 
   .voucher-value .label {
-    font-size: 0.9rem; /* leve aumento */
+    font-size: 0.9rem;
     color: #476556;
     margin-bottom: 0.3rem;
   }
 
   .voucher-value .value {
-    font-size: 1.6rem; /* balance visual */
+    font-size: 1.6rem;
     font-weight: 900;
     color: #065f46;
     line-height: 1.1;
@@ -108,11 +106,10 @@
     border-color: #e0e0e0;
   }
 
-  /* Descripción alineada a la izquierda */
   .voucher-description {
     h3 {
       margin: 0;
-      font-size: 1.1rem; /* leve aumento */
+      font-size: 1.1rem;
       font-weight: 800;
       color: #0b3b25;
     }
@@ -123,7 +120,7 @@
     }
   }
 
-  /* Fila inferior: fechas (izq) + marca (der) */
+  /* Fila inferior: fechas + marca */
   .voucher-footer-row {
     display: grid;
     grid-template-columns: 1fr auto;
@@ -144,12 +141,11 @@
     gap: 0.4rem;
     border: 1px solid #d3e4d8;
     background: #f9fdfb;
-    padding: 0.25rem 0.6rem; /* compacto */
-    border-radius: 999px; /* chip */
-    white-space: nowrap; /* ancho se ajusta al contenido */
+    padding: 0.25rem 0.6rem;
+    border-radius: 999px;
+    white-space: nowrap;
   }
 
-  /* Aumentamos un punto el tamaño de fuente de las fechas */
   .d-label {
     font-size: 0.95rem;
     color: #476556;
@@ -160,7 +156,7 @@
     color: #0b3b25;
   }
 
-  /* Marca (escudo + texto) a la derecha */
+  /* Marca (escudo + texto) */
   .voucher-brand {
     display: inline-flex;
     align-items: center;
@@ -183,19 +179,19 @@
 
   /* Acciones (fuera del card) */
   .pv-actions {
-    width: 100%;                  /* mismo ancho que el card */
+    width: 100%;
     display: flex;
     align-items: center;
     gap: 0.75rem;
     margin-top: 1rem;
-    padding: 0;                   /* sin padding extra */
+    padding: 0;
   }
   .pv-actions__spacer {
-    flex: 1;                      /* empuja el botón a la derecha */
+    flex: 1;
   }
   .pv-save-btn {
     margin-left: 0;
-    float: none !important;       /* nunca usar float dentro de flex */
+    float: none !important;
   }
 
   /* Responsive */

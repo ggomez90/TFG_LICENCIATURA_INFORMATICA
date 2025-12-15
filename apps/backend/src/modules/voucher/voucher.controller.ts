@@ -39,7 +39,7 @@ export class VoucherController {
     @Param('idVoucherTipo', ParseIntPipe) idVoucherTipo: number,
   ) {
     const exists = await this.voucherService.existsForTipo(idVoucherTipo);
-    return { exists }; // { exists: true | false }
+    return { exists }; // { exists: true o false }
   }
 
   // Crear (login requerido) — ADMIN y CLIENTE

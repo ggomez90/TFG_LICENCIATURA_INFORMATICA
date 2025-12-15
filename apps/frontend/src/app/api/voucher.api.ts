@@ -2,7 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
-// ===== Tipos base (podés ajustar cuando cierres el contrato del back) =====
+// Estados
 export type EstadoVoucherCode = 1 | 2 | 3 | 4; // 1 CREADO, 2 ADQUIRIDO, 3 UTILIZADO, 4 ANULADO
 
 export interface VoucherListItem {
@@ -12,7 +12,7 @@ export interface VoucherListItem {
   estadoVoucher: EstadoVoucherCode;
   fechaAdquisicion: string;   // ISO
   fechaUso?: string | null;   // ISO o null
-  // opcional si el back incluye la relación
+  //relacion entre voucher y voucher tipo
   voucherTipo?: {
     idVoucherTipo: number;
     titulo: string;
@@ -38,32 +38,31 @@ export interface FilterVoucher {
   estadoVoucher?: EstadoVoucherCode;
   desde?: string;             // ISO yyyy-MM-dd (fechaAdquisicion >=)
   hasta?: string;             // ISO yyyy-MM-dd (fechaAdquisicion <=)
-  q?: string;                 // si luego agregás búsqueda textual
+  q?: string;                 // busqueda por texto
 }
 
-// para crear desde admin (ej.: emitir a un cliente)
+// para crear desde admin
 export interface CreateVoucherPayload {
   idCliente: number;
   idVoucherTipo: number;
-  // opcionales según negocio:
-  estadoVoucher?: EstadoVoucherCode; // si el back lo setea por defecto, podés omitir
-  fechaAdquisicion?: string;         // ISO (si el back default now(), omitir)
+  // opcionales
+  estadoVoucher?: EstadoVoucherCode; // el back setea por defecto ADQUIRIDO
+  fechaAdquisicion?: string;         // por defecto now()
 }
 
-// para editar datos libres del voucher (si aplica)
+// para editar datos libres del voucher
 export interface UpdateVoucherPayload {
   idCliente?: number;
   idVoucherTipo?: number;
   fechaUso?: string | null;          // setear uso o revertir a null
-  // otros campos que habilite el back
 }
 
-// para cambio de estado (utilizar/anular/etc.)
+// para cambio de estado
 export interface UpdateEstadoVoucherPayload {
-  estadoVoucher: EstadoVoucherCode;  // 2=ADQUIRIDO, 3=UTILIZADO, 4=ANULADO
-  // opcional: metadatos, motivo de anulación, etc.
+  estadoVoucher: EstadoVoucherCode;  // 3=UTILIZADO, 4=ANULADO
+  // motivo del cambio
   motivo?: string;
-  fechaUso?: string;                 // útil cuando pasás a UTILIZADO
+  fechaUso?: string;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -71,7 +70,7 @@ export class VoucherApi {
   private http = inject(HttpClient);
   private readonly base = '/api/vouchers';
 
-  // LIST (admin): trae { items, total, ... }
+  // listado
   list(filter: FilterVoucher = {}): Observable<PagedVoucher> {
     let params = new HttpParams();
     Object.entries(filter).forEach(([k, v]) => {
@@ -82,7 +81,7 @@ export class VoucherApi {
     return this.http.get<PagedVoucher>(this.base, { params });
   }
 
-  // GET by id
+  //obtener por id
   getById(idVoucher: number): Observable<VoucherListItem> {
     return this.http.get<VoucherListItem>(`${this.base}/${idVoucher}`);
   }
@@ -97,8 +96,7 @@ export class VoucherApi {
     return this.http.patch<VoucherListItem>(`${this.base}/${idVoucher}`, payload);
   }
 
-  // Cambiar estado (utilizar / anular / etc.)
-  // Sugerido en back: PATCH /api/vouchers/:id/estado { estadoVoucher, ... }
+  // Cambiar estado
   updateEstado(idVoucher: number, payload: UpdateEstadoVoucherPayload): Observable<{ idVoucher: number; estadoVoucher: EstadoVoucherCode }> {
     return this.http.patch<{ idVoucher: number; estadoVoucher: EstadoVoucherCode }>(
       `${this.base}/${idVoucher}/estado`,

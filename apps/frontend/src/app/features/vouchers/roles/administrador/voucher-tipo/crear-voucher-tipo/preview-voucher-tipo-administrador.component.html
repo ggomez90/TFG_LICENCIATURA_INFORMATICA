@@ -14,7 +14,7 @@
         <!-- TÍTULO (centrado) -->
         <h2 class="voucher-title">{{ data.titulo || '(Sin título)' }}</h2>
 
-        <!-- FILA CENTRAL: BENEFICIO - ESTADO - PUNTOS (centrados, misma línea) -->
+        <!-- FILA CENTRAL: BENEFICIO - ESTADO - PUNTOS -->
         <div class="voucher-values">
           <div class="voucher-value">
             <div class="label">Beneficio</div>
@@ -40,13 +40,13 @@
           </div>
         </div>
 
-        <!-- DESCRIPCIÓN (alineada a la izquierda) -->
+        <!-- DESCRIPCIÓN -->
         <div class="voucher-description">
           <h3>Descripción</h3>
           <p>{{ data.descripcion || '(Sin descripción)' }}</p>
         </div>
 
-        <!-- FILA INFERIOR: FECHAS (izquierda) + MARCA (derecha) -->
+        <!-- FILA INFERIOR: FECHAS + MARCA -->
         <div class="voucher-footer-row">
           <div class="voucher-dates">
             <div class="date-chip">
@@ -75,7 +75,7 @@
     </div>
   </div>
 
-  <!-- ACCIONES (fuera del card) -->
+  <!-- ACCIONES -->
   <footer class="pv-actions">
     <button type="button" class="dsf-btn dsf-btn--ghost" (click)="onVolver()">
       ← Volver

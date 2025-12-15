@@ -8,7 +8,7 @@ import { map, distinctUntilChanged } from 'rxjs/operators';
 import { VoucherTipoApi, FilterVoucherTipo } from '../../../../api/voucher-tipo.api';
 import { VoucherApi } from '../../../../api/voucher.api';
 
-// ===== Tipos locales mínimos para render =====
+//Tipos locales mínimos para render
 interface AdminVoucherTipoListItem {
   idVoucherTipo: number;
   titulo: string;
@@ -61,7 +61,7 @@ export class AdministradorVouchersComponent implements OnInit {
     this.cargarTipos();
     this.cargarVouchers();
 
-    // Si volvemos con ?t=..., refrescar SOLO cuando cambie
+    // Si vuelve con ?t=..., refrescar SOLO cuando cambie
     this.route.queryParamMap
       .pipe(
         map(pm => pm.get('t') ?? ''),
@@ -79,7 +79,7 @@ export class AdministradorVouchersComponent implements OnInit {
   loadingTipos(): boolean { return this._loadingTipos; }
   loadingVouchers(): boolean { return this._loadingVouchers; }
 
-  // ===== Helpers =====
+  //Helpers
   private fmtDate(iso?: string | null): string {
     if (!iso) return '';
     const d = new Date(iso);
@@ -89,7 +89,7 @@ export class AdministradorVouchersComponent implements OnInit {
     return `${dd}/${mm}/${yyyy}`;
   }
 
-  // ===== Acciones Tipos =====
+  // Acciones Tipos
   onVerMasTipos(): void { this.router.navigate(['/menu-principal/admin/vouchers/voucher-tipo/listar']); }
   onCrearTipo(): void { this.router.navigate(['/menu-principal/admin/vouchers/voucher-tipo/crear']); }
   
@@ -131,19 +131,19 @@ export class AdministradorVouchersComponent implements OnInit {
       return;
     }
 
-    // ---- UI optimista
+    // UI
     const estadoPrevio = t.activa;
     t.activa = nuevoEstado;
-    // Clonar array para disparar ChangeDetection (OnPush)
+    // Clonar array para disparar ChangeDetection
     this._tipos = this._tipos.map(x =>
       x.idVoucherTipo === t.idVoucherTipo ? { ...x, activa: nuevoEstado } : x
     );
     this.cdr.markForCheck();
 
-    // ---- PATCH real
+    // PATCH real
     this.voucherTipoApi.updateActiva(t.idVoucherTipo, nuevoEstado).subscribe({
       next: () => {
-        // opcional: sincronizar con back por si hubo cambios colaterales
+        // ver con back por si hubo cambios
         setTimeout(() => {
           this.cargarTipos();
           this.cdr.detectChanges();
@@ -165,19 +165,19 @@ export class AdministradorVouchersComponent implements OnInit {
   }
 
 
-  // ===== Acciones Vouchers =====
+  //Acciones Vouchers
   onVerMasVouchers(): void { this.router.navigate(['/admin/vouchers/voucher/listar']); }
   onCrearVoucher(): void { this.router.navigate(['/admin/vouchers/voucher/crear']); }
   onVerVoucher(v: AdminVoucherListItem): void { this.router.navigate(['/admin/vouchers/voucher/ver', v.idVoucher]); }
   onEditarVoucher(v: AdminVoucherListItem): void { this.router.navigate(['/admin/vouchers/voucher/editar', v.idVoucher]); }
 
-  // ===== Carga Tipos (últimos 10 por ID desc) =====
+  //Carga Tipos (últimos 10 por ID desc)
   private cargarTipos(): void {
     if (this._onceTipos) return;
     this._onceTipos = true;
     this._loadingTipos = true; this.cdr.markForCheck();
 
-    // Pedimos sin filtros “sensibles” para no chocar con validaciones del DTO
+    // sin filtros para no chocar con validaciones del DTO
     const params: any = { limit: 50, offset: 0 };
 
     this.voucherTipoApi.getAll(params).subscribe({
@@ -194,7 +194,7 @@ export class AdministradorVouchersComponent implements OnInit {
           montoBeneficio: raw.montoBeneficio,
         })) as AdminVoucherTipoListItem[];
 
-        // Ordenamos por ID desc y nos quedamos con los 10 más altos
+        // Orden por ID desc y nos quedamos con los 10 más altos
         this._tipos = list
           .sort((a, b) => (b.idVoucherTipo || 0) - (a.idVoucherTipo || 0))
           .slice(0, 10);
@@ -203,7 +203,7 @@ export class AdministradorVouchersComponent implements OnInit {
         this.cdr.markForCheck();
       },
       error: (err) => {
-        // Log útil para ver status/texto del backend
+        // debug para consola
         console.error('GET /api/voucher-tipo falló:', err?.status, err?.error || err);
         this._tipos = [];
         this._loadingTipos = false;
@@ -213,7 +213,7 @@ export class AdministradorVouchersComponent implements OnInit {
   }
 
 
-  // ===== Carga Vouchers (últimos 10 por ID desc) =====
+  //Carga Vouchers (últimos 10 por ID desc)
   private cargarVouchers(): void {
     if (this._onceVouchers) return;
     this._onceVouchers = true;
@@ -251,7 +251,7 @@ export class AdministradorVouchersComponent implements OnInit {
   }
 
 
-  // ===== Formatos usados en el template =====
+  //Formatos usados en el template
   fmtVigencia(i: AdminVoucherTipoListItem): string {
     return `${this.fmtDate(i.fechaInicioVigencia)} – ${this.fmtDate(i.fechaFinVigencia)}`;
   }

@@ -63,30 +63,28 @@ export class PreviewVoucherTipoAdministradorComponent implements OnInit {
       activa: Boolean(borrador?.activa),
     };
 
-    // Evita el “solo aparece al hacer click”
     Promise.resolve().then(() => this.cdr.detectChanges());
   }
 
   private toIso(dateYMDorISO?: string | null): string | undefined {
     if (!dateYMDorISO) return undefined;
-    // yyyy-MM-dd -> ISO UTC
+    // yyyy-MM-dd = ISO UTC
     if (/^\d{4}-\d{2}-\d{2}$/.test(dateYMDorISO)) {
       const d = new Date(`${dateYMDorISO}T00:00:00`);
       return d.toISOString();
     }
-    // Ya era ISO
     return dateYMDorISO;
   }
 
   onVolver(): void {
     if (this.mode === 'edit' && this.idEdit) {
-      // Volver al editor conservando el origen para que el editor también sepa volver bien
+      // Volver al editor conservando el origen
       this.router.navigate(
         ['menu-principal/admin/vouchers/voucher-tipo/editar', this.idEdit],
         { state: { backTo: this.backTo } }
       );
     } else {
-      // Volver a crear (no cambia)
+      // Volver a crear
       this.router.navigate(['menu-principal/admin/vouchers/voucher-tipo/crear']);
     }
   }
@@ -110,7 +108,7 @@ export class PreviewVoucherTipoAdministradorComponent implements OnInit {
     };
 
     if (this.mode === 'edit' && this.idEdit) {
-      // PATCH (editar)
+      //editar
       this.api.update(this.idEdit, payloadBase).subscribe({
         next: () => {
           alert('Tipo de voucher actualizado correctamente.');
@@ -134,7 +132,7 @@ export class PreviewVoucherTipoAdministradorComponent implements OnInit {
       return;
     }
 
-    // POST (crear) — incluimos idAdmin como en el crear-tipo
+    // crear
     let idAdmin = this.session.getIdUsuario();
     if (!idAdmin) {
       try {

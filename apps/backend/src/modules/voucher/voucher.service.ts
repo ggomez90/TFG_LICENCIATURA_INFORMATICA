@@ -83,7 +83,7 @@ export class VoucherService {
     return allowed.some(([f, t]) => f === from && t === to);
   }
 
-  //Create
+  //Crear voucher
   async create(dto: CreateVoucherDto, ctx: ActorCtx): Promise<Voucher> {
     if (!['ADMIN', 'CLIENTE'].includes(ctx.actorRole)) {
       throw new ForbiddenException('No autorizado para crear vouchers.');
@@ -113,7 +113,7 @@ export class VoucherService {
     }
   }
 
-  //List
+  //Listar
   async findAll(filter: FilterVoucherDto, ctx: ActorCtx) {
     const {
       limit = 20,
@@ -123,14 +123,14 @@ export class VoucherService {
       idVoucher,
       idCliente,
       idEstadoVoucher,
-      idVoucherTipo,          // ⬅️ NUEVO
+      idVoucherTipo,
     } = filter as any;
 
     const where: Prisma.VoucherWhereInput = {};
 
     if (idVoucher) (where as any).idVoucher = Number(idVoucher);
 
-    // Si el actor es CLIENTE, forzamos sus propios vouchers
+    // Si el usuario es CLIENTE, forzamos sus propios vouchers
     if (ctx.actorRole === 'CLIENTE') {
       const myIdCliente = await this.resolveClienteIdFromIdentifier(ctx.identifier);
       where.idCliente = myIdCliente;
@@ -140,7 +140,7 @@ export class VoucherService {
 
     if (idEstadoVoucher) (where as any).idEstadoVoucher = Number(idEstadoVoucher);
 
-    // ⬇️ NUEVO: filtro por tipo
+    //filtro por tipo
     if (idVoucherTipo) (where as any).idVoucherTipo = Number(idVoucherTipo);
 
     const sortField = (sortBy ?? 'fechaAdquisicion') as keyof Prisma.VoucherOrderByWithRelationInput;
@@ -159,7 +159,7 @@ export class VoucherService {
   }
 
 
-  //Update Estado
+  //actualizar estado
   async updateEstado(idVoucher: number, dto: UpdateEstadoVoucherDto, ctx: ActorCtx): Promise<Voucher> {
     if (!['ADMIN', 'CLIENTE'].includes(ctx.actorRole)) {
       throw new ForbiddenException('No autorizado para cambiar estado de vouchers.');

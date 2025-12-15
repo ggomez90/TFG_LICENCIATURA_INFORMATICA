@@ -58,7 +58,6 @@ export class CrearVoucherTipoAdministradorComponent implements OnInit {
 
     let idAdmin = this.session.getIdUsuario();
     if (!idAdmin) {
-      // Intento de carga perezosa del perfil si aún no estaba
       await this.session.load();
       idAdmin = this.session.getIdUsuario();
     }
