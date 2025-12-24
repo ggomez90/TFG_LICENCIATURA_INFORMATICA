@@ -1,3 +1,6 @@
+# Yo reciclo: Gestión ciudadana de residuos a través de una plataforma digital.
+Ver documentación del proyecto: https://drive.google.com/file/d/1IuTCQrO7X8hmnGz2slZLmgpZoiZCxhZT/view?usp=drive_link
+
 # Informe técnico — Estructura, tecnologías y configuración del proyecto “¡Yo Reciclo!”
 
 Se documenta todo lo instalado, creado y configurado desde el inicio del proyecto: Angular (PWA) + NestJS + MySQL, con Keycloak para autenticación/roles, Nginx como proxy inverso y Docker Compose orquestando todos los servicios.
