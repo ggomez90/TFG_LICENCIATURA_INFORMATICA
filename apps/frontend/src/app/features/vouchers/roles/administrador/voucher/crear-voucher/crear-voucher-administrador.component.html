@@ -1,0 +1,98 @@
+<section class="dsf-wrap crear-voucher">
+  <!-- CABECERA -->
+  <header class="dsf-header">
+    <h1 class="dsf-title">Crear voucher</h1>
+    <p class="dsf-sub">Generá un nuevo voucher para un cliente, seleccionando el tipo y su estado inicial.</p>
+  </header>
+
+  <!-- FORMULARIO -->
+  <form class="dsf-form" (ngSubmit)="onPrevisualizar()">
+    <div class="dsf-card dsf-card--form">
+      <div class="dsf-card__body">
+        <!-- BLOQUE DE CAMPOS (2 columnas) -->
+        <div class="dsf-fields-row">
+          <!-- ID Cliente -->
+          <label class="dsf-field dsf-field--half">
+            <span class="dsf-field__label">ID Cliente <span class="dsf-field__required">*</span></span>
+            <input
+              type="number"
+              class="dsf-input"
+              [(ngModel)]="form.idCliente"
+              name="idCliente"
+              (keydown)="onNumberKeydown($event)"
+              placeholder="Ej: 12"
+              required
+              min="1"
+              step="1"
+              pattern="[0-9]*"
+              inputmode="numeric"
+            />
+          </label>
+
+          <!-- ID Tipo de voucher -->
+          <label class="dsf-field dsf-field--half">
+            <span class="dsf-field__label">ID Tipo de voucher <span class="dsf-field__required">*</span></span>
+            <input
+              type="number"
+              class="dsf-input"
+              [(ngModel)]="form.idVoucherTipo"
+              name="idVoucherTipo"
+              (keydown)="onNumberKeydown($event)"
+              placeholder="Ej: 5"
+              required
+              min="1"
+              step="1"
+              pattern="[0-9]*"
+              inputmode="numeric"
+            />
+          </label>
+        </div>
+
+        <div class="dsf-fields-row">
+          <!-- Estado -->
+          <label class="dsf-field dsf-field--half">
+            <span class="dsf-field__label">Estado <span class="dsf-field__required">*</span></span>
+            <select
+              class="dsf-input"
+              [(ngModel)]="form.idEstadoVoucher"
+              name="idEstadoVoucher"
+              required
+            >
+              <option *ngFor="let e of estados" [ngValue]="e.value">
+                {{ e.label }}
+              </option>
+            </select>
+          </label>
+
+          <!-- Fecha de adquisición -->
+          <label class="dsf-field dsf-field--half">
+            <span class="dsf-field__label">Fecha de adquisición <span class="dsf-field__required">*</span></span>
+            <input
+              type="date"
+              class="dsf-input"
+              [(ngModel)]="form.fechaAdquisicion"
+              name="fechaAdquisicion"
+              [min]="todayYmd()"
+              required
+            />
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- ACCIONES (IGUALES A CREAR-VOUCHER-TIPO) -->
+    <footer class="dsf-form__actions">
+      <button type="button" class="dsf-btn dsf-btn--ghost" (click)="onVolver()">← Volver</button>
+
+      <button type="button" class="dsf-btn dsf-btn--ghost" (click)="onLimpiar()">🧹 Borrar</button>
+
+      <span class="dsf-form__spacer"></span>
+
+      <button type="button" class="dsf-btn dsf-btn--outline" (click)="onPrevisualizar()">👁️ Previsualizar</button>
+
+      <button type="button" class="dsf-btn dsf-btn--primary" [disabled]="loading" (click)="onCrear()">
+        Crear voucher
+      </button>
+    </footer>
+  </form>
+</section>

@@ -1,14 +1,30 @@
 import { IsDateString, IsDecimal, IsInt, IsOptional, Min } from 'class-validator';
 
 export class CreateInscripcionDesafioDto {
-  @IsInt() @Min(1) idCliente!: number;
-  @IsInt() @Min(1) idDesafio!: number;
+  @IsOptional()
+  @IsInt()
+  @Min(1)
+  idCliente?: number;
 
-  @IsDateString() fechaAdhesion!: string; 
-  @IsOptional() @IsDateString() fechaBaja?: string;
+  @IsInt()
+  @Min(1)
+  idDesafio!: number;
 
-  @IsDecimal() progreso!: any;
-  @IsInt() @Min(0) puntosAcumulados!: number;
+  @IsDateString()
+  fechaAdhesion!: string;
 
-  @IsInt() @Min(1) estado!: number; // EstadoDesafio (1=ACTIVO)
+  @IsOptional()
+  @IsDateString()
+  fechaBaja?: string;
+
+  @IsDecimal()
+  progreso!: any;
+
+  @IsInt()
+  @Min(0)
+  puntosAcumulados!: number;
+
+  @IsInt()
+  @Min(1)
+  estado!: number; // EstadoDesafio (1=ACTIVO)
 }

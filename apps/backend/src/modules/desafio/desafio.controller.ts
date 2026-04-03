@@ -11,6 +11,7 @@ import {
   HttpCode,
   HttpStatus,
   Req,
+  NotFoundException,
 } from '@nestjs/common';
 import { DesafioService } from './desafio.service';
 import { CreateDesafioDto } from './create-desafio.dto';
@@ -39,6 +40,14 @@ export class DesafioController {
     return this.desafioService.getSummary();
   }
 
+  // Detalle (cualquier rol autenticado)
+  @Get(':id')
+  @UseGuards(KeycloakAuthGuard)
+  async findOne(@Param('id', ParseIntPipe) idDesafio: number) {
+    return this.desafioService.findOne(idDesafio);
+  }
+
+  //crear nuevos
   @Post()
   @UseGuards(KeycloakAuthGuard, RolesGuard)
   @Roles('ADMIN', 'ADMINISTRADOR')
@@ -53,6 +62,7 @@ export class DesafioController {
     return this.desafioService.createWithAdmin(resolvedIdAdmin, dto);
   }
 
+  //editar
   @Patch(':id')
   @UseGuards(KeycloakAuthGuard, RolesGuard)
   @Roles('ADMIN', 'ADMINISTRADOR')
@@ -63,6 +73,7 @@ export class DesafioController {
     return this.desafioService.update(idDesafio, dto);
   }
 
+  
   @Patch(':id/estado')
   @UseGuards(KeycloakAuthGuard, RolesGuard)
   @Roles('ADMIN', 'ADMINISTRADOR')

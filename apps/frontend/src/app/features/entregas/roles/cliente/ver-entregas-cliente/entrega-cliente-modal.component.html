@@ -1,0 +1,133 @@
+<div class="backdrop" *ngIf="visible" (click)="close()"></div>
+
+<section class="modal" *ngIf="visible" role="dialog" aria-modal="true">
+  <header class="modal-header">
+    <div>
+      <span class="eyebrow">Entregas · Cliente</span>
+      <h2>{{ title }}</h2>
+    </div>
+
+    <button type="button" class="close-btn" (click)="close()">
+      <span class="material-symbols-outlined">close</span>
+    </button>
+  </header>
+
+  <div class="codigo-box">
+    <span class="codigo-label">Código de entrega</span>
+    <strong>{{ codigoVisible }}</strong>
+    <small *ngIf="mode !== 'create'">
+      Este es el código que el cliente debe presentar al validar la entrega.
+    </small>
+    <small *ngIf="mode === 'create'">
+      Al crear la entrega se mostrará el código definitivo para presentar en validación.
+    </small>
+  </div>
+
+  <div class="summary-card">
+    <div>
+      <span class="label">Desafío</span>
+      <strong>{{ entrega?.desafioTitulo || desafio?.titulo || 'Desafío seleccionado' }}</strong>
+    </div>
+    <div>
+      <span class="label">Tipo de residuo</span>
+      <strong>{{ entrega?.tipoResiduo || desafio?.tipoResiduo || '-' }}</strong>
+    </div>
+    <div>
+      <span class="label">Estado</span>
+      <strong>
+        <span class="badge" [ngClass]="getEstadoClass(entrega?.estado)">
+          {{ getEstadoLabel(entrega?.estado) }}
+        </span>
+      </strong>
+    </div>
+  </div>
+
+  <div class="form-grid">
+    <div class="field">
+      <label>Cantidad declarada</label>
+
+      <div class="input-with-suffix">
+        <input
+          type="number"
+          min="0"
+          step="0.001"
+          [ngModel]="form().cantidadDeclarada"
+          (ngModelChange)="patchField('cantidadDeclarada', $event)"
+          [disabled]="!canEditFields"
+        />
+
+        <span class="suffix">
+          {{ entrega?.unidadMedida || desafio?.unidadMedida || 'unidad' }}
+        </span>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Ubicación</label>
+      <input
+        type="text"
+        [ngModel]="form().ubicacion"
+        (ngModelChange)="patchField('ubicacion', $event)"
+        [disabled]="!canEditFields"
+      />
+    </div>
+
+    <div class="field field-full">
+      <label>Observaciones</label>
+      <textarea
+        rows="4"
+        [ngModel]="form().observaciones"
+        (ngModelChange)="patchField('observaciones', $event)"
+        [disabled]="!canEditFields"
+      ></textarea>
+    </div>
+  </div>
+
+  <div class="info-grid" *ngIf="entrega">
+    <div class="info-box">
+      <span class="label">Fecha creación</span>
+      <strong>{{ entrega.fechaCreacion | date:'dd/MM/yyyy HH:mm' }}</strong>
+    </div>
+
+    <div class="info-box">
+      <span class="label">Vencimiento</span>
+      <strong>{{ entrega.fechaVencimiento | date:'dd/MM/yyyy' }}</strong>
+    </div>
+
+    <div class="info-box" *ngIf="entrega.fechaValidacion">
+      <span class="label">Fecha validación</span>
+      <strong>{{ entrega.fechaValidacion | date:'dd/MM/yyyy HH:mm' }}</strong>
+    </div>
+
+    <div class="info-box" *ngIf="entrega.motivoRechazo">
+      <span class="label">Motivo rechazo</span>
+      <strong>{{ entrega.motivoRechazo }}</strong>
+    </div>
+  </div>
+
+  <footer class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="close()">
+      Cerrar
+    </button>
+
+    <button type="button" class="btn btn-primary" *ngIf="showCrearButton" (click)="save()">
+      <span class="material-symbols-outlined">add_circle</span>
+      Crear
+    </button>
+
+    <button type="button" class="btn btn-primary" *ngIf="showGuardarButton" (click)="save()">
+      <span class="material-symbols-outlined">save</span>
+      Guardar
+    </button>
+
+    <button type="button" class="btn btn-secondary" *ngIf="showEditarButton" (click)="editar()">
+      <span class="material-symbols-outlined">edit_square</span>
+      Editar
+    </button>
+
+    <button type="button" class="btn btn-danger" *ngIf="showAnularButton" (click)="anular()">
+      <span class="material-symbols-outlined">cancel</span>
+      Anular
+    </button>
+  </footer>
+</section>

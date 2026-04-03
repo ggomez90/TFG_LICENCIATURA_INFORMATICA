@@ -38,6 +38,13 @@ export interface ContenidoListAdminParams {
   order?: 'asc' | 'desc';
 }
 
+export interface ContenidoPublicListItem {
+  idContenidoEducativo: number;
+  titulo: string | null;
+  fechaPublicacion: string; // ISO
+  visible: boolean;
+}
+
 export interface CreateContenidoDto {
   titulo?: string | null;
   descripcion?: string | null;
@@ -57,8 +64,8 @@ export class ContenidoApi {
   private http = inject(HttpClient);
 
   // lista publica, solo visibles
-  listPublic(): Observable<ContenidoItem[]> {
-    return this.http.get<ContenidoItem[]>(apiUrl('/contenidos'));
+  listPublic(): Observable<ContenidoPublicListItem[]> {
+    return this.http.get<ContenidoPublicListItem[]>(apiUrl('/contenidos'));
   }
 
   // listado para admin con filtros, incluye todos

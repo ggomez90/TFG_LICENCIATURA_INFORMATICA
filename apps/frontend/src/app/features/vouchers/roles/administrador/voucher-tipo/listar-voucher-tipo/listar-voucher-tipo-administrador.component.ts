@@ -264,24 +264,19 @@ export class ListarVoucherTipoAdministradorComponent implements OnInit {
     this.errorMsg = null;
     this.cdr.markForCheck();
 
-    let params = new HttpParams()
-      .set('limit', this.limit)
-      .set('offset', this.offset)
-      .set('sortBy', this.sortBy)
-      .set('order', this.order);
+    // Igual que dashboard: NO mandamos sortBy/order para no chocar con DTOs
+    const params: any = {
+      limit: this.limit,   // 50
+      offset: this.offset, // 0, 50, 100...
+    };
 
-    const doRequest = (p: HttpParams | null) =>
-      this.http.get<PaginatedResponse<any> | any[]>('/api/voucher-tipo', p ? { params: p } : {});
+    this.voucherTipoApi.getAll(params).subscribe({
+      next: (resp: any) => {
+        const src = Array.isArray(resp?.items)
+          ? resp.items
+          : (Array.isArray(resp) ? resp : []);
 
-    doRequest(params).subscribe({
-      next: (resp) => {
-        const raw = Array.isArray(resp)
-          ? resp
-          : Array.isArray((resp as any)?.items)
-          ? (resp as any).items
-          : [];
-
-        const mapped: AdminVoucherTipoListItem[] = raw.map((x: any) => ({
+        const mapped: AdminVoucherTipoListItem[] = src.map((x: any) => ({
           idVoucherTipo: x.idVoucherTipo,
           titulo: x.titulo ?? null,
           descripcion: x.descripcion ?? null,
@@ -292,73 +287,36 @@ export class ListarVoucherTipoAdministradorComponent implements OnInit {
           activa: !!x.activa,
         }));
 
-        const filtered = this.applyClientFilters(mapped);
+        // Tus filtros actuales (no se tocan)
+        let filtered = this.applyClientFilters(mapped);
 
-        if (Array.isArray(resp)) {
+        // Orden fijo como dashboard: ID desc
+        filtered = filtered.sort((a, b) => (b.idVoucherTipo || 0) - (a.idVoucherTipo || 0));
+
+        // Si el back devuelve paginado: usamos su paginación, pero ordenamos igual por seguridad
+        if (resp && Array.isArray(resp.items) && typeof resp.total === 'number') {
+          this.items = filtered;
+          this.total = resp.total ?? filtered.length;
+          this.limit = resp.limit ?? this.limit;
+          this.offset = resp.offset ?? this.offset;
+        } else {
+          // Si el back devuelve array: paginamos del lado cliente
           this.total = filtered.length;
           this.items = filtered.slice(this.offset, this.offset + this.limit);
-        } else {
-          this.items = filtered;
-          this.total = (resp as PaginatedResponse<any>).total ?? filtered.length;
-          this.limit = (resp as PaginatedResponse<any>).limit ?? this.limit;
-          this.offset = (resp as PaginatedResponse<any>).offset ?? this.offset;
         }
 
         this.loading = false;
         this.cdr.markForCheck();
       },
-      error: (err) => {
-        const msg = err?.error?.message;
-        const is400 = err?.status === 400;
-        const complainsParams =
-          Array.isArray(msg) && msg.some((m: string) => /property .* should not exist/i.test(m));
-
-        if (is400 && complainsParams) {
-          doRequest(null).subscribe({
-            next: (resp2) => {
-              const raw2 = Array.isArray(resp2)
-                ? resp2
-                : Array.isArray((resp2 as any)?.items)
-                ? (resp2 as any).items
-                : [];
-              const mapped2: AdminVoucherTipoListItem[] = raw2.map((x: any) => ({
-                idVoucherTipo: x.idVoucherTipo,
-                titulo: x.titulo ?? null,
-                descripcion: x.descripcion ?? null,
-                puntosRequeridos: Number(x.puntosRequeridos ?? 0),
-                montoBeneficio: Number(x.montoBeneficio ?? 0),
-                fechaInicioVigencia: x.fechaInicioVigencia ?? null,
-                fechaFinVigencia: x.fechaFinVigencia ?? null,
-                activa: !!x.activa,
-              }));
-              const filtered2 = this.applyClientFilters(mapped2);
-
-              this.items = filtered2;
-              this.total = Array.isArray(resp2) ? filtered2.length : (resp2 as any)?.total ?? filtered2.length;
-              this.limit = !Array.isArray(resp2) ? (resp2 as any)?.limit ?? this.limit : this.limit;
-              this.offset = !Array.isArray(resp2) ? (resp2 as any)?.offset ?? this.offset : 0;
-
-              this.loading = false;
-              this.cdr.markForCheck();
-            },
-            error: (err2) => {
-              console.error('Error cargando tipos de voucher (reintento sin params)', err2);
-              this.items = [];
-              this.total = 0;
-              this.loading = false;
-              this.errorMsg = 'Ocurrió un error al cargar el listado de tipos de voucher.';
-              this.cdr.markForCheck();
-            },
-          });
-        } else {
-          console.error('Error cargando tipos de voucher', err);
-          this.items = [];
-          this.total = 0;
-          this.loading = false;
-          this.errorMsg = 'Ocurrió un error al cargar el listado de tipos de voucher.';
-          this.cdr.markForCheck();
-        }
+      error: (err: any) => {
+        console.error('GET /api/voucher-tipo falló:', err?.status, err?.error || err);
+        this.items = [];
+        this.total = 0;
+        this.loading = false;
+        this.errorMsg = 'Ocurrió un error al cargar el listado de tipos de voucher.';
+        this.cdr.markForCheck();
       },
     });
   }
+
 }

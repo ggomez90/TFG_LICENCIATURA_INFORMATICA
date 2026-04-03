@@ -61,6 +61,7 @@ export class ClienteController {
   // ruta estatica para perfil propio
   @Get('me')
   @UseGuards(KeycloakAuthGuard)
+  @Roles('CLIENTE', 'ADMIN', 'ADMINISTRADOR', 'OPERARIO')
   async me(@User() user: any) {
     const identifier =
       user?.preferred_username ?? user?.email ?? user?.username ?? user?.sub;
@@ -68,6 +69,7 @@ export class ClienteController {
     return this.clienteService.findMe(identifier);
   }
 
+  //pefil
   @Patch('me')
   @UseGuards(KeycloakAuthGuard)
   async updateMe(@User() user: any, @Body() dto: UpdateClienteDto) {

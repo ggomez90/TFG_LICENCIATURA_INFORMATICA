@@ -1,18 +1,18 @@
 import { IsDateString, IsDecimal, IsInt, IsOptional, IsString, Length, Min } from 'class-validator';
 
 export class CreateEntregaDto {
-  @IsInt() @Min(1) idCliente!: number;
+  @IsOptional() @IsInt() @Min(1) idCliente?: number;
   @IsInt() @Min(1) idDesafio!: number;
   @IsInt() @Min(1) idInscripcionDesafio!: number;
 
   @IsDateString() fechaCreacion!: string;
-  @IsDateString() fechaVencimiento!: string; // +15 días
+  @IsDateString() fechaVencimiento!: string;
   @IsOptional() @IsDateString() fechaValidacion?: string;
 
   @IsDecimal() cantidadDeclarada!: any;
   @IsOptional() @IsDecimal() cantidadVerificada?: any;
 
-  @IsInt() @Min(1) estado!: number; // EstadoEntrega (2=PENDIENTE)
+  @IsInt() @Min(1) estado!: number;
 
   @IsOptional() @IsString() @Length(0, 300) observaciones?: string;
   @IsOptional() @IsInt() @Min(1) idOperarioValidador?: number;

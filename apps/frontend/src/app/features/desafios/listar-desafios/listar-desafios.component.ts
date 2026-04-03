@@ -130,14 +130,21 @@ export class ListarDesafiosComponent implements OnInit {
   //navegación
 
   onVolver(): void {
-    this.router.navigate(['/menu-principal', 'admin', 'desafios']);
+    const target = this.isAdmin
+      ? ['/menu-principal', 'admin', 'desafios']
+      : ['/menu-principal', 'cliente', 'desafios'];
+
+    this.router.navigate(target);
   }
 
   onVer(item: DesafioItem): void {
-    this.router.navigate(
-      ['/menu-principal', 'admin', 'desafios', 'ver', item.idDesafio],
-      { state: { item, from: 'listado' } } // marcador para decidir el volver
-    );
+    const target = this.isAdmin
+      ? ['/menu-principal', 'admin', 'desafios', 'ver', item.idDesafio]
+      : ['/menu-principal', 'cliente', 'desafios', 'ver', item.idDesafio];
+
+    this.router.navigate(target, {
+      state: { item, from: 'listado' }
+    });
   }
 
   onEditar(item: DesafioItem): void {

@@ -1,0 +1,138 @@
+<section class="page">
+  <div class="page-hero">
+    <div>
+      <span class="eyebrow">Entregas · Cliente</span>
+      <h1>Listado de entregas</h1>
+      <p>
+        Historial completo del cliente con filtros por estado y búsqueda rápida por código o desafío.
+      </p>
+    </div>
+
+    <button type="button" class="btn btn-secondary" (click)="volver()">
+      <span class="material-symbols-outlined">arrow_back</span>
+      Volver
+    </button>
+  </div>
+
+  <section class="filters-card">
+    <div class="search-box">
+      <span class="material-symbols-outlined">search</span>
+      <input
+        type="text"
+        [ngModel]="q()"
+        (ngModelChange)="setQuery($event)"
+        placeholder="Buscar por código, desafío o tipo de residuo"
+      />
+    </div>
+
+    <div class="select-box">
+      <label>Estado</label>
+      <select [ngModel]="filtroEstado()" (ngModelChange)="setFiltroEstado($event)">
+        <option value="TODOS">Todos</option>
+        <option [ngValue]="1">Creada</option>
+        <option [ngValue]="2">Pendiente</option>
+        <option [ngValue]="3">Validada</option>
+        <option [ngValue]="4">Rechazada</option>
+        <option [ngValue]="5">Puntos otorgados</option>
+        <option [ngValue]="6">Anulada</option>
+      </select>
+    </div>
+  </section>
+
+  <section class="table-card" *ngIf="loading()">
+    <p>Cargando entregas...</p>
+  </section>
+
+  <section class="table-card" *ngIf="errorMsg() as error">
+    <p>{{ error }}</p>
+  </section>
+
+  <section class="table-card" *ngIf="!loading() && !errorMsg()">
+    <div class="table-wrap">
+      <table class="history-table">
+        <thead>
+          <tr>
+            <th>Código</th>
+            <th>Desafío</th>
+            <th>Tipo</th>
+            <th>Creación</th>
+            <th>Cantidad</th>
+            <th>Estado</th>
+            <th>Puntos</th>
+            <th class="th-actions">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of pagedItems()">
+            <td class="codigo-cell">{{ item.codigoVisible }}</td>
+            <td>{{ item.desafioTitulo }}</td>
+            <td>{{ item.tipoResiduo }}</td>
+            <td>{{ item.fechaCreacion | date:'dd/MM/yyyy HH:mm' }}</td>
+            <td>{{ item.cantidadDeclarada | number:'1.0-3' }} {{ item.unidadMedida }}</td>
+            <td>
+              <span class="badge" [ngClass]="getEstadoClass(item.estado)">
+                {{ getEstadoLabel(item.estado) }}
+              </span>
+            </td>
+            <td>{{ item.puntosEstimados ?? 0 }}</td>
+            <td class="td-actions">
+              <button type="button" class="icon-btn" (click)="openView(item)" title="Ver">
+                <span class="material-symbols-outlined">visibility</span>
+              </button>
+
+              <button
+                type="button"
+                class="icon-btn"
+                *ngIf="item.estado === 1"
+                (click)="openEdit(item)"
+                title="Editar"
+              >
+                <span class="material-symbols-outlined">edit</span>
+              </button>
+
+              <button
+                type="button"
+                class="icon-btn"
+                *ngIf="item.estado === 1"
+                (click)="confirmar(item)"
+                title="Confirmar"
+              >
+                <span class="material-symbols-outlined">check_circle</span>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="pagination-bar">
+      <div class="pagination-info">
+        Página {{ page() }} de {{ totalPages() }}
+      </div>
+
+      <div class="pagination-actions">
+        <button type="button" class="btn btn-secondary" (click)="prevPage()" [disabled]="page() === 1">
+          Anterior
+        </button>
+        <button
+          type="button"
+          class="btn btn-secondary"
+          (click)="nextPage()"
+          [disabled]="page() === totalPages()"
+        >
+          Siguiente
+        </button>
+      </div>
+    </div>
+  </section>
+</section>
+
+<app-entrega-cliente-modal
+  [visible]="modalVisible()"
+  [mode]="modalMode()"
+  [entrega]="entregaSeleccionada()"
+  (closeModal)="closeModal()"
+  (saveEntrega)="onSaveEntrega($event)"
+  (anularEntrega)="onAnularEntrega($event)"
+  (editEntrega)="openEdit($event.entrega)"
+/>

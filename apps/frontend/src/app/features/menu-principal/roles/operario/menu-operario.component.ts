@@ -1,63 +1,290 @@
-import { Component, signal, computed } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  computed,
+  signal,
+} from '@angular/core';
+import { CommonModule, DatePipe, DecimalPipe, NgClass } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import {
+  EntregaListItem,
+  EntregasApi,
+  EstadoEntregaCode,
+} from '../../../../api/entrega.api';
 
-type QuickLink = { title: string; desc: string; route: string; iconPath: string; };
-type TareaAsignada = { punto: string; pendientes: number; direccion: string };
-type EntregaMini = { id: number; cliente: string; desafio: string; punto: string; estado: 'PENDIENTE'|'VALIDADA'|'RECHAZADA'; fecha: string };
+interface QuickLink {
+  title: string;
+  desc: string;
+  route: string;
+  icon: string;
+}
+
+interface DashboardKpi {
+  label: string;
+  value: number;
+  helper: string;
+  icon: string;
+}
+
+interface EntregaOperarioVm {
+  idEntrega: number;
+  idCliente: number;
+  clienteNombre: string;
+  idDesafio: number;
+  desafioTitulo: string;
+  tipoResiduo: string;
+  unidadMedida: string;
+  cantidadDeclarada: number;
+  cantidadVerificada?: number | null;
+  fechaCreacion: string;
+  fechaVencimiento: string;
+  fechaValidacion?: string | null;
+  estado: EstadoEntregaCode;
+  observaciones?: string;
+  ubicacion?: string;
+  motivoRechazo?: string | null;
+  codigoVisible: string;
+  operarioNombre?: string | null;
+  puntosEstimados?: number;
+}
 
 @Component({
   selector: 'app-menu-operario',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, NgClass, DatePipe, DecimalPipe],
   templateUrl: './menu-operario.component.html',
   styleUrls: ['./menu-operario.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MenuOperarioComponent {
+  readonly loading = signal(false);
+  readonly errorMsg = signal<string | null>(null);
 
-  // Métricas rápidas (ficticias)
-  entregasPendientesAsignadas = signal(7);
-  retirosHoy = signal(5);
-  kgProcesadosSemana = signal(168);
-  incidenciasAbiertas = signal(1);
+  readonly entregas = signal<EntregaOperarioVm[]>([]);
 
-  //Accesos rápidos
-  links = signal<QuickLink[]>([
-    { title: 'Validar entrega', desc: 'Escanear ticket o ingresar código', route: '/operario/entregas', iconPath: 'M3 6h18v2H3zM6 10h12v2H6zM8 14h8v2H8z' },
-    { title: 'Registrar retiro', desc: 'Cargar materiales retirados', route: '/operario/retiros', iconPath: 'M4 4h16v4H4V4zm0 6h10v10H4V10zm12 0h4v10h-4V10z' },
-    { title: 'Puntos asignados', desc: 'Ver rutas y pendientes', route: '/operario/puntos', iconPath: 'M12 2a7 7 0 0 0-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 0 0-7-7zm0 9a2 2 0 1 1 0-4 2 2 0 0 1 0 4z' },
-    { title: 'Mi historial', desc: 'Validaciones y retiros previos', route: '/operario/historial', iconPath: 'M5 4h14v2H5V4zm0 4h14v2H5V8zm0 4h10v2H5v-2z' },
+  readonly links = signal<QuickLink[]>([
+    {
+      title: 'Entregas pendientes',
+      desc: 'Ingresá al módulo operativo para revisar, validar o rechazar entregas.',
+      route: '/menu-principal/operario/entregas',
+      icon: 'fact_check',
+    },
+    {
+      title: 'Listado completo',
+      desc: 'Consultá todas las entregas con filtros avanzados por estado, cliente y fechas.',
+      route: '/menu-principal/operario/entregas/listado',
+      icon: 'table_view',
+    },
+    {
+      title: 'Reportes operativos',
+      desc: 'Visualizá métricas, composición por estado y exportación CSV.',
+      route: '/menu-principal/operario/reportes',
+      icon: 'monitoring',
+    },
   ]);
 
-  //Tareas asignadas (ficticias)
-  tareas = signal<TareaAsignada[]>([
-    { punto: 'Punto Verde Centro', pendientes: 3, direccion: 'San Martín 250' },
-    { punto: 'Escuela N° 412', pendientes: 2, direccion: 'Belgrano 890' },
-    { punto: 'Sociedad de Fomento', pendientes: 1, direccion: 'Rivadavia 1300' },
-    { punto: 'Plaza Norte', pendientes: 1, direccion: '25 de Mayo y Italia' },
+  readonly pendientes = computed(() =>
+    [...this.entregas()]
+      .filter((e) => e.estado === 2)
+      .sort((a, b) => b.idEntrega - a.idEntrega)
+  );
+
+  readonly recientesProcesadas = computed(() =>
+    [...this.entregas()]
+      .filter((e) => e.estado === 3 || e.estado === 4 || e.estado === 5)
+      .sort((a, b) => b.idEntrega - a.idEntrega)
+      .slice(0, 5)
+  );
+
+  readonly resumenEstados = computed(() => [
+    {
+      label: 'Creadas',
+      value: this.entregas().filter((e) => e.estado === 1).length,
+      className: 'is-creada',
+    },
+    {
+      label: 'Pendientes',
+      value: this.entregas().filter((e) => e.estado === 2).length,
+      className: 'is-pendiente',
+    },
+    {
+      label: 'Validadas',
+      value: this.entregas().filter((e) => e.estado === 3).length,
+      className: 'is-validada',
+    },
+    {
+      label: 'Rechazadas',
+      value: this.entregas().filter((e) => e.estado === 4).length,
+      className: 'is-rechazada',
+    },
+    {
+      label: 'Puntos otorgados',
+      value: this.entregas().filter((e) => e.estado === 5).length,
+      className: 'is-puntos',
+    },
+    {
+      label: 'Anuladas',
+      value: this.entregas().filter((e) => e.estado === 6).length,
+      className: 'is-anulada',
+    },
   ]);
 
-  totalPendientes = computed(() => this.tareas().reduce((acc, t) => acc + t.pendientes, 0));
+  readonly kpis = computed<DashboardKpi[]>(() => {
+    const rows = this.entregas();
 
-  //Versión con porcentaje para no usar Math en el template
-  tareasConPct = computed(() => {
-    const tot = this.totalPendientes() || 1;
-    return this.tareas().map(t => ({
-      ...t,
-      pct: (t.pendientes / tot) * 100
-    }));
+    return [
+      {
+        label: 'Pendientes',
+        value: rows.filter((x) => x.estado === 2).length,
+        helper: 'Listas para revisión',
+        icon: 'hourglass_top',
+      },
+      {
+        label: 'Validadas hoy',
+        value: rows.filter((x) => this.esHoy(x.fechaValidacion) && x.estado === 3).length,
+        helper: 'Control operativo del día',
+        icon: 'task_alt',
+      },
+      {
+        label: 'Rechazadas hoy',
+        value: rows.filter((x) => this.esHoy(x.fechaValidacion) && x.estado === 4).length,
+        helper: 'Observadas en control',
+        icon: 'dangerous',
+      },
+      {
+        label: 'Puntos otorgados hoy',
+        value: rows.filter((x) => this.esHoy(x.fechaValidacion) && x.estado === 5).length,
+        helper: 'Entregas finalizadas',
+        icon: 'workspace_premium',
+      },
+      {
+        label: 'Cantidad pendiente',
+        value: Math.round(
+          rows
+            .filter((x) => x.estado === 2)
+            .reduce((acc, x) => acc + Number(x.cantidadDeclarada ?? 0), 0)
+        ),
+        helper: 'Volumen a revisar',
+        icon: 'scale',
+      },
+    ];
   });
 
-  //Actividad reciente (ficticia)
-  ultPendientes = signal<EntregaMini[]>([
-    { id: 1101, cliente: 'María Díaz',  desafio: 'EcoBotellas',   punto: 'Centro', estado: 'PENDIENTE', fecha: '2025-10-05' },
-    { id: 1102, cliente: 'Juan Pérez',  desafio: 'Papel & Cartón', punto: 'Escuela 412', estado: 'PENDIENTE', fecha: '2025-10-05' },
-    { id: 1103, cliente: 'Ana Ruiz',    desafio: 'Vidrio Limpio',  punto: 'Plaza Norte', estado: 'PENDIENTE', fecha: '2025-10-04' },
-  ]);
+  readonly heroPendientes = computed(() => this.pendientes().length);
+  readonly heroProcesadas = computed(
+    () => this.entregas().filter((e) => e.estado === 3 || e.estado === 4 || e.estado === 5).length
+  );
 
-  ultValidadas = signal<EntregaMini[]>([
-    { id: 1201, cliente: 'Carlos Soto', desafio: 'EcoBotellas',   punto: 'Centro', estado: 'VALIDADA', fecha: '2025-10-04' },
-    { id: 1202, cliente: 'Lucía B.',    desafio: 'Metales',       punto: 'Fomento', estado: 'VALIDADA', fecha: '2025-10-03' },
-    { id: 1203, cliente: 'Nadia T.',    desafio: 'Vidrio Limpio', punto: 'Escuela 412', estado: 'VALIDADA', fecha: '2025-10-03' },
-  ]);
+  constructor(
+    private readonly entregasApi: EntregasApi,
+    private readonly cdr: ChangeDetectorRef,
+  ) {
+    this.cargarDashboard();
+  }
+
+  trackByKpi = (_: number, item: DashboardKpi) => item.label;
+  trackByEntrega = (_: number, item: EntregaOperarioVm) => item.idEntrega;
+  trackByLink = (_: number, item: QuickLink) => item.route;
+
+  getEstadoLabel(estado: EstadoEntregaCode): string {
+    const map: Record<EstadoEntregaCode, string> = {
+      1: 'Creada',
+      2: 'Pendiente',
+      3: 'Validada',
+      4: 'Rechazada',
+      5: 'Puntos otorgados',
+      6: 'Anulada',
+    };
+    return map[estado];
+  }
+
+  getEstadoClass(estado: EstadoEntregaCode): string {
+    const map: Record<EstadoEntregaCode, string> = {
+      1: 'is-creada',
+      2: 'is-pendiente',
+      3: 'is-validada',
+      4: 'is-rechazada',
+      5: 'is-puntos',
+      6: 'is-anulada',
+    };
+    return map[estado];
+  }
+
+  private cargarDashboard(): void {
+    this.loading.set(true);
+    this.errorMsg.set(null);
+
+    this.entregasApi.list({
+      limit: 100,
+      offset: 0,
+      sortBy: 'idEntrega',
+      order: 'desc',
+    }).subscribe({
+      next: (res) => {
+        const rows = (res.items ?? []).map((e) => this.toVm(e));
+        this.entregas.set(rows);
+        this.loading.set(false);
+        this.cdr.markForCheck();
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error(err);
+        this.errorMsg.set('No se pudo cargar el inicio del operario.');
+        this.loading.set(false);
+        this.cdr.markForCheck();
+        this.cdr.detectChanges();
+      },
+    });
+  }
+
+  private toVm(item: EntregaListItem): EntregaOperarioVm {
+    return {
+      idEntrega: item.idEntrega,
+      idCliente: item.idCliente,
+      clienteNombre: `Cliente #${item.idCliente}`,
+      idDesafio: item.idDesafio,
+      desafioTitulo: this.toPlainText(item.desafio?.titulo) || `Desafío #${item.idDesafio}`,
+      tipoResiduo: item.desafio?.tipoResiduo ?? 'Residuo',
+      unidadMedida: item.desafio?.unidadMedida ?? 'Unidad de medida desconocida',
+      cantidadDeclarada: Number(item.cantidadDeclarada ?? 0),
+      cantidadVerificada:
+        item.cantidadVerificada == null ? null : Number(item.cantidadVerificada),
+      fechaCreacion: item.fechaCreacion,
+      fechaVencimiento: item.fechaVencimiento,
+      fechaValidacion: item.fechaValidacion ?? null,
+      estado: item.estado,
+      observaciones: item.observaciones ?? '',
+      ubicacion: item.ubicacion ?? 'CORRALON MUNICIPAL',
+      motivoRechazo: item.motivoRechazo ?? null,
+      codigoVisible: `ENT-${item.idEntrega}`,
+      operarioNombre: item.idOperarioValidador
+        ? `Operario #${item.idOperarioValidador}`
+        : null,
+      puntosEstimados: Math.round(
+        Number(item.cantidadDeclarada ?? 0) *
+        Number(item.desafio?.puntosPorUnidad ?? 0)
+      ),
+    };
+  }
+
+  private esHoy(fecha?: string | null): boolean {
+    if (!fecha) return false;
+
+    const f = new Date(fecha);
+    const hoy = new Date();
+
+    return (
+      f.getFullYear() === hoy.getFullYear() &&
+      f.getMonth() === hoy.getMonth() &&
+      f.getDate() === hoy.getDate()
+    );
+  }
+
+  private toPlainText(value?: string | null): string {
+    if (!value) return '';
+    const div = document.createElement('div');
+    div.innerHTML = value;
+    return (div.textContent || div.innerText || '').trim();
+  }
 }

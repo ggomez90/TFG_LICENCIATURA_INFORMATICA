@@ -1,4 +1,9 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { Prisma } from '@prisma/client';
 
@@ -15,16 +20,65 @@ export class NotificacionService {
   private readonly MODEL = 'notificacion' as const;
   private readonly ID_FIELD = 'idNotificacion' as const;
 
-  //Helpers fechas
+  // Helpers
   private coerceCreate(dto: CreateNotificacionDto) {
-    const data: any = { ...dto };
-    if (dto.fechaCreacion) data.fechaCreacion = new Date(dto.fechaCreacion);
-    return data;
+    return {
+      ...dto,
+      visible: dto.visible ?? true,
+    };
   }
+
   private coerceUpdate(dto: UpdateNotificacionDto) {
-    const data: any = { ...dto };
-    if (dto.fechaCreacion) data.fechaCreacion = new Date(dto.fechaCreacion as any);
-    return data;
+    return { ...dto };
+  }
+
+  private pickRole(user: any): 'OPERARIO' | 'CLIENTE' {
+    const roles =
+      user?.realm_access?.roles ??
+      user?.resource_access?.default?.roles ??
+      user?.roles ??
+      [];
+
+    if (Array.isArray(roles)) {
+      if (roles.includes('OPERARIO')) return 'OPERARIO';
+      return 'CLIENTE';
+    }
+
+    return 'CLIENTE';
+  }
+
+  private async resolveAdminId(authUser: any): Promise<number> {
+    const email = authUser?.email ?? null;
+    const username =
+      authUser?.preferred_username ??
+      authUser?.username ??
+      authUser?.usuario ??
+      null;
+
+    if (!email && !username) {
+      throw new UnauthorizedException(
+        'No se pudo identificar al usuario autenticado.',
+      );
+    }
+
+    const usuario = await this.prisma.usuario.findFirst({
+      where: {
+        OR: [
+          ...(email ? [{ email }] : []),
+          ...(username ? [{ usuario: username }] : []),
+        ],
+      },
+      select: {
+        idUsuario: true,
+        idRolUsuario: true,
+      },
+    });
+
+    if (!usuario) {
+      throw new NotFoundException('Usuario administrador no encontrado.');
+    }
+
+    return usuario.idUsuario;
   }
 
   // ADMIN List
@@ -54,104 +108,151 @@ export class NotificacionService {
       };
     }
 
-    const sortField = (sortBy ?? 'fechaCreacion') as keyof Prisma.NotificacionOrderByWithRelationInput;
-    const sortOrder: Prisma.SortOrder = (order ?? 'desc').toLowerCase() === 'asc' ? 'asc' : 'desc';
-    const orderBy: Prisma.NotificacionOrderByWithRelationInput = { [sortField]: sortOrder };
+    const sortField =
+      (sortBy ?? 'fechaCreacion') as keyof Prisma.NotificacionOrderByWithRelationInput;
+
+    const sortOrder: Prisma.SortOrder =
+      (order ?? 'desc').toLowerCase() === 'asc' ? 'asc' : 'desc';
+
+    const orderBy: Prisma.NotificacionOrderByWithRelationInput = {
+      [sortField]: sortOrder,
+    };
 
     const take = Number(limit);
     const skip = Number(offset);
 
     const [items, total] = await this.prisma.$transaction([
-      (this.prisma as any)[this.MODEL].findMany({ where, skip, take, orderBy }),
-      (this.prisma as any)[this.MODEL].count({ where }),
+      this.prisma.notificacion.findMany({
+        where,
+        skip,
+        take,
+        orderBy,
+      }),
+      this.prisma.notificacion.count({ where }),
     ]);
 
-    return { items, total, limit: take, offset: skip, sortBy, order: sortOrder };
+    return {
+      items,
+      total,
+      limit: take,
+      offset: skip,
+      sortBy,
+      order: sortOrder,
+    };
   }
 
-  //ADMIN Create
-  async create(dto: CreateNotificacionDto) {
+  // ADMIN Create
+  async create(authUser: any, dto: CreateNotificacionDto) {
+    const idAdmin = await this.resolveAdminId(authUser);
     const data = this.coerceCreate(dto);
+
     try {
-      return await (this.prisma as any)[this.MODEL].create({ data });
+      return await this.prisma.notificacion.create({
+        data: {
+          ...data,
+          idAdmin,
+        },
+      });
     } catch (error: any) {
       if (error?.code === 'P2003') {
-        throw new BadRequestException('Alguna referencia es inválida (idAdmin / idRolUsuario).');
+        throw new BadRequestException(
+          'Alguna referencia es inválida (idAdmin / idRolUsuario).',
+        );
       }
       throw error;
     }
   }
 
-  //ADMIN Update
+  // ADMIN Update
   async update(idNotificacion: number, dto: UpdateNotificacionDto) {
-    const exists = await (this.prisma as any)[this.MODEL].findUnique({
+    const exists = await this.prisma.notificacion.findUnique({
       where: { [this.ID_FIELD]: idNotificacion },
     });
-    if (!exists) throw new NotFoundException('Notificación no encontrada');
+
+    if (!exists) {
+      throw new NotFoundException('Notificación no encontrada');
+    }
 
     const data = this.coerceUpdate(dto);
 
     try {
-      return await (this.prisma as any)[this.MODEL].update({
+      return await this.prisma.notificacion.update({
         where: { [this.ID_FIELD]: idNotificacion },
         data,
       });
     } catch (error: any) {
       if (error?.code === 'P2003') {
-        throw new BadRequestException('Alguna referencia es inválida (idAdmin / idRolUsuario).');
+        throw new BadRequestException(
+          'Alguna referencia es inválida (idAdmin / idRolUsuario).',
+        );
       }
       throw error;
     }
   }
 
-  //ADMIN Update visible
+  // ADMIN Update visible
   async updateVisible(idNotificacion: number, dto: UpdateVisibleNotificacionDto) {
-    const exists = await (this.prisma as any)[this.MODEL].findUnique({
+    const exists = await this.prisma.notificacion.findUnique({
       where: { [this.ID_FIELD]: idNotificacion },
     });
-    if (!exists) throw new NotFoundException('Notificación no encontrada');
 
-    return (this.prisma as any)[this.MODEL].update({
+    if (!exists) {
+      throw new NotFoundException('Notificación no encontrada');
+    }
+
+    return this.prisma.notificacion.update({
       where: { [this.ID_FIELD]: idNotificacion },
       data: { visible: dto.visible },
-      select: { [this.ID_FIELD]: true, visible: true } as any,
+      select: {
+        idNotificacion: true,
+        visible: true,
+      },
     });
   }
 
-  //OPERARIO/CLIENTE listado
-async listPublic(dto: ListNotificacionPublicDto) {
-  const { limit = 20, offset = 0, desde, hasta } = dto as any;
+  // OPERARIO/CLIENTE listado
+  async listPublic(user: any, dto: ListNotificacionPublicDto) {
+    const { limit = 20, offset = 0, desde, hasta } = dto as any;
 
-  const where: Prisma.NotificacionWhereInput = {
-    visible: true,
-    ...(desde || hasta
-      ? {
-          fechaCreacion: {
-            ...(desde ? { gte: new Date(desde) } : {}),
-            ...(hasta ? { lte: new Date(hasta) } : {}),
-          },
-        }
-      : {}),
-  };
+    const role = this.pickRole(user);
+    const idRolUsuario = role === 'OPERARIO' ? 2 : 3;
 
-  const [items, total] = await this.prisma.$transaction([
-    this.prisma.notificacion.findMany({
-      where,
-      orderBy: { fechaCreacion: 'desc' }, // siempre mas nuevas primero
-      skip: Number(offset),
-      take: Number(limit),
-      select: {
-        idNotificacion: true,
-        titulo: true,
-        mensaje: true,
-        fechaCreacion: true,
-        visible: true,
-        idRolUsuario: true,
-      },
-    }),
-    this.prisma.notificacion.count({ where }),
-  ]);
+    const where: Prisma.NotificacionWhereInput = {
+      visible: true,
+      idRolUsuario,
+      ...(desde || hasta
+        ? {
+            fechaCreacion: {
+              ...(desde ? { gte: new Date(desde) } : {}),
+              ...(hasta ? { lte: new Date(hasta) } : {}),
+            },
+          }
+        : {}),
+    };
 
-  return { items, total, limit: Number(limit), offset: Number(offset) };
-}
+    const [items, total] = await this.prisma.$transaction([
+      this.prisma.notificacion.findMany({
+        where,
+        orderBy: { fechaCreacion: 'desc' },
+        skip: Number(offset),
+        take: Number(limit),
+        select: {
+          idNotificacion: true,
+          titulo: true,
+          mensaje: true,
+          fechaCreacion: true,
+          visible: true,
+          idRolUsuario: true,
+        },
+      }),
+      this.prisma.notificacion.count({ where }),
+    ]);
+
+    return {
+      items,
+      total,
+      limit: Number(limit),
+      offset: Number(offset),
+    };
+  }
 }

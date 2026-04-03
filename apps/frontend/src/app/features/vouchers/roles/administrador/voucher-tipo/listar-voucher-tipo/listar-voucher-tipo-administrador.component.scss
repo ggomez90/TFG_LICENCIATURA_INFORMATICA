@@ -75,7 +75,6 @@
   }
 }
 
-
 /* Botones */
 .dsf-btn { border-radius: 999px; padding: .35rem .9rem; font-size: .85rem; font-weight: 500; border: 1px solid transparent; cursor: pointer; transition: background-color .15s, color .15s, border-color .15s; }
 .dsf-btn--lg { min-height: 44px; padding: .55rem 1.2rem; font-size: .95rem; }
@@ -90,6 +89,19 @@
 /* Tabla */
 .dsf-table-wrap { overflow-x: auto; }
 .dsf-table { width: 100%; border-collapse: collapse; font-size: 0.95rem; table-layout: fixed; }
+
+/* CAMBIO: Columna ID más angosta + blindaje contra nth-child */
+.dsf-th--id,
+.dsf-td--id {
+  width: 48px;
+  min-width: 48px;
+  max-width: 48px;
+  text-align: center;
+  white-space: nowrap;
+  padding-left: 0.35rem;
+  padding-right: 0.35rem;
+  font-weight: 700;
+}
 
 .dsf-table thead th {
   text-align: center;
@@ -112,15 +124,22 @@
 /* Fuerte */
 .dsf-table__cell--strong { font-weight: 700; color: #1b5e20; }
 
-/* Anchos */
+/* CAMBIO: Recalibrar anchos por la nueva primer columna ID
+   ID | Título | Vigencia | Estado | Acciones */
 .dsf-table thead th:nth-child(1),
-.dsf-table tbody td:nth-child(1) { width: 45%; } /* Título */
+.dsf-table tbody td:nth-child(1) { width: 48px !important; }
+
 .dsf-table thead th:nth-child(2),
-.dsf-table tbody td:nth-child(2) { width: 25%; } /* Vigencia */
+.dsf-table tbody td:nth-child(2) { width: 45%; } /* Título */
+
 .dsf-table thead th:nth-child(3),
-.dsf-table tbody td:nth-child(3) { width: 12%; } /* Estado */
+.dsf-table tbody td:nth-child(3) { width: 25%; } /* Vigencia */
+
 .dsf-table thead th:nth-child(4),
-.dsf-table tbody td:nth-child(4) { width: 18%; } /* Acciones */
+.dsf-table tbody td:nth-child(4) { width: 12%; } /* Estado */
+
+.dsf-table thead th:nth-child(5),
+.dsf-table tbody td:nth-child(5) { width: 18%; } /* Acciones */
 
 .dsf-table__th--actions { text-align: center; }
 .dsf-table__cell--actions { text-align: center; padding-right: 0.6rem; }

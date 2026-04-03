@@ -1,89 +1,97 @@
-<!-- Backdrop (cierra al click) -->
-<div class="modal__backdrop" (click)="cancel()"></div>
+<div class="modal-backdrop" (click)="cancel()"></div>
 
-<!-- Panel centrado -->
-<div class="modal__panel" (click)="$event.stopPropagation()">
-  <section class="modal__card" role="dialog" aria-modal="true" aria-labelledby="dlg-title">
-    <header class="modal__header">
-      <h3 id="dlg-title">Nuevo usuario</h3>
-      <button type="button" class="icon-btn close" (click)="cancel()" aria-label="Cerrar">×</button>
-    </header>
+<div class="modal-shell-wrap" (click)="$event.stopPropagation()">
+  <section class="modal-shell" role="dialog" aria-modal="true" aria-labelledby="dlg-title">
+    <div class="modal-head">
+      <div>
+        <span class="modal-eyebrow">Alta administrativa</span>
+        <h2 id="dlg-title">Nuevo usuario</h2>
+        <p>
+          Completá los datos principales, asigná el rol correspondiente y generá la cuenta
+          para continuar con el flujo de verificación.
+        </p>
+      </div>
 
-    <div class="modal__body">
-      <p class="hint">Completá los datos y elegí el rol. Se enviará correo de verificación y solicitud de contraseña.</p>
+      <button type="button" class="icon-btn" (click)="cancel()" aria-label="Cerrar">
+        ×
+      </button>
+    </div>
 
-      <form [formGroup]="form" class="form" (ngSubmit)="submit()">
-        <div class="grid">
+    <div class="modal-status-row">
+      <span class="chip chip-soft">Creación de cuenta</span>
+      <span class="chip">Rol configurable</span>
+    </div>
 
-          <!-- Nombres -->
-          <label class="field">
-            <span class="lbl">Nombres *</span>
-            <input type="text" formControlName="nombres" #firstInput />
-            <small class="err" *ngIf="f['nombres'].touched && f['nombres'].invalid">
-              Campo requerido
-            </small>
-          </label>
+    <section class="info-card">
+      <h3>Datos del nuevo usuario</h3>
 
-          <!-- Apellidos -->
-          <label class="field">
-            <span class="lbl">Apellidos *</span>
-            <input type="text" formControlName="apellidos" />
-            <small class="err" *ngIf="f['apellidos'].touched && f['apellidos'].invalid">
-              Campo requerido
-            </small>
-          </label>
+      <form [formGroup]="form" class="form-grid" (ngSubmit)="submit()">
+        <label class="field">
+          <span class="field__label">Nombres *</span>
+          <input type="text" formControlName="nombres" #firstInput />
+          <small class="err" *ngIf="f['nombres'].touched && f['nombres'].invalid">
+            Campo requerido
+          </small>
+        </label>
 
-          <!-- Usuario -->
-          <label class="field">
-            <span class="lbl">Usuario *</span>
-            <input type="text" formControlName="usuario" />
-            <small class="err" *ngIf="f['usuario'].touched && f['usuario'].invalid">
-              Usuario debe tener de 6 a 40 caracteres
-            </small>
-            <small class="err" *ngIf="f['usuario'].errors?.duplicate">
-              El nombre de usuario ya está registrado
-            </small>
-          </label>
+        <label class="field">
+          <span class="field__label">Apellidos *</span>
+          <input type="text" formControlName="apellidos" />
+          <small class="err" *ngIf="f['apellidos'].touched && f['apellidos'].invalid">
+            Campo requerido
+          </small>
+        </label>
 
-          <!-- Email -->
-          <label class="field">
-            <span class="lbl">Email *</span>
-            <input type="email" formControlName="email" />
-            <small class="err" *ngIf="f['email'].touched && f['email'].invalid">
-              Email inválido
-            </small>
-            <small class="err" *ngIf="f['email'].errors?.duplicate">
-              El email ya está registrado
-            </small>
-          </label>
+        <label class="field">
+          <span class="field__label">Usuario *</span>
+          <input type="text" formControlName="usuario" />
+          <small class="err" *ngIf="f['usuario'].touched && f['usuario'].invalid">
+            Usuario debe tener de 6 a 40 caracteres
+          </small>
+          <small class="err" *ngIf="f['usuario'].errors?.duplicate">
+            El nombre de usuario ya está registrado
+          </small>
+        </label>
 
-          <!-- DNI/CUIT/CUIL -->
-          <label class="field field--full">
-            <span class="lbl">DNI/CUIT/CUIL (opcional)</span>
-            <input type="text" formControlName="dniCuitCuil" />
-            <small class="err" *ngIf="f['dniCuitCuil'].errors?.duplicate">
-              El documento ya está registrado
-            </small>
-          </label>
+        <label class="field">
+          <span class="field__label">Email *</span>
+          <input type="email" formControlName="email" />
+          <small class="err" *ngIf="f['email'].touched && f['email'].invalid">
+            Email inválido
+          </small>
+          <small class="err" *ngIf="f['email'].errors?.duplicate">
+            El email ya está registrado
+          </small>
+        </label>
 
-          <!-- Rol -->
-          <label class="field">
-            <span class="lbl">Rol *</span>
-            <select formControlName="idRolUsuario">
-              <option [ngValue]="1">ADMINISTRADOR</option>
-              <option [ngValue]="2">OPERARIO</option>
-              <option [ngValue]="3">CLIENTE</option>
-            </select>
-          </label>
+        <label class="field field--full">
+          <span class="field__label">DNI/CUIT/CUIL (opcional)</span>
+          <input type="text" formControlName="dniCuitCuil" />
+          <small class="err" *ngIf="f['dniCuitCuil'].errors?.duplicate">
+            El documento ya está registrado
+          </small>
+        </label>
+
+        <label class="field">
+          <span class="field__label">Rol *</span>
+          <select formControlName="idRolUsuario">
+            <option [ngValue]="1">ADMINISTRADOR</option>
+            <option [ngValue]="2">OPERARIO</option>
+            <option [ngValue]="3">CLIENTE</option>
+          </select>
+        </label>
+
+        <div class="form-note field--full">
+          Al crear el usuario se enviará correo de verificación y solicitud de contraseña.
         </div>
 
-        <footer class="modal__footer">
-          <button type="button" class="dsf-btn dsf-btn--ghost" (click)="cancel()">Cancelar</button>
-          <button type="submit" class="dsf-btn" [disabled]="loading">
-            {{ loading ? 'Creando…' : 'Crear' }}
+        <div class="modal-actions field--full">
+          <button type="button" class="btn btn-secondary" (click)="cancel()">Cancelar</button>
+          <button type="submit" class="btn btn-primary" [disabled]="loading">
+            {{ loading ? 'Creando…' : 'Crear usuario' }}
           </button>
-        </footer>
+        </div>
       </form>
-    </div>
+    </section>
   </section>
 </div>

@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { HttpClient, HttpParams } from '@angular/common/http';
+import { RolesService } from '../../../auth/roles.service';
 
 interface EncuestaRow {
   idEncuesta: number;
@@ -28,11 +29,14 @@ interface PaginatedResponse<T> {
   templateUrl: './listar-encuesta.component.html',
   styleUrls: ['./listar-encuesta.component.scss'],
 })
+
 export class ListarEncuestaComponent implements OnInit {
   // estado
   items: EncuestaRow[] = [];
   loading = false;
   errorMsg = '';
+  isAdmin = false;
+  isCliente = false;
 
   // paginación
   limit = 30;
@@ -55,9 +59,18 @@ export class ListarEncuestaComponent implements OnInit {
     private readonly http: HttpClient,
     private readonly router: Router,
     private readonly cdr: ChangeDetectorRef,
+    private readonly roles: RolesService,
   ) {}
 
   ngOnInit(): void {
+    this.isAdmin = this.roles.hasAnyRole(['ADMIN', 'ADMINISTRADOR']);
+    this.isCliente = this.roles.hasRole('CLIENTE');
+
+    // No-admin (cliente o invitado): solo activas
+    if (!this.isAdmin) {
+      this.filtro.activa = true;
+    }
+
     this.cargar();
   }
 
@@ -103,7 +116,13 @@ export class ListarEncuestaComponent implements OnInit {
 
   //Navegación
   onVolver(): void {
-    this.router.navigate(['/menu-principal/admin/biblioteca']);
+    if (this.isAdmin) {
+      this.router.navigate(['/menu-principal/admin/biblioteca']);
+    } else if (this.isCliente) {
+      this.router.navigate(['/menu-principal/cliente/biblioteca']);
+    } else {
+      this.router.navigate(['/']);
+    }
   }
 
   //Filtros / Paginación
@@ -113,7 +132,12 @@ export class ListarEncuestaComponent implements OnInit {
   }
 
   onLimpiarFiltros(): void {
-    this.filtro = { fechaDesde: null, fechaHasta: null, activa: null, q: '' };
+    this.filtro = {
+      fechaDesde: null,
+      fechaHasta: null,
+      activa: this.isAdmin ? null : true,
+      q: '',
+    };
     this.offset = 0;
     this.cargar();
   }
@@ -132,14 +156,23 @@ export class ListarEncuestaComponent implements OnInit {
 
   //Acciones de fila
   onVer(e: EncuestaRow): void {
-    this.router.navigate(['/menu-principal/biblioteca/encuestas/ver', e.idEncuesta]);
+    if (this.isAdmin) {
+      this.router.navigate(['/menu-principal/admin/biblioteca/encuestas/ver', e.idEncuesta]);
+    } else if (this.isCliente) {
+      this.router.navigate(['/menu-principal/cliente/biblioteca/encuestas/ver', e.idEncuesta]);
+    } else {
+      // futuro: ruta pública
+      this.router.navigate(['/public/recursos/encuestas/ver', e.idEncuesta]);
+    }
   }
 
   onEditar(e: EncuestaRow): void {
+    if (!this.isAdmin) return;
     this.router.navigate(['/menu-principal/admin/biblioteca/encuestas/editar', e.idEncuesta]);
   }
 
   onToggleActiva(e: EncuestaRow, event: Event): void {
+    if (!this.isAdmin) return;
     const input = event.target as HTMLInputElement;
     const nuevoEstado = input.checked;
 
@@ -181,7 +214,7 @@ export class ListarEncuestaComponent implements OnInit {
 
     if (this.filtro.fechaDesde) params = params.set('fechaDesde', this.filtro.fechaDesde);
     if (this.filtro.fechaHasta) params = params.set('fechaHasta', this.filtro.fechaHasta);
-    if (this.filtro.activa !== null) params = params.set('activa', this.filtro.activa ? '1' : '0');
+    if (this.filtro.activa !== null) params = params.set('activa', String(this.filtro.activa)); // "true"/"false"
     if (this.filtro.q?.trim()) params = params.set('q', this.filtro.q.trim());
 
     const doRequest = (p: HttpParams | null) =>

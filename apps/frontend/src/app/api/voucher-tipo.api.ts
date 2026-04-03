@@ -34,6 +34,30 @@ export interface FilterVoucherTipo {
   hasta?: string; // yyyy-MM-dd
 }
 
+export interface ClienteVoucherTipoItem extends AdminVoucherTipoItem {
+  puntosDisponibles: number;
+  disponibleParaCanje: boolean;
+  puntosFaltantes: number;
+}
+
+export interface PagedVoucherTipoCliente {
+  items: ClienteVoucherTipoItem[];
+  total: number;
+  limit: number;
+  offset: number;
+  sortBy?: string;
+  order?: 'asc' | 'desc';
+  puntosDisponibles: number;
+}
+
+export interface FilterVoucherTipoCliente {
+  limit?: number;
+  offset?: number;
+  sortBy?: 'idVoucherTipo' | 'fechaInicioVigencia' | 'fechaFinVigencia' | 'puntosRequeridos' | 'montoBeneficio';
+  order?: 'asc' | 'desc';
+  soloCanjeables?: boolean;
+}
+
 @Injectable({ providedIn: 'root' })
 export class VoucherTipoApi {
   private http = inject(HttpClient);
@@ -64,4 +88,15 @@ export class VoucherTipoApi {
     return this.http.get<AdminVoucherTipoItem>(`${this.base}/${id}`);
   }
 
+  getDisponiblesCliente(filter: FilterVoucherTipoCliente = {}): Observable<PagedVoucherTipoCliente> {
+    let params = new HttpParams();
+    Object.entries(filter ?? {}).forEach(([k, v]) => {
+      if (v !== undefined && v !== null && v !== '') params = params.set(k, String(v));
+    });
+    return this.http.get<PagedVoucherTipoCliente>(`${this.base}/cliente/disponibles`, { params });
+  }
+
+  getDisponibleClienteById(idVoucherTipo: number): Observable<ClienteVoucherTipoItem> {
+    return this.http.get<ClienteVoucherTipoItem>(`${this.base}/cliente/disponibles/${idVoucherTipo}`);
+  }
 }

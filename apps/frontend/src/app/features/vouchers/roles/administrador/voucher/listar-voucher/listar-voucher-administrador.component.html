@@ -1,0 +1,187 @@
+<section class="dsf-wrap biblioteca-admin">
+  <header class="dsf-header">
+    <h1 class="dsf-title">Vouchers</h1>
+    <p class="dsf-sub">
+      Listado completo de vouchers emitidos. Podés filtrar y navegar por páginas.
+    </p>
+  </header>
+
+  <!-- FILTROS -->
+  <section class="dsf-panel">
+    <form class="dsf-filters" (ngSubmit)="onAplicarFiltros()">
+      <!-- FILA 1 -->
+      <div class="dsf-filters__row">
+        <label class="dsf-field">
+          <span class="dsf-field__label">Fecha desde</span>
+          <input
+            type="date"
+            class="dsf-input"
+            [(ngModel)]="filtro.fechaDesde"
+            name="fechaDesde"
+            [max]="filtro.fechaHasta || null"
+          />
+        </label>
+
+        <label class="dsf-field">
+          <span class="dsf-field__label">Fecha hasta</span>
+          <input
+            type="date"
+            class="dsf-input"
+            [(ngModel)]="filtro.fechaHasta"
+            name="fechaHasta"
+            [min]="filtro.fechaDesde || null"
+          />
+        </label>
+
+        <label class="dsf-field">
+          <span class="dsf-field__label">Estado</span>
+          <select class="dsf-input" [(ngModel)]="filtro.estado" name="estado">
+            <option [ngValue]="null">Todos</option>
+            <option [ngValue]="1">CREADO</option>
+            <option [ngValue]="2">ADQUIRIDO</option>
+            <option [ngValue]="3">UTILIZADO</option>
+            <option [ngValue]="4">ANULADO</option>
+          </select>
+        </label>
+
+        <label class="dsf-field dsf-field--search">
+          <span class="dsf-field__label">Buscar</span>
+          <input
+            type="text"
+            class="dsf-input dsf-input--lg"
+            placeholder="ID voucher / cliente / tipo / título"
+            [(ngModel)]="filtro.q"
+            name="q"
+          />
+        </label>
+      </div>
+
+      <!-- FILA 2 -->
+      <div class="dsf-filters__row dsf-filters__row--second">
+        <label class="dsf-field dsf-field--range">
+          <span class="dsf-field__label">ID Cliente</span>
+          <input
+            type="number"
+            class="dsf-input"
+            name="idCliente"
+            [(ngModel)]="filtro.idCliente"
+            (keydown)="onNumberKeydown($event)"
+            min="1"
+            step="1"
+          />
+        </label>
+
+        <label class="dsf-field dsf-field--range">
+          <span class="dsf-field__label">ID Tipo</span>
+          <input
+            type="number"
+            class="dsf-input"
+            name="idVoucherTipo"
+            [(ngModel)]="filtro.idVoucherTipo"
+            (keydown)="onNumberKeydown($event)"
+            min="1"
+            step="1"
+          />
+        </label>
+
+        <!-- BOTONES -->
+        <div class="dsf-filters__buttons dsf-filters__buttons--rigth">
+          <button type="submit" class="dsf-btn dsf-btn--outline dsf-btn--lg">
+            Aplicar
+          </button>
+          <button
+            type="button"
+            class="dsf-btn dsf-btn--outline dsf-btn--lg"
+            (click)="onLimpiarFiltros()"
+          >
+            Limpiar
+          </button>
+        </div>
+      </div>
+    </form>
+  </section>
+
+  <!-- RESULTADOS -->
+  <section class="dsf-panel">
+    <div *ngIf="loading" class="dsf-empty dsf-empty--loading">
+      <p class="dsf-empty__text">Cargando vouchers...</p>
+    </div>
+
+    <div *ngIf="!loading && errorMsg" class="dsf-empty">
+      {{ errorMsg }}
+    </div>
+
+    <div *ngIf="!loading && !errorMsg && items.length === 0" class="dsf-empty">
+      <p class="dsf-empty__text">
+        No se encontraron vouchers con los filtros seleccionados.
+      </p>
+    </div>
+
+    <div *ngIf="!loading && !errorMsg && items.length > 0" class="dsf-table-wrap">
+      <table class="dsf-table">
+        <thead>
+          <tr>
+            <th class="dsf-th--id">ID</th>
+            <th>Cliente</th>
+            <th>Tipo</th>
+            <th>Estado</th>
+            <th>Adquisición</th>
+            <th>Uso</th>
+            <th class="dsf-table__th--actions">Acciones</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr *ngFor="let v of items">
+            <td class="dsf-td--center dsf-td--id">{{ v.idVoucher }}</td>
+
+            <td class="dsf-td--center">
+              #{{ v.idCliente }}
+            </td>
+
+            <td class="dsf-td--center dsf-td--title">
+              #{{ v.idVoucherTipo }}
+              <span class="muted" *ngIf="v.voucherTipo?.titulo">· {{ v.voucherTipo?.titulo }}</span>
+            </td>
+
+            <td class="dsf-td--center">
+              <span class="dsf-badge" [ngClass]="badgeClass(v.estadoVoucher)">
+                {{ estadoLabel(v.estadoVoucher) }}
+              </span>
+            </td>
+
+            <td class="dsf-td--center">
+              {{ v.fechaAdquisicion | date : 'dd/MM/yyyy' }}
+            </td>
+
+            <td class="dsf-td--center">
+              {{ v.fechaUso ? (v.fechaUso | date : 'dd/MM/yyyy') : '—' }}
+            </td>
+
+            <td class="dsf-table__cell--actions">
+              <div class="dsf-actions-inline">
+                <button type="button" class="dsf-icon-btn" (click)="onVer(v)" title="Ver detalle">👁️</button>
+                <button *ngIf="isAdmin" type="button" class="dsf-icon-btn" (click)="onEditar(v)" title="Editar">✏️</button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <footer class="dsf-pagination">
+        <span class="dsf-pagination__info">
+          Mostrando
+          <strong *ngIf="items.length > 0">{{ offset + 1 }} - {{ offset + items.length }}</strong>
+          <strong *ngIf="items.length === 0">0</strong>
+          de <strong>{{ total }}</strong> registros
+        </span>
+
+        <div class="dsf-pagination__buttons">
+          <button type="button" class="dsf-btn dsf-btn--ghost" (click)="onVolver()">← Volver</button>
+          <button type="button" class="dsf-btn dsf-btn--ghost" (click)="paginaAnterior()" [disabled]="offset === 0">← Anterior</button>
+          <button type="button" class="dsf-btn dsf-btn--ghost" (click)="paginaSiguiente()" [disabled]="offset + limit >= total">Siguiente →</button>
+        </div>
+      </footer>
+    </div>
+  </section>
+</section>

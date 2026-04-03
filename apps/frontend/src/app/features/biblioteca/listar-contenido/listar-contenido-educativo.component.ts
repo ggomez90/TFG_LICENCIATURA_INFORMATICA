@@ -71,6 +71,11 @@ export class ListarContenidoEducativoComponent implements OnInit {
   ngOnInit(): void {
     this.isAdmin = this.roles.hasAnyRole(['ADMIN', 'ADMINISTRADOR']);
     this.isCliente = this.roles.hasRole('CLIENTE');
+
+    if (!this.isAdmin) {
+      this.filtro.visible = true;
+    }
+
     this.cargar();
   }
 
@@ -141,7 +146,7 @@ export class ListarContenidoEducativoComponent implements OnInit {
     this.filtro = {
       fechaDesde: null,
       fechaHasta: null,
-      visible: null,
+      visible: this.isAdmin ? null : true,
       q: '',
     };
     this.offset = 0;
@@ -162,26 +167,43 @@ export class ListarContenidoEducativoComponent implements OnInit {
 
   // ACCIONES
 
+  // onVer(item: AdminContenidoListItem): void {
+  //   if (!item.idContenido) return;
+
+  //   if (this.isAdmin) {
+  //     this.router.navigate([
+  //       '/menu-principal',
+  //       'admin',
+  //       'biblioteca',
+  //       'contenidos',
+  //       'ver',
+  //       item.idContenido,
+  //     ]);
+  //   } else {
+  //     this.router.navigate([
+  //       '/menu-principal',
+  //       'biblioteca',
+  //       'contenidos',
+  //       item.idContenido,
+  //     ]);
+  //   }
+  // }
+
   onVer(item: AdminContenidoListItem): void {
     if (!item.idContenido) return;
 
     if (this.isAdmin) {
-      this.router.navigate([
-        '/menu-principal',
-        'admin',
-        'biblioteca',
-        'contenidos',
-        'ver',
-        item.idContenido,
-      ]);
-    } else {
-      this.router.navigate([
-        '/menu-principal',
-        'biblioteca',
-        'contenidos',
-        item.idContenido,
-      ]);
+      this.router.navigate(['/menu-principal/admin/biblioteca/contenidos/ver', item.idContenido]);
+      return;
     }
+
+    if (this.isCliente) {
+      this.router.navigate(['/menu-principal/cliente/biblioteca/contenidos/ver', item.idContenido]);
+      return;
+    }
+
+    // invitado (cuando exista esa ruta)
+    this.router.navigate(['/public/recursos/contenidos/ver', item.idContenido]);
   }
 
   onEditar(item: AdminContenidoListItem): void {
@@ -239,104 +261,99 @@ export class ListarContenidoEducativoComponent implements OnInit {
     this.errorMsg = null;
     this.cdr.markForCheck();
 
-    let params = new HttpParams()
-      .set('limit', this.limit)
-      .set('offset', this.offset)
-      .set('sortBy', this.sortBy)
-      .set('order', this.order);
+    const isPublic = !this.isAdmin;
 
-    if (this.filtro.fechaDesde) params = params.set('fechaDesde', this.filtro.fechaDesde);
-    if (this.filtro.fechaHasta) params = params.set('fechaHasta', this.filtro.fechaHasta);
-    if (this.filtro.visible !== null) {
-      // criterio 1 o 0
-      params = params.set('visible', this.filtro.visible ? '1' : '0');
-    }
-    if (this.filtro.q?.trim()) params = params.set('q', this.filtro.q.trim());
+    // ADMIN: soporta filtros/params en /admin
+    if (!isPublic) {
+      let params = new HttpParams()
+        .set('limit', this.limit)
+        .set('offset', this.offset)
+        .set('sortBy', this.sortBy)
+        .set('order', this.order);
 
-    const doRequest = (p: HttpParams | null) =>
-      this.http.get<PaginatedResponse<any> | any[]>('/api/contenidos/admin', p ? { params: p } : {});
+      if (this.filtro.fechaDesde) params = params.set('fechaDesde', this.filtro.fechaDesde);
+      if (this.filtro.fechaHasta) params = params.set('fechaHasta', this.filtro.fechaHasta);
+      if (this.filtro.visible !== null) params = params.set('visible', this.filtro.visible ? '1' : '0');
+      if (this.filtro.q?.trim()) params = params.set('q', this.filtro.q.trim());
 
-    doRequest(params).subscribe({
-      next: (resp) => {
-        const rawItems = Array.isArray(resp)
-          ? resp
-          : Array.isArray((resp as any)?.items)
-          ? (resp as any).items
-          : [];
+      this.http.get<PaginatedResponse<any> | any[]>('/api/contenidos/admin', { params }).subscribe({
+        next: (resp) => {
+          const rawItems = Array.isArray(resp)
+            ? resp
+            : Array.isArray((resp as any)?.items)
+            ? (resp as any).items
+            : [];
 
-        const mapped: AdminContenidoListItem[] = rawItems.map((raw: any) => ({
-          idContenido: raw.idContenidoEducativo,
-          titulo: raw.titulo ?? null,
-          descripcion: raw.descripcion ?? null,
-          fechaPublicacion: raw.fechaPublicacion,
-          visible: !!raw.visible,
-        }));
+          const mapped: AdminContenidoListItem[] = rawItems.map((raw: any) => ({
+            idContenido: raw.idContenidoEducativo,
+            titulo: raw.titulo ?? null,
+            descripcion: raw.descripcion ?? null,
+            fechaPublicacion: raw.fechaPublicacion,
+            visible: !!raw.visible,
+          }));
 
-        const filtered = this.applyClientFilters(mapped);
+          const filtered = this.applyClientFilters(mapped);
 
-        // Totales y paginación: el back suele tirar errores pra paginar, asi que lo paginamos en front
-        if (Array.isArray(resp)) {
-          this.total = filtered.length;
-          this.items = filtered.slice(this.offset, this.offset + this.limit);
-        } else {
-          this.items = filtered;
-          this.total = (resp as PaginatedResponse<any>).total ?? filtered.length;
-          this.limit = (resp as PaginatedResponse<any>).limit ?? this.limit;
-          this.offset = (resp as PaginatedResponse<any>).offset ?? this.offset;
-        }
+          if (Array.isArray(resp)) {
+            this.total = filtered.length;
+            this.items = filtered.slice(this.offset, this.offset + this.limit);
+          } else {
+            this.items = filtered;
+            this.total = (resp as PaginatedResponse<any>).total ?? filtered.length;
+            this.limit = (resp as PaginatedResponse<any>).limit ?? this.limit;
+            this.offset = (resp as PaginatedResponse<any>).offset ?? this.offset;
+          }
 
-        this.loading = false;
-        this.cdr.markForCheck();
-      },
-      error: (err) => {
-        //reintento sin params si se queja de los query params
-        const msg = err?.error?.message;
-        const is400 = err?.status === 400;
-        const complainsParams =
-          Array.isArray(msg) && msg.some((m: string) => /property .* should not exist/i.test(m));
-
-        if (is400 && complainsParams) {
-          doRequest(null).subscribe({
-            next: (resp2) => {
-              const raw2 = Array.isArray(resp2)
-                ? resp2
-                : Array.isArray((resp2 as any)?.items)
-                ? (resp2 as any).items
-                : [];
-              const mapped2: AdminContenidoListItem[] = raw2.map((raw: any) => ({
-                idContenido: raw.idContenidoEducativo,
-                titulo: raw.titulo ?? null,
-                descripcion: raw.descripcion ?? null,
-                fechaPublicacion: raw.fechaPublicacion,
-                visible: !!raw.visible,
-              }));
-              const filtered2 = this.applyClientFilters(mapped2);
-
-              this.items = filtered2;
-              this.total = Array.isArray(resp2) ? filtered2.length : (resp2 as any)?.total ?? filtered2.length;
-              this.limit = !Array.isArray(resp2) ? (resp2 as any)?.limit ?? this.limit : this.limit;
-              this.offset = !Array.isArray(resp2) ? (resp2 as any)?.offset ?? this.offset : 0;
-
-              this.loading = false;
-              this.cdr.markForCheck();
-            },
-            error: (err2) => {
-              console.error('Error cargando contenidos (reintento sin params)', err2);
-              this.items = [];
-              this.total = 0;
-              this.loading = false;
-              this.errorMsg = 'Ocurrió un error al cargar el listado de contenidos.';
-              this.cdr.markForCheck();
-            },
-          });
-        } else {
-          console.error('Error cargando contenidos educativos (listado completo)', err);
+          this.loading = false;
+          this.cdr.markForCheck();
+        },
+        error: (err) => {
+          console.error('Error cargando contenidos (admin)', err);
           this.items = [];
           this.total = 0;
           this.loading = false;
           this.errorMsg = 'Ocurrió un error al cargar el listado de contenidos.';
           this.cdr.markForCheck();
-        }
+        },
+      });
+
+      return;
+    }
+
+    // CLIENTE/INVITADO: endpoint público /api/contenidos (sin params)
+    this.http.get<any[]>('/api/contenidos').subscribe({
+      next: (resp) => {
+        const rawItems = Array.isArray(resp) ? resp : [];
+
+        const mapped: AdminContenidoListItem[] = rawItems.map((raw: any) => ({
+          // OJO: acá depende de tu respuesta pública. Si ya devuelve idContenidoEducativo, perfecto.
+          // Si devolviera "id" u otro nombre, ajustamos aquí.
+          idContenido: raw.idContenidoEducativo ?? raw.idContenido ?? raw.id ?? 0,
+          titulo: raw.titulo ?? null,
+          descripcion: raw.descripcion ?? null,
+          fechaPublicacion: raw.fechaPublicacion,
+          visible: raw.visible !== undefined ? !!raw.visible : true,
+        }));
+
+        // cliente/invitado: siempre visibles
+        const forced = mapped.filter((x) => x.visible);
+
+        // aplicar filtros (sin visible, porque ya está forzado)
+        const filtered = this.applyClientFilters(forced);
+
+        this.total = filtered.length;
+        this.items = filtered.slice(this.offset, this.offset + this.limit);
+
+        this.loading = false;
+        this.cdr.markForCheck();
+      },
+      error: (err) => {
+        console.error('Error cargando contenidos (public)', err);
+        this.items = [];
+        this.total = 0;
+        this.loading = false;
+        this.errorMsg = 'Ocurrió un error al cargar el listado de contenidos.';
+        this.cdr.markForCheck();
       },
     });
   }

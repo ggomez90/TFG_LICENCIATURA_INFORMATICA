@@ -1,66 +1,218 @@
-<!--La vista es solo decorativa, no posee logica-->
-<section class="dsf-wrap">
-  <header class="dsf-header">
-    <h1 class="dsf-title">Entregas (Operario)</h1>
-    <p class="dsf-sub">Recepción y validación de entregas reportadas por ciudadanos. Usá los filtros para priorizar.</p>
-  </header>
+<section class="entregas-dashboard">
+  <div class="hero-card">
+    <div class="hero-copy">
+      <span class="hero-eyebrow">Yo_Reciclo · Operario</span>
+      <h1>Entregas operativas</h1>
+      <p>
+        Recibí entregas físicas, verificá que coincidan con lo registrado por el cliente
+        y resolvé su validación o rechazo antes de otorgar puntos.
+      </p>
 
-  <div class="dsf-toolbar">
-    <div class="dsf-field">
-      <label for="buscar">Buscar</label>
-      <input id="buscar" #buscarInput type="text" placeholder="Buscar por ciudadano, desafío o ID…"
-             (input)="q.set(buscarInput.value)" />
+      <div class="hero-actions">
+        <button type="button" class="btn btn-primary" (click)="goToListadoCompleto()">
+          <span class="material-symbols-outlined">list_alt</span>
+          Ver listado completo
+        </button>
+      </div>
     </div>
 
-    <div class="dsf-field">
-      <label for="estado">Estado</label>
-      <select id="estado" #estadoSel (change)="onEstadoChange($any(estadoSel).value)">
-        <option value="todos">Todos</option>
-        <option value="pendiente">Pendiente</option>
-        <option value="aprobada">Aprobada</option>
-        <option value="rechazada">Rechazada</option>
-      </select>
+    <div class="hero-highlight">
+      <div class="highlight-top">
+        <span class="chip chip-soft">Recepción rápida</span>
+        <span class="chip">Búsqueda por ID</span>
+      </div>
+
+      <h2>Buscá una entrega por su ID o código visible</h2>
+
+      <div class="hero-note">
+        <span class="material-symbols-outlined">qr_code_scanner</span>
+        <span>
+          Ingresá el ID que presenta el cliente para abrir el detalle y resolver la entrega directamente desde el modal.
+        </span>
+      </div>
+
+      <div class="quick-search">
+        <label for="busquedaEntrega">ID / Código</label>
+        <div class="quick-search-row">
+          <input
+            id="busquedaEntrega"
+            type="text"
+            [value]="busquedaRapida()"
+            (input)="busquedaRapida.set($any($event.target).value)"
+            (keyup.enter)="buscarEntrega()"
+            placeholder="Ej: 1058 o ENT-1058"
+          />
+
+          <button type="button" class="btn btn-ghost" (click)="buscarEntrega()">
+            <span class="material-symbols-outlined">search</span>
+            Buscar
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 
-  <div class="dsf-grid">
-    <article class="dsf-card" *ngFor="let e of entregas()">
-      <div class="dsf-card__media">
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path fill="currentColor" d="M19 3H5a2 2 0 0 0-2 2v12l4-4h12a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2z"/>
-        </svg>
+  <div class="panel panel-soft" *ngIf="loading()">
+    <p>Cargando entregas del operario...</p>
+  </div>
+
+  <div class="panel panel-soft" *ngIf="errorMsg() as error">
+    <p>{{ error }}</p>
+  </div>
+
+  <div class="kpis-grid" *ngIf="!loading() && !errorMsg()">
+    <article class="kpi-card" *ngFor="let kpi of kpis(); trackBy: trackByKpi">
+      <div class="kpi-icon">
+        <span class="material-symbols-outlined">{{ kpi.icon }}</span>
       </div>
-
-      <div class="dsf-card__body">
-        <div class="dsf-card__head">
-          <h2 class="dsf-card__title">{{ e.desafio }}</h2>
-          <span class="badge" [class.ok]="estadoBadgeClass(e.estado)==='ok'"
-                             [class.warn]="estadoBadgeClass(e.estado)==='warn'"
-                             [class.err]="estadoBadgeClass(e.estado)==='err'">
-            {{ estadoLabel(e.estado) }}
-          </span>
-        </div>
-
-        <p class="dsf-card__meta">
-          <strong>ID:</strong> {{ e.id }} ·
-          <strong>Fecha:</strong> {{ e.fecha | date:'dd/MM/yyyy' }} ·
-          <strong>Ciudadano:</strong> {{ e.ciudadano }} ·
-          <strong>Peso:</strong> {{ e.pesoKg }} kg
-        </p>
-
-        <p class="dsf-card__desc" *ngIf="e.notas">
-          <strong>Notas:</strong> {{ e.notas }}
-        </p>
-
-        <div class="dsf-card__actions">
-          <button type="button" class="dsf-btn ghost" (click)="rechazar(e.id)" [disabled]="e.estado!=='pendiente'">Rechazar</button>
-          <button type="button" class="dsf-btn" (click)="aprobar(e.id)" [disabled]="e.estado!=='pendiente'">Aprobar</button>
-        </div>
+      <div class="kpi-body">
+        <span class="kpi-label">{{ kpi.label }}</span>
+        <strong class="kpi-value">{{ kpi.value }}</strong>
+        <small class="kpi-helper">{{ kpi.helper }}</small>
       </div>
-    </article>
-
-    <article class="dsf-empty" *ngIf="entregas().length === 0">
-      <p>No hay entregas que coincidan con los filtros.</p>
     </article>
   </div>
+
+  <section class="panel panel-wide panel-rich" *ngIf="!loading() && !errorMsg()">
+    <div class="panel-head">
+      <div>
+        <span class="section-eyebrow">Acción principal</span>
+        <h3>Entregas pendientes para control</h3>
+        <p>
+          Se muestran las entregas pendientes listas para revisión física en el punto de recepción.
+        </p>
+      </div>
+
+      <button type="button" class="btn btn-secondary" (click)="goToListadoPendientes()">
+        <span class="material-symbols-outlined">visibility</span>
+        Ver todas
+      </button>
+    </div>
+
+    <div class="desafios-grid">
+      <article
+        class="desafio-card desafio-card--featured"
+        *ngFor="let entrega of entregasPendientes(); trackBy: trackByEntrega"
+      >
+        <div class="card-top">
+          <span class="chip chip-soft">{{ entrega.tipoResiduo }}</span>
+          <span class="status-ready">Pendiente</span>
+        </div>
+
+        <h4>{{ entrega.desafioTitulo }}</h4>
+
+        <div class="id-row">
+          <span class="id-chip">ID {{ entrega.idEntrega }}</span>
+          <span class="code-chip">{{ entrega.codigoVisible }}</span>
+        </div>
+
+        <div class="desafio-details">
+          <div>
+            <span class="label">Cliente</span>
+            <strong>{{ entrega.clienteNombre }}</strong>
+          </div>
+          <div>
+            <span class="label">Cantidad declarada</span>
+            <strong>{{ entrega.cantidadDeclarada | number:'1.0-3' }} {{ entrega.unidadMedida }}</strong>
+          </div>
+          <div>
+            <span class="label">Ubicación</span>
+            <strong>{{ entrega.ubicacion || 'Sin ubicación' }}</strong>
+          </div>
+          <div>
+            <span class="label">Vencimiento</span>
+            <strong>{{ entrega.fechaVencimiento | date:'dd/MM/yyyy HH:mm' }}</strong>
+          </div>
+        </div>
+
+        <p class="obs" *ngIf="entrega.observaciones">
+          {{ entrega.observaciones }}
+        </p>
+
+        <button
+          type="button"
+          class="btn btn-primary btn-full"
+          (click)="openViewModal(entrega)"
+        >
+          <span class="material-symbols-outlined">fact_check</span>
+          Revisar entrega
+        </button>
+      </article>
+    </div>
+
+    <div class="empty-state" *ngIf="!entregasPendientes().length">
+      <span class="material-symbols-outlined">inventory</span>
+      <strong>No hay entregas pendientes</strong>
+      <p>Cuando existan entregas en estado pendiente aparecerán en esta sección.</p>
+    </div>
+  </section>
+
+  <section class="panel panel-history panel-rich" *ngIf="!loading() && !errorMsg()">
+    <div class="panel-head">
+      <div>
+        <span class="section-eyebrow">Actividad reciente</span>
+        <h3>Últimos 10 movimientos de entregas</h3>
+        <p>
+          Historial breve con las últimas acciones y cambios de estado registrados en entregas.
+        </p>
+      </div>
+
+      <button type="button" class="btn btn-secondary" (click)="goToListadoCompleto()">
+        <span class="material-symbols-outlined">table_view</span>
+        Ir al listado
+      </button>
+    </div>
+
+    <div class="table-wrap">
+      <table class="history-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Código</th>
+            <th>Cliente</th>
+            <th>Desafío</th>
+            <th>Fecha</th>
+            <th>Estado</th>
+            <th>Detalle</th>
+            <th class="th-actions">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of actividadReciente(); trackBy: trackByActividad">
+            <td class="codigo-cell">{{ item.idEntrega }}</td>
+            <td>{{ item.codigoVisible }}</td>
+            <td>{{ item.clienteNombre }}</td>
+            <td>{{ item.desafioTitulo }}</td>
+            <td>{{ item.fecha | date:'dd/MM/yyyy HH:mm' }}</td>
+            <td>
+              <span class="badge" [ngClass]="getEstadoClass(item.estado)">
+                {{ getEstadoLabel(item.estado) }}
+              </span>
+            </td>
+            <td>{{ item.detalle }}</td>
+            <td class="td-actions">
+              <button
+                type="button"
+                class="icon-btn"
+                title="Ver detalle"
+                (click)="openViewModalById(item.idEntrega)"
+              >
+                <span class="material-symbols-outlined">visibility</span>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
 </section>
+
+<app-entrega-operario-modal
+  [visible]="modalVisible()"
+  [entrega]="entregaSeleccionada()"
+  (closeModal)="closeModal()"
+  (validarEntrega)="onValidarEntrega($event)"
+  (rechazarEntrega)="onRechazarEntrega($event)"
+  (volverPendiente)="onVolverPendiente($event)"
+  (confirmarPuntos)="onConfirmarPuntos($event)"
+/>

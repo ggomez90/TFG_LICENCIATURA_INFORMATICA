@@ -1,0 +1,132 @@
+<section class="adm-notif-page">
+  <header class="adm-notif-page__header">
+    <div>
+      <p class="adm-notif-page__eyebrow">ADMINISTRACIÓN</p>
+      <h1 class="adm-notif-page__title">Notificaciones</h1>
+      <p class="adm-notif-page__subtitle">
+        Gestiona las notificaciones del sistema: crea, consulta, edita y controla su visibilidad.
+      </p>
+    </div>
+
+    <div class="adm-notif-page__actions">
+      <button type="button" class="btn btn--secondary" (click)="cargarNotificaciones()">
+        ACTUALIZAR
+      </button>
+      <button type="button" class="btn btn--primary" (click)="irCrear()">
+        NUEVA NOTIFICACIÓN
+      </button>
+    </div>
+  </header>
+
+  <section class="adm-notif-toolbar">
+    <input
+      #txtFiltro
+      type="text"
+      class="adm-notif-input"
+      placeholder="Buscar por título o mensaje..."
+      [value]="filtroTexto()"
+      (input)="actualizarFiltroTexto(txtFiltro.value)"
+    />
+
+    <select class="adm-notif-select" [ngModel]="filtroRol()" (ngModelChange)="filtroRol.set($event)">
+      <option value="">Todos los roles</option>
+      <option value="2">OPERARIO</option>
+      <option value="3">CLIENTE</option>
+    </select>
+
+    <select class="adm-notif-select" [ngModel]="filtroVisible()" (ngModelChange)="filtroVisible.set($event)">
+      <option value="">Todos los estados</option>
+      <option value="true">Visible</option>
+      <option value="false">No visible</option>
+    </select>
+  </section>
+
+  <section class="adm-notif-content">
+    <div class="adm-notif-state" *ngIf="cargando()">Cargando notificaciones...</div>
+
+    <div class="adm-notif-state adm-notif-state--error" *ngIf="!cargando() && error()">
+      {{ error() }}
+    </div>
+
+    <div class="adm-notif-state" *ngIf="!cargando() && !error() && !notificaciones().length">
+      No hay notificaciones cargadas.
+    </div>
+
+    <div
+      class="adm-notif-state"
+      *ngIf="!cargando() && !error() && notificaciones().length && !notificacionesFiltradas().length"
+    >
+      No se encontraron resultados para los filtros aplicados.
+    </div>
+
+    <div class="adm-notif-table-wrap" *ngIf="!cargando() && !error() && notificacionesFiltradas().length">
+      <table class="adm-notif-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>TÍTULO</th>
+            <th>MENSAJE</th>
+            <th>ROL DESTINO</th>
+            <th>FECHA</th>
+            <th>VISIBLE</th>
+            <th>ACCIONES</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of notificacionesFiltradas(); trackBy: trackByNotif">
+            <td>{{ item.idNotificacion }}</td>
+            <td>{{ item.titulo }}</td>
+            <td>{{ item.mensaje }}</td>
+            <td>{{ rolLabel(item.idRolUsuario) }}</td>
+            <td>{{ item.fechaCreacion | date:'dd/MM/yyyy HH:mm' }}</td>
+            <td>
+              <span class="badge" [class.badge--off]="!item.visible">
+                {{ item.visible ? 'SÍ' : 'NO' }}
+              </span>
+            </td>
+            <td>
+              <div class="row-actions">
+                <button
+                  type="button"
+                  class="table-btn"
+                  [class.table-btn--disabled]="!puedeEditar(item)"
+                  (click)="onEditarClick(item)"
+                >
+                  EDITAR
+                </button>
+
+                <button type="button" class="table-btn table-btn--ghost" (click)="cambiarVisible(item)">
+                  {{ item.visible ? 'OCULTAR' : 'MOSTRAR' }}
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="adm-notif-pagination" *ngIf="!cargando() && !error()">
+      <button
+        type="button"
+        class="adm-notif-page-btn"
+        [disabled]="!puedeIrAtras()"
+        (click)="irAtras()"
+      >
+        ATRÁS
+      </button>
+
+      <div class="adm-notif-page-indicator">
+        Página {{ paginaActual() }} de {{ totalPaginas() }}
+      </div>
+
+      <button
+        type="button"
+        class="adm-notif-page-btn"
+        [disabled]="!puedeIrSiguiente()"
+        (click)="irSiguiente()"
+      >
+        SIGUIENTE
+      </button>
+    </div>
+  </section>
+</section>

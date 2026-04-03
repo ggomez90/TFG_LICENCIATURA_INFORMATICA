@@ -1,0 +1,114 @@
+<section class="dsf-wrap preview-voucher-tipo">
+  <header class="dsf-header">
+    <h1 class="dsf-title">Mi voucher</h1>
+    <p class="dsf-subtitle">
+      Consultá el detalle del voucher adquirido y su estado actual.
+    </p>
+  </header>
+
+  <div *ngIf="loading" class="dsf-empty dsf-empty--loading">
+    <p class="dsf-empty__text">Cargando voucher...</p>
+  </div>
+
+  <div *ngIf="!loading && error" class="dsf-empty">
+    <p class="dsf-empty__text">{{ error }}</p>
+  </div>
+
+  <div *ngIf="!loading && !error" class="dsf-card dsf-card--preview voucher-preview-card">
+    <div class="voucher-frame">
+      <div class="voucher-content">
+        <h2 class="voucher-title">{{ tipoTitulo || '(Tipo de voucher)' }}</h2>
+
+        <div class="voucher-values voucher-values--4">
+          <div class="voucher-value">
+            <div class="label">Código</div>
+            <div class="value value--code value--code-codigo">{{ codigoTexto }}</div>
+          </div>
+
+          <div class="voucher-value">
+            <div class="label">Beneficio</div>
+            <div class="value">
+              <ng-container *ngIf="montoBeneficio !== undefined; else noMonto">
+                $ {{ montoBeneficio }}
+              </ng-container>
+              <ng-template #noMonto>-</ng-template>
+            </div>
+          </div>
+
+          <div class="voucher-value">
+            <div class="label">Estado</div>
+            <div class="value">
+              <span class="state-badge" [ngClass]="estadoClase">{{ estadoTexto }}</span>
+            </div>
+          </div>
+
+          <div class="voucher-value">
+            <div class="label">Puntos requeridos</div>
+            <div class="value">
+              <ng-container *ngIf="puntosRequeridos !== undefined; else noPuntos">
+                {{ puntosRequeridos }}
+              </ng-container>
+              <ng-template #noPuntos>-</ng-template>
+            </div>
+          </div>
+        </div>
+
+        <div class="beneficiario-hero">
+          BENEFICIARIO:
+          {{ beneficiarioLinea1 }}
+          <span *ngIf="beneficiarioLinea2"> - {{ beneficiarioLinea2 }}</span>
+        </div>
+
+        <div class="voucher-description">
+          <h3>Descripción</h3>
+          <p>{{ tipoDescripcion || '(Sin descripción)' }}</p>
+        </div>
+
+        <div class="voucher-footer-row">
+          <div class="voucher-dates">
+            <div class="date-chip">
+              <span class="d-label">Fecha adquisición:</span>
+              <span class="d-value">{{ fechaAdqISO ? (fechaAdqISO | date:'dd/MM/yyyy') : '-' }}</span>
+            </div>
+
+            <div class="date-chip">
+              <span class="d-label">Fecha uso:</span>
+              <span class="d-value">
+                <ng-container *ngIf="fechaUsoISO; else noUso">
+                  {{ fechaUsoISO | date:'dd/MM/yyyy' }}
+                </ng-container>
+                <ng-template #noUso>-</ng-template>
+              </span>
+            </div>
+          </div>
+
+          <div class="voucher-brand">
+            <img
+              src="/assets/img/escudo-muni.png"
+              alt="Escudo Gobierno de la Ciudad de Ceres"
+              class="f-escudo"
+            />
+            <div class="f-brand__text">
+              <span class="line1">Gobierno de la Ciudad</span>
+              <span class="line2">de Ceres</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="pv-actions">
+    <button type="button" class="dsf-btn dsf-btn--ghost" (click)="onVolver()">← Volver</button>
+    <div class="pv-actions__spacer"></div>
+
+    <button
+      *ngIf="!loading && !error && puedeAnular"
+      type="button"
+      class="dsf-btn dsf-btn--danger"
+      (click)="onAnular()"
+    >
+      Anular voucher
+    </button>
+  </footer>
+</section>

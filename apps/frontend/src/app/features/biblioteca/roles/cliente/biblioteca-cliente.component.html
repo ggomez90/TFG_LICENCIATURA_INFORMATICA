@@ -1,49 +1,194 @@
-<!--La vista es solo decorativa, no posee logica-->
-<section class="dsf-wrap">
-  <header class="dsf-header">
-    <h1 class="dsf-title">Biblioteca educativa (Ciudadanía)</h1>
-    <p class="dsf-sub">Guías, videos e infografías para separar y reciclar mejor.</p>
+<section class="dsf-wrap biblioteca-cliente">
+  <!-- HERO -->
+  <header class="hero">
+    <div class="hero__content">
+      <div class="hero__kicker">Yo_Reciclo</div>
+      <h1 class="hero__title">Biblioteca educativa</h1>
+      <p class="hero__sub">
+        Contenidos cortos, claros y accionables para mejorar tus hábitos.
+        Explorá artículos y participá en encuestas para ayudarnos a mejorar.
+      </p>
 
-    <div class="dsf-toolbar">
-      <div class="dsf-input">
-        <input
-          type="text"
-          placeholder="Buscar recursos (ej: plástico, guía, calendario)"
-          [value]="q()"
-          (input)="q.set($any($event.target).value)"
-          aria-label="Buscar"
-        />
+      <div class="hero__actions">
+        <button type="button" class="dsf-btn dsf-btn--primary hero__btn" (click)="onCallToAction()">
+          Explorar contenidos
+        </button>
+
+        <a class="dsf-btn dsf-btn--ghost hero__btn" [routerLink]="['/menu-principal/cliente/biblioteca/encuestas/lista']">
+          Ver encuestas
+        </a>
       </div>
 
-      <div class="dsf-filter">
-        <label>Filtrar por:</label>
-        <select
-          [value]="filtro()"
-          (change)="filtro.set($any($event.target).value)"
-        >
-          <option *ngFor="let t of tipos" [value]="t">{{ t }}</option>
-        </select>
+      <div class="hero__chips">
+        <span class="chip chip--ok">📚 Contenidos visibles</span>
+        <span class="chip chip--soft">🧠 Aprendizaje rápido</span>
+        <span class="chip chip--soft">🗳️ Encuestas activas</span>
+      </div>
+    </div>
+
+    <div class="hero__aside">
+      <div class="hero-card">
+        <div class="hero-card__icon">⭐</div>
+        <div class="hero-card__title">Recomendado</div>
+
+        <ng-container *ngIf="contenidoRecomendado; else recEmptyTpl">
+          <div class="hero-card__text hero-card__text--strong">
+            {{ contenidoRecomendado.titulo }}
+          </div>
+          <div class="meta">Publicado: {{ fmtFecha(contenidoRecomendado.fechaPublicacion) }}</div>
+
+          <div class="hero-card__actions">
+            <a
+              class="dsf-btn dsf-btn--primary dsf-btn--sm"
+              [routerLink]="['/menu-principal/cliente/biblioteca/contenidos/ver', contenidoRecomendado.idContenido]"
+            >
+              Ver contenido
+            </a>
+          </div>
+        </ng-container>
+
+        <ng-template #recEmptyTpl>
+          <div class="hero-card__text">
+            Todavía no hay contenidos publicados para recomendar.
+          </div>
+        </ng-template>
       </div>
     </div>
   </header>
 
-  <div class="dsf-grid">
-    <article class="dsf-card" *ngFor="let r of listFiltrada()">
-      <div class="dsf-card__media" [attr.data-tipo]="r.tipo">
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path fill="currentColor" [attr.d]="r.icon"></path>
-        </svg>
-      </div>
-      <div class="dsf-card__body">
-        <h2 class="dsf-card__title">{{ r.titulo }}</h2>
-        <p class="dsf-card__desc">{{ r.desc }}</p>
-        <div class="dsf-badges">
-          <span class="badge">{{ r.tipo }}</span>
+  <!-- GRID PRINCIPAL -->
+  <div class="client-grid">
+    <!-- CONTENIDOS -->
+    <section class="panel panel--glass">
+      <header class="panel__header">
+        <div>
+          <h2 class="panel__title">Últimos contenidos</h2>
+          <p class="panel__sub">Solo lo publicado y visible para la ciudadanía.</p>
         </div>
-        <div class="dsf-card__actions">
-          <button type="button" class="dsf-btn">VER RECURSO →</button>
+
+        <div class="panel__actions">
+          <button type="button" class="dsf-btn dsf-btn--ghost" (click)="onVerTodosContenidos()">
+            Ver todos
+          </button>
         </div>
+      </header>
+
+      <!-- Error -->
+      <div class="hint" *ngIf="errorContenidos">
+        <span class="hint__icon">⚠️</span>
+        <span class="hint__text">{{ errorContenidos }}</span>
       </div>
-    </article>
+
+      <!-- Loading -->
+      <ng-container *ngIf="loadingContenidos; else contenidosLoadedTpl">
+        <div class="cards-grid">
+          <div class="card skeleton" *ngFor="let _ of [1,2,3,4]">
+            <div class="skeleton__line skeleton__line--sm"></div>
+            <div class="skeleton__line"></div>
+            <div class="skeleton__line skeleton__line--lg"></div>
+          </div>
+        </div>
+      </ng-container>
+
+      <!-- Loaded -->
+      <ng-template #contenidosLoadedTpl>
+        <div *ngIf="contenidos.length === 0 && !errorContenidos" class="empty">
+          <div class="empty__icon">📭</div>
+          <div class="empty__title">Aún no hay contenidos publicados</div>
+          <div class="empty__text">Cuando haya novedades, las vas a ver acá.</div>
+        </div>
+
+        <div *ngIf="contenidos.length > 0" class="cards-grid">
+          <article class="card" *ngFor="let c of contenidos">
+            <div class="card__top">
+              <span class="badge badge--soft">{{ c.etiqueta || 'Educación' }}</span>
+              <span class="meta">{{ fmtFecha(c.fechaPublicacion) }}</span>
+            </div>
+
+            <h3 class="card__title">{{ c.titulo }}</h3>
+            <p class="card__desc">{{ c.descripcionCorta || 'Abrí el contenido para ver el detalle.' }}</p>
+
+            <div class="card__actions">
+              <!-- <button type="button" class="dsf-btn dsf-btn--primary dsf-btn--sm" (click)="onVerContenido(c.idContenido)">
+                Ver contenido
+              </button> -->
+              <a
+                class="dsf-btn dsf-btn--primary dsf-btn--sm"
+                [routerLink]="['/menu-principal/cliente/biblioteca/contenidos/ver', c.idContenido]"
+              >
+                Ver contenido
+              </a>
+              <!-- <button type="button" class="dsf-btn dsf-btn--ghost dsf-btn--sm" (click)="onVerTodosContenidos()">
+                Más contenidos
+              </button> -->
+            </div>
+          </article>
+        </div>
+      </ng-template>
+    </section>
+
+    <!-- ENCUESTAS -->
+    <section class="panel panel--solid">
+      <header class="panel__header">
+        <div>
+          <h2 class="panel__title">Últimas encuestas</h2>
+          <p class="panel__sub">Participá y ayudanos a mejorar la plataforma.</p>
+        </div>
+
+        <div class="panel__actions">
+          <button type="button" class="dsf-btn dsf-btn--ghost" (click)="onVerTodasEncuestas()">
+            Ver todas
+          </button>
+        </div>
+      </header>
+
+      <!-- Error -->
+      <div class="hint" *ngIf="errorEncuestas">
+        <span class="hint__icon">⚠️</span>
+        <span class="hint__text">{{ errorEncuestas }}</span>
+      </div>
+
+      <!-- Loading -->
+      <ng-container *ngIf="loadingEncuestas; else encuestasLoadedTpl">
+        <div class="list">
+          <div class="row skeleton-row" *ngFor="let _ of [1,2,3]">
+            <div class="skeleton__line skeleton__line--sm"></div>
+            <div class="skeleton__line"></div>
+          </div>
+        </div>
+      </ng-container>
+
+      <!-- Loaded -->
+      <ng-template #encuestasLoadedTpl>
+        <div *ngIf="encuestas.length === 0 && !errorEncuestas" class="empty">
+          <div class="empty__icon">🗳️</div>
+          <div class="empty__title">No hay encuestas activas</div>
+          <div class="empty__text">Revisá más tarde, suelen publicarse seguido.</div>
+        </div>
+
+        <div *ngIf="encuestas.length > 0" class="list">
+          <article class="row" *ngFor="let e of encuestas">
+            <div class="row__left">
+              <div class="row__title">{{ e.titulo }}</div>
+              <div class="row__meta">
+                <span class="pill pill--ok">Activa</span>
+                <span class="meta">Publicada: {{ fmtFecha(e.fechaPublicacion) }}</span>
+                <span class="meta" *ngIf="e.fechaCierre">Cierre: {{ fmtFecha(e.fechaCierre) }}</span>
+              </div>
+            </div>
+
+            <div class="row__right">
+              <button
+                type="button"
+                class="dsf-btn dsf-btn--primary dsf-btn--sm"
+                (click)="onVerEncuesta(e.idEncuesta)"
+              >
+                Participar
+              </button>
+            </div>
+          </article>
+        </div>
+      </ng-template>
+    </section>
   </div>
 </section>

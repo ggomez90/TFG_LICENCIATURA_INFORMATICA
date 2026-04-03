@@ -1,0 +1,101 @@
+<section class="notif-page">
+  <header class="notif-page__header">
+    <div>
+      <p class="notif-page__eyebrow">CENTRO DE NOTIFICACIONES</p>
+      <h1 class="notif-page__title">Mis notificaciones</h1>
+      <p class="notif-page__subtitle">
+        Aquí puedes consultar todas las notificaciones emitidas para tu rol.
+      </p>
+    </div>
+
+    <button type="button" class="notif-refresh-btn" (click)="cargarNotificaciones()">
+      ACTUALIZAR
+    </button>
+  </header>
+
+  <section class="notif-toolbar">
+    <div class="notif-search">
+      <input
+        #txtFiltro
+        type="text"
+        class="notif-search__input"
+        placeholder="Buscar por título o mensaje..."
+        [value]="filtro()"
+        (input)="actualizarFiltro(txtFiltro.value)"
+      />
+
+      <button
+        *ngIf="filtro()"
+        type="button"
+        class="notif-search__clear"
+        (click)="limpiarFiltro()"
+      >
+        LIMPIAR
+      </button>
+    </div>
+  </section>
+
+  <section class="notif-content">
+    <div class="notif-state" *ngIf="cargando()">Cargando notificaciones...</div>
+
+    <div class="notif-state notif-state--error" *ngIf="!cargando() && error()">
+      {{ error() }}
+    </div>
+
+    <div class="notif-state" *ngIf="!cargando() && !error() && !notificaciones().length">
+      No tienes notificaciones disponibles.
+    </div>
+
+    <div
+      class="notif-state"
+      *ngIf="!cargando() && !error() && notificaciones().length && !notificacionesFiltradas().length"
+    >
+      No se encontraron resultados para el filtro ingresado.
+    </div>
+
+    <div
+      class="notif-list"
+      *ngIf="!cargando() && !error() && notificacionesFiltradas().length"
+    >
+      <article
+        class="notif-card"
+        *ngFor="let item of notificacionesFiltradas(); trackBy: trackByNotif"
+      >
+        <div class="notif-card__top">
+          <h2 class="notif-card__title">{{ item.titulo }}</h2>
+          <span class="notif-card__date">
+            {{ item.fechaCreacion | date:'dd/MM/yyyy HH:mm' }}
+          </span>
+        </div>
+
+        <p class="notif-card__message">
+          {{ item.mensaje }}
+        </p>
+      </article>
+    </div>
+
+    <div class="notif-pagination" *ngIf="!cargando() && !error()">
+      <button
+        type="button"
+        class="notif-page-btn"
+        [disabled]="!puedeIrAtras()"
+        (click)="irAtras()"
+      >
+        ATRÁS
+      </button>
+
+      <div class="notif-page-indicator">
+        Página {{ paginaActual() }} de {{ totalPaginas() }}
+      </div>
+
+      <button
+        type="button"
+        class="notif-page-btn"
+        [disabled]="!puedeIrSiguiente()"
+        (click)="irSiguiente()"
+      >
+        SIGUIENTE
+      </button>
+    </div>
+  </section>
+</section>

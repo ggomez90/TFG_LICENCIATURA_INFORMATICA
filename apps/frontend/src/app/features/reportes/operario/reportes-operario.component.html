@@ -1,0 +1,360 @@
+<section class="reportes-dashboard">
+  <div class="hero-card">
+    <div class="hero-copy">
+      <span class="hero-eyebrow">Yo_Reciclo · Operario</span>
+      <h1>Reportes operativos</h1>
+      <p>
+        Consultá métricas, distribución por estado y detalle histórico de las entregas
+        procesadas por operación.
+      </p>
+
+      <div class="hero-actions">
+        <button type="button" class="btn btn-primary" (click)="exportCSV()">
+          <span class="material-symbols-outlined">download</span>
+          Exportar CSV
+        </button>
+      </div>
+    </div>
+
+    <div class="hero-highlight">
+      <div class="highlight-top">
+        <span class="chip chip-soft">Análisis</span>
+        <span class="chip">Entregas y estados</span>
+      </div>
+
+      <h2>Seguimiento de desempeño operativo</h2>
+
+      <div class="hero-note">
+        <span class="material-symbols-outlined">monitoring</span>
+        <span>
+          El reporte muestra datos filtrados del módulo de entregas y permite revisar cada registro en detalle.
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <section class="panel panel-filters">
+    <div class="panel-head">
+      <div>
+        <span class="section-eyebrow">Filtros</span>
+        <h3>Filtrar entregas</h3>
+        <p>
+          Ajusta los criterios de búsqueda y recarga el listado con la combinación que necesites.
+        </p>
+      </div>
+    </div>
+
+    <div class="filters-grid">
+      <div class="field">
+        <label for="q">Buscar</label>
+        <input
+          id="q"
+          type="text"
+          [value]="q()"
+          (input)="q.set($any($event.target).value)"
+          placeholder="ID, código, cliente, desafío, ubicación..."
+        />
+      </div>
+
+      <div class="field">
+        <label for="estado">Estado</label>
+        <select
+          id="estado"
+          [value]="getEstadoValue()"
+          (change)="onEstadoChange($any($event.target).value)"
+        >
+          <option *ngFor="let e of estados" [value]="e.value === '' ? '' : e.value">
+            {{ e.label }}
+          </option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="idCliente">ID Cliente</label>
+        <input
+          id="idCliente"
+          type="number"
+          [value]="idCliente()"
+          (input)="idCliente.set($any($event.target).value)"
+          placeholder="Ej: 18"
+        />
+      </div>
+
+      <div class="field">
+        <label for="idDesafio">ID Desafío</label>
+        <input
+          id="idDesafio"
+          type="number"
+          [value]="idDesafio()"
+          (input)="idDesafio.set($any($event.target).value)"
+          placeholder="Ej: 1"
+        />
+      </div>
+
+      <div class="field">
+        <label for="fechaDesde">Desde</label>
+        <input
+          id="fechaDesde"
+          type="date"
+          [value]="fechaDesde()"
+          (input)="fechaDesde.set($any($event.target).value)"
+        />
+      </div>
+
+      <div class="field">
+        <label for="fechaHasta">Hasta</label>
+        <input
+          id="fechaHasta"
+          type="date"
+          [value]="fechaHasta()"
+          (input)="fechaHasta.set($any($event.target).value)"
+        />
+      </div>
+
+      <div class="field">
+        <label for="sortBy">Ordenar por</label>
+        <select
+          id="sortBy"
+          [value]="sortBy()"
+          (change)="sortBy.set($any($event.target).value)"
+        >
+          <option value="idEntrega">ID Entrega</option>
+          <option value="fechaCreacion">Fecha creación</option>
+          <option value="fechaVencimiento">Fecha vencimiento</option>
+          <option value="fechaValidacion">Fecha validación</option>
+          <option value="estado">Estado</option>
+          <option value="idCliente">ID Cliente</option>
+          <option value="idDesafio">ID Desafío</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="order">Dirección</label>
+        <select
+          id="order"
+          [value]="order()"
+          (change)="order.set($any($event.target).value)"
+        >
+          <option value="desc">Descendente</option>
+          <option value="asc">Ascendente</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="pageSize">Cantidad por página</label>
+        <select
+          id="pageSize"
+          [value]="getPageSizeValue()"
+          (change)="onPageSizeChange($any($event.target).value)"
+        >
+          <option value="10">10</option>
+          <option value="20">20</option>
+          <option value="50">50</option>
+          <option value="100">100</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="filter-actions">
+      <button type="button" class="btn btn-secondary" (click)="limpiarFiltros()">
+        <span class="material-symbols-outlined">filter_alt_off</span>
+        Limpiar filtros
+      </button>
+
+      <button type="button" class="btn btn-primary" (click)="aplicarFiltros()">
+        <span class="material-symbols-outlined">filter_alt</span>
+        Aplicar filtros
+      </button>
+    </div>
+  </section>
+
+  <section class="kpis-grid" *ngIf="!loading() && !errorMsg()">
+    <article class="kpi-card" *ngFor="let kpi of kpis(); trackBy: trackByKpi">
+      <div class="kpi-icon">
+        <span class="material-symbols-outlined">{{ kpi.icon }}</span>
+      </div>
+      <div class="kpi-body">
+        <span class="kpi-label">{{ kpi.label }}</span>
+        <strong class="kpi-value">{{ kpi.value }}</strong>
+        <small class="kpi-helper">{{ kpi.helper }}</small>
+      </div>
+    </article>
+  </section>
+
+  <section class="content-grid" *ngIf="!loading() && !errorMsg()">
+    <section class="panel panel-rich">
+      <div class="panel-head">
+        <div>
+          <span class="section-eyebrow">Composición</span>
+          <h3>Distribución por estado</h3>
+          <p>Resumen visual del estado actual de las entregas filtradas.</p>
+        </div>
+      </div>
+
+      <div class="comp__bar comp__bar--tall">
+        <div class="comp__seg creada" [style.width.%]="compCreadasPct()"></div>
+        <div class="comp__seg pend" [style.width.%]="compPendPct()"></div>
+        <div class="comp__seg val" [style.width.%]="compValPct()"></div>
+        <div class="comp__seg rech" [style.width.%]="compRechPct()"></div>
+        <div class="comp__seg puntos" [style.width.%]="compPuntosPct()"></div>
+        <div class="comp__seg anulada" [style.width.%]="compAnuladasPct()"></div>
+      </div>
+
+      <div class="comp__legend comp__legend--expanded">
+        <span><i class="dot creada"></i> Creadas {{ compCreadasPct() | number:'1.2-2' }}%</span>
+        <span><i class="dot pend"></i> Pendientes {{ compPendPct() | number:'1.2-2' }}%</span>
+        <span><i class="dot val"></i> Validadas {{ compValPct() | number:'1.2-2' }}%</span>
+        <span><i class="dot rech"></i> Rechazadas {{ compRechPct() | number:'1.2-2' }}%</span>
+        <span><i class="dot puntos"></i> Puntos otorgados {{ compPuntosPct() | number:'1.2-2' }}%</span>
+        <span><i class="dot anulada"></i> Anuladas {{ compAnuladasPct() | number:'1.2-2' }}%</span>
+      </div>
+    </section>
+
+    <section class="panel panel-rich">
+      <div class="panel-head">
+        <div>
+          <span class="section-eyebrow">Resumen operativo</span>
+          <h3>Estado del conjunto filtrado</h3>
+          <p>Indicadores consistentes sin depender de la unidad de medida del desafío.</p>
+        </div>
+      </div>
+
+      <div class="metric-list">
+        <div class="metric-row">
+          <span>Registros filtrados</span>
+          <strong>{{ totalReg() }}</strong>
+        </div>
+        <div class="metric-row">
+          <span>Con validación registrada</span>
+          <strong>{{ totalConValidacion() }}</strong>
+        </div>
+        <div class="metric-row">
+          <span>Sin validación registrada</span>
+          <strong>{{ totalSinValidacion() }}</strong>
+        </div>
+        <div class="metric-row">
+          <span>Con motivo de rechazo</span>
+          <strong>{{ totalConMotivoRechazo() }}</strong>
+        </div>
+        <div class="metric-row">
+          <span>Cerradas con puntos</span>
+          <strong>{{ cantPuntos() }}</strong>
+        </div>
+      </div>
+    </section>
+  </section>
+
+  <section class="panel panel-history">
+    <div class="panel-head">
+      <div>
+        <span class="section-eyebrow">Detalle</span>
+        <h3>Listado de entregas</h3>
+        <p>Resultados actuales del reporte con acceso a detalle individual.</p>
+      </div>
+
+      <button type="button" class="btn btn-secondary" (click)="exportCSV()">
+        <span class="material-symbols-outlined">download</span>
+        Exportar CSV
+      </button>
+    </div>
+
+    <div class="panel" *ngIf="loading()">
+      <p>Cargando reportes...</p>
+    </div>
+
+    <div class="panel" *ngIf="errorMsg() as error">
+      <p>{{ error }}</p>
+    </div>
+
+    <div class="table-wrap" *ngIf="!loading() && !errorMsg()">
+      <table class="history-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Código</th>
+            <th>Cliente</th>
+            <th>Desafío</th>
+            <th>Fecha</th>
+            <th>Declarada</th>
+            <th>Verificada</th>
+            <th>Estado</th>
+            <th>Ubicación</th>
+            <th class="th-actions">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of visibles(); trackBy: trackByEntrega">
+            <td class="codigo-cell">{{ item.idEntrega }}</td>
+            <td>{{ item.codigoVisible }}</td>
+            <td>{{ item.clienteNombre }}</td>
+            <td>{{ item.desafioTitulo }}</td>
+            <td>{{ item.fechaValidacion || item.fechaCreacion | date:'dd/MM/yyyy HH:mm' }}</td>
+            <td>{{ item.cantidadDeclarada | number:'1.0-3' }} {{ item.unidadMedida }}</td>
+            <td>
+              {{ item.cantidadVerificada != null ? (item.cantidadVerificada | number:'1.0-3') + ' ' + item.unidadMedida : '-' }}
+            </td>
+            <td>
+              <span class="badge" [ngClass]="getEstadoClass(item.estado)">
+                {{ getEstadoLabel(item.estado) }}
+              </span>
+            </td>
+            <td>{{ item.ubicacion || '-' }}</td>
+            <td class="td-actions">
+              <button
+                type="button"
+                class="icon-btn"
+                title="Ver detalle"
+                (click)="openViewModal(item)"
+              >
+                <span class="material-symbols-outlined">visibility</span>
+              </button>
+            </td>
+          </tr>
+
+          <tr *ngIf="!visibles().length">
+            <td colspan="10" class="empty-row">
+              No se encontraron entregas para los filtros seleccionados.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="pager" *ngIf="!loading() && !errorMsg()">
+      <button
+        type="button"
+        class="btn btn-secondary"
+        (click)="prevPage()"
+        [disabled]="page() <= 1"
+      >
+        <span class="material-symbols-outlined">chevron_left</span>
+        Anterior
+      </button>
+
+      <div class="pager-info">
+        <strong>Página {{ page() }}</strong>
+        <span>de {{ totalPages() }}</span>
+      </div>
+
+      <button
+        type="button"
+        class="btn btn-secondary"
+        (click)="nextPage()"
+        [disabled]="page() >= totalPages()"
+      >
+        Siguiente
+        <span class="material-symbols-outlined">chevron_right</span>
+      </button>
+    </div>
+  </section>
+</section>
+
+<app-entrega-operario-modal
+  [visible]="modalVisible()"
+  [entrega]="entregaSeleccionada()"
+  (closeModal)="closeModal()"
+  (validarEntrega)="onValidarEntrega($event)"
+  (rechazarEntrega)="onRechazarEntrega($event)"
+  (volverPendiente)="onVolverPendiente($event)"
+  (confirmarPuntos)="onConfirmarPuntos($event)"
+/>

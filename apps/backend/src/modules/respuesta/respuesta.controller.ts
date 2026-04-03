@@ -20,13 +20,43 @@ import { KeycloakAuthGuard, User } from '../../auth';
 export class RespuestaController {
   constructor(private readonly respuestaService: RespuestaService) {}
 
-  // Publico sin login
-  @Post()
+  // PUBLICO (INVITADO)
+  @Post('public')
   async createPublic(@Body() dto: CreateRespuestaEncuestaDto) {
-    return this.respuestaService.create(dto);
+    return this.respuestaService.createPublic(dto);
   }
 
-  // Login requerido cualquier rol
+  // Chequeo público: si ya existe respuesta para una encuesta por DNI (para bloquear UI invitado)
+  @Get('public/check')
+  async checkPublic(
+    @Query('idEncuesta', ParseIntPipe) idEncuesta: number,
+    @Query('dni') dni: string,
+  ) {
+    return this.respuestaService.checkPublic(idEncuesta, dni);
+  }
+
+    @Get('mine')
+    @UseGuards(KeycloakAuthGuard)
+    async findMine(
+      @User() user: any,
+      @Query('idEncuesta', ParseIntPipe) idEncuesta: number,
+    ) {
+      const identifier =
+        user?.preferred_username ?? user?.email ?? user?.username ?? user?.sub;
+
+      return this.respuestaService.findMine(idEncuesta, { identifier });
+    }
+
+  // LOGUEADO
+  @Post()
+  @UseGuards(KeycloakAuthGuard)
+  async createMine(@User() user: any, @Body() dto: CreateRespuestaEncuestaDto) {
+    const identifier =
+      user?.preferred_username ?? user?.email ?? user?.username ?? user?.sub;
+    return this.respuestaService.createMine(dto, { identifier });
+  }
+
+  // Login requerido cualquier rol (lista: admin ve todo, cliente ve lo suyo)
   @Get()
   @UseGuards(KeycloakAuthGuard)
   async findAll(@User() user: any, @Query() filter: FilterRespuestaDto) {

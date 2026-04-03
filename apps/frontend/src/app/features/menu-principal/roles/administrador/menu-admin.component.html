@@ -1,110 +1,378 @@
-<section class="dsf-wrap">
-  <header class="dsf-header">
-    <h1 class="dsf-title">Panel de Administración — ¡Yo Reciclo!</h1>
-    <p class="dsf-sub">Resumen general, accesos rápidos y actividad reciente del sistema.</p>
-  </header>
+<section class="admin-dashboard">
+  <section class="hero-card">
+    <div class="hero-copy">
+      <span class="hero-eyebrow">Yo_Reciclo · Administración</span>
+      <h1>Centro de control administrativo</h1>
+      <p>
+        Supervisá el estado general del sistema, accedé rápido a los módulos clave
+        y consultá la actividad más reciente de usuarios, desafíos, vouchers y entregas.
+      </p>
 
-  <!-- RESUMEN GLOBAL -->
-  <div class="stat-grid">
-    <article class="stat-card">
-      <div class="stat-icon">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 12a5 5 0 1 0-5-5 5 5 0 0 0 5 5zm0 2c-4.418 0-8 2.239-8 5v3h16v-3c0-2.761-3.582-5-8-5z"/></svg>
+      <div class="hero-actions">
+        <button
+          class="btn btn-primary"
+          type="button"
+          (click)="onRefresh()"
+          [disabled]="loading()"
+        >
+          <span class="spin" *ngIf="loading()"></span>
+          <span *ngIf="!loading()">↻</span>
+          {{ loading() ? 'Actualizando panel...' : 'Actualizar panel' }}
+        </button>
+
+        <a class="btn btn-secondary" routerLink="/menu-principal/admin/usuarios">
+          Gestionar usuarios
+        </a>
       </div>
-      <div class="stat-body">
-        <h3 class="stat-title">Usuarios totales</h3>
-        <div class="stat-value">{{ usuariosTotal() }}</div>
-        <div class="stat-sub">
-          Admin {{ usuariosAdmin() }} ({{ pctAdmins() | number:'1.0-0' }}%) ·
-          Operarios {{ usuariosOperarios() }} ({{ pctOperarios() | number:'1.0-0' }}%) ·
-          Clientes {{ usuariosClientes() }} ({{ pctClientes() | number:'1.0-0' }}%)
+    </div>
+
+    <div class="hero-highlight">
+      <div class="highlight-top">
+        <span class="chip chip-soft">Resumen general</span>
+        <span class="chip">Panel activo</span>
+      </div>
+
+      <h2>Estado actual del ecosistema Yo_Reciclo</h2>
+
+      <div class="hero-stats">
+        <article class="hero-stat">
+          <span class="hero-stat__label">Usuarios</span>
+          <strong class="hero-stat__value">{{ formatInt(usuariosTotal()) }}</strong>
+        </article>
+
+        <article class="hero-stat hero-stat--accent">
+          <span class="hero-stat__label">Desafíos activos</span>
+          <strong class="hero-stat__value">{{ formatInt(desafiosActivos()) }}</strong>
+        </article>
+      </div>
+
+      <div class="hero-progress">
+        <div class="hero-progress__head">
+          <span>Composición de usuarios</span>
+          <strong>{{ pctClientes() | number:'1.0-0' }}% clientes</strong>
+        </div>
+
+        <div class="hero-progress__bar" aria-hidden="true">
+          <span class="hero-progress__fill hero-progress__fill--admin" [style.width.%]="pctAdmins()"></span>
+          <span class="hero-progress__fill hero-progress__fill--operario" [style.width.%]="pctOperarios()"></span>
+          <span class="hero-progress__fill hero-progress__fill--cliente" [style.width.%]="pctClientes()"></span>
         </div>
       </div>
-    </article>
 
-    <article class="stat-card">
-      <div class="stat-icon">
-        <svg viewBox="0 0 24 24"><path fill="currentColor" d="M4 4h16v4H4V4zm0 6h10v10H4V10zm12 0h4v10h-4V10z"/></svg>
+      <div class="hero-note">
+        <span class="hero-note__icon">i</span>
+        <span>
+          El panel utiliza datos reales del sistema y resume de forma rápida la situación
+          operativa y administrativa actual.
+        </span>
       </div>
-      <div class="stat-body">
-        <h3 class="stat-title">Desafíos activos</h3>
-        <div class="stat-value">{{ desafiosActivos() }}</div>
-        <div class="stat-sub">En ejecución actualmente</div>
-      </div>
-    </article>
+    </div>
+  </section>
 
-    <article class="stat-card">
-      <div class="stat-icon">
-        <svg viewBox="0 0 24 24"><path fill="currentColor" d="M4 6h16v4H4zM4 14h16v4H4z"/></svg>
-      </div>
-      <div class="stat-body">
-        <h3 class="stat-title">Vouchers entregados</h3>
-        <div class="stat-value">{{ vouchersEntregados() }}</div>
-        <div class="stat-sub">Acumulado del mes</div>
-      </div>
-    </article>
+  <section class="panel panel-feedback" *ngIf="loading()">
+    <p>Cargando panel de administración...</p>
+  </section>
 
-    <article class="stat-card">
-      <div class="stat-icon">
-        <svg viewBox="0 0 24 24"><path fill="currentColor" d="M3 6h18v2H3zM6 10h12v2H6zM8 14h8v2H8z"/></svg>
-      </div>
-      <div class="stat-body">
-        <h3 class="stat-title">Entregas pendientes</h3>
-        <div class="stat-value">{{ entregasPendientes() }}</div>
-        <div class="stat-sub">A la espera de validación</div>
-      </div>
-    </article>
-  </div>
+  <section class="panel panel-feedback panel-feedback--error" *ngIf="error()">
+    <p>{{ error() }}</p>
+  </section>
 
-  <!-- ACCESOS RÁPIDOS -->
-  <div class="dsf-grid">
-    <article class="dsf-card" *ngFor="let l of links()">
-      <div class="dsf-card__media">
+  <section class="kpis-grid" *ngIf="!loading() && !error()">
+    <article class="kpi-card">
+      <div class="kpi-icon">
         <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path fill="currentColor" [attr.d]="l.iconPath"></path>
+          <path fill="currentColor" d="M12 12a5 5 0 1 0-5-5 5 5 0 0 0 5 5zm0 2c-4.418 0-8 2.239-8 5v3h16v-3c0-2.761-3.582-5-8-5z"/>
         </svg>
       </div>
-      <div class="dsf-card__body">
-        <h2 class="dsf-card__title">{{ l.title }}</h2>
-        <p class="dsf-card__desc">{{ l.desc }}</p>
-        <div class="dsf-card__actions">
-          <a class="dsf-btn" [routerLink]="l.route">IR →</a>
-        </div>
+      <div class="kpi-body">
+        <span class="kpi-label">Usuarios totales</span>
+        <strong class="kpi-value">{{ formatInt(usuariosTotal()) }}</strong>
+        <small class="kpi-helper">
+          Admin {{ formatInt(usuariosAdmin()) }} · Operarios {{ formatInt(usuariosOperarios()) }} · Clientes {{ formatInt(usuariosClientes()) }}
+        </small>
       </div>
     </article>
-  </div>
 
-  <!-- ACTIVIDAD RECIENTE -->
-  <section class="recent">
-    <header class="recent__header">
-      <h2 class="recent__title">Actividad reciente</h2>
-      <p class="recent__sub">Últimos movimientos de usuarios y entregas.</p>
-    </header>
+    <article class="kpi-card">
+      <div class="kpi-icon">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path fill="currentColor" d="M4 4h16v4H4V4zm0 6h10v10H4V10zm12 0h4v10h-4V10z"/>
+        </svg>
+      </div>
+      <div class="kpi-body">
+        <span class="kpi-label">Desafíos activos</span>
+        <strong class="kpi-value">{{ formatInt(desafiosActivos()) }}</strong>
+        <small class="kpi-helper">
+          Pausados {{ formatInt(desafiosPausados()) }} · Finalizados {{ formatInt(desafiosFinalizados()) }}
+        </small>
+      </div>
+    </article>
 
-    <div class="recent__grid">
-      <article class="recent__card">
-        <h3 class="recent__card-title">Nuevos usuarios</h3>
-        <ul class="recent__list">
-          <li *ngFor="let u of ultUsuarios()">
-            <span class="pill" [class.pill--admin]="u.tipo==='ADMIN'" [class.pill--op]="u.tipo==='OPERARIO'">{{ u.tipo }}</span>
-            <strong>{{ u.nombre }}</strong>
-            <span class="muted">· {{ u.email }}</span>
-          </li>
-        </ul>
-      </article>
+    <article class="kpi-card">
+      <div class="kpi-icon">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path fill="currentColor" d="M4 6h16v4H4zM4 14h16v4H4z"/>
+        </svg>
+      </div>
+      <div class="kpi-body">
+        <span class="kpi-label">Vouchers del mes</span>
+        <strong class="kpi-value">{{ formatInt(vouchersMesAdquiridos()) }}</strong>
+        <small class="kpi-helper">
+          Utilizados {{ formatInt(vouchersUtilizadosMes()) }}
+        </small>
+      </div>
+    </article>
 
-      <article class="recent__card">
-        <h3 class="recent__card-title">Últimas entregas</h3>
-        <ul class="recent__list">
-          <li *ngFor="let e of ultEntregas()">
-            <span class="pill"
-              [class.pill--ok]="e.estado==='VALIDADA'"
-              [class.pill--warn]="e.estado==='PENDIENTE'"
-              [class.pill--danger]="e.estado==='RECHAZADA'">{{ e.estado }}</span>
-            <strong>{{ e.cliente }}</strong>
-            <span class="muted">· {{ e.desafio }} · {{ e.fecha }}</span>
-          </li>
-        </ul>
+    <article class="kpi-card">
+      <div class="kpi-icon">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path fill="currentColor" d="M3 6h18v2H3zM6 10h12v2H6zM8 14h8v2H8z"/>
+        </svg>
+      </div>
+      <div class="kpi-body">
+        <span class="kpi-label">Entregas pendientes</span>
+        <strong class="kpi-value">{{ formatInt(entregasPendientes()) }}</strong>
+        <small class="kpi-helper">Pendientes de validación operativa</small>
+      </div>
+    </article>
+  </section>
+
+  <section class="panel panel-links" *ngIf="!loading() && !error()">
+    <div class="panel-head">
+      <div>
+        <span class="section-eyebrow">Acción rápida</span>
+        <h3>Módulos principales del administrador</h3>
+        <p>
+          Accesos directos a las secciones más utilizadas para gestionar el sistema.
+        </p>
+      </div>
+    </div>
+
+    <div class="links-grid">
+      <article class="quick-card" *ngFor="let l of links()">
+        <div class="quick-icon">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path fill="currentColor" [attr.d]="l.iconPath"></path>
+          </svg>
+        </div>
+
+        <div class="quick-body">
+          <h4>{{ l.title }}</h4>
+          <p>{{ l.desc }}</p>
+        </div>
+
+        <div class="quick-actions">
+          <a class="quick-link" [routerLink]="l.route">
+            <span>Ir al módulo</span>
+            <span aria-hidden="true">→</span>
+          </a>
+        </div>
       </article>
     </div>
   </section>
+
+  <div class="content-grid" *ngIf="!loading() && !error()">
+    <section class="panel panel-rich">
+      <div class="panel-head">
+        <div>
+          <span class="section-eyebrow">Composición</span>
+          <h3>Distribución de usuarios por rol</h3>
+          <p>Vista general del reparto actual entre administradores, operarios y clientes.</p>
+        </div>
+      </div>
+
+      <div class="distribution-list">
+        <article class="distribution-card">
+          <div class="distribution-card__head">
+            <span class="badge badge-admin">Administradores</span>
+            <strong>{{ formatInt(usuariosAdmin()) }}</strong>
+          </div>
+          <div class="distribution-progress">
+            <div class="distribution-progress__bar">
+              <div class="distribution-progress__fill distribution-progress__fill--admin" [style.width.%]="pctAdmins()"></div>
+            </div>
+            <small>{{ pctAdmins() | number:'1.0-0' }}%</small>
+          </div>
+        </article>
+
+        <article class="distribution-card">
+          <div class="distribution-card__head">
+            <span class="badge badge-operario">Operarios</span>
+            <strong>{{ formatInt(usuariosOperarios()) }}</strong>
+          </div>
+          <div class="distribution-progress">
+            <div class="distribution-progress__bar">
+              <div class="distribution-progress__fill distribution-progress__fill--operario" [style.width.%]="pctOperarios()"></div>
+            </div>
+            <small>{{ pctOperarios() | number:'1.0-0' }}%</small>
+          </div>
+        </article>
+
+        <article class="distribution-card">
+          <div class="distribution-card__head">
+            <span class="badge badge-cliente">Clientes</span>
+            <strong>{{ formatInt(usuariosClientes()) }}</strong>
+          </div>
+          <div class="distribution-progress">
+            <div class="distribution-progress__bar">
+              <div class="distribution-progress__fill distribution-progress__fill--cliente" [style.width.%]="pctClientes()"></div>
+            </div>
+            <small>{{ pctClientes() | number:'1.0-0' }}%</small>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="panel panel-rich">
+      <div class="panel-head">
+        <div>
+          <span class="section-eyebrow">Actividad reciente</span>
+          <h3>Últimos movimientos del sistema</h3>
+          <p>Resumen compacto de altas y actividad reciente en los módulos principales.</p>
+        </div>
+      </div>
+
+      <div class="activity-stack">
+        <article class="activity-card">
+          <div class="activity-card__head">
+            <h4>Nuevos usuarios</h4>
+            <span class="tag">últimos 5</span>
+          </div>
+
+          <ul class="activity-list" *ngIf="ultUsuarios().length; else emptyUsuarios">
+            <li *ngFor="let u of ultUsuarios()">
+              <span class="pill" [ngClass]="pillClassUsuario(u.tipo)">{{ u.tipo }}</span>
+              <div class="activity-list__body">
+                <strong>{{ u.nombre }}</strong>
+                <small>{{ u.email }}</small>
+              </div>
+            </li>
+          </ul>
+        </article>
+
+        <article class="activity-card">
+          <div class="activity-card__head">
+            <h4>Últimos desafíos</h4>
+            <span class="tag">últimos 5</span>
+          </div>
+
+          <ul class="activity-list" *ngIf="ultDesafios().length; else emptyDesafios">
+            <li *ngFor="let d of ultDesafios()">
+              <span class="pill pill--base">{{ d.estado }}</span>
+              <div class="activity-list__body">
+                <strong>#{{ d.id }} · {{ d.titulo }}</strong>
+                <small *ngIf="d.inicio">Inicio {{ d.inicio }}</small>
+              </div>
+            </li>
+          </ul>
+        </article>
+      </div>
+    </section>
+  </div>
+
+  <section class="panel panel-history" *ngIf="!loading() && !error()">
+    <div class="panel-head">
+      <div>
+        <span class="section-eyebrow">Detalle reciente</span>
+        <h3>Vouchers y entregas recientes</h3>
+        <p>
+          Seguimiento rápido de los últimos vouchers emitidos y las entregas más recientes registradas en el sistema.
+        </p>
+      </div>
+    </div>
+
+    <div class="history-grid">
+      <div class="table-card">
+        <div class="table-card__head">
+          <h4>Últimos vouchers</h4>
+          <span class="tag">últimos 5</span>
+        </div>
+
+        <div class="table-wrap" *ngIf="ultVouchers().length; else emptyVouchers">
+          <table class="history-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Cliente</th>
+                <th>Tipo</th>
+                <th>Estado</th>
+                <th>Fecha</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let v of ultVouchers()">
+                <td class="codigo-cell">#{{ v.id }}</td>
+                <td>{{ v.clienteId }}</td>
+                <td>{{ v.tipoId }}</td>
+                <td>
+                  <span class="pill" [ngClass]="pillClassVoucher(v.estado)">{{ v.estado }}</span>
+                </td>
+                <td>{{ v.fecha }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="table-card">
+        <div class="table-card__head">
+          <h4>Últimas entregas</h4>
+          <span class="tag">últimas 5</span>
+        </div>
+
+        <div class="table-wrap" *ngIf="ultEntregas().length; else emptyEntregas">
+          <table class="history-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Cliente</th>
+                <th>Desafío</th>
+                <th>Estado</th>
+                <th>Fecha</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let e of ultEntregas()">
+                <td class="codigo-cell">#{{ e.id }}</td>
+                <td>{{ e.clienteId }}</td>
+                <td>{{ e.desafioId }}</td>
+                <td>
+                  <span class="pill" [ngClass]="pillClassEntrega(e.estado)">{{ e.estado }}</span>
+                </td>
+                <td>{{ e.fecha }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <ng-template #emptyUsuarios>
+    <div class="empty-state empty-state--small">
+      <strong>Sin usuarios recientes</strong>
+      <p>Cuando se registren nuevos usuarios, aparecerán aquí.</p>
+    </div>
+  </ng-template>
+
+  <ng-template #emptyDesafios>
+    <div class="empty-state empty-state--small">
+      <strong>Sin desafíos recientes</strong>
+      <p>Cuando se creen o actualicen desafíos, aparecerán aquí.</p>
+    </div>
+  </ng-template>
+
+  <ng-template #emptyVouchers>
+    <div class="empty-state">
+      <strong>Sin vouchers recientes</strong>
+      <p>No hay vouchers recientes para mostrar en este momento.</p>
+    </div>
+  </ng-template>
+
+  <ng-template #emptyEntregas>
+    <div class="empty-state">
+      <strong>Sin entregas recientes</strong>
+      <p>No hay entregas recientes para mostrar en este momento.</p>
+    </div>
+  </ng-template>
 </section>

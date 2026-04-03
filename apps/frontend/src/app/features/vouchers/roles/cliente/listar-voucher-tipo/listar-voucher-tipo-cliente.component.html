@@ -1,0 +1,148 @@
+<section class="voucher-tipos-page">
+  <header class="page-hero">
+    <div>
+      <p class="page-hero__eyebrow">Canje de beneficios</p>
+      <h1 class="page-hero__title">Vouchers disponibles</h1>
+      <p class="page-hero__text">
+        Explorá los tipos de vouchers disponibles para adquirir según tus puntos acumulados.
+      </p>
+    </div>
+
+    <aside class="points-box">
+      <span class="points-box__label">Tus puntos disponibles</span>
+      <strong class="points-box__value">{{ puntosDisponibles }}</strong>
+      <span class="points-box__help">Saldo actual de canje</span>
+    </aside>
+  </header>
+
+  <section class="toolbar">
+    <div class="toolbar__left">
+      <label class="check-field">
+        <input
+          type="checkbox"
+          [checked]="soloDisponibles()"
+          (change)="soloDisponibles.set(!soloDisponibles())"
+        />
+        <span>Solo disponibles para mí</span>
+      </label>
+    </div>
+
+    <div class="toolbar__right">
+      <label class="select-field">
+        <span>Ordenar por</span>
+        <select
+          [ngModel]="ordenSeleccionado()"
+          (ngModelChange)="ordenSeleccionado.set($event)"
+        >
+          <option value="puntos-asc">Menor puntaje</option>
+          <option value="puntos-desc">Mayor puntaje</option>
+          <option value="beneficio-desc">Mayor beneficio</option>
+        </select>
+      </label>
+
+      <button type="button" class="dsf-btn dsf-btn--ghost" (click)="irAlDashboard()">
+        Volver al dashboard
+      </button>
+    </div>
+  </section>
+
+  
+  <div *ngIf="loading" class="info-box">Cargando vouchers disponibles...</div>
+  <div *ngIf="!loading && error" class="info-box info-box--error">{{ error }}</div>
+
+  <section class="summary-strip">
+  <div class="summary-card">
+    <span class="summary-card__label">Resultados</span>
+    <strong class="summary-card__value">{{ vouchersFiltrados().length }}</strong>
+  </div>
+
+  <div class="summary-card">
+      <span class="summary-card__label">Disponibles ahora</span>
+      <strong class="summary-card__value">{{ cantidadDisponibles() }}</strong>
+    </div>
+
+    <div class="summary-card">
+      <span class="summary-card__label">No alcanzan tus puntos</span>
+      <strong class="summary-card__value">{{ cantidadFaltanPuntos() }}</strong>
+    </div>
+
+    <div class="summary-card">
+      <span class="summary-card__label">Puntos disponibles</span>
+      <strong class="summary-card__value">{{ puntosDisponibles }}</strong>
+    </div>
+  </section>
+
+  <section class="cards-grid">
+    <article class="voucher-card" *ngFor="let item of vouchersFiltrados(); trackBy: trackById">
+      <div class="voucher-card__top">
+        <span [class]="getEstadoClase(item.estado)">
+          {{ getEstadoLabel(item.estado) }}
+        </span>
+      </div>
+
+      <h2 class="voucher-card__title">{{ item.titulo }}</h2>
+      <p class="voucher-card__desc">{{ item.descripcion }}</p>
+
+      <div class="voucher-card__meta">
+        <div class="meta-row">
+          <span>Beneficio</span>
+          <strong>$ {{ item.montoBeneficio }}</strong>
+        </div>
+
+        <div class="meta-row">
+          <span>Puntos requeridos</span>
+          <strong>{{ item.puntosRequeridos }}</strong>
+        </div>
+
+        <div class="meta-row">
+          <span>Inicio vigencia</span>
+          <strong>{{ item.fechaInicio | date:'dd/MM/yyyy' }}</strong>
+        </div>
+
+        <div class="meta-row">
+          <span>Fin vigencia</span>
+          <strong>{{ item.fechaFin | date:'dd/MM/yyyy' }}</strong>
+        </div>
+      </div>
+
+      <div class="voucher-card__info" *ngIf="item.estado === 'faltan-puntos'">
+        Te faltan {{ item.puntosFaltantes || 0 }} puntos para poder adquirir este voucher.
+      </div>
+
+      <div class="voucher-card__actions">
+        <button
+          *ngIf="item.estado === 'disponible'; else actionDisabled"
+          type="button"
+          class="dsf-btn dsf-btn--primary dsf-btn--block"
+          (click)="adquirirVoucherTipo(item.idVoucherTipo)"
+        >
+          Adquirir voucher
+        </button>
+
+        <ng-template #actionDisabled>
+          <button type="button" class="dsf-btn dsf-btn--disabled dsf-btn--block" disabled>
+            No disponible
+          </button>
+        </ng-template>
+
+        <button
+          type="button"
+          class="dsf-btn dsf-btn--ghost dsf-btn--block"
+          (click)="verDetalleTipo(item.idVoucherTipo)"
+        >
+          Ver detalle
+        </button>
+      </div>
+    </article>
+  </section>
+
+  <footer class="page-footer">
+    <button type="button" class="dsf-btn dsf-btn--ghost" (click)="irAlDashboard()">
+      ← Volver
+    </button>
+
+    <button type="button" class="dsf-btn dsf-btn--primary" (click)="verMisVouchers()">
+      Ver mis vouchers
+    </button>
+  </footer>
+</section>

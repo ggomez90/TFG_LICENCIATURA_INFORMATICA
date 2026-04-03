@@ -3,9 +3,10 @@ import { CommonModule } from '@angular/common';
 import { RouterModule, Router, ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { map, distinctUntilChanged } from 'rxjs/operators';
+import { HttpClient } from '@angular/common/http';
 
 // APIs
-import { VoucherTipoApi, FilterVoucherTipo } from '../../../../api/voucher-tipo.api';
+import { VoucherTipoApi } from '../../../../api/voucher-tipo.api';
 import { VoucherApi } from '../../../../api/voucher.api';
 
 //Tipos locales mínimos para render
@@ -23,8 +24,13 @@ type EstadoVoucherCode = 1 | 2 | 3 | 4; // 1 CREADO, 2 ADQUIRIDO, 3 UTILIZADO, 4
 
 interface AdminVoucherListItem {
   idVoucher: number;
+  idCliente: number;
   idVoucherTipo: number;
+
   tituloTipo: string;
+
+  beneficiario?: string;        // ✅ calculado con lógica preview
+
   estadoVoucher: EstadoVoucherCode;   // 1,2,3,4
   fechaAdquisicion: string;           // ISO
   fechaUso?: string | null;           // ISO o null
@@ -41,6 +47,7 @@ export class AdministradorVouchersComponent implements OnInit {
   constructor(
     private readonly voucherTipoApi: VoucherTipoApi,
     private readonly voucherApi: VoucherApi,
+    private readonly http: HttpClient,
     private readonly router: Router,
     private readonly route: ActivatedRoute,
     private readonly cdr: ChangeDetectorRef,
@@ -92,7 +99,7 @@ export class AdministradorVouchersComponent implements OnInit {
   // Acciones Tipos
   onVerMasTipos(): void { this.router.navigate(['/menu-principal/admin/vouchers/voucher-tipo/listar']); }
   onCrearTipo(): void { this.router.navigate(['/menu-principal/admin/vouchers/voucher-tipo/crear']); }
-  
+
   onVerTipo(t: AdminVoucherTipoListItem): void {
     this.router.navigate(
       ['/menu-principal/admin/vouchers/voucher-tipo/ver', t.idVoucherTipo],
@@ -164,12 +171,11 @@ export class AdministradorVouchersComponent implements OnInit {
     });
   }
 
-
   //Acciones Vouchers
-  onVerMasVouchers(): void { this.router.navigate(['/admin/vouchers/voucher/listar']); }
-  onCrearVoucher(): void { this.router.navigate(['/admin/vouchers/voucher/crear']); }
-  onVerVoucher(v: AdminVoucherListItem): void { this.router.navigate(['/admin/vouchers/voucher/ver', v.idVoucher]); }
-  onEditarVoucher(v: AdminVoucherListItem): void { this.router.navigate(['/admin/vouchers/voucher/editar', v.idVoucher]); }
+  onVerMasVouchers(): void { this.router.navigate(['menu-principal/admin/vouchers/voucher/listar']); }
+  onCrearVoucher(): void { this.router.navigate(['menu-principal/admin/vouchers/voucher/crear']); }
+  onVerVoucher(v: AdminVoucherListItem): void { this.router.navigate(['menu-principal/admin/vouchers/voucher/ver', v.idVoucher]); }
+  onEditarVoucher(v: AdminVoucherListItem): void { this.router.navigate(['menu-principal/admin/vouchers/voucher/editar', v.idVoucher]); }
 
   //Carga Tipos (últimos 10 por ID desc)
   private cargarTipos(): void {
@@ -212,7 +218,6 @@ export class AdministradorVouchersComponent implements OnInit {
     });
   }
 
-
   //Carga Vouchers (últimos 10 por ID desc)
   private cargarVouchers(): void {
     if (this._onceVouchers) return;
@@ -227,8 +232,11 @@ export class AdministradorVouchersComponent implements OnInit {
 
         const list = src.map((raw: any) => ({
           idVoucher: raw.idVoucher,
+          idCliente: Number(raw.idCliente ?? 0),
           idVoucherTipo: raw.idVoucherTipo,
           tituloTipo: raw.voucherTipo?.titulo ?? raw.tituloTipo ?? '(Sin título)',
+          beneficiario: '',
+
           estadoVoucher: Number(raw.estadoVoucher) as EstadoVoucherCode,
           fechaAdquisicion: raw.fechaAdquisicion,
           fechaUso: raw.fechaUso ?? null,
@@ -237,6 +245,9 @@ export class AdministradorVouchersComponent implements OnInit {
         this._vouchers = list
           .sort((a, b) => (b.idVoucher || 0) - (a.idVoucher || 0))
           .slice(0, 10);
+
+        // ✅ completar beneficiario (misma lógica que preview)
+        this._vouchers.forEach(v => this.resolverBeneficiario(v));
 
         this._loadingVouchers = false;
         this.cdr.markForCheck();
@@ -250,7 +261,6 @@ export class AdministradorVouchersComponent implements OnInit {
     });
   }
 
-
   //Formatos usados en el template
   fmtVigencia(i: AdminVoucherTipoListItem): string {
     return `${this.fmtDate(i.fechaInicioVigencia)} – ${this.fmtDate(i.fechaFinVigencia)}`;
@@ -258,9 +268,61 @@ export class AdministradorVouchersComponent implements OnInit {
   fmtFechaAdq(v: AdminVoucherListItem): string {
     return this.fmtDate(v.fechaAdquisicion);
   }
-  badgeClaseVoucher(v: AdminVoucherListItem): 'dsf-badge--ok' | 'dsf-badge--muted' | '' {
-    if (v.estadoVoucher === 3) return 'dsf-badge--ok';     // UTILIZADO
-    if (v.estadoVoucher === 4) return 'dsf-badge--muted';  // ANULADO
-    return '';
+  fmtFechaUso(v: AdminVoucherListItem): string {
+    return this.fmtDate(v.fechaUso ?? null);
+  }
+
+  // Estado igual al tipo voucher: verde para todo excepto ANULADO gris
+  badgeClaseVoucher(v: AdminVoucherListItem): 'dsf-badge--ok' | 'dsf-badge--muted' {
+    if (v.estadoVoucher === 4) return 'dsf-badge--muted'; // ANULADO
+    return 'dsf-badge--ok'; // CREADO / ADQUIRIDO / UTILIZADO
+  }
+
+  /**
+   * Regla (igual a preview):
+   * - Si Cliente.idTipoCliente ∈ {2,3} => beneficiario = razonSocial
+   * - Si Cliente.idTipoCliente = 1 => beneficiario = Apellidos + Nombres (desde /api/usuarios/:id)
+   * Nota: idCliente = idUsuario
+   */
+  private resolverBeneficiario(v: AdminVoucherListItem): void {
+    const idCliente = Number(v.idCliente ?? 0);
+    if (!idCliente || idCliente <= 0) {
+      v.beneficiario = '—';
+      this.cdr.markForCheck();
+      return;
+    }
+
+    this.http.get<any>(`/api/clientes/${idCliente}`).subscribe({
+      next: (cli: any) => {
+        const tipo = Number(cli?.idTipoCliente ?? 0);
+
+        // PYME/Empresa o Institución => Razón Social
+        if (tipo === 2 || tipo === 3) {
+          const rs = String(cli?.razonSocial ?? '').trim();
+          v.beneficiario = rs || `Cliente #${idCliente}`;
+          this.cdr.markForCheck();
+          return;
+        }
+
+        // Ciudadano => Apellidos + Nombres desde Usuario (idUsuario = idCliente)
+        this.http.get<any>(`/api/usuarios/${idCliente}`).subscribe({
+          next: (u: any) => {
+            const ape = String(u?.apellidos ?? '').trim();
+            const nom = String(u?.nombres ?? '').trim();
+            const full = [ape, nom].filter(Boolean).join(' ').trim();
+            v.beneficiario = full || `Cliente #${idCliente}`;
+            this.cdr.markForCheck();
+          },
+          error: () => {
+            v.beneficiario = `Cliente #${idCliente}`;
+            this.cdr.markForCheck();
+          },
+        });
+      },
+      error: () => {
+        v.beneficiario = `Cliente #${idCliente}`;
+        this.cdr.markForCheck();
+      },
+    });
   }
 }

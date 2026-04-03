@@ -1,0 +1,209 @@
+@use '../../../../../biblioteca/roles/administrador/crear-contenido/crear-contenido-educativo.component.scss' as *;
+
+.crear-voucher {
+  *, *::before, *::after { box-sizing: border-box; }
+
+  .dsf-header { margin-bottom: 1.25rem; }
+  .dsf-title  { color: #1b5e20; }
+  .dsf-sub    { color: #2e7d32; }
+
+  .dsf-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    width: 100%;
+  }
+
+  .dsf-card--form {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 1.75rem 1.5rem;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.04);
+    border: 1px solid rgba(0, 128, 0, 0.06);
+    width: 100%;
+  }
+
+  .dsf-card__body {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    min-width: 0;
+  }
+
+  .dsf-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    min-width: 0;
+  }
+
+  .dsf-field__label {
+    font-weight: 600;
+    color: #0b3b25;
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.4rem;
+  }
+
+  .dsf-field__required {
+    color: #c0392b;
+    font-weight: 700;
+  }
+
+  .dsf-input {
+    border-radius: 999px;
+    border: 1px solid #d3e4d8;
+    padding: 0.7rem 1rem;
+    font-size: 0.95rem;
+    outline: none;
+    transition:
+      border-color 0.15s ease,
+      box-shadow 0.15s ease,
+      background-color 0.15s ease;
+    background: #f9fdfb;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .dsf-input:focus {
+    border-color: #2e8b57;
+    box-shadow: 0 0 0 2px rgba(46, 139, 87, 0.18);
+    background: #ffffff;
+  }
+
+  .dsf-fields-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    width: 100%;
+  }
+
+  .dsf-fields-row > * {
+    min-width: 0;
+    flex: 1 1 220px;
+  }
+
+  .dsf-field--half {
+    flex: 1 1 220px;
+  }
+
+  /* ACCIONES: igual que crear-voucher-tipo */
+  .dsf-form__actions {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-top: 0.5rem;
+    width: 100%;
+  }
+
+  .dsf-form__actions .dsf-btn {
+    min-height: 40px;
+    padding-top: 0.4rem;
+    padding-bottom: 0.4rem;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .dsf-form__spacer { flex: 1; }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .dsf-card--form { padding: 1.25rem 1rem; }
+
+    .dsf-fields-row {
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .dsf-field--half { flex: 1 1 100%; }
+
+    .dsf-form__actions {
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 0.5rem;
+
+      .dsf-btn { min-width: 140px; text-align: center; }
+      .dsf-form__spacer { display: none; }
+    }
+  }
+
+  @media (max-width: 520px) {
+    .dsf-card--form { padding: 1rem .85rem; }
+    .dsf-input { font-size: .95rem; padding: .6rem .9rem; }
+    .dsf-form__actions .dsf-btn { min-width: 120px; }
+  }
+
+  /* ============================================================
+   * EXTENSIONES PARA EDITAR-VOUCHER (SIN ROMPER TU ESTILO BASE)
+   * ============================================================ */
+
+  .dsf-field__hint {
+    font-size: 0.8rem;
+    color: #5e7a6a;
+    line-height: 1.25;
+  }
+
+  /* look "grisado" para disabled sin cambiar layout */
+  .dsf-input:disabled,
+  .dsf-input.is-disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+    background: #f2f7f4;
+  }
+
+  /* Fila especial donde va el select + switch (mantiene 2 columnas) */
+  .dsf-fields-row--estado {
+    align-items: flex-start;
+  }
+
+  /* Switch simple estilo DSF (no toca botones ni inputs) */
+  .dsf-switch-field {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    cursor: pointer;
+    user-select: none;
+    flex-wrap: wrap;
+  }
+
+  .dsf-switch-field input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .dsf-switch__track {
+    width: 46px;
+    height: 24px;
+    border-radius: 999px;
+    background: #d3e4d8;
+    position: relative;
+    transition: background 0.15s ease;
+    flex: 0 0 auto;
+  }
+
+  .dsf-switch__thumb {
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #ffffff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.16);
+    transition: transform 0.15s ease;
+  }
+
+  .dsf-switch-field input:checked + .dsf-switch__track {
+    background: #2e8b57;
+  }
+
+  .dsf-switch-field input:checked + .dsf-switch__track .dsf-switch__thumb {
+    transform: translateX(22px);
+  }
+
+  .dsf-switch__text {
+    font-weight: 500;
+    color: #0b3b25;
+  }
+}

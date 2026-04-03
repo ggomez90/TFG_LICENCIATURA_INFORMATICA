@@ -50,22 +50,198 @@ export class RespuestaService {
     return myId === 1;
   }
 
-  //Create publico
-  async create(dto: CreateRespuestaEncuestaDto): Promise<RespuestaEncuesta> {
-    const data: any = { ...dto };
-    if (dto.fechaRespuesta) data.fechaRespuesta = new Date(dto.fechaRespuesta);
+  private normalizeDni(input: string): string {
+    return String(input ?? '').replace(/\D+/g, '').trim();
+  }
 
-    // Si llega idUsuario validar que exista
-    if (dto.idUsuario) {
-      const exists = await this.prisma.usuario.findUnique({ where: { idUsuario: dto.idUsuario } });
-      if (!exists) throw new BadRequestException('idUsuario no válido.');
+  private async assertEncuestaActiva(idEncuesta: number): Promise<void> {
+    const enc = await this.prisma.encuesta.findUnique({ where: { idEncuesta } });
+    if (!enc) throw new NotFoundException('Encuesta no encontrada');
+
+    // Regla: debe estar activa
+    if (!enc.activa) throw new BadRequestException('La encuesta está cerrada.');
+
+    // Regla: si fechaCierre ya pasó, también cerrada
+    const now = new Date();
+    if (enc.fechaCierre && enc.fechaCierre.getTime() < now.getTime()) {
+      throw new BadRequestException('La encuesta está cerrada.');
+    }
+  }
+
+  private async assertEncuestaNoVencida(idEncuesta: number) {
+    const encuesta = await this.prisma.encuesta.findUnique({
+      where: { idEncuesta },
+      select: { fechaCierre: true },
+    });
+    if (!encuesta) throw new NotFoundException('Encuesta no encontrada');
+
+    const cierre = new Date(encuesta.fechaCierre).getTime();
+    if (!Number.isNaN(cierre) && cierre < Date.now()) {
+      throw new BadRequestException('La encuesta está cerrada por fecha.');
+    }
+  }
+
+  private parseDni(dni?: string | null): string | null {
+    const v = String(dni ?? '').trim();
+    return v ? v : null;
+  }
+
+  private async assertEncuestaAbiertaParaResponder(idEncuesta: number) {
+    const encuesta = await this.prisma.encuesta.findUnique({
+      where: { idEncuesta },
+      select: { idEncuesta: true, activa: true, fechaCierre: true },
+    });
+
+    if (!encuesta) {
+      throw new NotFoundException('Encuesta no encontrada');
     }
 
+    if (!encuesta.activa) {
+      throw new BadRequestException('La encuesta no está activa.');
+    }
+
+    const cierre = new Date(encuesta.fechaCierre);
+    const now = new Date();
+
+    // cerrada por fecha
+    if (!Number.isNaN(cierre.getTime()) && cierre.getTime() < now.getTime()) {
+      throw new BadRequestException('La encuesta está cerrada por fecha.');
+    }
+  }
+
+  private async assertNoRespuestaPrevia(
+    idEncuesta: number,
+    idUsuario?: number | null,
+    dniInvitado?: string | null,
+  ) {
+    // Si es cliente: 1 respuesta por (idEncuesta, idUsuario)
+    if (idUsuario) {
+      const exists = await this.prisma.respuestaEncuesta.findFirst({
+        where: { idEncuesta, idUsuario },
+        select: { idRespuesta: true },
+      });
+      if (exists) {
+        throw new BadRequestException('Ya respondiste esta encuesta.');
+      }
+      return;
+    }
+
+    // Si es invitado: 1 respuesta por (idEncuesta, dni)
+    const dni = this.parseDni(dniInvitado);
+    if (dni) {
+      const exists = await this.prisma.respuestaEncuesta.findFirst({
+        where: { idEncuesta, dniCuilCuitInvitado: dni },
+        select: { idRespuesta: true },
+      });
+      if (exists) {
+        throw new BadRequestException('Este DNI ya respondió esta encuesta.');
+      }
+    }
+  }
+
+  private async assertDniInvitadoNoEsUsuario(dniInvitado?: string | null) {
+    const dni = this.parseDni(dniInvitado);
+    if (!dni) return;
+
+    // Si ese DNI existe como usuario, obligamos login.
+    const u = await this.prisma.usuario.findFirst({
+      where: { dniCuitCuil: dni },
+      select: { idUsuario: true },
+    });
+
+    if (u) {
+      throw new BadRequestException('Este DNI pertenece a un usuario registrado. Por favor iniciá sesión para responder.');
+    }
+  }
+
+  // CREATE INVITADO
+  async createPublic(dto: CreateRespuestaEncuestaDto): Promise<RespuestaEncuesta> {
+    // Validaciones base
+    if (!dto?.idEncuesta) throw new BadRequestException('idEncuesta requerido.');
+
+    // 1) Validar encuesta activa + NO vencida por fecha
+    await this.assertEncuestaActiva(dto.idEncuesta); // valida activa
+    await this.assertEncuestaNoVencida(dto.idEncuesta);
+
+    // Invitado NO puede mandar idUsuario
+    if (dto.idUsuario) {
+      throw new BadRequestException('Un invitado no puede enviar idUsuario.');
+    }
+
+    const dni = this.normalizeDni(dto.dniCuilCuitInvitado ?? '');
+    if (!dni) throw new BadRequestException('DNI requerido para invitado.');
+
+    // Si existe usuario con ese DNI, obligar login
+    const existingUser = await this.prisma.usuario.findFirst({
+      where: { dniCuitCuil: dni },
+      select: { idUsuario: true },
+    });
+    if (existingUser) {
+      throw new BadRequestException(
+        'Este DNI pertenece a un usuario registrado. Inicie sesión para responder.',
+      );
+    }
+
+    // validar si no respondio como invitado
+    const already = await this.prisma.respuestaEncuesta.findFirst({
+      where: { idEncuesta: dto.idEncuesta, dniCuilCuitInvitado: dni },
+      select: { idRespuesta: true },
+    });
+    if (already) throw new BadRequestException('Ya respondiste esta encuesta.');
+
+    const data: any = {
+      idEncuesta: dto.idEncuesta,
+      datosInvitado: dto.datosInvitado ?? null,
+      dniCuilCuitInvitado: dni,
+      contenido: dto.contenido,
+      // fechaRespuesta si viene la usamos, si no, now()
+      fechaRespuesta: dto.fechaRespuesta ? new Date(dto.fechaRespuesta) : new Date(),
+    };
+
     try {
-      return await (this.prisma as any)[this.MODEL].create({ data });
+      return await this.prisma.respuestaEncuesta.create({ data });
     } catch (error: any) {
-      if (error?.code === 'P2003') {
-        throw new BadRequestException('Alguna referencia es inválida (idEncuesta / idUsuario).');
+      if (error?.code === 'P2002') {
+        throw new BadRequestException('Ya existe una respuesta para esta encuesta.');
+      }
+      throw error;
+    }
+  }
+
+  // CREATE LOGUEADO
+  async createMine(dto: CreateRespuestaEncuestaDto, ctx: ActorCtx): Promise<RespuestaEncuesta> {
+    if (!dto?.idEncuesta) throw new BadRequestException('idEncuesta requerido.');
+
+    // 1) Validar encuesta activa + NO vencida por fecha
+    await this.assertEncuestaActiva(dto.idEncuesta);
+    await this.assertEncuestaNoVencida(dto.idEncuesta);
+
+    const myId = await this.resolveMyUserId(ctx);
+
+    // Logged NO puede mandar datos de invitado
+    if (dto.datosInvitado || dto.dniCuilCuitInvitado) {
+      throw new BadRequestException('No envíes datos de invitado si estás logueado.');
+    }
+
+    // validar si ya respondio
+    const already = await this.prisma.respuestaEncuesta.findFirst({
+      where: { idEncuesta: dto.idEncuesta, idUsuario: myId },
+      select: { idRespuesta: true },
+    });
+    if (already) throw new BadRequestException('Ya respondiste esta encuesta.');
+
+    const data: any = {
+      idEncuesta: dto.idEncuesta,
+      idUsuario: myId,
+      contenido: dto.contenido,
+      fechaRespuesta: dto.fechaRespuesta ? new Date(dto.fechaRespuesta) : new Date(),
+    };
+
+    try {
+      return await this.prisma.respuestaEncuesta.create({ data });
+    } catch (error: any) {
+      if (error?.code === 'P2002') {
+        throw new BadRequestException('Ya existe una respuesta para esta encuesta.');
       }
       throw error;
     }
@@ -165,5 +341,35 @@ export class RespuestaService {
       }
       throw error;
     }
+  }
+
+  async checkPublic(idEncuesta: number, dni: string) {
+    const ndni = this.normalizeDni(dni);
+    if (!ndni) throw new BadRequestException('DNI inválido.');
+
+    const item = await this.prisma.respuestaEncuesta.findFirst({
+      where: { idEncuesta: Number(idEncuesta), dniCuilCuitInvitado: ndni },
+      orderBy: { fechaRespuesta: 'desc' },
+      select: { idRespuesta: true, contenido: true, fechaRespuesta: true },
+    });
+
+    return {
+      responded: !!item,
+      item: item ?? null,
+    };
+  }
+
+  async findMine(idEncuesta: number, ctx: ActorCtx): Promise<RespuestaEncuesta | null> {
+    const myId = await this.resolveMyUserId(ctx);
+
+    return this.prisma.respuestaEncuesta.findFirst({
+      where: {
+        idEncuesta: Number(idEncuesta),
+        idUsuario: myId,
+      },
+      orderBy: {
+        fechaRespuesta: 'desc',
+      },
+    });
   }
 }

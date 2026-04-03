@@ -1,11 +1,10 @@
 @use '../../../../../biblioteca/roles/administrador/crear-contenido/preview-contenido-educativo.component.scss' as *;
 
-/* Anular grid heredado en el wrapper para que el footer ocupe 100% */
+/* Anular grid heredado en el wrapper */
 .ver-voucher-tipo {
   display: block;
 }
 
-/* Card base y estilos - clonado de preview */
 .ver-voucher-tipo {
   .voucher-preview-card {
     background: #ffffff;
@@ -50,13 +49,17 @@
     letter-spacing: 0.03em;
   }
 
+  /* =========================================================
+     FILA CENTRAL — CÓDIGO | BENEFICIO | ESTADO | PUNTOS
+     Ajuste fino: centrados y más juntos
+     ========================================================= */
   .voucher-values {
     display: grid;
-    grid-template-columns: repeat(3, minmax(140px, 1fr));
-    gap: 1rem;
-    align-items: start;
-    justify-items: center;
+    grid-template-columns: repeat(4, max-content);
+    justify-content: center;      /* centra el bloque completo */
+    gap: 4rem;                 /* separación justa */
     text-align: center;
+    align-items: start;
   }
 
   .voucher-value .label {
@@ -70,7 +73,7 @@
     font-weight: 900;
     color: #065f46;
     line-height: 1.1;
-    word-break: break-word;
+    white-space: nowrap;
   }
 
   .voucher-description {
@@ -91,7 +94,7 @@
     display: grid;
     grid-template-columns: 1fr auto;
     align-items: end;
-    gap: 1rem;
+    gap: 4rem;
   }
 
   .voucher-dates {
@@ -115,6 +118,7 @@
     font-size: 0.85rem;
     color: #476556;
   }
+
   .d-value {
     font-size: 0.95rem;
     font-weight: 800;
@@ -136,15 +140,9 @@
       flex-direction: column;
       line-height: 1.05;
       font-weight: 700;
-      .line1 {
-        color: #2e7d32;
-        font-size: 0.8rem;
-      }
-      .line2 {
-        color: #1b5e20;
-        font-size: 1rem;
-        font-weight: 800;
-      }
+
+      .line1 { color: #2e7d32; font-size: 0.8rem; }
+      .line2 { color: #1b5e20; font-size: 1rem; font-weight: 800; }
     }
   }
 
@@ -157,24 +155,26 @@
     font-weight: 700;
     border: 1px solid transparent;
   }
+
   .state-badge--ok {
     background: #e8f5e9;
     color: #1b5e20;
     border-color: #c8e6c9;
   }
+
   .state-badge--muted {
     background: #eeeeee;
     color: #616161;
     border-color: #e0e0e0;
   }
 
-  /* Acciones */
   .pv-actions {
     display: flex;
     align-items: center;
     gap: 0.75rem;
     margin-top: 1.25rem;
   }
+
   .pv-actions__spacer {
     flex: 1;
   }
@@ -182,12 +182,15 @@
   /* Responsive */
   @media (max-width: 760px) {
     .voucher-values {
-      grid-template-columns: 1fr;
+      grid-template-columns: repeat(2, max-content);
+      gap: 1rem;
     }
+
     .voucher-footer-row {
       grid-template-columns: 1fr;
       align-items: start;
     }
+
     .voucher-brand {
       justify-content: flex-start;
     }

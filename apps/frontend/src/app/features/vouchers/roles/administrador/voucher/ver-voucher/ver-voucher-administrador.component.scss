@@ -1,0 +1,230 @@
+@use '../../../../../biblioteca/roles/administrador/crear-contenido/preview-contenido-educativo.component.scss' as *;
+
+.dsf-wrap.preview-voucher-tipo {
+  display: block !important;
+  column-gap: 0 !important;
+  row-gap: 0 !important;
+}
+.dsf-wrap.preview-voucher-tipo > * {
+  grid-column: 1 / -1 !important;
+  width: 100%;
+}
+
+.preview-voucher-tipo {
+  .voucher-preview-card {
+    background: #ffffff;
+    padding: 0;
+    border-radius: 18px;
+    border: none;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+    font-size: 1.05rem;
+    width: 100%;
+  }
+
+  .voucher-frame {
+    border: 4px solid #2e7d32;
+    border-radius: 18px;
+    padding: 1.4rem;
+    background: repeating-linear-gradient(
+      45deg,
+      #f1f8e9 0,
+      #f1f8e9 10px,
+      #ffffff 10px,
+      #ffffff 20px
+    );
+  }
+
+  .voucher-content {
+    background: #ffffff;
+    border-radius: 14px;
+    padding: 1.4rem;
+    border: 1px solid #c8e6c9;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 1.1rem;
+  }
+
+  .voucher-title {
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: #1b5e20;
+    text-align: center;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+
+  /* 4 columnas: CÓDIGO - BENEFICIO - ESTADO - PUNTOS */
+  .voucher-values {
+    display: grid;
+    gap: 1rem;
+    align-items: start;
+    justify-items: center;
+    text-align: center;
+  }
+  .voucher-values--4 {
+    grid-template-columns: repeat(4, minmax(140px, 1fr));
+  }
+
+  .voucher-value .label {
+    font-size: 0.9rem;
+    color: #476556;
+    margin-bottom: 0.3rem;
+  }
+
+  .voucher-value .value {
+    font-size: 1.6rem;
+    font-weight: 900;
+    color: #065f46;
+    line-height: 1.1;
+    word-break: break-word;
+  }
+
+  .value--code {
+    font-size: 1rem;
+    color: #0b3b25;
+    border: 1px solid #d3e4d8;
+    background: #f9fdfb;
+    padding: 0.15rem 0.55rem;
+    border-radius: 999px;
+    max-width: 220px;
+  }
+
+  .value--code-codigo {
+    font-size: 0.8rem;
+  }
+
+  .state-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.25rem 0.7rem;
+    border-radius: 999px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    border: 1px solid transparent;
+    line-height: 1;
+  }
+  .state-badge--ok {
+    background: #e8f5e9;
+    color: #1b5e20;
+    border-color: #c8e6c9;
+  }
+  .state-badge--muted {
+    background: #eeeeee;
+    color: #616161;
+    border-color: #e0e0e0;
+  }
+  /* neutro para CREADO/ADQUIRIDO */
+  .state-badge--muted2 {
+    background: #f1f8e9;
+    color: #2e7d32;
+    border-color: #c8e6c9;
+  }
+
+  /* Beneficiario grande */
+  .beneficiario-hero {
+    text-align: center;
+    font-size: 1.55rem;
+    font-weight: 900;
+    color: #0b3b25;
+    letter-spacing: 0.01em;
+    padding: 0.35rem 0.6rem;
+    border-radius: 14px;
+    background: #f9fdfb;
+    border: 1px solid #d3e4d8;
+  }
+
+  .voucher-description {
+    h3 {
+      margin: 0;
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: #0b3b25;
+    }
+    p {
+      margin: 0.25rem 0 0;
+      line-height: 1.55;
+      color: #23402e;
+    }
+  }
+
+  .voucher-footer-row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: end;
+    gap: 1rem;
+  }
+
+  .voucher-dates {
+    display: inline-flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .date-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    border: 1px solid #d3e4d8;
+    background: #f9fdfb;
+    padding: 0.25rem 0.6rem;
+    border-radius: 999px;
+    white-space: nowrap;
+  }
+
+  .d-label {
+    font-size: 0.95rem;
+    color: #476556;
+  }
+  .d-value {
+    font-size: 1.05rem;
+    font-weight: 800;
+    color: #0b3b25;
+  }
+
+  .voucher-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+
+    .f-escudo {
+      width: 40px;
+      height: auto;
+    }
+
+    .f-brand__text {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.05;
+      font-weight: 700;
+      .line1 { color: #2e7d32; font-size: 0.8rem; }
+      .line2 { color: #1b5e20; font-size: 1rem; font-weight: 800; }
+    }
+  }
+
+  .pv-actions {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-top: 1rem;
+    padding: 0;
+  }
+  .pv-actions__spacer { flex: 1; }
+
+  @media (max-width: 900px) {
+    .voucher-values--4 { grid-template-columns: 1fr 1fr; }
+  }
+
+  @media (max-width: 760px) {
+    .voucher-values--4 { grid-template-columns: 1fr; }
+    .voucher-footer-row {
+      grid-template-columns: 1fr;
+      align-items: start;
+    }
+    .voucher-brand { justify-content: flex-start; }
+    .pv-actions { flex-wrap: wrap; }
+    .beneficiario-hero { font-size: 1.25rem; }
+  }
+}

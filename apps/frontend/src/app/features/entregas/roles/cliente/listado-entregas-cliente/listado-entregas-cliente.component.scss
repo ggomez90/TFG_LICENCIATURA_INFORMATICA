@@ -1,0 +1,249 @@
+:host {
+  display: block;
+}
+
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  padding: 1.25rem;
+  min-height: 100%;
+  background: linear-gradient(180deg, #f7fff9 0%, #f8fafc 100%);
+}
+
+.page-hero {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: flex-start;
+  padding: 1.4rem;
+  border-radius: 24px;
+  background: linear-gradient(135deg, #0f5132 0%, #166534 55%, #1f8a4c 100%);
+  color: #fff;
+
+  h1 {
+    margin: 0.15rem 0 0.35rem;
+    font-size: 2rem;
+    font-weight: 800;
+  }
+
+  p {
+    margin: 0;
+    max-width: 720px;
+    color: rgba(255, 255, 255, 0.88);
+    line-height: 1.5;
+  }
+}
+
+.eyebrow {
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.filters-card,
+.table-card {
+  padding: 1rem 1.1rem;
+  border-radius: 20px;
+  background: #fff;
+  border: 1px solid #dcefe3;
+  box-shadow: 0 12px 28px rgba(15, 81, 50, 0.08);
+}
+
+.filters-card {
+  display: grid;
+  grid-template-columns: 1fr 260px;
+  gap: 1rem;
+}
+
+.search-box {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.85rem 1rem;
+  border: 1px solid #dcefe3;
+  border-radius: 14px;
+  background: #fbfffc;
+
+  input {
+    width: 100%;
+    border: none;
+    outline: none;
+    background: transparent;
+    color: #163024;
+    font-size: 0.95rem;
+  }
+}
+
+.select-box {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+
+  label {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: #5b6f63;
+  }
+
+  select {
+    min-height: 46px;
+    border-radius: 14px;
+    border: 1px solid #dcefe3;
+    padding: 0 0.9rem;
+    background: #fbfffc;
+    color: #163024;
+    outline: none;
+  }
+}
+
+.table-wrap {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.history-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 980px;
+
+  th,
+  td {
+    padding: 0.95rem 0.8rem;
+    text-align: left;
+    vertical-align: middle;
+    border-bottom: 1px solid #ebf5ee;
+  }
+
+  th {
+    font-size: 0.82rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #6a8175;
+    font-weight: 800;
+  }
+
+  td {
+    color: #254032;
+    font-size: 0.93rem;
+  }
+
+  .th-actions,
+  .td-actions {
+    text-align: right;
+  }
+}
+
+.codigo-cell {
+  font-weight: 800;
+  color: #0f5132;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.4rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.is-creada {
+  background: #e0f2fe;
+  color: #075985;
+}
+
+.is-pendiente {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.is-validada {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.is-rechazada {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.is-puntos {
+  background: #ede9fe;
+  color: #6d28d9;
+}
+
+.is-anulada {
+  background: #e5e7eb;
+  color: #4b5563;
+}
+
+.pagination-bar {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: center;
+  margin-top: 1rem;
+}
+
+.pagination-info {
+  color: #5b6f63;
+  font-weight: 700;
+}
+
+.pagination-actions {
+  display: flex;
+  gap: 0.65rem;
+}
+
+.btn {
+  border: none;
+  outline: none;
+  cursor: pointer;
+  min-height: 44px;
+  padding: 0.8rem 1rem;
+  border-radius: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-weight: 700;
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+.btn-secondary {
+  background: #f3fdf6;
+  color: #166534;
+  border: 1px solid #ccebd7;
+}
+
+.icon-btn {
+  width: 38px;
+  height: 38px;
+  border: 1px solid #dcefe3;
+  background: #fff;
+  color: #166534;
+  border-radius: 12px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 0.35rem;
+}
+
+@media (max-width: 900px) {
+  .page-hero,
+  .filters-card,
+  .pagination-bar {
+    grid-template-columns: 1fr;
+    flex-direction: column;
+    align-items: stretch;
+  }
+}

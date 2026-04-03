@@ -14,6 +14,9 @@ import { CreateEntregaDto } from './create-entrega.dto';
 import { UpdateEntregaDto } from './update-entrega.dto';
 import { UpdateEstadoEntregaDto } from './update-estado-entrega.dto';
 import { FilterEntregaDto } from './filter-entrega.dto';
+import { RevisarEntregaOperarioDto } from './revisar-entrega-operario.dto';
+import { VolverPendienteEntregaDto } from './volver-pendiente-entrega.dto';
+import { ConfirmarPuntosEntregaDto } from './confirmar-puntos-entrega.dto';
 
 import { KeycloakAuthGuard, RolesGuard, Roles, User } from '../../auth';
 
@@ -21,12 +24,10 @@ import { KeycloakAuthGuard, RolesGuard, Roles, User } from '../../auth';
 export class EntregaController {
   constructor(private readonly entregaService: EntregaService) {}
 
-  //Listado (login requerido)
-  //Cliente: ve solo sus entregas
-  // Operario/Admin ven todas
+  //obtener para cualquier tipo de rol
   @Get()
   @UseGuards(KeycloakAuthGuard, RolesGuard)
-  @Roles('ADMIN', 'OPERARIO', 'CLIENTE')
+  @Roles('ADMIN', 'ADMINISTRADOR', 'OPERARIO', 'CLIENTE')
   async findAll(@User() user: any, @Query() filter: FilterEntregaDto) {
     const actorRole = this.pickRole(user);
     const identifier =
@@ -35,10 +36,10 @@ export class EntregaController {
     return this.entregaService.findAll(filter, { actorRole, identifier });
   }
 
-  // Crear (ADMIN o CLIENTE)
+  //crear
   @Post()
   @UseGuards(KeycloakAuthGuard, RolesGuard)
-  @Roles('ADMIN', 'CLIENTE')
+  @Roles('ADMIN', 'ADMINISTRADOR', 'CLIENTE')
   async create(@User() user: any, @Body() dto: CreateEntregaDto) {
     const actorRole = this.pickRole(user);
     const identifier =
@@ -47,10 +48,10 @@ export class EntregaController {
     return this.entregaService.create(dto, { actorRole, identifier });
   }
 
-  // Update (ADMIN o CLIENTE) — solo si estado actual == CREADA (1)
+  //editar
   @Patch(':id')
   @UseGuards(KeycloakAuthGuard, RolesGuard)
-  @Roles('ADMIN', 'CLIENTE')
+  @Roles('ADMIN', 'ADMINISTRADOR', 'CLIENTE')
   async update(
     @User() user: any,
     @Param('id', ParseIntPipe) idEntrega: number,
@@ -63,10 +64,10 @@ export class EntregaController {
     return this.entregaService.update(idEntrega, dto, { actorRole, identifier });
   }
 
-  // Update Estado (ADMIN, OPERARIO o CLIENTE)
+  //editar estado segun corresponda por rol
   @Patch(':id/estado')
   @UseGuards(KeycloakAuthGuard, RolesGuard)
-  @Roles('ADMIN', 'OPERARIO', 'CLIENTE')
+  @Roles('ADMIN', 'ADMINISTRADOR', 'OPERARIO', 'CLIENTE')
   async updateEstado(
     @User() user: any,
     @Param('id', ParseIntPipe) idEntrega: number,
@@ -79,18 +80,69 @@ export class EntregaController {
     return this.entregaService.updateEstado(idEntrega, dto, { actorRole, identifier });
   }
 
-  //helpers
-  private pickRole(user: any): 'ADMIN' | 'OPERARIO' | 'CLIENTE' {
+  // OPERARIO: validar o rechazar una entrega pendiente
+  @Patch(':id/operario/revisar')
+  @UseGuards(KeycloakAuthGuard, RolesGuard)
+  @Roles('ADMIN', 'ADMINISTRADOR', 'OPERARIO')
+  async revisarOperario(
+    @User() user: any,
+    @Param('id', ParseIntPipe) idEntrega: number,
+    @Body() dto: RevisarEntregaOperarioDto,
+  ) {
+    const actorRole = this.pickRole(user);
+    const identifier =
+      user?.preferred_username ?? user?.email ?? user?.username ?? user?.sub;
+
+    return this.entregaService.revisarOperario(idEntrega, dto, { actorRole, identifier });
+  }
+
+  // OPERARIO: volver una validada/rechazada a pendiente
+  @Patch(':id/operario/volver-pendiente')
+  @UseGuards(KeycloakAuthGuard, RolesGuard)
+  @Roles('ADMIN', 'ADMINISTRADOR', 'OPERARIO')
+  async volverPendienteOperario(
+    @User() user: any,
+    @Param('id', ParseIntPipe) idEntrega: number,
+    @Body() dto: VolverPendienteEntregaDto,
+  ) {
+    const actorRole = this.pickRole(user);
+    const identifier =
+      user?.preferred_username ?? user?.email ?? user?.username ?? user?.sub;
+
+    return this.entregaService.volverPendienteOperario(idEntrega, dto, { actorRole, identifier });
+  }
+
+  // OPERARIO: confirmar puntos de una entrega validada
+  @Patch(':id/operario/confirmar-puntos')
+  @UseGuards(KeycloakAuthGuard, RolesGuard)
+  @Roles('ADMIN', 'ADMINISTRADOR', 'OPERARIO')
+  async confirmarPuntosOperario(
+    @User() user: any,
+    @Param('id', ParseIntPipe) idEntrega: number,
+    @Body() dto: ConfirmarPuntosEntregaDto,
+  ) {
+    const actorRole = this.pickRole(user);
+    const identifier =
+      user?.preferred_username ?? user?.email ?? user?.username ?? user?.sub;
+
+    return this.entregaService.confirmarPuntosOperario(idEntrega, dto, { actorRole, identifier });
+  }
+
+  //helper para evaluar roles
+  private pickRole(user: any): 'ADMIN' | 'ADMINISTRADOR' | 'OPERARIO' | 'CLIENTE' {
     const roles =
       user?.realm_access?.roles ??
       user?.resource_access?.default?.roles ??
       user?.roles ??
       [];
+
     if (Array.isArray(roles)) {
       if (roles.includes('ADMIN')) return 'ADMIN';
+      if (roles.includes('ADMINISTRADOR')) return 'ADMINISTRADOR';
       if (roles.includes('OPERARIO')) return 'OPERARIO';
-      return 'CLIENTE';
+      if (roles.includes('CLIENTE')) return 'CLIENTE';
     }
+
     return 'CLIENTE';
   }
 }

@@ -14,13 +14,56 @@
 
   <!-- Derecha: campana + perfil -->
   <div class="actions">
-    <button class="icon-btn bell" (click)="onBellClick()" aria-label="Notificaciones">
-      <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
-        <path fill="currentColor" d="M12 2a6 6 0 0 0-6 6v3.586l-.707.707A1 1 0 0 0 6 14h12a1 1 0 0 0 .707-1.707L18 11.586V8a6 6 0 0 0-6-6Z"/>
-        <path fill="currentColor" d="M9 18a3 3 0 0 0 6 0H9Z"/>
-      </svg>
-      <span class="badge" *ngIf="notifCount() > 0">{{ notifCount() }}</span>
-    </button>
+    <div class="bell-wrap" (click)="$event.stopPropagation()">
+      <button
+        class="icon-btn bell"
+        (click)="onBellClick()"
+        aria-label="Notificaciones"
+        [attr.aria-expanded]="bellOpen()"
+      >
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path fill="currentColor" d="M12 2a6 6 0 0 0-6 6v3.586l-.707.707A1 1 0 0 0 6 14h12a1 1 0 0 0 .707-1.707L18 11.586V8a6 6 0 0 0-6-6Z"/>
+          <path fill="currentColor" d="M9 18a3 3 0 0 0 6 0H9Z"/>
+        </svg>
+
+        <span class="badge" *ngIf="!isAdmin() && notifCount() > 0">{{ notifCount() }}</span>
+        <span class="dot" *ngIf="!isAdmin() && hayNovedades() && notifCount() === 0"></span>
+      </button>
+
+      <div class="bell-dropdown" *ngIf="!isAdmin() && bellOpen()">
+        <div class="bell-dropdown__header">
+          <span>Notificaciones</span>
+        </div>
+
+        <div class="bell-dropdown__body">
+          <div class="bell-state" *ngIf="cargandoNotificaciones()">Cargando...</div>
+
+          <ng-container *ngIf="!cargandoNotificaciones()">
+            <div class="bell-state" *ngIf="!notificaciones().length">
+              No tienes notificaciones.
+            </div>
+
+            <button
+              *ngFor="let item of notificaciones(); trackBy: trackByNotif"
+              type="button"
+              class="bell-item"
+            >
+              <div class="bell-item__title">{{ item.titulo }}</div>
+              <div class="bell-item__message">{{ item.mensaje }}</div>
+              <div class="bell-item__date">
+                {{ item.fechaCreacion | date:'dd/MM/yyyy HH:mm' }}
+              </div>
+            </button>
+          </ng-container>
+        </div>
+
+        <div class="bell-dropdown__footer">
+          <button type="button" class="bell-all-btn" (click)="verTodasNotificaciones()">
+            VER TODAS
+          </button>
+        </div>
+      </div>
+    </div>
 
     <div class="profile" (click)="$event.stopPropagation()">
       <button class="profile-btn" (click)="toggleProfile()" aria-haspopup="menu" [attr.aria-expanded]="profileOpen()">

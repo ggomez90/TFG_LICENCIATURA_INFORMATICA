@@ -1,32 +1,255 @@
-@use './mis-datos.component.scss' as *; /* importa estilos de mis-datos */
+:host { display: block; }
 
+/* Wrapper estilo reciclaje */
+.dsf-wrap{
+  display:grid;
+  gap: 12px;
+  background:
+    radial-gradient(900px 600px at 0% -10%, rgba(16,185,129,.10) 0%, rgba(16,185,129,0) 60%),
+    linear-gradient(180deg, #f0fdf4 0%, #ffffff 100%);
+  border: 1px solid rgba(16,185,129,.25);
+  border-radius: 14px;
+  padding: 12px;
+  box-shadow: 0 10px 22px rgba(16,185,129,.12), 0 2px 8px rgba(2,6,23,.08);
+}
+
+.dsf-header{ display:grid; gap:4px; }
+.dsf-title{ margin:0; font-weight:800; color:#065f46; font-size:18px; }
+.dsf-sub{ margin:0; color:#065f46; opacity:.9; font-size:14px; }
+
+/* Estados */
+.dsf-empty{
+  border-radius: 0.75rem;
+  padding: 1rem;
+  background: #fff;
+  border: 1px dashed rgba(16,185,129,.35);
+  text-align: center;
+  color: #065f46;
+  font-size: 0.95rem;
+}
+.dsf-empty--loading{
+  background: linear-gradient(90deg,#ffffff 0%,#f0fdf4 50%,#ffffff 100%);
+  background-size: 200% 100%;
+  animation: dsf-skeleton 1.5s infinite linear;
+}
+.dsf-empty--warn{
+  border-style: solid;
+  border-color: rgba(245,158,11,.35);
+  color: #92400e;
+  background: #fffbeb;
+}
+.dsf-empty--ok{
+  border-style: solid;
+  border-color: rgba(16,185,129,.35);
+  color: #065f46;
+  background: rgba(240,253,244,.8);
+}
+.dsf-empty__text{ margin: 0; }
+
+@keyframes dsf-skeleton {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* Grid de cards */
 .form-grid{
-  display:grid; gap:12px;
-}
-.legend{
-  color:#065f46; font-weight:800; font-size:14px; margin-bottom:4px;
-}
-.field{
-  display:grid; gap:6px;
-}
-.field label{
-  font-size:12px; color:#065f46; font-weight:700;
-}
-.field input{
-  border:1px solid rgba(16,185,129,.35);
-  background:#fff; border-radius:10px; padding:10px 12px;
-  font-size:14px; color:#064e3b; outline:none;
-}
-.field input:focus{
-  border-color:#059669; box-shadow:0 0 0 3px rgba(5,150,105,.15);
+  display:grid;
+  gap: 12px;
+  grid-template-columns: repeat(12, 1fr);
 }
 
-.dsf-card__actions{
-  display:flex; gap:8px; justify-content:flex-end; margin-top:4px;
+.form-card{
+  grid-column: span 12;
+  display:grid;
+  gap: 12px;
+  background:
+    radial-gradient(60% 80% at 0% 0%, rgba(16,185,129,.12) 0%, rgba(16,185,129,0) 70%),
+    radial-gradient(60% 80% at 100% 100%, rgba(5,150,105,.10) 0%, rgba(5,150,105,0) 70%),
+    #ffffff;
+  border: 1px solid rgba(16,185,129,.28);
+  border-radius: 16px;
+  padding: 12px;
+  box-shadow: 0 10px 22px rgba(16,185,129,.12), 0 2px 8px rgba(2,6,23,.08);
 }
-.dsf-btn.outline{
-  background:#fff; color:#065f46; border-color:#059669;
+
+.block-title{
+  margin:0;
+  display:flex;
+  align-items:center;
+  gap: 10px;
+  font-size: 15px;
+  font-weight: 800;
+  color: #065f46;
+  border-bottom: 1px dashed rgba(16,185,129,.35);
+  padding-bottom: 6px;
 }
-.dsf-btn.outline:hover{
-  background:#ecfdf5;
+.block-title__icon{
+  width: 30px;
+  height: 30px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  border-radius: 10px;
+  background: rgba(16,185,129,.12);
+  border: 1px solid rgba(16,185,129,.22);
+}
+
+/* filas/cols */
+.row{
+  display:grid;
+  gap: 10px;
+  grid-template-columns: repeat(12, 1fr);
+}
+.col-6{ grid-column: span 12; }
+.col-12{ grid-column: span 12; }
+
+label{
+  font-size: 12px;
+  color: #065f46;
+  font-weight: 700;
+  margin-bottom: 4px;
+  display:block;
+}
+
+/* Campo read-only con iconito (base) */
+.ro-field{
+  min-height: 40px;
+  border: 1px solid rgba(16,185,129,.28);
+  border-radius: 12px;
+  padding: 8px 10px;
+  font-size: 14px;
+  color: #064e3b;
+  background: linear-gradient(0deg, rgba(240,253,244,.65), rgba(240,253,244,.65));
+  display:flex;
+  align-items:center;
+  gap: 10px;
+}
+
+.ro-icon{
+  width: 28px;
+  height: 28px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border-radius: 10px;
+  background: rgba(16,185,129,.14);
+  border: 1px solid rgba(16,185,129,.18);
+  flex: 0 0 28px;
+}
+
+.ro-text{
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ro-field.strong{ font-weight: 800; }
+
+/* Tags */
+.ro-field.tag{
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: .3px;
+  border-color: #059669;
+  color: #fff;
+  background: #059669;
+}
+.ro-field.tag .ro-icon{
+  background: rgba(255,255,255,.18);
+  border-color: rgba(255,255,255,.22);
+}
+
+.ro-field.tag.tag--off{
+  border-color: #94a3b8;
+  color: #0f172a;
+  background: #e2e8f0;
+}
+.ro-field.tag.tag--off .ro-icon{
+  background: rgba(15,23,42,.06);
+  border-color: rgba(15,23,42,.10);
+}
+
+/* EDIT MODE: input/select ocupan el espacio sin romper layout */
+.ro-field--edit{ padding-right: 12px; }
+
+/* Inputs y selects dentro de ro-field (para que NO se superpongan) */
+.ro-input,
+.ro-select{
+  width: 100%;
+  min-width: 0;
+  border: 0;
+  outline: none;
+  background: transparent;
+  color: #064e3b;
+  font-size: 14px;
+  padding: 0;
+  margin: 0;
+}
+
+/* select: que no “reviente” altura */
+.ro-select{
+  appearance: none;
+  line-height: 1.2;
+}
+
+/* estado disabled visual (grisado como pediste) */
+.ro-field--disabled{
+  opacity: .9;
+  background: linear-gradient(0deg, rgba(241,245,249,.95), rgba(241,245,249,.95));
+  border-color: rgba(148,163,184,.55);
+  color: #0f172a;
+}
+.ro-field--disabled .ro-icon{
+  background: rgba(15,23,42,.06);
+  border-color: rgba(15,23,42,.10);
+}
+.ro-field--disabled .ro-text{
+  color:#0f172a;
+}
+
+/* loading suave en localidad */
+.ro-field--loading{
+  background: linear-gradient(90deg,#ffffff 0%,#f0fdf4 50%,#ffffff 100%);
+  background-size: 200% 100%;
+  animation: dsf-skeleton 1.5s infinite linear;
+}
+
+/* Acciones */
+.actions{
+  display:flex;
+  gap: 10px;
+  justify-content:flex-end;
+  margin-top: 6px;
+}
+
+.dsf-btn{
+  appearance:none;
+  border: 1px solid #059669;
+  background: #059669;
+  color: #fff;
+  border-radius: 12px;
+  padding: 10px 14px;
+  cursor: pointer;
+  font-weight: 800;
+  font-size: 14px;
+  text-decoration: none;
+  display:inline-flex;
+  align-items:center;
+}
+.dsf-btn:hover{
+  background:#047857;
+  border-color:#047857;
+}
+.dsf-btn:disabled{
+  opacity: .65;
+  cursor: not-allowed;
+  background: #cbd5e1;
+  border-color: #cbd5e1;
+  color: #0f172a;
+}
+
+/* Responsive */
+@media (min-width: 700px){
+  .col-6{ grid-column: span 6; }
 }

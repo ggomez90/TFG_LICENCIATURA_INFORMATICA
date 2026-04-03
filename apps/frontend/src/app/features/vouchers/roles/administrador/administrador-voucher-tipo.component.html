@@ -39,6 +39,7 @@
           <table class="dsf-table">
             <thead>
               <tr>
+                <th class="dsf-th--id">ID</th>
                 <th>Vigencia</th>
                 <th>Título</th>
                 <th>Estado</th>
@@ -47,6 +48,7 @@
             </thead>
             <tbody>
               <tr *ngFor="let t of tipos()">
+                <td class="dsf-td--center dsf-td--id">{{ t.idVoucherTipo }}</td>
                 <td class="dsf-td--center">{{ fmtVigencia(t) }}</td>
                 <td class="dsf-table__cell--strong dsf-td--title">{{ t.titulo }}</td>
                 <td class="dsf-td--center">
@@ -106,21 +108,41 @@
           <table class="dsf-table">
             <thead>
               <tr>
+                <th class="dsf-th--id">ID</th>
+                <th class="dsf-th--id2">ID Tipo</th>
                 <th>Fecha adquisición</th>
-                <th>Tipo</th>
+                <th>Fecha uso</th>
+                <th>Beneficiario</th>
                 <th>Estado</th>
                 <th class="dsf-table__th--actions">Acciones</th>
               </tr>
             </thead>
+
             <tbody>
               <tr *ngFor="let v of vouchers()">
+                <td class="dsf-td--center dsf-td--id">{{ v.idVoucher }}</td>
+                <td class="dsf-td--center dsf-td--id2">{{ v.idVoucherTipo }}</td>
+
                 <td class="dsf-td--center">{{ fmtFechaAdq(v) }}</td>
-                <td class="dsf-table__cell--strong dsf-td--title">{{ v.tituloTipo }}</td>
+
+                <td class="dsf-td--center">
+                  {{ v.fechaUso ? fmtFechaUso(v) : '—' }}
+                </td>
+
+                <td class="dsf-td--title">
+                  {{ v.beneficiario || '—' }}
+                </td>
+
                 <td class="dsf-td--center">
                   <span class="dsf-badge" [ngClass]="badgeClaseVoucher(v)">
-                    {{ v.estadoVoucher === 3 ? 'Utilizado' : (v.estadoVoucher === 4 ? 'Anulado' : (v.estadoVoucher === 2 ? 'Adquirido' : 'Creado')) }}
+                    {{
+                      v.estadoVoucher === 4 ? 'Anulado' :
+                      v.estadoVoucher === 3 ? 'Utilizado' :
+                      v.estadoVoucher === 2 ? 'Adquirido' : 'Creado'
+                    }}
                   </span>
                 </td>
+
                 <td class="dsf-table__cell--actions">
                   <div class="dsf-actions-inline">
                     <button type="button" class="dsf-icon-btn" (click)="onVerVoucher(v)" title="Ver detalle">👁️</button>

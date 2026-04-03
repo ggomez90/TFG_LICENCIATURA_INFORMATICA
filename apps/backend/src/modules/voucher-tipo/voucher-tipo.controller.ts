@@ -17,6 +17,7 @@ import { CreateVoucherTipoDto } from './create-voucher-tipo.dto';
 import { UpdateVoucherTipoDto } from './update-voucher-tipo.dto';
 import { UpdateActivaVoucherTipoDto } from './update-activa-voucher-tipo.dto';
 import { FilterVoucherTipoDto } from './filter-voucher-tipo.dto';
+import { FilterVoucherTipoClienteDto } from './filter-voucher-tipo-cliente.dto';
 
 import { KeycloakAuthGuard, RolesGuard, Roles } from '../../auth';
 
@@ -30,6 +31,35 @@ export class VoucherTipoController {
   @Roles('ADMIN', 'ADMINISTRADOR')
   async findAll(@Query() filter: FilterVoucherTipoDto) {
     return this.voucherTipoService.findAll(filter);
+  }
+
+  //GET para cliente
+  @Get('cliente/disponibles')
+  @UseGuards(KeycloakAuthGuard, RolesGuard)
+  @Roles('CLIENTE')
+  async findDisponiblesCliente(
+    @Req() req: any,
+    @Query() filter: FilterVoucherTipoClienteDto,
+  ) {
+    const user = req.user;
+    const identifier =
+      user?.preferred_username ?? user?.email ?? user?.username ?? user?.sub;
+
+    return this.voucherTipoService.findDisponiblesCliente(filter, { identifier });
+  }
+
+  @Get('cliente/disponibles/:id')
+  @UseGuards(KeycloakAuthGuard, RolesGuard)
+  @Roles('CLIENTE')
+  async findOneDisponibleCliente(
+    @Req() req: any,
+    @Param('id', ParseIntPipe) idVoucherTipo: number,
+  ) {
+    const user = req.user;
+    const identifier =
+      user?.preferred_username ?? user?.email ?? user?.username ?? user?.sub;
+
+    return this.voucherTipoService.findOneDisponibleCliente(idVoucherTipo, { identifier });
   }
 
   @Post()

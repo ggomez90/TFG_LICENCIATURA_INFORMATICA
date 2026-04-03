@@ -123,6 +123,9 @@ model Usuario {
   Notificaciones   Notificacion[]       @relation("Notificacion_Admin")
   Desafios         Desafio[]            @relation("Desafio_Admin")
 
+  // Meta de notificaciones
+  notificacionMeta UsuarioNotificacionMeta?
+
   // Movimientos asignados por admin
   MovsComoAdmin    MovimientoPuntos[]   @relation("Movimiento_Admin")
 
@@ -185,12 +188,12 @@ model Voucher {
 }
 
 model RespuestaEncuesta {
-  idRespuesta      Int       @id @default(autoincrement())
+  idRespuesta      Int      @id @default(autoincrement())
   idEncuesta       Int
-  encuesta         Encuesta  @relation(fields: [idEncuesta], references: [idEncuesta], onDelete: Cascade, onUpdate: Cascade)
+  encuesta         Encuesta @relation(fields: [idEncuesta], references: [idEncuesta], onDelete: Cascade, onUpdate: Cascade)
 
   idUsuario        Int?
-  usuario          Usuario?  @relation(fields: [idUsuario], references: [idUsuario], onDelete: SetNull, onUpdate: Cascade)
+  usuario          Usuario? @relation(fields: [idUsuario], references: [idUsuario], onDelete: SetNull, onUpdate: Cascade)
 
   datosInvitado        String?  @db.VarChar(100)
   dniCuilCuitInvitado  String?  @db.VarChar(20)
@@ -199,6 +202,9 @@ model RespuestaEncuesta {
 
   @@index([idEncuesta])
   @@index([idUsuario])
+
+  @@unique([idEncuesta, idUsuario])
+  @@unique([idEncuesta, dniCuilCuitInvitado])
 }
 
 model InscripcionDesafio {
@@ -352,6 +358,16 @@ model Notificacion {
 
   @@index([idRolUsuario])
   @@index([idAdmin])
+}
+
+model UsuarioNotificacionMeta {
+  idUsuarioNotificacionMeta Int       @id @default(autoincrement())
+  idUsuario                 Int       @unique
+  ultimaNotificacionVistaAt DateTime?
+
+  usuario                   Usuario   @relation(fields: [idUsuario], references: [idUsuario], onDelete: Cascade, onUpdate: Cascade)
+
+  @@index([ultimaNotificacionVistaAt])
 }
 
 model Desafio {

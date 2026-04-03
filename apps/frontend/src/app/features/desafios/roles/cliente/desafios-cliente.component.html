@@ -1,20 +1,173 @@
-<!--La vista es solo decorativa, no posee logica-->
-<section class="dsf-wrap">
-  <header class="dsf-header">
-    <h1 class="dsf-title">Desafíos</h1>
-    <p class="dsf-sub">ACA VAN LOS DESAFÍOS PARA EL CLIENTE</p>
+<section class="cli-dsf-wrap">
+  <header class="cli-dsf-hero">
+    <div class="cli-dsf-hero__content">
+      <span class="cli-dsf-hero__eyebrow">Panel de desafíos</span>
+      <h1 class="cli-dsf-hero__title">Participá, avanzá y sumá puntos con cada desafío</h1>
+      <p class="cli-dsf-hero__text">
+        Desde aquí podés seguir tus desafíos activos, revisar tu avance y explorar nuevas
+        propuestas disponibles para inscribirte.
+      </p>
+
+      <div class="cli-dsf-hero__actions">
+        <button type="button" class="cli-btn cli-btn--primary" (click)="onVerMisDesafios()">
+          Mis desafíos
+        </button>
+        <button type="button" class="cli-btn cli-btn--ghost" (click)="onExplorarTodos()">
+          Explorar desafíos
+        </button>
+      </div>
+    </div>
+
+    <aside class="cli-dsf-highlight" *ngIf="desafioDestacado as destacado">
+      <span class="cli-dsf-highlight__label">Desafío destacado</span>
+      <h2 class="cli-dsf-highlight__title">{{ destacado.titulo }}</h2>
+      <p class="cli-dsf-highlight__desc">{{ destacado.descripcion }}</p>
+
+      <div class="cli-dsf-highlight__meta">
+        <span class="chip chip--soft">{{ destacado.tipoResiduo }}</span>
+        <span class="chip" [ngClass]="getEstadoClase(destacado.estado)">
+          {{ destacado.estado }}
+        </span>
+        <span class="chip chip--soft">{{ destacado.puntosTotales }} pts</span>
+      </div>
+
+      <button type="button" class="cli-btn cli-btn--secondary" (click)="onVerDetalle(destacado)">
+        Ver desafío
+      </button>
+    </aside>
   </header>
 
-  <div class="dsf-card">
-    <div class="dsf-card__media">
-      <svg viewBox="0 0 24 24" aria-hidden="true">
-        <path fill="currentColor" d="M8 5v14l11-7L8 5z"/>
-      </svg>
+  <section class="cli-kpis">
+    <article class="cli-kpi">
+      <span class="cli-kpi__label">Mis desafíos</span>
+      <strong class="cli-kpi__value">{{ resumen.misDesafios }}</strong>
+    </article>
+
+    <article class="cli-kpi">
+      <span class="cli-kpi__label">Activos</span>
+      <strong class="cli-kpi__value">{{ resumen.activos }}</strong>
+    </article>
+
+    <article class="cli-kpi">
+      <span class="cli-kpi__label">Completados</span>
+      <strong class="cli-kpi__value">{{ resumen.completados }}</strong>
+    </article>
+
+    <article class="cli-kpi">
+      <span class="cli-kpi__label">Puntos acumulados</span>
+      <strong class="cli-kpi__value">{{ resumen.puntosAcumulados }}</strong>
+    </article>
+  </section>
+
+  <section class="cli-section">
+    <div class="cli-section__head">
+      <div>
+        <h2 class="cli-section__title">Mis desafíos</h2>
+        <p class="cli-section__sub">
+          Tus inscripciones más recientes con el estado actual y el porcentaje de avance.
+        </p>
+      </div>
+
+      <button type="button" class="cli-link-btn" (click)="onVerMisDesafios()">
+        Ver todos
+      </button>
     </div>
-    <div class="dsf-card__body">
-      <h2 class="dsf-card__title">Ejemplo de desafío</h2>
-      <p class="dsf-card__desc">Contenido de prueba del módulo de desafíos (cliente).</p>
-      <button type="button" class="dsf-btn">VER MÁS →</button>
+
+    <div class="cli-grid cli-grid--mis" *ngIf="misDesafios.length > 0; else sinMisDesafios">
+      <article class="cli-card cli-card--mine" *ngFor="let d of misDesafios; trackBy: trackById">
+        <div class="cli-card__top">
+          <span class="chip chip--soft">{{ d.tipoResiduo }}</span>
+          <span class="chip" [ngClass]="getEstadoClase(d.estado)">
+            {{ d.estado }}
+          </span>
+        </div>
+
+        <h3 class="cli-card__title">{{ d.titulo }}</h3>
+        <p class="cli-card__desc">{{ d.descripcion }}</p>
+
+        <div class="cli-card__dates">
+          <span>Inicio: {{ d.fechaInicio | date:'dd/MM/yyyy' }}</span>
+          <span>Fin: {{ d.fechaFin ? (d.fechaFin | date:'dd/MM/yyyy') : '—' }}</span>
+        </div>
+
+        <div class="cli-progress">
+          <div class="cli-progress__head">
+            <span>Avance</span>
+            <strong>{{ d.progreso }}%</strong>
+          </div>
+          <div class="cli-progress__bar">
+            <div class="cli-progress__fill" [style.width]="getProgressWidth(d.progreso)"></div>
+          </div>
+        </div>
+
+        <div class="cli-card__footer">
+          <div class="cli-card__points">
+            <span>Puntos acumulados</span>
+            <strong>{{ d.puntosAcumulados }}</strong>
+          </div>
+
+          <button type="button" class="cli-btn cli-btn--ghost" (click)="onVerDetalle(d)">
+            Ver detalle
+          </button>
+        </div>
+      </article>
     </div>
-  </div>
+
+    <ng-template #sinMisDesafios>
+      <div class="cli-empty">
+        Todavía no estás participando en desafíos. Explorá las propuestas disponibles e inscribite en la que más te interese.
+      </div>
+    </ng-template>
+  </section>
+
+  <section class="cli-section">
+    <div class="cli-section__head">
+      <div>
+        <h2 class="cli-section__title">Explorar desafíos</h2>
+        <p class="cli-section__sub">
+          Desafíos disponibles publicados para que puedas conocerlos e inscribirte.
+        </p>
+      </div>
+
+      <button type="button" class="cli-link-btn" (click)="onExplorarTodos()">
+        Explorar todos
+      </button>
+    </div>
+
+    <div class="cli-grid cli-grid--explorar" *ngIf="explorarDesafios.length > 0; else sinExplorar">
+      <article class="cli-card" *ngFor="let d of explorarDesafios; trackBy: trackById">
+        <div class="cli-card__top">
+          <span class="chip chip--soft">{{ d.tipoResiduo }}</span>
+          <span class="chip" [ngClass]="getEstadoClase(d.estado)">
+            {{ d.estado }}
+          </span>
+        </div>
+
+        <h3 class="cli-card__title">{{ d.titulo }}</h3>
+        <p class="cli-card__desc">{{ d.descripcion }}</p>
+
+        <div class="cli-card__meta">
+          <span>Inicio: {{ d.fechaInicio | date:'dd/MM/yyyy' }}</span>
+          <span>Fin: {{ d.fechaFin ? (d.fechaFin | date:'dd/MM/yyyy') : '—' }}</span>
+          <span>{{ d.puntosTotales }} puntos</span>
+        </div>
+
+        <div class="cli-card__status" *ngIf="d.yaInscripto">
+          Ya estás inscripto en este desafío.
+        </div>
+
+        <div class="cli-card__actions">
+          <button type="button" class="cli-btn cli-btn--ghost" (click)="onVerDetalle(d)">
+            Ver desafío
+          </button>
+        </div>
+      </article>
+    </div>
+
+    <ng-template #sinExplorar>
+      <div class="cli-empty">
+        En este momento no hay desafíos disponibles para mostrar.
+      </div>
+    </ng-template>
+  </section>
 </section>

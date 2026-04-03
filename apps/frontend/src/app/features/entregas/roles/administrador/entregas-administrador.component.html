@@ -1,0 +1,244 @@
+<section class="entregas-admin-page">
+  <header class="page-head panel-soft">
+    <div class="page-head__row">
+      <div class="page-head__copy">
+        <h1 class="page-title">Entregas (Administrador)</h1>
+        <p class="page-sub">
+          Gestión de entregas: consulta, búsqueda, filtrado y visualización detallada.
+        </p>
+      </div>
+
+      <div class="quick-search">
+        <label class="quick-search__label" for="busquedaRapidaEntrega">Buscar por ID / código</label>
+        <div class="quick-search__row">
+          <input
+            id="busquedaRapidaEntrega"
+            type="text"
+            [value]="busquedaRapida()"
+            (input)="busquedaRapida.set($any($event.target).value)"
+            (keyup.enter)="buscarEntregaRapida()"
+            placeholder="Ej: 1058 o ENT-1058"
+          />
+          <button type="button" class="btn btn-primary" (click)="buscarEntregaRapida()">
+            Buscar
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <section class="stats-grid">
+    <article class="stat-card">
+      <div class="stat__num">{{ totalEntregas() }}</div>
+      <div class="stat__label">Total</div>
+    </article>
+
+    <article class="stat-card">
+      <div class="stat__num">{{ totalCreadas() }}</div>
+      <div class="stat__label">Creadas</div>
+    </article>
+
+    <article class="stat-card">
+      <div class="stat__num">{{ totalPendientes() }}</div>
+      <div class="stat__label">Pendientes</div>
+    </article>
+
+    <article class="stat-card">
+      <div class="stat__num">{{ totalValidadas() }}</div>
+      <div class="stat__label">Validadas</div>
+    </article>
+
+    <article class="stat-card">
+      <div class="stat__num">{{ totalRechazadas() }}</div>
+      <div class="stat__label">Rechazadas</div>
+    </article>
+
+    <article class="stat-card">
+      <div class="stat__num">{{ totalPuntos() }}</div>
+      <div class="stat__label">Puntos otorgados</div>
+    </article>
+
+    <article class="stat-card">
+      <div class="stat__num">{{ totalAnuladas() }}</div>
+      <div class="stat__label">Anuladas</div>
+    </article>
+  </section>
+
+  <section class="panel panel-filters">
+    <div class="filters-row filters-row--entregas">
+      <label class="field field--search">
+        <span class="field__label">Buscar</span>
+        <input
+          type="search"
+          class="search-input"
+          placeholder="ID, código, cliente, desafío, ubicación..."
+          [value]="q()"
+          (input)="q.set($any($event.target).value)"
+        />
+      </label>
+
+      <label class="field field--fixed">
+        <span class="field__label">Estado</span>
+        <select
+          [value]="getEstadoValue()"
+          (change)="onEstadoChange($any($event.target).value)"
+        >
+          <option *ngFor="let e of estados" [value]="e.value === 'todos' ? 'todos' : e.value">
+            {{ e.label }}
+          </option>
+        </select>
+      </label>
+
+      <label class="field field--fixed">
+        <span class="field__label">ID Cliente</span>
+        <input
+          type="number"
+          [value]="idCliente()"
+          (input)="idCliente.set($any($event.target).value)"
+          placeholder="Ej: 18"
+        />
+      </label>
+
+      <label class="field field--fixed">
+        <span class="field__label">ID Desafío</span>
+        <input
+          type="number"
+          [value]="idDesafio()"
+          (input)="idDesafio.set($any($event.target).value)"
+          placeholder="Ej: 1"
+        />
+      </label>
+
+      <label class="field field--fixed">
+        <span class="field__label">Desde</span>
+        <input
+          type="date"
+          [value]="fechaDesde()"
+          (input)="fechaDesde.set($any($event.target).value)"
+        />
+      </label>
+
+      <label class="field field--fixed">
+        <span class="field__label">Hasta</span>
+        <input
+          type="date"
+          [value]="fechaHasta()"
+          (input)="fechaHasta.set($any($event.target).value)"
+        />
+      </label>
+
+      <div class="filters__cta">
+        <button type="button" class="btn btn-secondary" (click)="limpiarFiltros()">
+          Limpiar
+        </button>
+        <button type="button" class="btn btn-primary" (click)="aplicarFiltros()">
+          Buscar
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel panel-table">
+    <div class="feedback feedback--error" *ngIf="errorMsg()">
+      {{ errorMsg() }}
+    </div>
+
+    <div class="table-scroll">
+      <table class="entregas-table">
+        <thead>
+          <tr>
+            <th class="th-id">ID</th>
+            <th>Código</th>
+            <th>Cliente</th>
+            <th>Desafío</th>
+            <th>Fecha creación</th>
+            <th>Estado</th>
+            <th class="th-actions">Acciones</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr *ngIf="loading()">
+            <td class="empty" colspan="7">
+              <div class="empty-box">
+                <div class="empty-title">Cargando…</div>
+                <div class="empty-sub">Obteniendo entregas</div>
+              </div>
+            </td>
+          </tr>
+
+          <tr *ngIf="!loading() && visibles().length === 0">
+            <td class="empty" colspan="7">
+              <div class="empty-box">
+                <div class="empty-title">No hay entregas para mostrar</div>
+                <div class="empty-sub">Ajustá los filtros o probá otra búsqueda.</div>
+              </div>
+            </td>
+          </tr>
+
+          <tr *ngFor="let item of visibles(); trackBy: trackByEntrega">
+            <td class="td-id td-center">{{ item.idEntrega }}</td>
+            <td class="td-strong td-center">{{ item.codigoVisible }}</td>
+            <td class="td-center">{{ item.clienteNombre }}</td>
+            <td class="td-center">{{ item.desafioTitulo }}</td>
+            <td class="td-center">{{ item.fechaCreacion | date:'dd/MM/yyyy HH:mm' }}</td>
+            <td class="td-center">
+              <span class="pill pill--lg" [ngClass]="getEstadoClass(item.estado)">
+                {{ getEstadoLabel(item.estado) }}
+              </span>
+            </td>
+            <td class="td-actions">
+              <div class="actions-inline">
+                <button
+                  type="button"
+                  class="icon-btn icon-btn--large"
+                  (click)="verEntrega(item)"
+                  title="Ver detalle"
+                >
+                  👁️
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="pager" *ngIf="!loading() && filtradas().length > 0">
+      <div class="pager__info">
+        Página {{ page() }} de {{ totalPages() }} —
+        Mostrando {{ visibles().length }} de {{ filtradas().length }}
+      </div>
+
+      <div class="pager__actions">
+        <button
+          type="button"
+          class="btn btn-secondary"
+          (click)="prevPage()"
+          [disabled]="page() <= 1"
+        >
+          ‹ Anterior
+        </button>
+
+        <button
+          type="button"
+          class="btn btn-primary"
+          (click)="nextPage()"
+          [disabled]="page() >= totalPages()"
+        >
+          Siguiente ›
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <app-entrega-operario-modal
+    [visible]="modalVisible()"
+    [entrega]="entregaSeleccionada()"
+    (closeModal)="cerrarModal()"
+    (validarEntrega)="onValidarEntrega($event)"
+    (rechazarEntrega)="onRechazarEntrega($event)"
+    (volverPendiente)="onVolverPendiente($event)"
+    (confirmarPuntos)="onConfirmarPuntos($event)"
+  />
+</section>

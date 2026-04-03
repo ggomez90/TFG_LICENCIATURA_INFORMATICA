@@ -6,6 +6,7 @@ import { CreateVoucherTipoDto } from './create-voucher-tipo.dto';
 import { UpdateVoucherTipoDto } from './update-voucher-tipo.dto';
 import { UpdateActivaVoucherTipoDto } from './update-activa-voucher-tipo.dto';
 import { FilterVoucherTipoDto } from './filter-voucher-tipo.dto';
+import { FilterVoucherTipoClienteDto } from './filter-voucher-tipo-cliente.dto';
 
 @Injectable()
 export class VoucherTipoService {
@@ -26,6 +27,51 @@ export class VoucherTipoService {
     if (dto.fechaInicioVigencia) data.fechaInicioVigencia = new Date(dto.fechaInicioVigencia as any);
     if (dto.fechaFinVigencia) data.fechaFinVigencia = new Date(dto.fechaFinVigencia as any);
     return data;
+  }
+
+  private async findUsuarioByIdentifier(idOrIdentifier: number | string) {
+    let usuario: any = null;
+
+    if (typeof idOrIdentifier === 'number' || /^\d+$/.test(String(idOrIdentifier))) {
+      usuario = await this.prisma.usuario.findUnique({
+        where: { idUsuario: Number(idOrIdentifier) },
+      });
+    } else {
+      const identifier = String(idOrIdentifier).trim();
+      usuario = await this.prisma.usuario.findFirst({
+        where: {
+          OR: [
+            { usuario: identifier },
+            { email: identifier },
+            { dniCuitCuil: identifier },
+          ],
+        },
+      });
+    }
+
+    if (!usuario) throw new NotFoundException('Usuario no encontrado');
+    return usuario;
+  }
+
+  private async resolveClienteIdFromIdentifier(identifier: string): Promise<number> {
+    const usuario = await this.findUsuarioByIdentifier(identifier);
+    return usuario.idUsuario;
+  }
+
+  private async getClienteConPuntos(idCliente: number) {
+    const cliente = await this.prisma.cliente.findUnique({
+      where: { idCliente },
+      select: {
+        idCliente: true,
+        puntos: true,
+      },
+    });
+
+    if (!cliente) {
+      throw new NotFoundException('Cliente no encontrado');
+    }
+
+    return cliente;
   }
 
   // Listado (ADMIN)
@@ -128,5 +174,114 @@ export class VoucherTipoService {
     });
     if (!item) throw new NotFoundException('Tipo de voucher no encontrado');
     return item;
+  }
+
+  async findDisponiblesCliente(
+    filter: FilterVoucherTipoClienteDto,
+    ctx: { identifier: string },
+  ) {
+    const {
+      limit = 20,
+      offset = 0,
+      sortBy = 'puntosRequeridos',
+      order = 'asc',
+      soloCanjeables,
+    } = filter as any;
+
+    const idCliente = await this.resolveClienteIdFromIdentifier(ctx.identifier);
+    const cliente = await this.getClienteConPuntos(idCliente);
+    const puntosDisponibles = Number(cliente.puntos ?? 0);
+
+    const now = new Date();
+
+    const where: Prisma.VoucherTipoWhereInput = {
+      activa: true,
+      fechaInicioVigencia: { lte: now },
+      fechaFinVigencia: { gte: now },
+    };
+
+    const sortField =
+      (sortBy ?? 'puntosRequeridos') as keyof Prisma.VoucherTipoOrderByWithRelationInput;
+    const sortOrder: Prisma.SortOrder =
+      (order ?? 'asc').toLowerCase() === 'desc' ? 'desc' : 'asc';
+
+    const orderBy: Prisma.VoucherTipoOrderByWithRelationInput = {
+      [sortField]: sortOrder,
+    };
+
+    const take = Number(limit);
+    const skip = Number(offset);
+
+    const [rawItems, total] = await this.prisma.$transaction([
+      this.prisma.voucherTipo.findMany({
+        where,
+        skip,
+        take,
+        orderBy,
+      }),
+      this.prisma.voucherTipo.count({ where }),
+    ]);
+
+    let items = rawItems.map((item) => {
+      const puntosRequeridos = Number(item.puntosRequeridos ?? 0);
+      const disponibleParaCanje = puntosDisponibles >= puntosRequeridos;
+      const puntosFaltantes = Math.max(0, puntosRequeridos - puntosDisponibles);
+
+      return {
+        ...item,
+        puntosDisponibles,
+        disponibleParaCanje,
+        puntosFaltantes,
+      };
+    });
+
+    if (soloCanjeables === true) {
+      items = items.filter((x) => x.disponibleParaCanje);
+    }
+
+    return {
+      items,
+      total: soloCanjeables === true ? items.length : total,
+      limit: take,
+      offset: skip,
+      sortBy,
+      order: sortOrder,
+      puntosDisponibles,
+    };
+  }
+
+  async findOneDisponibleCliente(
+    idVoucherTipo: number,
+    ctx: { identifier: string },
+  ) {
+    const idCliente = await this.resolveClienteIdFromIdentifier(ctx.identifier);
+    const cliente = await this.getClienteConPuntos(idCliente);
+    const puntosDisponibles = Number(cliente.puntos ?? 0);
+
+    const now = new Date();
+
+    const item = await this.prisma.voucherTipo.findFirst({
+      where: {
+        idVoucherTipo,
+        activa: true,
+        fechaInicioVigencia: { lte: now },
+        fechaFinVigencia: { gte: now },
+      },
+    });
+
+    if (!item) {
+      throw new NotFoundException('Tipo de voucher no disponible para cliente');
+    }
+
+    const puntosRequeridos = Number(item.puntosRequeridos ?? 0);
+    const disponibleParaCanje = puntosDisponibles >= puntosRequeridos;
+    const puntosFaltantes = Math.max(0, puntosRequeridos - puntosDisponibles);
+
+    return {
+      ...item,
+      puntosDisponibles,
+      disponibleParaCanje,
+      puntosFaltantes,
+    };
   }
 }

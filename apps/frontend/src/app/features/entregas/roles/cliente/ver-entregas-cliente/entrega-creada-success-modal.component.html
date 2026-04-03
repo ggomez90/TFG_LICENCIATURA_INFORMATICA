@@ -1,0 +1,54 @@
+<div class="success-backdrop" *ngIf="visible" (click)="close()"></div>
+
+<section class="success-modal" *ngIf="visible" role="dialog" aria-modal="true">
+  <header class="success-header">
+    <div class="icon-wrap">
+      <span class="material-symbols-outlined">check_circle</span>
+    </div>
+
+    <div class="header-copy">
+      <span class="eyebrow">Entrega registrada</span>
+      <h2>La entrega fue creada correctamente</h2>
+      <p>
+        Guarda este código. Será el identificador que el cliente deberá presentar
+        al momento de validar la entrega.
+      </p>
+    </div>
+  </header>
+
+  <div class="codigo-box">
+    <span class="codigo-label">Código de entrega</span>
+    <strong>{{ codigo }}</strong>
+  </div>
+
+  <div class="summary-grid">
+    <div class="summary-card">
+      <span class="label">Desafío</span>
+      <strong>{{ desafioTitulo || 'Desafío seleccionado' }}</strong>
+    </div>
+
+    <div class="summary-card">
+      <span class="label">Cantidad declarada</span>
+      <strong>{{ cantidad }} {{ unidadMedida }}</strong>
+    </div>
+
+    <div class="summary-card">
+      <span class="label">Estado inicial</span>
+      <strong>{{ estadoLabel }}</strong>
+    </div>
+  </div>
+
+  <div class="info-note">
+    <span class="material-symbols-outlined">info</span>
+    <span>
+      La entrega quedó registrada en estado <strong>{{ estadoLabel }}</strong>. Ahora podrá
+      verse, editarse o confirmarse según corresponda.
+    </span>
+  </div>
+
+  <footer class="success-footer">
+    <button type="button" class="btn btn-primary" (click)="close()">
+      Entendido
+    </button>
+  </footer>
+</section>

@@ -1,0 +1,278 @@
+<section class="listado-dashboard">
+  <div class="hero-card">
+    <div class="hero-copy">
+      <span class="hero-eyebrow">Yo_Reciclo · Operario</span>
+      <h1>Listado de entregas</h1>
+      <p>{{ subtitulo() }}</p>
+
+      <div class="hero-actions">
+        <button type="button" class="btn btn-secondary" (click)="volverDashboard()">
+          <span class="material-symbols-outlined">arrow_back</span>
+          Volver al dashboard
+        </button>
+      </div>
+    </div>
+
+    <div class="hero-highlight">
+      <div class="highlight-top">
+        <span class="chip chip-soft">
+          {{ origen() === 'pendientes' ? 'Vista operativa' : 'Vista completa' }}
+        </span>
+        <span class="chip">
+          {{ origen() === 'pendientes' ? 'Solo pendientes' : 'Todos los estados' }}
+        </span>
+      </div>
+
+      <h2>Control y trazabilidad de entregas</h2>
+
+      <div class="hero-note">
+        <span class="material-symbols-outlined">inventory_2</span>
+        <span>
+          Aquí puedes filtrar por estado, cliente, desafío, fechas y abrir cada entrega para operar sobre ella.
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <section class="panel panel-filters">
+    <div class="panel-head">
+      <div>
+        <span class="section-eyebrow">Filtros</span>
+        <h3>Filtrar entregas</h3>
+        <p>
+          Ajusta los criterios de búsqueda y recarga el listado con la combinación que necesites.
+        </p>
+      </div>
+    </div>
+
+    <div class="filters-grid">
+      <div class="field">
+        <label for="q">Buscar</label>
+        <input
+          id="q"
+          type="text"
+          [value]="q()"
+          (input)="q.set($any($event.target).value)"
+          placeholder="ID, código, cliente, desafío, ubicación..."
+        />
+      </div>
+
+      <div class="field">
+        <label for="estado">Estado</label>
+        <select
+          id="estado"
+          [value]="getEstadoValue()"
+          (change)="onEstadoChange($any($event.target).value)"
+        >
+          <option *ngFor="let e of estados" [value]="e.value === '' ? '' : e.value">
+            {{ e.label }}
+          </option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="idCliente">ID Cliente</label>
+        <input
+          id="idCliente"
+          type="number"
+          [value]="idCliente()"
+          (input)="idCliente.set($any($event.target).value)"
+          placeholder="Ej: 18"
+        />
+      </div>
+
+      <div class="field">
+        <label for="idDesafio">ID Desafío</label>
+        <input
+          id="idDesafio"
+          type="number"
+          [value]="idDesafio()"
+          (input)="idDesafio.set($any($event.target).value)"
+          placeholder="Ej: 1"
+        />
+      </div>
+
+      <div class="field">
+        <label for="fechaDesde">Desde</label>
+        <input
+          id="fechaDesde"
+          type="date"
+          [value]="fechaDesde()"
+          (input)="fechaDesde.set($any($event.target).value)"
+        />
+      </div>
+
+      <div class="field">
+        <label for="fechaHasta">Hasta</label>
+        <input
+          id="fechaHasta"
+          type="date"
+          [value]="fechaHasta()"
+          (input)="fechaHasta.set($any($event.target).value)"
+        />
+      </div>
+
+      <div class="field">
+        <label for="sortBy">Ordenar por</label>
+        <select
+          id="sortBy"
+          [value]="sortBy()"
+          (change)="sortBy.set($any($event.target).value)"
+        >
+          <option value="idEntrega">ID Entrega</option>
+          <option value="fechaCreacion">Fecha creación</option>
+          <option value="fechaVencimiento">Fecha vencimiento</option>
+          <option value="fechaValidacion">Fecha validación</option>
+          <option value="estado">Estado</option>
+          <option value="idCliente">ID Cliente</option>
+          <option value="idDesafio">ID Desafío</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="order">Dirección</label>
+        <select
+          id="order"
+          [value]="order()"
+          (change)="order.set($any($event.target).value)"
+        >
+          <option value="desc">Descendente</option>
+          <option value="asc">Ascendente</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="limit">Cantidad por página</label>
+        <select
+          id="limit"
+          [value]="getLimitValue()"
+          (change)="onLimitChange($any($event.target).value)"
+        >
+          <option value="10">10</option>
+          <option value="20">20</option>
+          <option value="50">50</option>
+          <option value="100">100</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="filter-actions">
+      <button type="button" class="btn btn-secondary" (click)="limpiarFiltros()">
+        <span class="material-symbols-outlined">filter_alt_off</span>
+        Limpiar filtros
+      </button>
+
+      <button type="button" class="btn btn-primary" (click)="aplicarFiltros()">
+        <span class="material-symbols-outlined">filter_alt</span>
+        Aplicar filtros
+      </button>
+    </div>
+  </section>
+
+  <section class="panel panel-history">
+    <div class="panel-head">
+      <div>
+        <span class="section-eyebrow">Resultados</span>
+        <h3>Entregas encontradas</h3>
+        <p>Total informado por la API: {{ total() }} · Mostrando {{ entregas().length }} registros en esta página.</p>
+      </div>
+    </div>
+
+    <div class="panel" *ngIf="loading()">
+      <p>Cargando entregas...</p>
+    </div>
+
+    <div class="panel" *ngIf="errorMsg() as error">
+      <p>{{ error }}</p>
+    </div>
+
+    <div class="table-wrap" *ngIf="!loading() && !errorMsg()">
+      <table class="history-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Código</th>
+            <th>Cliente</th>
+            <th>Desafío</th>
+            <th>Cantidad</th>
+            <th>Creación</th>
+            <th>Vencimiento</th>
+            <th>Estado</th>
+            <th>Ubicación</th>
+            <th class="th-actions">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let entrega of entregas(); trackBy: trackByEntrega">
+            <td class="codigo-cell">{{ entrega.idEntrega }}</td>
+            <td>{{ entrega.codigoVisible }}</td>
+            <td>{{ entrega.clienteNombre }}</td>
+            <td>{{ entrega.desafioTitulo }}</td>
+            <td>{{ entrega.cantidadDeclarada | number:'1.0-3' }} {{ entrega.unidadMedida }}</td>
+            <td>{{ entrega.fechaCreacion | date:'dd/MM/yyyy HH:mm' }}</td>
+            <td>{{ entrega.fechaVencimiento | date:'dd/MM/yyyy HH:mm' }}</td>
+            <td>
+              <span class="badge" [ngClass]="getEstadoClass(entrega.estado)">
+                {{ getEstadoLabel(entrega.estado) }}
+              </span>
+            </td>
+            <td>{{ entrega.ubicacion || '-' }}</td>
+            <td class="td-actions">
+              <button
+                type="button"
+                class="icon-btn"
+                title="Ver detalle"
+                (click)="openViewModal(entrega)"
+              >
+                <span class="material-symbols-outlined">visibility</span>
+              </button>
+            </td>
+          </tr>
+
+          <tr *ngIf="!entregas().length">
+            <td colspan="10" class="empty-row">
+              No se encontraron entregas con los filtros seleccionados.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="pager" *ngIf="!loading() && !errorMsg()">
+      <button
+        type="button"
+        class="btn btn-secondary"
+        (click)="changePage(-1)"
+        [disabled]="currentPage() <= 1"
+      >
+        <span class="material-symbols-outlined">chevron_left</span>
+        Anterior
+      </button>
+
+      <div class="pager-info">
+        <strong>Página {{ currentPage() }}</strong>
+        <span>de {{ totalPages() }}</span>
+      </div>
+
+      <button
+        type="button"
+        class="btn btn-secondary"
+        (click)="changePage(1)"
+        [disabled]="currentPage() >= totalPages()"
+      >
+        Siguiente
+        <span class="material-symbols-outlined">chevron_right</span>
+      </button>
+    </div>
+  </section>
+</section>
+
+<app-entrega-operario-modal
+  [visible]="modalVisible()"
+  [entrega]="entregaSeleccionada()"
+  (closeModal)="closeModal()"
+  (validarEntrega)="onValidarEntrega($event)"
+  (rechazarEntrega)="onRechazarEntrega($event)"
+  (volverPendiente)="onVolverPendiente($event)"
+  (confirmarPuntos)="onConfirmarPuntos($event)"
+/>

@@ -34,8 +34,8 @@
           />
         </label>
 
-        <!-- VISIBLE -->
-        <label class="dsf-field">
+        <!-- VISIBLE (solo admin) -->
+        <label class="dsf-field" *ngIf="isAdmin">
           <span class="dsf-field__label">Visible</span>
           <select
             class="dsf-input"
@@ -104,7 +104,9 @@
             <th>Fecha publicación</th>
             <th>Título</th>
             <th>Visualización</th>
-            <th class="dsf-table__th--actions">Acciones</th>
+            <th class="dsf-table__th--actions">
+              {{ isAdmin ? 'Acciones' : 'Ver' }}
+            </th>
           </tr>
         </thead>
         <tbody>

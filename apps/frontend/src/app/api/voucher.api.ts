@@ -16,6 +16,8 @@ export interface VoucherListItem {
   voucherTipo?: {
     idVoucherTipo: number;
     titulo: string;
+    puntosRequeridos?: number;
+    montoBeneficio?: number;
   };
 }
 
@@ -65,6 +67,24 @@ export interface UpdateEstadoVoucherPayload {
   fechaUso?: string;
 }
 
+export interface AdquirirVoucherClientePayload {
+  idVoucherTipo: number;
+}
+
+export interface AdquirirVoucherClienteResponse {
+  message: string;
+  voucher: VoucherListItem;
+  puntosDebitados: number;
+  puntosDisponibles: number;
+}
+
+export interface AnularVoucherClienteResponse {
+  message: string;
+  voucher: VoucherListItem;
+  puntosReintegrados: number;
+  puntosDisponibles: number;
+}
+
 @Injectable({ providedIn: 'root' })
 export class VoucherApi {
   private http = inject(HttpClient);
@@ -106,5 +126,13 @@ export class VoucherApi {
 
   existsForTipo(idVoucherTipo: number): Observable<{ exists: boolean }> {
     return this.http.get<{ exists: boolean }>(`${this.base}/existe-tipo/${idVoucherTipo}`);
+  }
+
+  adquirirCliente(payload: AdquirirVoucherClientePayload): Observable<AdquirirVoucherClienteResponse> {
+    return this.http.post<AdquirirVoucherClienteResponse>(`${this.base}/cliente/adquirir`, payload);
+  }
+
+  anularCliente(idVoucher: number): Observable<AnularVoucherClienteResponse> {
+    return this.http.post<AnularVoucherClienteResponse>(`${this.base}/${idVoucher}/cliente/anular`, {});
   }
 }

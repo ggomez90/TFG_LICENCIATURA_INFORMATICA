@@ -1,0 +1,161 @@
+<section class="mis-vouchers-page">
+  <header class="page-header">
+    <div>
+      <p class="page-header__eyebrow">Gestión personal</p>
+      <h1 class="page-header__title">Mis vouchers</h1>
+      <p class="page-header__text">
+        Consultá tus vouchers adquiridos, su estado actual y las acciones disponibles.
+      </p>
+    </div>
+
+    <div class="page-header__actions">
+      <button type="button" class="dsf-btn dsf-btn--ghost" (click)="irAlDashboard()">
+        Ir al dashboard
+      </button>
+      <button type="button" class="dsf-btn dsf-btn--primary" (click)="irADisponibles()">
+        Ver disponibles
+      </button>
+    </div>
+  </header>
+
+  <section class="filters-card">
+    <div class="filters-card__left">
+      <label class="filter-field">
+        <span>Buscar</span>
+        <input
+          type="text"
+          [ngModel]="busqueda()"
+          (ngModelChange)="busqueda.set($event)"
+          placeholder="Código o tipo de voucher"
+        />
+      </label>
+    </div>
+
+    <div class="filters-card__right">
+      <button
+        type="button"
+        class="filter-chip"
+        [class.filter-chip--active]="filtroEstado() === 'TODOS'"
+        (click)="filtroEstado.set('TODOS')"
+      >
+        Todos
+      </button>
+
+      <button
+        type="button"
+        class="filter-chip"
+        [class.filter-chip--active]="filtroEstado() === 'ADQUIRIDO'"
+        (click)="filtroEstado.set('ADQUIRIDO')"
+      >
+        Adquiridos
+      </button>
+
+      <button
+        type="button"
+        class="filter-chip"
+        [class.filter-chip--active]="filtroEstado() === 'UTILIZADO'"
+        (click)="filtroEstado.set('UTILIZADO')"
+      >
+        Utilizados
+      </button>
+
+      <button
+        type="button"
+        class="filter-chip"
+        [class.filter-chip--active]="filtroEstado() === 'ANULADO'"
+        (click)="filtroEstado.set('ANULADO')"
+      >
+        Anulados
+      </button>
+    </div>
+  </section>
+
+
+  <div *ngIf="loading" class="info-box">Cargando vouchers...</div>
+  <div *ngIf="!loading && error" class="info-box info-box--error">{{ error }}</div>
+
+  <section class="summary-grid">
+    <article class="summary-card">
+      <span class="summary-card__label">Total filtrado</span>
+      <strong class="summary-card__value">{{ vouchersFiltrados().length }}</strong>
+    </article>
+
+    <article class="summary-card">
+      <span class="summary-card__label">Adquiridos</span>
+      <strong class="summary-card__value">{{ cantidadAdquiridos() }}</strong>
+    </article>
+
+    <article class="summary-card">
+      <span class="summary-card__label">Utilizados</span>
+      <strong class="summary-card__value">{{ cantidadUtilizados() }}</strong>
+    </article>
+
+    <article class="summary-card">
+      <span class="summary-card__label">Anulados</span>
+      <strong class="summary-card__value">{{ cantidadAnulados() }}</strong>
+    </article>
+  </section>
+
+  <section class="table-card">
+    <div class="table-wrap">
+      <table class="dsf-table dsf-table--centered">
+        <thead>
+          <tr>
+            <th>Código</th>
+            <th>Tipo</th>
+            <th>Beneficio</th>
+            <th>Puntos</th>
+            <th>Estado</th>
+            <th>F. adquisición</th>
+            <th>F. uso</th>
+            <th class="th-actions">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of vouchersFiltrados(); trackBy: trackById">
+            <td>#{{ item.codigo }}</td>
+            <td>{{ item.tipoTitulo }}</td>
+            <td>$ {{ item.montoBeneficio }}</td>
+            <td>{{ item.puntosRequeridos }}</td>
+            <td>
+              <span [class]="getEstadoClase(item.estado)">
+                {{ item.estado }}
+              </span>
+            </td>
+            <td>{{ item.fechaAdquisicion | date:'dd/MM/yyyy' }}</td>
+            <td>
+              <ng-container *ngIf="item.fechaUso; else noUso">
+                {{ item.fechaUso | date:'dd/MM/yyyy' }}
+              </ng-container>
+              <ng-template #noUso>-</ng-template>
+            </td>
+            <td class="td-actions">
+              <div class="row-actions">
+                <button type="button" class="table-action-btn table-action-btn--view" (click)="verVoucher(item.idVoucher)">
+                  VER
+                </button>
+
+                <button
+                  *ngIf="puedeAnular(item)"
+                  type="button"
+                  class="table-action-btn table-action-btn--danger"
+                  (click)="anularVoucher(item.idVoucher)"
+                >
+                  ANULAR
+                </button>
+              </div>
+            </td>
+          </tr>
+
+          <tr *ngIf="!vouchersFiltrados().length">
+            <td colspan="8">
+              <div class="empty-state">
+                No hay vouchers para los filtros seleccionados.
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+</section>

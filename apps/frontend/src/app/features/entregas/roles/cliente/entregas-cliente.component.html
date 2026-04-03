@@ -1,65 +1,334 @@
-<!--La vista es solo decorativa, no posee logica-->
-<section class="dsf-wrap">
-  <header class="dsf-header">
-    <h1 class="dsf-title">Mis Entregas (Cliente)</h1>
-    <p class="dsf-sub">Historial de entregas asociadas a tus desafíos inscriptos. Filtrá por estado o buscá por nombre/ID.</p>
-  </header>
+<section class="entregas-dashboard">
+  <div class="hero-card">
+    <div class="hero-copy">
+      <span class="hero-eyebrow">Yo_Reciclo · Cliente</span>
+      <h1>Mis entregas</h1>
+      <p>
+        Registrá entregas sobre tus desafíos activos, gestioná borradores antes de confirmarlos
+        y seguí el estado de validación de cada registro.
+      </p>
 
-  <div class="dsf-toolbar">
-    <div class="dsf-field">
-      <label for="buscar">Buscar</label>
-      <input id="buscar" #buscarInput type="text" placeholder="Buscar por desafío o ID…"
-             (input)="q.set(buscarInput.value)" />
+      <div class="hero-actions">
+        <button type="button" class="btn btn-primary" (click)="goToDesafiosEntregables()">
+          <span class="material-symbols-outlined">add_circle</span>
+          Registrar nueva entrega
+        </button>
+
+        <button type="button" class="btn btn-secondary" (click)="goToListadoEntregas('historial')">
+          <span class="material-symbols-outlined">history</span>
+          Ver historial completo
+        </button>
+      </div>
     </div>
 
-    <div class="dsf-field">
-      <label for="estado">Estado</label>
-      <select id="estado" #estadoSel (change)="onEstadoChange($any(estadoSel).value)">
-        <option value="todos">Todos</option>
-        <option value="pendiente">Pendiente</option>
-        <option value="aprobada">Aprobada</option>
-        <option value="rechazada">Rechazada</option>
-      </select>
+    <div class="hero-highlight" *ngIf="desafioDestacado() as destacado">
+      <div class="highlight-top">
+        <span class="chip chip-soft">Desafío destacado</span>
+        <span class="chip">{{ destacado.tipoResiduo }}</span>
+      </div>
+
+      <h2>{{ destacado.titulo }}</h2>
+
+      <div class="highlight-meta">
+        <div class="meta-item">
+          <span class="label">Meta</span>
+          <strong>{{ destacado.meta | number:'1.0-3' }} {{ destacado.unidadMedida }}</strong>
+        </div>
+        <div class="meta-item">
+          <span class="label">Progreso actual</span>
+          <strong>{{ getProgressLabel(destacado.progresoActual) }}</strong>
+        </div>
+        <div class="meta-item">
+          <span class="label">Comprometido</span>
+          <strong>{{ getProgressLabel(destacado.progresoComprometido) }}</strong>
+        </div>
+      </div>
+
+      <div class="progress-block">
+        <div class="progress-head">
+          <span>Progreso proyectado</span>
+          <strong>{{ getProgressLabel(destacado.progresoTotalProyectado) }}</strong>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill" [style.width]="getProgressLabel(destacado.progresoTotalProyectado)"></div>
+        </div>
+      </div>
+
+      <div class="hero-note">
+        <span class="material-symbols-outlined">info</span>
+        <span>
+          El destacado se define sobre desafíos donde el cliente está inscripto y aún puede registrar entregas.
+        </span>
+      </div>
+
+      <button
+        type="button"
+        class="btn btn-ghost"
+        [disabled]="!destacado.disponibleParaEntrega"
+        (click)="openCreateModal(destacado)"
+      >
+        <span class="material-symbols-outlined">outbox</span>
+        Registrar entrega en este desafío
+      </button>
     </div>
   </div>
 
-  <div class="dsf-grid">
-    <article class="dsf-card" *ngFor="let e of entregas()">
-      <div class="dsf-card__media">
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path fill="currentColor" d="M19 3H5a2 2 0 0 0-2 2v12l4-4h12a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2z"/>
-        </svg>
+  <div class="panel" *ngIf="loading()">
+    <p>Cargando entregas del cliente...</p>
+  </div>
+
+  <div class="panel" *ngIf="errorMsg() as error">
+    <p>{{ error }}</p>
+  </div>
+
+  <div class="kpis-grid" *ngIf="!loading() && !errorMsg()">
+    <article class="kpi-card" *ngFor="let kpi of kpis(); trackBy: trackByKpi">
+      <div class="kpi-icon">
+        <span class="material-symbols-outlined">{{ kpi.icon }}</span>
       </div>
-
-      <div class="dsf-card__body">
-        <div class="dsf-card__head">
-          <h2 class="dsf-card__title">{{ e.desafio }}</h2>
-          <span class="badge" [class.ok]="estadoBadgeClass(e.estado)==='ok'"
-                             [class.warn]="estadoBadgeClass(e.estado)==='warn'"
-                             [class.err]="estadoBadgeClass(e.estado)==='err'">
-            {{ estadoLabel(e.estado) }}
-          </span>
-        </div>
-
-        <p class="dsf-card__meta">
-          <strong>ID:</strong> {{ e.id }} ·
-          <strong>Fecha:</strong> {{ e.fecha | date:'dd/MM/yyyy' }} ·
-          <strong>Puntos:</strong> +{{ e.puntos }}
-        </p>
-
-        <p class="dsf-card__desc" *ngIf="e.observaciones">
-          <strong>Observaciones:</strong> {{ e.observaciones }}
-        </p>
-
-        <div class="dsf-card__actions">
-          <a class="dsf-btn ghost" routerLink="/app/desafios">Ver desafío</a>
-          <button type="button" class="dsf-btn">Detalle</button>
-        </div>
+      <div class="kpi-body">
+        <span class="kpi-label">{{ kpi.label }}</span>
+        <strong class="kpi-value">{{ kpi.value }}</strong>
+        <small class="kpi-helper">{{ kpi.helper }}</small>
       </div>
-    </article>
-
-    <article class="dsf-empty" *ngIf="entregas().length === 0">
-      <p>No se encontraron entregas con los filtros actuales.</p>
     </article>
   </div>
+
+  <div class="content-grid" *ngIf="!loading() && !errorMsg()">
+    <section class="panel panel-wide">
+      <div class="panel-head">
+        <div>
+          <span class="section-eyebrow">Acción principal</span>
+          <h3>Desafíos desde los que puedes registrar entregas</h3>
+          <p>
+            Se muestran inscripciones vigentes y desafíos activos. Si el desafío está pausado,
+            vencido o completado, se informa visualmente.
+          </p>
+        </div>
+
+        <button type="button" class="btn btn-secondary" (click)="goToDesafiosEntregables()">
+          <span class="material-symbols-outlined">list</span>
+          Ver todos
+        </button>
+      </div>
+
+      <div class="desafios-grid">
+        <article
+          class="desafio-card"
+          *ngFor="let desafio of desafiosAccionPrincipal(); trackBy: trackByDesafio"
+        >
+          <div class="card-top">
+            <span class="chip chip-soft">{{ desafio.tipoResiduo }}</span>
+
+            <span class="status-ready" *ngIf="desafio.disponibleParaEntrega">
+              Disponible
+            </span>
+
+            <span class="status-blocked" *ngIf="!desafio.disponibleParaEntrega">
+              {{ desafio.motivoBloqueo || 'No disponible' }}
+            </span>
+          </div>
+
+          <h4>{{ desafio.titulo }}</h4>
+
+          <div class="desafio-details">
+            <div>
+              <span class="label">Meta</span>
+              <strong>{{ desafio.meta | number:'1.0-3' }} {{ desafio.unidadMedida }}</strong>
+            </div>
+            <div>
+              <span class="label">Progreso actual</span>
+              <strong>{{ getProgressLabel(desafio.progresoActual) }}</strong>
+            </div>
+            <div>
+              <span class="label">Comprometido</span>
+              <strong>{{ getProgressLabel(desafio.progresoComprometido) }}</strong>
+            </div>
+          </div>
+
+          <div class="progress-block compact">
+            <div class="progress-head">
+              <span>Proyección total</span>
+              <strong>{{ getProgressLabel(desafio.progresoTotalProyectado) }}</strong>
+            </div>
+            <div class="progress-bar">
+              <div class="progress-fill" [style.width]="getProgressLabel(desafio.progresoTotalProyectado)"></div>
+            </div>
+          </div>
+
+          <button
+            type="button"
+            class="btn btn-primary btn-full"
+            [disabled]="!desafio.disponibleParaEntrega"
+            (click)="openCreateModal(desafio)"
+          >
+            <span class="material-symbols-outlined">add_task</span>
+            Registrar entrega
+          </button>
+        </article>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-head">
+        <div>
+          <span class="section-eyebrow">Seguimiento</span>
+          <h3>Borradores pendientes de confirmación</h3>
+          <p>
+            Aquí se muestran solo entregas en estado creada, para que el cliente pueda
+            verlas, editarlas, confirmarlas o anularlas.
+          </p>
+        </div>
+
+        <button type="button" class="btn btn-secondary" (click)="goToListadoEntregas('seguimiento')">
+          <span class="material-symbols-outlined">list_alt</span>
+          Ver todas
+        </button>
+      </div>
+
+      <div class="empty-state" *ngIf="!entregasBorrador().length">
+        <span class="material-symbols-outlined">task_alt</span>
+        <strong>No tienes entregas en borrador</strong>
+        <p>Cuando registres una nueva entrega en estado creada, aparecerá aquí.</p>
+      </div>
+
+      <div class="action-list" *ngIf="entregasBorrador().length">
+        <article
+          class="action-card"
+          *ngFor="let entrega of entregasBorrador(); trackBy: trackByEntrega"
+        >
+          <div class="action-card-head">
+            <div>
+              <h4>{{ entrega.desafioTitulo }}</h4>
+              <small>{{ entrega.codigoVisible }}</small>
+            </div>
+
+            <span class="badge" [ngClass]="getEstadoClass(entrega.estado)">
+              {{ getEstadoLabel(entrega.estado) }}
+            </span>
+          </div>
+
+          <div class="action-meta">
+            <div>
+              <span class="label">Cantidad declarada</span>
+              <strong>{{ entrega.cantidadDeclarada | number:'1.0-3' }} {{ entrega.unidadMedida }}</strong>
+            </div>
+            <div>
+              <span class="label">Creación</span>
+              <strong>{{ entrega.fechaCreacion | date:'dd/MM/yyyy HH:mm' }}</strong>
+            </div>
+            <div>
+              <span class="label">Vencimiento</span>
+              <strong>{{ entrega.fechaVencimiento | date:'dd/MM/yyyy' }}</strong>
+            </div>
+          </div>
+
+          <p class="obs" *ngIf="entrega.observaciones">
+            {{ entrega.observaciones }}
+          </p>
+
+          <div class="action-buttons">
+            <button type="button" class="btn btn-secondary" (click)="openViewModal(entrega)">
+              <span class="material-symbols-outlined">visibility</span>
+              Ver
+            </button>
+
+            <button type="button" class="btn btn-secondary" (click)="openEditModal(entrega)">
+              <span class="material-symbols-outlined">edit_square</span>
+              Editar
+            </button>
+
+            <button type="button" class="btn btn-primary" (click)="confirmarEntrega(entrega)">
+              <span class="material-symbols-outlined">check_circle</span>
+              Confirmar
+            </button>
+          </div>
+        </article>
+      </div>
+    </section>
+  </div>
+
+  <section class="panel panel-history" *ngIf="!loading() && !errorMsg()">
+    <div class="panel-head">
+      <div>
+        <span class="section-eyebrow">Historial reciente</span>
+        <h3>Últimas entregas registradas</h3>
+        <p>
+          Resumen rápido del historial de entregas del cliente con su estado actual
+          y código visible.
+        </p>
+      </div>
+
+      <button type="button" class="btn btn-secondary" (click)="goToListadoEntregas('historial')">
+        <span class="material-symbols-outlined">visibility</span>
+        Ver todos
+      </button>
+    </div>
+
+    <div class="table-wrap">
+      <table class="history-table">
+        <thead>
+          <tr>
+            <th>Código</th>
+            <th>Desafío</th>
+            <th>Fecha</th>
+            <th>Cantidad</th>
+            <th>Estado</th>
+            <th>Puntos</th>
+            <th class="th-actions">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let entrega of historialReciente(); trackBy: trackByEntrega">
+            <td class="codigo-cell">{{ entrega.codigoVisible }}</td>
+            <td>{{ entrega.desafioTitulo }}</td>
+            <td>{{ entrega.fechaCreacion | date:'dd/MM/yyyy HH:mm' }}</td>
+            <td>{{ entrega.cantidadDeclarada | number:'1.0-3' }} {{ entrega.unidadMedida }}</td>
+            <td>
+              <span class="badge" [ngClass]="getEstadoClass(entrega.estado)">
+                {{ getEstadoLabel(entrega.estado) }}
+              </span>
+            </td>
+            <td>{{ entrega.puntosEstimados ?? 0 }}</td>
+            <td class="td-actions">
+              <button type="button" class="icon-btn" (click)="openViewModal(entrega)" title="Ver detalle">
+                <span class="material-symbols-outlined">visibility</span>
+              </button>
+
+              <button
+                type="button"
+                class="icon-btn"
+                *ngIf="entrega.estado === 1"
+                (click)="openEditModal(entrega)"
+                title="Editar"
+              >
+                <span class="material-symbols-outlined">edit</span>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
 </section>
+
+<app-entrega-cliente-modal
+  [visible]="modalVisible()"
+  [mode]="modalMode()"
+  [entrega]="entregaSeleccionada()"
+  [desafio]="desafioSeleccionado()"
+  (closeModal)="closeModal()"
+  (saveEntrega)="onSaveEntrega($event)"
+  (anularEntrega)="onAnularEntrega($event)"
+  (editEntrega)="openEditModal($event.entrega)"
+/>
+
+<app-entrega-creada-success-modal
+  [visible]="successModalVisible()"
+  [codigo]="successCodigo()"
+  [desafioTitulo]="successDesafioTitulo()"
+  [cantidad]="successCantidad()"
+  [unidadMedida]="successUnidadMedida()"
+  [estadoLabel]="'Creada'"
+  (closeModal)="closeSuccessModal()"
+/>

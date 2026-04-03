@@ -149,7 +149,7 @@
       <table class="dsf-table">
         <thead>
           <tr>
-            <!-- SIN COLUMNA ID -->
+            <th class="dsf-th--id">ID</th>
             <th>Título</th>
             <th>Vigencia</th>
             <th>Estado</th>
@@ -158,6 +158,7 @@
         </thead>
         <tbody>
           <tr *ngFor="let t of items">
+            <td class="dsf-td--center dsf-td--id">{{ t.idVoucherTipo }}</td>
             <td class="dsf-table__cell--strong dsf-td--title">{{ getTituloPlano(t.titulo) }}</td>
             <td class="dsf-td--center">
               {{ t.fechaInicioVigencia | date : 'dd/MM/yyyy' }} – {{ t.fechaFinVigencia ? (t.fechaFinVigencia | date : 'dd/MM/yyyy') : '—' }}

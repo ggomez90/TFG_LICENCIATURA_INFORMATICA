@@ -218,7 +218,7 @@ export class UsuarioService {
             ],
           });
         } else if (tipoCliente === '1' || tipoCliente === '2' || tipoCliente === '3') {
-          // Asegurá que exista la fila de Cliente y que el idTipoCliente coincida
+          // Asegura que exista la fila de Cliente y que el idTipoCliente coincida
           and.push({
             cliente: {
               is: {
@@ -485,5 +485,12 @@ export class UsuarioService {
       if (e?.code === 'P2002') return;
       throw e;
     }
+  }
+
+  // encontrar un usuario por id
+  async findOneById(id: number) {
+    return this.prisma.usuario.findUnique({
+      where: { idUsuario: id },
+    });
   }
 }

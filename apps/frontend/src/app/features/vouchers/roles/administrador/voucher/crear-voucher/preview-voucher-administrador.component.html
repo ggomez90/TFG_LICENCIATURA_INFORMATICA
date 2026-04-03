@@ -1,0 +1,110 @@
+<section class="dsf-wrap preview-voucher-tipo">
+  <header class="dsf-header">
+    <h1 class="dsf-title">Previsualización del voucher</h1>
+  </header>
+
+  <div class="dsf-card dsf-card--preview voucher-preview-card">
+    <div class="voucher-frame">
+      <div class="voucher-content">
+
+        <h2 class="voucher-title">{{ tipoTitulo || '(Tipo de voucher)' }}</h2>
+
+        <!-- FILA: CÓDIGO - BENEFICIO - ESTADO - PUNTOS -->
+        <div class="voucher-values voucher-values--4">
+          <div class="voucher-value">
+            <div class="label">Código</div>
+            <div class="value value--code-codigo"> {{ idVoucherEdit && idVoucherEdit > 0 ? ('#' + idVoucherEdit) : codigoTexto }} </div>
+          </div>
+
+          <div class="voucher-value">
+            <div class="label">Beneficio</div>
+            <div class="value">
+              <ng-container *ngIf="montoBeneficio !== undefined; else noMonto">
+                $ {{ montoBeneficio }}
+              </ng-container>
+              <ng-template #noMonto>-</ng-template>
+            </div>
+          </div>
+
+          <div class="voucher-value">
+            <div class="label">Estado</div>
+            <div class="value">
+              <span class="state-badge state-badge--ok">{{ estadoTexto }}</span>
+            </div>
+          </div>
+
+          <div class="voucher-value">
+            <div class="label">Puntos requeridos</div>
+            <div class="value">
+              <ng-container *ngIf="puntosRequeridos !== undefined; else noPuntos">
+                {{ puntosRequeridos }}
+              </ng-container>
+              <ng-template #noPuntos>-</ng-template>
+            </div>
+          </div>
+        </div>
+
+        <!-- BENEFICIARIO (debajo del estado, centrado y grande) -->
+        <div class="beneficiario-hero">
+          BENEFICIARIO:
+          {{ beneficiarioLinea1 || ('Cliente #' + (borrador.idCliente)) }}
+          <span *ngIf="beneficiarioLinea2"> - {{ beneficiarioLinea2 }}</span>
+        </div>
+
+        <!-- DESCRIPCIÓN REAL DEL VOUCHER-TIPO -->
+        <div class="voucher-description">
+          <h3>Descripción</h3>
+          <p>{{ tipoDescripcion || '(Sin descripción)' }}</p>
+        </div>
+
+        <!-- FECHAS -->
+        <div class="voucher-footer-row">
+          <div class="voucher-dates">
+            <div class="date-chip">
+              <span class="d-label">Fecha adquisición:</span>
+              <span class="d-value">{{ borrador.fechaAdquisicion | date:'dd/MM/yyyy' }}</span>
+            </div>
+
+            <div class="date-chip">
+              <span class="d-label">Fecha uso:</span>
+              <span class="d-value">-</span>
+            </div>
+          </div>
+
+          <div class="voucher-brand">
+            <img
+              src="/assets/img/escudo-muni.png"
+              alt="Escudo Gobierno de la Ciudad de Ceres"
+              class="f-escudo"
+            />
+            <div class="f-brand__text">
+              <span class="line1">Gobierno de la Ciudad</span>
+              <span class="line2">de Ceres</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <footer class="pv-actions">
+    <button type="button" class="dsf-btn dsf-btn--ghost" (click)="onVolver()">← Volver</button>
+    <div class="pv-actions__spacer"></div>
+
+    <button
+      *ngIf="mode !== 'edit'; else btnActualizarTpl"
+      type="button"
+      class="dsf-btn dsf-btn--primary pv-save-btn"
+      (click)="onGuardar()"
+    >
+      ✅ Guardar voucher
+    </button>
+
+    <ng-template #btnActualizarTpl>
+      <button type="button" class="dsf-btn dsf-btn--primary pv-save-btn" (click)="onActualizar()">
+        💾 Actualizar voucher
+      </button>
+    </ng-template>
+  </footer>
+</section>

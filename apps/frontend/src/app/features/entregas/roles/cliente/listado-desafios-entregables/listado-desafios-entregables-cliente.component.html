@@ -1,0 +1,140 @@
+<section class="page">
+  <div class="page-hero">
+    <div>
+      <span class="eyebrow">Entregas · Cliente</span>
+      <h1>Desafíos entregables</h1>
+      <p>
+        Aquí se muestran todos los desafíos a los que el cliente está inscripto
+        y desde los cuales puede o no registrar nuevas entregas.
+      </p>
+    </div>
+
+    <button type="button" class="btn btn-secondary" (click)="volver()">
+      <span class="material-symbols-outlined">arrow_back</span>
+      Volver
+    </button>
+  </div>
+
+  <section class="filters-card">
+    <div class="search-box">
+      <span class="material-symbols-outlined">search</span>
+      <input
+        type="text"
+        [ngModel]="q()"
+        (ngModelChange)="setQuery($event)"
+        placeholder="Buscar por título o tipo de residuo"
+      />
+    </div>
+
+    <div class="filters-inline">
+      <button type="button" class="filter-chip" [class.active]="filtroEstado() === 'TODOS'" (click)="setFiltroEstado('TODOS')">
+        Todos
+      </button>
+      <button type="button" class="filter-chip" [class.active]="filtroEstado() === 'DISPONIBLES'" (click)="setFiltroEstado('DISPONIBLES')">
+        Disponibles
+      </button>
+      <button type="button" class="filter-chip" [class.active]="filtroEstado() === 'BLOQUEADOS'" (click)="setFiltroEstado('BLOQUEADOS')">
+        No disponibles
+      </button>
+    </div>
+  </section>
+
+  <section class="filters-card" *ngIf="loading()">
+    <p>Cargando desafíos entregables...</p>
+  </section>
+
+  <section class="filters-card" *ngIf="errorMsg() as error">
+    <p>{{ error }}</p>
+  </section>
+
+  <section class="grid" *ngIf="!loading() && !errorMsg()">
+    <article class="card" *ngFor="let item of filteredItems()">
+      <div class="card-top">
+        <span class="chip chip-soft">{{ item.tipoResiduo }}</span>
+
+        <span class="state-ok" *ngIf="item.disponibleParaEntrega">Disponible</span>
+        <span class="state-block" *ngIf="!item.disponibleParaEntrega">
+          {{ item.motivoBloqueo || 'No disponible' }}
+        </span>
+      </div>
+
+      <h3>{{ item.titulo }}</h3>
+
+      <div class="meta-grid">
+        <div>
+          <span class="label">Meta</span>
+          <strong>{{ item.meta | number:'1.0-3' }} {{ item.unidadMedida }}</strong>
+        </div>
+        <div>
+          <span class="label">Fecha adhesión</span>
+          <strong>{{ item.fechaAdhesion | date:'dd/MM/yyyy' }}</strong>
+        </div>
+        <div>
+          <span class="label">Fecha fin</span>
+          <strong>{{ item.fechaFin ? (item.fechaFin | date:'dd/MM/yyyy') : 'Sin fecha' }}</strong>
+        </div>
+      </div>
+
+      <div class="progress-group">
+        <div class="progress-head">
+          <span>Avance actual</span>
+          <strong>{{ getProgressLabel(item.progresoActual) }}</strong>
+        </div>
+        <div class="bar">
+          <div class="fill fill-current" [style.width]="getProgressLabel(item.progresoActual)"></div>
+        </div>
+
+        <div class="progress-head">
+          <span>Comprometido</span>
+          <strong>{{ getProgressLabel(item.progresoComprometido) }}</strong>
+        </div>
+        <div class="bar">
+          <div class="fill fill-committed" [style.width]="getProgressLabel(item.progresoComprometido)"></div>
+        </div>
+
+        <div class="progress-head">
+          <span>Total proyectado</span>
+          <strong>{{ getProgressLabel(item.progresoTotalProyectado) }}</strong>
+        </div>
+        <div class="bar">
+          <div class="fill fill-total" [style.width]="getProgressLabel(item.progresoTotalProyectado)"></div>
+        </div>
+      </div>
+
+      <div class="footer-row">
+        <div class="points-box">
+          <span class="label">Puntos acumulados</span>
+          <strong>{{ item.puntosAcumulados }}</strong>
+        </div>
+
+        <button
+          type="button"
+          class="btn btn-primary"
+          [disabled]="!item.disponibleParaEntrega"
+          (click)="openCreateModal(item)"
+        >
+          <span class="material-symbols-outlined">add_task</span>
+          Registrar entrega
+        </button>
+      </div>
+    </article>
+  </section>
+</section>
+
+<app-entrega-cliente-modal
+  [visible]="modalVisible()"
+  mode="create"
+  [desafio]="desafioSeleccionado()"
+  (closeModal)="closeModal()"
+  (saveEntrega)="onSaveEntrega($event)"
+/>
+
+<app-entrega-creada-success-modal
+  [visible]="successModalVisible()"
+  [codigo]="successCodigo()"
+  [desafioTitulo]="successDesafioTitulo()"
+  [cantidad]="successCantidad()"
+  [unidadMedida]="successUnidadMedida()"
+  [estadoLabel]="'Creada'"
+  (closeModal)="closeSuccessModal()"
+/>

@@ -10,6 +10,14 @@ import { ClienteModule } from './modules/cliente';
 import { DesafioModule } from './modules/desafio';
 import { VoucherTipoModule } from './modules/voucher-tipo';
 import { VoucherModule } from './modules/voucher';
+import { LocalidadModule } from './modules/localidad';
+import { ProvinciaModule } from './modules/provincia';
+import { EntregaModule } from './modules/entrega';
+import { RespuestaModule } from './modules/respuesta';
+import { InscripcionModule } from './modules/inscripcion';
+import { MovimientosModule } from './modules/movimientos';
+import { NotificacionModule } from './modules/notificacion';
+import { UsuarioNotificacionMetaModule } from './modules/usuario-notificacion-meta/usuario-notificacion-meta.module';
 
 @Module({
   imports: [
@@ -23,6 +31,14 @@ import { VoucherModule } from './modules/voucher';
     DesafioModule,
     VoucherTipoModule,
     VoucherModule,
+    LocalidadModule,
+    ProvinciaModule,
+    EntregaModule,
+    RespuestaModule,
+    InscripcionModule,
+    MovimientosModule,
+    NotificacionModule,
+    UsuarioNotificacionMetaModule
   ],
   controllers: [],
   providers: [

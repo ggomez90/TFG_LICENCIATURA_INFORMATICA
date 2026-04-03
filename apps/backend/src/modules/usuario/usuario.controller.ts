@@ -49,6 +49,7 @@ export class UsuarioController {
     return this.usuarioService.meAndSync(user);
   }
 
+  //editar perfil propio
   @Patch('me')
   @UseGuards(KeycloakAuthGuard)
   async updateMe(@User() user: any, @Body() dto: UpdateUsuarioDto) {
@@ -73,6 +74,14 @@ export class UsuarioController {
   @Roles('ADMIN', 'ADMINISTRADOR')
   async findAll(@Query() filter: FilterUsuarioDto) {
     return this.usuarioService.findAll(filter);
+  }
+
+  //obtiene usuario por id - solo admin
+  @Get(':id')
+  @UseGuards(KeycloakAuthGuard, RolesGuard)
+  @Roles('ADMIN', 'ADMINISTRADOR')
+  async getById(@Param('id', ParseIntPipe) id: number) {
+    return this.usuarioService.findOneById(id);
   }
 
   @Patch(':id/enable')

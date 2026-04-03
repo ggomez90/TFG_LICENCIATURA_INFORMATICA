@@ -57,15 +57,16 @@ export class InscripcionService {
 
     const data: any = { ...dto };
 
-    // Si quien crea es CLIENTE va su propio idCliente
     if (ctx.actorRole === 'CLIENTE') {
       const myIdCliente = await this.resolveClienteIdFromIdentifier(ctx.identifier);
-      if (dto.idCliente !== myIdCliente) {
-        data.idCliente = myIdCliente;
+      data.idCliente = myIdCliente;
+    } else {
+      if (!dto.idCliente || Number(dto.idCliente) < 1) {
+        throw new BadRequestException('El idCliente es requerido para crear inscripciones como administrador.');
       }
+      data.idCliente = Number(dto.idCliente);
     }
 
-    // fechas
     if (dto.fechaAdhesion) data.fechaAdhesion = new Date(dto.fechaAdhesion);
     if (dto.fechaBaja) data.fechaBaja = new Date(dto.fechaBaja);
 
@@ -106,7 +107,7 @@ export class InscripcionService {
 
     if (idInscripcionDesafio) (where as any).idInscripcionDesafio = Number(idInscripcionDesafio);
     if (idDesafio) where.idDesafio = Number(idDesafio);
-    if (idEstadoDesafio) (where as any).idEstadoDesafio = Number(idEstadoDesafio);
+    if (idEstadoDesafio) (where as any).estado = Number(idEstadoDesafio);
     if (idTipoCliente) (where as any).idTipoCliente = Number(idTipoCliente);
     if (idRolUsuario) (where as any).idRolUsuario = Number(idRolUsuario);
 
@@ -182,7 +183,7 @@ export class InscripcionService {
     }
 
     const data: any = {
-      idEstadoDesafio: Number(dto.idEstadoDesafio),
+      estado: Number(dto.idEstadoDesafio),
     };
 
     return await (this.prisma as any)[this.MODEL].update({

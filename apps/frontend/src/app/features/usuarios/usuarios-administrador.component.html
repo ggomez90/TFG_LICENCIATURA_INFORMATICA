@@ -1,73 +1,74 @@
-<section class="dsf-wrap">
-  <header class="dsf-header">
-    <h1 class="dsf-title">Usuarios (Administrador)</h1>
-    <p class="dsf-sub">Gestión de usuarios: creación, listado, búsqueda, visualización y edición.</p>
+<section class="users-admin-page">
+  <header class="page-head panel-soft">
+    <div class="page-head__copy">
+      <h1 class="page-title">Usuarios (Administrador)</h1>
+      <p class="page-sub">
+        Gestión de usuarios: creación, listado, búsqueda, visualización y edición.
+      </p>
+    </div>
   </header>
 
-  <!-- Resumen y Contadores -->
-  <div class="dsf-grid stats">
-    <article class="dsf-card stat">
+  <section class="stats-grid">
+    <article class="stat-card">
       <div class="stat__num">{{ counters().total }}</div>
       <div class="stat__label">Total</div>
     </article>
 
-    <article class="dsf-card stat">
+    <article class="stat-card">
       <div class="stat__num">{{ counters().activos }}</div>
       <div class="stat__label">Activos</div>
     </article>
 
-    <article class="dsf-card stat">
+    <article class="stat-card">
       <div class="stat__num">{{ counters().baneados }}</div>
       <div class="stat__label">Baneados</div>
     </article>
 
-    <article class="dsf-card stat">
+    <article class="stat-card">
       <div class="stat__num">{{ counters().pendientes }}</div>
       <div class="stat__label">Pendientes</div>
     </article>
 
-    <article class="dsf-card stat">
+    <article class="stat-card">
       <div class="stat__num">{{ counters().clientes }}</div>
       <div class="stat__label">Clientes</div>
     </article>
 
-    <article class="dsf-card stat">
+    <article class="stat-card">
       <div class="stat__num">{{ counters().operarios }}</div>
       <div class="stat__label">Operarios</div>
     </article>
 
-    <article class="dsf-card stat">
+    <article class="stat-card">
       <div class="stat__num">{{ counters().admins }}</div>
       <div class="stat__label">Administradores</div>
     </article>
-  </div>
+  </section>
 
-  <!-- Filtros (fila: BUSCAR - TIPO - ESTADO - NUEVO) -->
-  <div class="filters dsf-card filters--row">
-    <div class="filters__row filters__row--4">
-      <label class="field field--grow">
-        <span class="field__label field__label--em">Buscar</span>
+  <section class="panel panel-filters">
+    <div class="filters-row">
+      <label class="field field--search">
+        <span class="field__label">Buscar</span>
         <input
           type="search"
-          class="search--wide"
+          class="search-input"
           placeholder="ID, nombre, propietario, DNI/CUIT/CUIL, email…"
           #qInput
           (input)="onBuscar(qInput.value)"
         />
       </label>
 
-      <!-- TIPO CLIENTE -->
       <label class="field field--fixed">
-        <span class="field__label field__label--em">Tipo</span>
+        <span class="field__label">Tipo</span>
 
         <div
-          class="dsf-custom-select"
+          class="custom-select"
           [class.is-open]="menuOpen()"
           (keydown.escape)="closeMenus()"
         >
           <button
             type="button"
-            class="dsf-custom-select__btn"
+            class="custom-select__btn"
             (click)="toggleMenu()"
             aria-haspopup="true"
             [attr.aria-expanded]="menuOpen()"
@@ -76,16 +77,14 @@
             <span class="chev" aria-hidden="true">▾</span>
           </button>
 
-          <nav class="dsf-custom-select__menu" *ngIf="menuOpen()">
+          <nav class="custom-select__menu" *ngIf="menuOpen()">
             <ul class="root">
-              <!-- Opción Todos -->
               <li>
                 <button type="button" (click)="selectTipoCombined('todos')">
                   Todos
                 </button>
               </li>
 
-              <!-- Grupo Cliente  -->
               <li
                 class="has-sub"
                 (mouseenter)="openSubOnHover()"
@@ -131,7 +130,6 @@
                 </ul>
               </li>
 
-              <!-- Operario - Administrador -->
               <li>
                 <button type="button" (click)="selectTipoCombined('operario')">
                   Operario
@@ -148,7 +146,7 @@
       </label>
 
       <label class="field field--fixed">
-        <span class="field__label field__label--em">Estado</span>
+        <span class="field__label">Estado</span>
         <select #estSel (change)="onEstadoChange(estSel.value)">
           <option value="todos">Todos</option>
           <option value="activos">Activos</option>
@@ -157,71 +155,78 @@
       </label>
 
       <div class="filters__cta">
-        <button type="button" class="dsf-btn" (click)="onNuevaCuenta()">+ Nuevo usuario</button>
+        <button type="button" class="btn btn-primary btn-new-user" (click)="onNuevaCuenta()">
+          <span class="btn-new-user__icon" aria-hidden="true">＋</span>
+          <span>Nuevo usuario</span>
+        </button>
       </div>
     </div>
-  </div>
+  </section>
 
-  <!-- Tabla -->
-  <div class="tbl dsf-card">
-    <div class="tbl__scroll">
-      <table>
+  <section class="panel panel-table">
+    <div class="table-scroll">
+      <table class="users-table">
         <thead>
           <tr>
+            <th class="th-id">ID</th>
             <th>Nombre usuario</th>
             <th>Propietario</th>
             <th>DNI/CUIT/CUIL</th>
             <th>Email</th>
-            <th style="width:150px">Tipo</th>
-            <th style="width:180px" class="dsf-table__th--actions">Acciones</th>
+            <th class="th-type">Tipo</th>
+            <th class="th-actions">Acciones</th>
           </tr>
         </thead>
 
         <tbody>
           <tr *ngFor="let u of visible(); trackBy: trackById">
+            <td class="td-id">{{ u.id }}</td>
             <td class="td-strong">
               <span>{{ u.nombreUsuario }}</span>
               <span
                 *ngIf="u.isBanned"
-                class="dsf-badge dsf-badge--ban"
+                class="badge badge--ban"
                 title="Usuario baneado"
-              >BANEADO</span>
+              >
+                BANEADO
+              </span>
             </td>
             <td>{{ u.propietario }}</td>
             <td>{{ u.dniCuitCuil }}</td>
             <td>{{ u.email }}</td>
             <td>
-              <span class="pill pill--lg"
+              <span
+                class="pill pill--lg"
                 [class.pill--admin]="u.tipo==='admin'"
                 [class.pill--operario]="u.tipo==='operario'"
                 [class.pill--cliente]="u.tipo==='cliente'"
-                [class.pill--muted]="u.isBanned">
+                [class.pill--muted]="u.isBanned"
+              >
                 {{ u.tipo }}
               </span>
             </td>
-            <td class="dsf-table__cell--actions">
-              <div class="dsf-actions-inline">
-                <!-- Ver -->
+            <td class="td-actions">
+              <div class="actions-inline">
                 <button
                   type="button"
-                  class="dsf-icon-btn"
+                  class="icon-btn"
                   (click)="verUsuario(u)"
                   title="Ver detalle"
                 >
                   👁️
                 </button>
-                <!-- Editar -->
+
                 <button
                   type="button"
-                  class="dsf-icon-btn"
+                  class="icon-btn"
                   (click)="editarUsuario(u)"
                   title="Editar"
                 >
                   ✏️
                 </button>
-                <!-- Ban/Habilitar -->
+
                 <label
-                  class="dsf-icon-toggle"
+                  class="icon-toggle"
                   [title]="u.isBanned ? 'Habilitar usuario' : 'Banear usuario'"
                 >
                   <input
@@ -229,26 +234,26 @@
                     [checked]="u.isBanned"
                     (change)="toggleBan(u)"
                   />
-                  <span class="dsf-icon-toggle__pill"></span>
+                  <span class="icon-toggle__pill"></span>
                 </label>
               </div>
             </td>
           </tr>
 
           <tr *ngIf="!loading() && visible().length === 0">
-            <td class="empty" colspan="6">
-              <div class="empty__box">
-                <div class="empty__title">No hay usuarios para mostrar</div>
-                <div class="empty__sub">Ajustá los filtros o agregá nuevos usuarios.</div>
+            <td class="empty" colspan="7">
+              <div class="empty-box">
+                <div class="empty-title">No hay usuarios para mostrar</div>
+                <div class="empty-sub">Ajustá los filtros o agregá nuevos usuarios.</div>
               </div>
             </td>
           </tr>
 
           <tr *ngIf="loading()">
-            <td class="empty" colspan="6">
-              <div class="empty__box">
-                <div class="empty__title">Cargando…</div>
-                <div class="empty__sub">Obteniendo usuarios</div>
+            <td class="empty" colspan="7">
+              <div class="empty-box">
+                <div class="empty-title">Cargando…</div>
+                <div class="empty-sub">Obteniendo usuarios</div>
               </div>
             </td>
           </tr>
@@ -256,35 +261,50 @@
       </table>
     </div>
 
-    <!-- Paginación -->
-    <div class="pager" *ngIf="!loading() && (serverPaging() ? serverTotal() > 0 : filtered().length > 0)">
+    <div
+      class="pager"
+      *ngIf="!loading() && (serverPaging() ? serverTotal() > 0 : filtered().length > 0)"
+    >
       <div class="pager__info">
         Página {{ page() }} de {{ pages() }} —
         Mostrando {{ visible().length }} de
         {{ serverPaging() ? serverTotal() : filtered().length }}
       </div>
+
       <div class="pager__actions pager__actions--spaced">
-        <button type="button" class="dsf-btn dsf-btn--ghost" (click)="goPrev()" [disabled]="!canPrev()">‹ Anterior</button>
-        <button type="button" class="dsf-btn" (click)="goNext()" [disabled]="!canNext()">Siguiente ›</button>
+        <button
+          type="button"
+          class="btn btn-secondary"
+          (click)="goPrev()"
+          [disabled]="!canPrev()"
+        >
+          ‹ Anterior
+        </button>
+
+        <button
+          type="button"
+          class="btn btn-primary"
+          (click)="goNext()"
+          [disabled]="!canNext()"
+        >
+          Siguiente ›
+        </button>
       </div>
     </div>
-  </div>
+  </section>
 
-  <!-- Modal crear -->
   <app-usuario-create-dialog
     *ngIf="showCreate()"
     (close)="onCreateClosed()"
     (saved)="onCreateSaved()"
   />
 
-  <!-- Modal ver -->
   <app-usuario-view-dialog
     *ngIf="showView() && current()"
     [usuario]="current()!"
     (close)="onViewClosed()"
   />
 
-  <!-- Modal editar -->
   <app-usuario-edit-dialog
     *ngIf="showEdit() && current()"
     [usuario]="current()!"
@@ -292,7 +312,6 @@
     (saved)="onEditSaved()"
   />
 
-  <!-- Modal banear -->
   <app-usuario-ban-dialog
     *ngIf="showBan() && current()"
     [usuario]="current()!"

@@ -32,8 +32,8 @@
           />
         </label>
 
-        <!-- ACTIVA -->
-        <label class="dsf-field">
+        <!-- ACTIVA (solo admin) -->
+        <label class="dsf-field" *ngIf="isAdmin">
           <span class="dsf-field__label">Estado</span>
           <select
             class="dsf-input"
@@ -104,7 +104,7 @@
                 {{ e.activa ? 'Activa' : 'Cerrada' }}
               </span>
             </td>
-            <td class="dsf-table__cell--actions">
+            <td class="dsf-table__cell--actions" *ngIf="isAdmin">
               <div class="dsf-actions-inline">
                 <button
                   type="button"
@@ -133,6 +133,20 @@
                   />
                   <span class="dsf-icon-toggle__pill"></span>
                 </label>
+              </div>
+            </td>
+
+            <!-- Acciones para cliente/invitado: solo ver -->
+            <td class="dsf-table__cell--actions" *ngIf="!isAdmin">
+              <div class="dsf-actions-inline">
+                <button
+                  type="button"
+                  class="dsf-icon-btn"
+                  (click)="onVer(e)"
+                  title="Ver detalle"
+                >
+                  👁️
+                </button>
               </div>
             </td>
           </tr>

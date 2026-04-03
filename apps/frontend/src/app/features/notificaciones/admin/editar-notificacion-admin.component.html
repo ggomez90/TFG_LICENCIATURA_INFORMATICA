@@ -1,0 +1,76 @@
+<section class="adm-notif-form-page">
+  <header class="adm-notif-form-page__header">
+    <div>
+      <p class="adm-notif-form-page__eyebrow">ADMINISTRACIÓN</p>
+      <h1 class="adm-notif-form-page__title">Editar notificación</h1>
+      <p class="adm-notif-form-page__subtitle">
+        Solo se pueden editar notificaciones que estén en estado no visible.
+      </p>
+    </div>
+  </header>
+
+  <section class="adm-notif-form-card">
+    <div class="adm-notif-form-error" *ngIf="error() && cargando() === false">
+      {{ error() }}
+    </div>
+
+    <div class="adm-notif-state" *ngIf="cargando()">Cargando notificación...</div>
+
+    <ng-container *ngIf="!cargando() && !error()">
+      <div class="adm-notif-form-grid">
+        <div class="field">
+          <label class="field__label">Rol destino</label>
+          <select
+            class="field__control"
+            [ngModel]="form().idRolUsuario"
+            (ngModelChange)="actualizar('idRolUsuario', +$event)"
+          >
+            <option [ngValue]="2">OPERARIO</option>
+            <option [ngValue]="3">CLIENTE</option>
+          </select>
+        </div>
+
+        <div class="field field--full">
+          <label class="field__label">Título</label>
+          <input
+            type="text"
+            class="field__control"
+            maxlength="100"
+            [ngModel]="form().titulo"
+            (ngModelChange)="actualizar('titulo', $event)"
+          />
+        </div>
+
+        <div class="field field--full">
+          <label class="field__label">Mensaje</label>
+          <textarea
+            class="field__control field__control--textarea"
+            maxlength="300"
+            [ngModel]="form().mensaje"
+            (ngModelChange)="actualizar('mensaje', $event)"
+          ></textarea>
+        </div>
+
+        <div class="field">
+          <label class="field__label">Visible</label>
+          <input
+            class="field__control field__control--readonly"
+            type="text"
+            value="NO"
+            readonly
+          />
+        </div>
+      </div>
+
+      <div class="adm-notif-form-actions">
+        <button type="button" class="btn btn--ghost" (click)="cancelar()" [disabled]="guardando()">
+          CANCELAR
+        </button>
+
+        <button type="button" class="btn btn--primary" (click)="guardar()" [disabled]="guardando()">
+          {{ guardando() ? 'GUARDANDO...' : 'GUARDAR CAMBIOS' }}
+        </button>
+      </div>
+    </ng-container>
+  </section>
+</section>

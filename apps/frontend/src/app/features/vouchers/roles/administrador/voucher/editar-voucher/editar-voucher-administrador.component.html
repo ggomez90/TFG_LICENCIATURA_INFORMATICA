@@ -1,0 +1,136 @@
+<section class="dsf-wrap crear-voucher editar-voucher">
+  <!-- CABECERA -->
+  <header class="dsf-header">
+    <h1 class="dsf-title">Editar voucher</h1>
+    <p class="dsf-sub">Modificá datos del voucher. El cambio de estado es opcional y se realiza por un flujo separado.</p>
+  </header>
+
+  <!-- FORMULARIO -->
+  <form class="dsf-form" (ngSubmit)="onPrevisualizar()">
+    <div class="dsf-card dsf-card--form">
+      <div class="dsf-card__body">
+
+        <!-- BLOQUE: idCliente + idVoucherTipo -->
+        <div class="dsf-fields-row">
+          <label class="dsf-field dsf-field--half">
+            <span class="dsf-field__label">ID Cliente <span class="dsf-field__required">*</span></span>
+            <input
+              type="number"
+              class="dsf-input"
+              [(ngModel)]="form.idCliente"
+              name="idCliente"
+              (keydown)="onNumberKeydown($event)"
+              required
+              min="1"
+              step="1"
+              pattern="[0-9]*"
+              inputmode="numeric"
+            />
+          </label>
+
+          <label class="dsf-field dsf-field--half">
+            <span class="dsf-field__label">ID Tipo de voucher <span class="dsf-field__required">*</span></span>
+            <input
+              type="number"
+              class="dsf-input"
+              [(ngModel)]="form.idVoucherTipo"
+              name="idVoucherTipo"
+              (keydown)="onNumberKeydown($event)"
+              required
+              min="1"
+              step="1"
+              pattern="[0-9]*"
+              inputmode="numeric"
+            />
+          </label>
+        </div>
+
+        <!-- BLOQUE: estado + switch + fecha (grisada) -->
+        <div class="dsf-fields-row dsf-fields-row--estado">
+          <!-- Estado -->
+          <label class="dsf-field dsf-field--half">
+            <span class="dsf-field__label">
+              Estado
+              <span class="dsf-field__required" *ngIf="cambiarEstado"> *</span>
+            </span>
+
+            <select
+              class="dsf-input"
+              [(ngModel)]="form.estadoVoucher"
+              name="estadoVoucher"
+              [disabled]="!cambiarEstado"
+              [class.is-disabled]="!cambiarEstado"
+            >
+              <option *ngFor="let e of estados" [ngValue]="e.value">
+                {{ e.label }}
+              </option>
+            </select>
+
+            <small class="dsf-field__hint" *ngIf="!cambiarEstado">
+              Para cambiar el estado, activá el switch de “Cambiar estado”.
+            </small>
+          </label>
+
+          <!-- Switch cambiar estado -->
+          <div class="dsf-field dsf-field--half dsf-field--switch-inline">
+            <span class="dsf-field__label">Cambiar estado</span>
+
+            <label class="dsf-switch-field" for="switchCambiarEstado">
+              <input
+                id="switchCambiarEstado"
+                type="checkbox"
+                name="cambiarEstado"
+                [(ngModel)]="cambiarEstado"
+                (change)="onToggleCambiarEstado()"
+              />
+              <span class="dsf-switch__track">
+                <span class="dsf-switch__thumb"></span>
+              </span>
+              <span class="dsf-switch__text">
+                {{ cambiarEstado ? 'Activado' : 'Desactivado' }}
+              </span>
+            </label>
+
+            <p class="dsf-field__hint">
+              Si está activado, al actualizar se llamará también al endpoint de cambio de estado.
+            </p>
+          </div>
+        </div>
+
+        <div class="dsf-fields-row">
+          <!-- Fecha adquisición (NO editable) -->
+          <label class="dsf-field dsf-field--half">
+            <span class="dsf-field__label">Fecha de adquisición</span>
+            <input
+              type="date"
+              class="dsf-input is-disabled"
+              [(ngModel)]="form.fechaAdquisicion"
+              name="fechaAdquisicion"
+              disabled
+            />
+            <small class="dsf-field__hint">Este campo no es editable.</small>
+          </label>
+
+          <!-- Spacer visual -->
+          <div class="dsf-field dsf-field--half"></div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ACCIONES -->
+    <footer class="dsf-form__actions">
+      <button type="button" class="dsf-btn dsf-btn--ghost" (click)="onVolver()">← Volver</button>
+
+      <button type="button" class="dsf-btn dsf-btn--ghost" (click)="onLimpiar()">🧹 Borrar</button>
+
+      <span class="dsf-form__spacer"></span>
+
+      <button type="button" class="dsf-btn dsf-btn--outline" (click)="onPrevisualizar()">👁️ Previsualizar</button>
+
+      <button type="button" class="dsf-btn dsf-btn--primary" [disabled]="loading" (click)="onActualizar()">
+      💾 Actualizar voucher
+      </button>
+    </footer>
+  </form>
+</section>

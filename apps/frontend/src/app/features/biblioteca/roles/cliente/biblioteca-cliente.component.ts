@@ -1,15 +1,26 @@
-//El codigo no posee logica para esta feature, los datos son estaticos y solo decorativos para simular una vista
-import { Component, signal } from '@angular/core';
+import { Component, ChangeDetectionStrategy, ChangeDetectorRef, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
+import { HttpParams } from '@angular/common/http';
 
-type Recurso = {
-  id: string;
-  tipo: 'Guía' | 'Video' | 'Infografía' | 'FAQ';
+import { ContenidoApi, ContenidoItem } from '../../../../api/contenido.api';
+import { EncuestaApi, EncuestaItem } from '../../../../api/encuesta.api';
+
+interface ClienteContenidoCard {
+  idContenido: number;
   titulo: string;
-  desc: string;
-  icon: string;
-};
+  fechaPublicacion: string;
+  descripcionCorta?: string;
+  etiqueta?: string;
+}
+
+interface ClienteEncuestaCard {
+  idEncuesta: number;
+  titulo: string;
+  fechaPublicacion: string; // ISO
+  fechaCierre?: string | null;
+  activa: boolean;
+}
 
 @Component({
   selector: 'app-biblioteca-cliente',
@@ -17,26 +28,224 @@ type Recurso = {
   imports: [CommonModule, RouterModule],
   templateUrl: './biblioteca-cliente.component.html',
   styleUrls: ['./biblioteca-cliente.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class BibliotecaClienteComponent {
-  q = signal('');
-  recursos = signal<Recurso[]>([
-    { id: 'g1', tipo: 'Guía', titulo: 'Separación en origen (paso a paso)', desc: 'Cómo separar plástico, papel, vidrio y orgánicos en casa.', icon: 'M5 3h14a2 2 0 0 1 2 2v2H3V5a2 2 0 0 1 2-2zm16 6v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9h18z' },
-    { id: 'v1', tipo: 'Video', titulo: '¿Qué es reciclable y qué no?', desc: 'Clip de 2 minutos para toda la familia.', icon: 'M8 5v14l11-7L8 5z' },
-    { id: 'i1', tipo: 'Infografía', titulo: 'Calendario de recolección', desc: 'Días y horarios por barrio.', icon: 'M12 7a5 5 0 1 0 0 10A5 5 0 0 0 12 7z' },
-    { id: 'f1', tipo: 'FAQ', titulo: 'Preguntas frecuentes', desc: 'Respuestas rápidas a dudas comunes.', icon: 'M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z' },
-    { id: 'g2', tipo: 'Guía', titulo: 'Limpieza de envases', desc: 'Buenas prácticas para entregar material en buen estado.', icon: 'M5 3h14a2 2 0 0 1 2 2v2H3V5a2 2 0 0 1 2-2z' },
-    { id: 'v2', tipo: 'Video', titulo: 'Reciclaje en Ceres', desc: 'Conocé el circuito local y la cooperativa.', icon: 'M8 5v14l11-7L8 5z' },
-  ]);
+export class BibliotecaClienteComponent implements OnInit {
+  loadingContenidos = false;
+  loadingEncuestas = false;
 
-  tipos = ['Todos', 'Guía', 'Video', 'Infografía', 'FAQ'];
-  filtro = signal<'Todos' | 'Guía' | 'Video' | 'Infografía' | 'FAQ'>('Todos');
+  errorContenidos: string | null = null;
+  errorEncuestas: string | null = null;
 
-  listFiltrada = () => {
-    const k = this.q().toLowerCase();
-    return this.recursos().filter(r =>
-      (this.filtro() === 'Todos' || r.tipo === this.filtro()) &&
-      (r.titulo.toLowerCase().includes(k) || r.desc.toLowerCase().includes(k))
-    );
-  };
+  contenidos: ClienteContenidoCard[] = [];
+  encuestas: ClienteEncuestaCard[] = [];
+
+  contenidoRecomendado: ClienteContenidoCard | null = null;
+
+  // por ahora dashboard cliente => no invitado
+  isGuest = false;
+
+  constructor(
+    private readonly router: Router,
+    private readonly cdr: ChangeDetectorRef,
+    private readonly contenidoApi: ContenidoApi,
+    private readonly encuestaApi: EncuestaApi,
+  ) {}
+
+  ngOnInit(): void {
+    this.cargarContenidos();
+    this.cargarEncuestas();
+  }
+
+  // Helpers
+  private getContenidoId(raw: any): number {
+    const v =
+      raw?.idContenidoEducativo ??
+      raw?.idContenido ??
+      raw?.id ??
+      null;
+
+    const n = Number(v);
+    return Number.isFinite(n) && n > 0 ? n : 0;
+  }
+
+  private stripHtml(input: string | null | undefined, fallback = 'Sin título'): string {
+    if (!input) return fallback;
+    const plain = input.replace(/<[^>]+>/g, '').trim();
+    return plain || fallback;
+  }
+
+  private truncateText(input: string | null | undefined, max = 110): string {
+    const t = this.stripHtml(input ?? '', '').replace(/\s+/g, ' ').trim();
+    if (!t) return '';
+    if (t.length <= max) return t;
+    return t.slice(0, max - 1).trimEnd() + '…';
+  }
+
+  fmtFecha(iso?: string | null): string {
+    if (!iso) return '-';
+    const d = new Date(iso);
+    if (Number.isNaN(d.getTime())) return '-';
+    return d.toLocaleDateString('es-AR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+  }
+
+  // Navegación
+  onVerTodosContenidos(): void {
+    this.router.navigate(['/menu-principal/cliente/biblioteca/contenidos/lista']);
+  }
+
+  onVerTodasEncuestas(): void {
+    this.router.navigate(['/menu-principal/cliente/biblioteca/encuestas/lista']);
+  }
+
+  onVerContenido(idContenido: number): void {
+    this.router.navigate(['/menu-principal/cliente/biblioteca/contenidos/ver', idContenido]);
+  }
+
+  onVerEncuesta(idEncuesta: number): void {
+    this.router.navigate(['/menu-principal/cliente/biblioteca/encuestas/ver', idEncuesta]);
+  }
+
+  onCallToAction(): void {
+    this.onVerTodosContenidos();
+  }
+
+  // Data
+  private cargarContenidos(): void {
+    this.loadingContenidos = true;
+    this.errorContenidos = null;
+    this.cdr.markForCheck();
+
+    this.contenidoApi.listPublic().subscribe({
+      next: (items: any[]) => {
+        const mapped: ClienteContenidoCard[] = (items ?? []).map((c: any) => ({
+          idContenido: c.idContenidoEducativo,
+          titulo: this.stripHtml(c.titulo, 'Sin título'),
+          fechaPublicacion: c.fechaPublicacion,
+          descripcionCorta: '', // el listado público no trae descripción (está bien)
+          etiqueta: 'Educación',
+        }));
+
+        // Orden DESC por id (o por fecha si preferís)
+        mapped.sort((a, b) => (b.idContenido || 0) - (a.idContenido || 0));
+
+        this.contenidoRecomendado = mapped.length > 0 ? mapped[0] : null;
+
+        const recId = this.contenidoRecomendado?.idContenido;
+        this.contenidos = mapped.filter((x) => x.idContenido !== recId).slice(0, 4);
+
+        this.loadingContenidos = false;
+        this.cdr.markForCheck();
+      },
+      error: (err) => {
+        console.error('Error cargando contenidos públicos', err);
+        this.contenidoRecomendado = null;
+        this.contenidos = [];
+        this.loadingContenidos = false;
+        this.errorContenidos = 'No se pudieron cargar los contenidos.';
+        this.cdr.markForCheck();
+      },
+    });
+  }
+
+  private cargarEncuestas(): void {
+    this.loadingEncuestas = true;
+    this.errorEncuestas = null;
+    this.cdr.markForCheck();
+
+    // Intento 1: pedir activas + orden desc
+    const baseParams = {
+      limit: 50,
+      offset: 0,
+      // OJO: tu EncuestaApi setea activa como "true"/"false" string
+      activa: true,
+      sortBy: 'idEncuesta' as const,
+      order: 'desc' as const,
+    };
+
+    const doRequest = (useParams: any | null) => this.encuestaApi.list(useParams ?? {});
+
+    doRequest(baseParams).subscribe({
+      next: (resp: any) => {
+        const src: any[] = Array.isArray(resp)
+          ? resp
+          : Array.isArray(resp?.items)
+          ? resp.items
+          : [];
+
+        const mapped: ClienteEncuestaCard[] = src
+          .map((e: EncuestaItem) => ({
+            idEncuesta: (e as any).idEncuesta,
+            titulo: this.stripHtml((e as any).titulo ?? 'Sin título', 'Sin título'),
+            fechaPublicacion: (e as any).fechaPublicacion,
+            fechaCierre: (e as any).fechaCierre ?? null,
+            activa: !!(e as any).activa,
+          }))
+          // por las dudas: filtrar activas (cliente no debería ver cerradas)
+          .filter((e) => e.activa);
+
+        mapped.sort((a, b) => {
+          const ida = a.idEncuesta || 0;
+          const idb = b.idEncuesta || 0;
+          if (idb !== ida) return idb - ida;
+
+          const ta = new Date(a.fechaPublicacion).getTime() || 0;
+          const tb = new Date(b.fechaPublicacion).getTime() || 0;
+          return tb - ta;
+        });
+
+        this.encuestas = mapped.slice(0, 3);
+        this.loadingEncuestas = false;
+        this.cdr.markForCheck();
+      },
+      error: (err) => {
+        // Reintento sin params si backend se queja por query params
+        const msg = err?.error?.message;
+        const is400 = err?.status === 400;
+        const complainsParams =
+          Array.isArray(msg) && msg.some((m: string) => /property .* should not exist/i.test(m));
+
+        if (is400 && complainsParams) {
+          doRequest(null).subscribe({
+            next: (resp2: any) => {
+              const src2: any[] = Array.isArray(resp2)
+                ? resp2
+                : Array.isArray(resp2?.items)
+                ? resp2.items
+                : [];
+
+              const mapped2: ClienteEncuestaCard[] = src2
+                .map((e: any) => ({
+                  idEncuesta: e.idEncuesta,
+                  titulo: this.stripHtml(e.titulo ?? 'Sin título', 'Sin título'),
+                  fechaPublicacion: e.fechaPublicacion,
+                  fechaCierre: e.fechaCierre ?? null,
+                  activa: !!e.activa,
+                }))
+                .filter((e) => e.activa);
+
+              mapped2.sort((a, b) => (b.idEncuesta || 0) - (a.idEncuesta || 0));
+              this.encuestas = mapped2.slice(0, 3);
+
+              this.loadingEncuestas = false;
+              this.cdr.markForCheck();
+            },
+            error: (err2) => {
+              console.error('Error cargando encuestas (reintento sin params)', err2);
+              this.encuestas = [];
+              this.loadingEncuestas = false;
+              this.errorEncuestas = 'No se pudieron cargar las encuestas.';
+              this.cdr.markForCheck();
+            },
+          });
+        } else {
+          console.error('Error cargando encuestas', err);
+          this.encuestas = [];
+          this.loadingEncuestas = false;
+          this.errorEncuestas = 'No se pudieron cargar las encuestas.';
+          this.cdr.markForCheck();
+        }
+      },
+    });
+  }
 }

@@ -20,6 +20,7 @@ export class ContenidoService {
   private readonly MODEL = 'contenidoEducativo' as const;
   private readonly ID_FIELD = 'idContenidoEducativo' as const;
 
+  //helpers para crear y editar
   private coerceCreate(dto: CreateContenidoEducativoDto) {
     const data: any = { ...dto };
     if (dto.fechaPublicacion)
@@ -47,6 +48,7 @@ export class ContenidoService {
       },
       orderBy: { fechaPublicacion: 'desc' },
       select: {
+        [this.ID_FIELD]: true,
         fechaPublicacion: true,
         titulo: true,
         visible: true,

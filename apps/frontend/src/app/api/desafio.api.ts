@@ -192,8 +192,19 @@ export class DesafioApi {
   }
 
   // GET /api/desafios/:id
-  getById(id: number) {
-    return this.http.get<DesafioItem>(`${this.base}/${id}`);
+  getById(id: number): Observable<DesafioItem> {
+    return this.http.get<DesafioItem>(`${this.base}/${id}`).pipe(
+      map((i: any) => ({
+        ...i,
+        meta: typeof i?.meta === 'string' ? parseFloat(i.meta) : i.meta,
+        puntosPorUnidad:
+          i?.puntosPorUnidad == null
+            ? null
+            : typeof i.puntosPorUnidad === 'string'
+              ? parseFloat(i.puntosPorUnidad)
+              : i.puntosPorUnidad,
+      }))
+    );
   }
 
   // PATCH /api/desafios/:id

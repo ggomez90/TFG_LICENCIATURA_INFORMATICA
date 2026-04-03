@@ -1,91 +1,162 @@
-<!--proximo modulo a desarrollar, por el momento solo una vista estatica-->
 <section class="dsf-wrap">
   <header class="dsf-header">
     <h1 class="dsf-title">Mis datos</h1>
-    <p class="dsf-sub">Visualizá la información de tu perfil. Para modificarla, usá “Editar perfil”.</p>
+    <p class="dsf-sub">
+      Visualizá la información de tu perfil. Para modificarla, usá “Editar perfil”.
+    </p>
   </header>
 
-  <ng-container *ngIf="usuario() as u">
+  <!-- ESTADO: loading -->
+  <div *ngIf="loading()" class="dsf-empty dsf-empty--loading">
+    <p class="dsf-empty__text">Cargando tu perfil...</p>
+  </div>
+
+  <!-- ESTADO: error (no bloqueante) -->
+  <div *ngIf="!loading() && errorMsg()" class="dsf-empty dsf-empty--warn">
+    <p class="dsf-empty__text">{{ errorMsg() }}</p>
+  </div>
+
+  <ng-container *ngIf="!loading() && usuario() as u">
     <div class="form-grid">
 
       <!-- Identificación -->
       <article class="form-card">
-        <h2 class="block-title">Identificación</h2>
+        <h2 class="block-title">
+          <span class="block-title__icon" aria-hidden="true">🪪</span>
+          Identificación
+        </h2>
 
         <div class="row">
           <div class="col-6">
-            <label>Nombres</label>
-            <div class="ro-field">{{ u.nombres || '—' }}</div>
+            <label>Nombre</label>
+            <div class="ro-field">
+              <span class="ro-icon" aria-hidden="true">👤</span>
+              <span class="ro-text">{{ u.nombres || '—' }}</span>
+            </div>
           </div>
+
           <div class="col-6">
-            <label>Apellidos</label>
-            <div class="ro-field">{{ u.apellidos || '—' }}</div>
+            <label>Apellido</label>
+            <div class="ro-field">
+              <span class="ro-icon" aria-hidden="true">👤</span>
+              <span class="ro-text">{{ u.apellidos || '—' }}</span>
+            </div>
           </div>
-          <div class="col-6">
+
+          <div class="col-6" *ngIf="u.rol === 'CLIENTE'">
             <label>Razón social</label>
-            <div class="ro-field">{{ u.razonSocial || '—' }}</div>
+            <div class="ro-field">
+              <span class="ro-icon" aria-hidden="true">🏢</span>
+              <span class="ro-text">{{ u.razonSocial || '—' }}</span>
+            </div>
           </div>
+
           <div class="col-6">
             <label>DNI / CUIT / CUIL</label>
-            <div class="ro-field">{{ u.dniCuitCuil || '—' }}</div>
+            <div class="ro-field">
+              <span class="ro-icon" aria-hidden="true">🔢</span>
+              <span class="ro-text">{{ u.dniCuitCuil || '—' }}</span>
+            </div>
           </div>
         </div>
       </article>
 
       <!-- Contacto -->
       <article class="form-card">
-        <h2 class="block-title">Contacto</h2>
+        <h2 class="block-title">
+          <span class="block-title__icon" aria-hidden="true">✉️</span>
+          Contacto
+        </h2>
 
         <div class="row">
           <div class="col-6">
             <label>Email</label>
-            <div class="ro-field">{{ u.email || '—' }}</div>
+            <div class="ro-field">
+              <span class="ro-icon" aria-hidden="true">📧</span>
+              <span class="ro-text">{{ u.email || '—' }}</span>
+            </div>
           </div>
+
           <div class="col-6">
             <label>Usuario</label>
-            <div class="ro-field">{{ u.usuario || '—' }}</div>
+            <div class="ro-field">
+              <span class="ro-icon" aria-hidden="true">🧾</span>
+              <span class="ro-text">{{ u.usuario || '—' }}</span>
+            </div>
           </div>
-          <div class="col-6">
+
+          <div class="col-12">
             <label>Dirección</label>
-            <div class="ro-field">{{ u.direccion || '—' }}</div>
+            <div class="ro-field">
+              <span class="ro-icon" aria-hidden="true">📍</span>
+              <span class="ro-text">{{ u.direccion || '—' }}</span>
+            </div>
           </div>
+
           <div class="col-6">
             <label>Localidad</label>
-            <div class="ro-field">{{ u.localidad || '—' }}</div>
+            <div class="ro-field">
+              <span class="ro-icon" aria-hidden="true">🧭</span>
+              <span class="ro-text">{{ u.localidad || '—' }}</span>
+            </div>
           </div>
+
           <div class="col-6">
             <label>Provincia</label>
-            <div class="ro-field">{{ u.provincia || '—' }}</div>
+            <div class="ro-field">
+              <span class="ro-icon" aria-hidden="true">🗺️</span>
+              <span class="ro-text">{{ u.provincia || '—' }}</span>
+            </div>
           </div>
         </div>
       </article>
 
-      <!-- Estado y rol -->
+      <!-- Rol y estado -->
       <article class="form-card">
-        <h2 class="block-title">Rol y estado</h2>
+        <h2 class="block-title">
+          <span class="block-title__icon" aria-hidden="true">🛡️</span>
+          Rol y estado
+        </h2>
 
         <div class="row">
           <div class="col-6">
             <label>Rol</label>
-            <div class="ro-field tag">{{ u.rol || '—' }}</div>
+            <div class="ro-field tag">
+              <span class="ro-icon" aria-hidden="true">🏷️</span>
+              <span class="ro-text">{{ u.rol || '—' }}</span>
+            </div>
           </div>
+
+          <div class="col-6" *ngIf="u.rol === 'CLIENTE'">
+            <label>Tipo de cliente</label>
+            <div class="ro-field tag">{{ tipoClienteLabel(u.idTipoCliente) }}</div>
+          </div>
+
           <div class="col-6">
             <label>Estado</label>
             <div class="ro-field tag" [class.tag--ok]="u.estado" [class.tag--off]="!u.estado">
-              {{ u.estado ? 'Activo' : 'Inactivo' }}
+              <span class="ro-icon" aria-hidden="true">{{ u.estado ? '✅' : '⛔' }}</span>
+              <span class="ro-text">{{ u.estado ? 'Activo' : 'Inactivo' }}</span>
             </div>
           </div>
-          <div class="col-6">
+
+          <div class="col-6" *ngIf="u.rol === 'CLIENTE'">
             <label>Puntos</label>
-            <div class="ro-field strong">{{ u.puntos }}</div>
+            <div class="ro-field strong">
+              <span class="ro-icon" aria-hidden="true">♻️</span>
+              <span class="ro-text">{{ formatInt(u.puntos) }}</span>
+            </div>
+          </div>
+
+          <div class="col-6">
+            <label>ID usuario</label>
+            <div class="ro-field">
+              <span class="ro-icon" aria-hidden="true">#</span>
+              <span class="ro-text">{{ u.idUsuario }}</span>
+            </div>
           </div>
         </div>
       </article>
-
-      <!-- Acciones -->
-      <div class="actions">
-        <a class="dsf-btn" routerLink="/menu-principal/perfil/editar">EDITAR PERFIL →</a>
-      </div>
     </div>
   </ng-container>
 </section>

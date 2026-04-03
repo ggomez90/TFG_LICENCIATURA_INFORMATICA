@@ -1,163 +1,357 @@
-<!--La vista es solo decorativa, no posee logica-->
-<section class="dsf-wrap">
-  <header class="dsf-header">
-    <h1 class="dsf-title">Indicadores (Administrador)</h1>
-    <p class="dsf-sub">Visión general de uso, canjes y desempeño de desafíos.</p>
+<section class="admin-indicators">
+  <section class="hero-card">
+    <div class="hero-copy">
+      <span class="hero-eyebrow">Yo_Reciclo · Administración</span>
+      <h1>Indicadores del sistema</h1>
+      <p>
+        Visualizá el estado general de usuarios, desafíos, vouchers y entregas.
+        Las métricas de entregas y desafíos se calculan según el rango seleccionado.
+      </p>
 
-    <div class="dsf-filters">
-      <label for="rango">Rango:</label>
-      <select id="rango" #rangoSel (change)="onRangoChange(rangoSel.value)">
-        <option [selected]="rangoDias()===30" value="30">Últimos 30 días</option>
-        <option [selected]="rangoDias()===90" value="90">Últimos 90 días</option>
-        <option [selected]="rangoDias()===180" value="180">Últimos 180 días</option>
-      </select>
-      <span class="hint">* Datos ficticios para maquetado</span>
+      <div class="hero-actions">
+        <label class="range-field" for="rango">
+          <span>Rango</span>
+          <select id="rango" [disabled]="loading()" (change)="onRangoChange(($any($event.target)).value)">
+            <option [selected]="rangoDias()===30" value="30">Últimos 30 días</option>
+            <option [selected]="rangoDias()===90" value="90">Últimos 90 días</option>
+            <option [selected]="rangoDias()===180" value="180">Últimos 180 días</option>
+          </select>
+        </label>
+
+        <button class="btn btn-primary" type="button" (click)="refresh()" [disabled]="loading()">
+          {{ loading() ? 'Actualizando…' : '↻ Actualizar panel' }}
+        </button>
+      </div>
+
+      <div class="hero-feedback">
+        <span class="hero-hint" *ngIf="loading()">Cargando indicadores…</span>
+        <span class="hero-hint hero-hint--error" *ngIf="error()">{{ error() }}</span>
+      </div>
     </div>
-  </header>
 
-  <!-- KPIs -->
-  <div class="dsf-grid">
-    <article class="dsf-card stat">
-      <div class="dsf-card__media">
+    <div class="hero-aside">
+      <div class="hero-aside__top">
+        <span class="chip chip-soft">Vista ejecutiva</span>
+        <span class="chip">Rango {{ rangoDias() }} días</span>
+      </div>
+
+      <h2>Resumen actual del ecosistema</h2>
+
+      <div class="hero-stats">
+        <article class="hero-stat">
+          <span class="hero-stat__label">Usuarios</span>
+          <strong class="hero-stat__value">{{ formatInt(totalUsuarios()) }}</strong>
+        </article>
+
+        <article class="hero-stat hero-stat--accent">
+          <span class="hero-stat__label">Entregas en rango</span>
+          <strong class="hero-stat__value">{{ formatInt(entregasTotalRango()) }}</strong>
+        </article>
+      </div>
+
+      <div class="hero-progress">
+        <div class="hero-progress__head">
+          <span>Distribución de usuarios</span>
+          <strong>{{ pct(totalPorRol().CLIENTE, totalUsuarios()) | number:'1.0-0' }}% clientes</strong>
+        </div>
+
+        <div class="hero-progress__bar" aria-hidden="true">
+          <span class="hero-progress__fill hero-progress__fill--admin" [style.width.%]="pct(totalPorRol().ADMIN, totalUsuarios())"></span>
+          <span class="hero-progress__fill hero-progress__fill--operario" [style.width.%]="pct(totalPorRol().OPERARIO, totalUsuarios())"></span>
+          <span class="hero-progress__fill hero-progress__fill--cliente" [style.width.%]="pct(totalPorRol().CLIENTE, totalUsuarios())"></span>
+        </div>
+      </div>
+
+      <div class="hero-note">
+        <span class="hero-note__icon">i</span>
+        <span>
+          Vouchers se muestran en forma global por estado, ya que el filtro backend no aplica rango por fecha.
+        </span>
+      </div>
+    </div>
+  </section>
+
+  <section class="kpis-grid">
+    <article class="kpi-card">
+      <div class="kpi-icon">
         <svg viewBox="0 0 24 24" aria-hidden="true">
           <path fill="currentColor" d="M12 12a5 5 0 1 0-5-5 5 5 0 0 0 5 5Zm0 2c-5.33 0-8 2.667-8 4v2h16v-2c0-1.333-2.67-4-8-4Z"/>
         </svg>
       </div>
-      <div class="dsf-card__body">
-        <h2 class="dsf-card__title">Usuarios totales</h2>
-        <p class="kpi">{{ formatInt(totalUsuarios()) }}</p>
-        <p class="muted">Admin: {{ totalPorRol().ADMIN }} · Operario: {{ totalPorRol().OPERARIO }} · Cliente: {{ formatInt(totalPorRol().CLIENTE) }}</p>
+      <div class="kpi-body">
+        <span class="kpi-label">Usuarios totales</span>
+        <strong class="kpi-value">{{ formatInt(totalUsuarios()) }}</strong>
+        <small class="kpi-helper">
+          Admin {{ formatInt(totalPorRol().ADMIN) }} · Operario {{ formatInt(totalPorRol().OPERARIO) }} · Cliente {{ formatInt(totalPorRol().CLIENTE) }}
+        </small>
       </div>
     </article>
 
-    <article class="dsf-card stat">
-      <div class="dsf-card__media">
+    <article class="kpi-card">
+      <div class="kpi-icon">
         <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path fill="currentColor" d="M17 3H7a2 2 0 0 0-2 2v14l7-3 7 3V5a2 2 0 0 0-2-2Z"/>
+          <path fill="currentColor" d="M4 4h16v4H4V4zm0 6h10v10H4V10zm12 0h4v10h-4V10z"/>
         </svg>
       </div>
-      <div class="dsf-card__body">
-        <h2 class="dsf-card__title">Usuarios nuevos</h2>
-        <p class="kpi">{{ formatInt(usuariosNuevosRango()) }}</p>
-        <p class="muted">en {{ rangoDias() }} días</p>
+      <div class="kpi-body">
+        <span class="kpi-label">Desafíos activos</span>
+        <strong class="kpi-value">{{ formatInt(desafiosSummary()?.activos ?? 0) }}</strong>
+        <small class="kpi-helper">Total {{ formatInt(desafiosSummary()?.total ?? 0) }}</small>
       </div>
     </article>
 
-    <article class="dsf-card stat">
-      <div class="dsf-card__media">
+    <article class="kpi-card">
+      <div class="kpi-icon">
         <svg viewBox="0 0 24 24" aria-hidden="true">
           <path fill="currentColor" d="M21 7H3V5h18v2Zm0 4H3V9h18v2Zm0 4H3v-2h18v2Zm0 4H3v-2h18v2Z"/>
         </svg>
       </div>
-      <div class="dsf-card__body">
-        <h2 class="dsf-card__title">Vouchers adquiridos</h2>
-        <p class="kpi">{{ formatInt(vouchersAdquiridosRango()) }}</p>
-        <p class="muted">en {{ rangoDias() }} días</p>
+      <div class="kpi-body">
+        <span class="kpi-label">Vouchers globales</span>
+        <strong class="kpi-value">{{ formatInt(vouchersTotal()) }}</strong>
+        <small class="kpi-helper">Distribución por estado</small>
       </div>
     </article>
 
-    <article class="dsf-card stat">
-      <div class="dsf-card__media">
+    <article class="kpi-card">
+      <div class="kpi-icon">
         <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path fill="currentColor" d="M12 2a5 5 0 0 1 5 5v3h1a2 2 0 0 1 2 2v8H4v-8a2 2 0 0 1 2-2h1V7a5 5 0 0 1 5-5Zm0 2a3 3 0 0 0-3 3v3h6V7a3 3 0 0 0-3-3Z"/>
+          <path fill="currentColor" d="M3 6h18v2H3zM6 10h12v2H6zM8 14h8v2H8z"/>
         </svg>
       </div>
-      <div class="dsf-card__body">
-        <h2 class="dsf-card__title">Vouchers canjeados</h2>
-        <p class="kpi">{{ formatInt(vouchersCanjeadosRango()) }}</p>
-        <p class="muted">en {{ rangoDias() }} días</p>
+      <div class="kpi-body">
+        <span class="kpi-label">Entregas en rango</span>
+        <strong class="kpi-value">{{ formatInt(entregasTotalRango()) }}</strong>
+        <small class="kpi-helper">{{ rangoDias() }} días seleccionados</small>
       </div>
     </article>
 
-    <article class="dsf-card stat">
-      <div class="dsf-card__media">
+    <article class="kpi-card">
+      <div class="kpi-icon">
         <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path fill="currentColor" d="M3 5h18v2H3V5Zm0 6h12v2H3v-2Zm0 6h18v2H3v-2Z"/>
+          <path fill="currentColor" d="M12 2l8 4v6c0 5.25-3.44 10.74-8 12-4.56-1.26-8-6.75-8-12V6l8-4z"/>
         </svg>
       </div>
-      <div class="dsf-card__body">
-        <h2 class="dsf-card__title">Desafíos creados</h2>
-        <p class="kpi">{{ formatInt(desafiosCreadosRango()) }}</p>
-        <p class="muted">en {{ rangoDias() }} días</p>
+      <div class="kpi-body">
+        <span class="kpi-label">Inscripciones</span>
+        <strong class="kpi-value">{{ formatInt(desafiosSummary()?.inscripcionesTotales ?? 0) }}</strong>
+        <small class="kpi-helper">Acumulado general de desafíos</small>
       </div>
     </article>
+  </section>
 
-    <article class="dsf-card stat">
-      <div class="dsf-card__media">
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path fill="currentColor" d="M3 13h4l3 6 4-12 3 6h4l-2 4H5z"/>
-        </svg>
-      </div>
-      <div class="dsf-card__body">
-        <h2 class="dsf-card__title">Cumplimiento promedio</h2>
-        <p class="kpi">{{ formatPct(cumplimientoPromedioRango()) }}</p>
-        <div class="progress">
-          <div class="bar" [style.width.%]="cumplimientoPromedioRango()"></div>
+  <div class="content-grid">
+    <section class="panel">
+      <div class="panel-head">
+        <div>
+          <span class="section-eyebrow">Composición</span>
+          <h3>Distribución de usuarios por rol</h3>
+          <p>Relación actual entre administradores, operarios y clientes.</p>
         </div>
-        <p class="muted">sobre entregas verificadas</p>
       </div>
-    </article>
+
+      <div class="distribution-list">
+        <article class="distribution-card">
+          <div class="distribution-card__head">
+            <span class="badge badge-admin">Administradores</span>
+            <strong>{{ formatInt(totalPorRol().ADMIN) }}</strong>
+          </div>
+          <div class="distribution-progress">
+            <div class="distribution-progress__bar">
+              <div class="distribution-progress__fill distribution-progress__fill--admin" [style.width.%]="pct(totalPorRol().ADMIN, totalUsuarios())"></div>
+            </div>
+            <small>{{ pct(totalPorRol().ADMIN, totalUsuarios()) | number:'1.0-0' }}%</small>
+          </div>
+        </article>
+
+        <article class="distribution-card">
+          <div class="distribution-card__head">
+            <span class="badge badge-operario">Operarios</span>
+            <strong>{{ formatInt(totalPorRol().OPERARIO) }}</strong>
+          </div>
+          <div class="distribution-progress">
+            <div class="distribution-progress__bar">
+              <div class="distribution-progress__fill distribution-progress__fill--operario" [style.width.%]="pct(totalPorRol().OPERARIO, totalUsuarios())"></div>
+            </div>
+            <small>{{ pct(totalPorRol().OPERARIO, totalUsuarios()) | number:'1.0-0' }}%</small>
+          </div>
+        </article>
+
+        <article class="distribution-card">
+          <div class="distribution-card__head">
+            <span class="badge badge-cliente">Clientes</span>
+            <strong>{{ formatInt(totalPorRol().CLIENTE) }}</strong>
+          </div>
+          <div class="distribution-progress">
+            <div class="distribution-progress__bar">
+              <div class="distribution-progress__fill distribution-progress__fill--cliente" [style.width.%]="pct(totalPorRol().CLIENTE, totalUsuarios())"></div>
+            </div>
+            <small>{{ pct(totalPorRol().CLIENTE, totalUsuarios()) | number:'1.0-0' }}%</small>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-head">
+        <div>
+          <span class="section-eyebrow">Estados clave</span>
+          <h3>Desafíos, vouchers y entregas</h3>
+          <p>Lectura rápida del sistema según volumen y estado.</p>
+        </div>
+      </div>
+
+      <div class="status-stack">
+        <article class="status-card">
+          <div class="status-card__head">
+            <h4>Desafíos</h4>
+            <span class="tag">global</span>
+          </div>
+
+          <div class="chips">
+            <span class="chip-data chip-data--ok">Activos {{ formatInt(desafiosSummary()?.activos ?? 0) }}</span>
+            <span class="chip-data chip-data--warn">Pausados {{ formatInt(desafiosSummary()?.pausados ?? 0) }}</span>
+            <span class="chip-data chip-data--muted">Finalizados {{ formatInt(desafiosSummary()?.finalizados ?? 0) }}</span>
+          </div>
+        </article>
+
+        <article class="status-card">
+          <div class="status-card__head">
+            <h4>Vouchers</h4>
+            <span class="tag">global</span>
+          </div>
+
+          <div class="chips">
+            <span class="chip-data chip-data--muted">Creado {{ formatInt(vouchersPorEstado().CREADO) }}</span>
+            <span class="chip-data chip-data--ok">Adquirido {{ formatInt(vouchersPorEstado().ADQUIRIDO) }}</span>
+            <span class="chip-data chip-data--base">Utilizado {{ formatInt(vouchersPorEstado().UTILIZADO) }}</span>
+            <span class="chip-data chip-data--danger">Anulado {{ formatInt(vouchersPorEstado().ANULADO) }}</span>
+          </div>
+        </article>
+
+        <article class="status-card">
+          <div class="status-card__head">
+            <h4>Entregas</h4>
+            <span class="tag">{{ rangoDias() }} días</span>
+          </div>
+
+          <div class="chips">
+            <span class="chip-data chip-data--warn">Pendiente {{ formatInt(entregasPorEstado()['PENDIENTE']) }}</span>
+            <span class="chip-data chip-data--ok">Validada {{ formatInt(entregasPorEstado()['VALIDADA']) }}</span>
+            <span class="chip-data chip-data--danger">Rechazada {{ formatInt(entregasPorEstado()['RECHAZADA']) }}</span>
+            <span class="chip-data chip-data--muted">Anulada {{ formatInt(entregasPorEstado()['ANULADA']) }}</span>
+            <span class="chip-data chip-data--base">Puntos {{ formatInt(entregasPorEstado()['PUNTOS_OTORGADOS']) }}</span>
+          </div>
+        </article>
+      </div>
+    </section>
   </div>
 
-  <!-- Distribución por material -->
-  <section class="block">
-    <header class="dsf-header">
-      <h2 class="dsf-title">Distribución por material</h2>
-      <p class="dsf-sub">Total: {{ formatInt(totalKg()) }} kg</p>
-    </header>
+  <section class="panel">
+    <div class="panel-head">
+      <div>
+        <span class="section-eyebrow">Exportaciones</span>
+        <h3>Descarga de datasets completos</h3>
+        <p>
+          Exportá información completa del sistema en CSV usando los endpoints generales ya disponibles.
+        </p>
+      </div>
+    </div>
 
-    <div class="table-wrap">
-      <table class="dsf-table">
-        <thead>
-          <tr>
-            <th>Material</th>
-            <th class="right">Kg</th>
-            <th class="w40">Participación</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let m of materiales(); trackBy: trackByIndex">
-            <td>{{ m.material }}</td>
-            <td class="right">{{ formatInt(m.kg) }}</td>
-            <td>
-              <div class="progress thin">
-                <div class="bar" [style.width.%]="pct(m.kg)"></div>
-                </div>
-                <span class="muted small">{{ pct(m.kg) | number:'1.0-1' }}%</span>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+    <div class="export-grid">
+      <button type="button" class="btn btn-secondary" (click)="exportUsuariosCSV()" [disabled]="loading()">
+        Exportar usuarios
+      </button>
+      <button type="button" class="btn btn-secondary" (click)="exportDesafiosCSV()" [disabled]="loading()">
+        Exportar desafíos
+      </button>
+      <button type="button" class="btn btn-secondary" (click)="exportVouchersCSV()" [disabled]="loading()">
+        Exportar vouchers
+      </button>
+      <button type="button" class="btn btn-secondary" (click)="exportEntregasCSV()" [disabled]="loading()">
+        Exportar entregas
+      </button>
+      <button type="button" class="btn btn-primary" (click)="exportResumenCSV()" [disabled]="loading()">
+        Exportar resumen
+      </button>
     </div>
   </section>
 
-  <!-- Top desafíos -->
-  <section class="block">
-    <header class="dsf-header">
-      <h2 class="dsf-title">Top 5 desafíos por kg entregados</h2>
-      <p class="dsf-sub">Indicador de impacto material recuperado</p>
-    </header>
+  <section class="panel">
+    <div class="panel-head">
+      <div>
+        <span class="section-eyebrow">Actividad del rango</span>
+        <h3>Resumen operativo</h3>
+        <p>Indicadores consolidados del período seleccionado.</p>
+      </div>
+    </div>
+
+    <div class="summary-grid">
+      <article class="summary-card">
+        <span class="summary-card__label">Desafíos creados</span>
+        <strong class="summary-card__value">{{ formatInt(desafiosCreadosRango()) }}</strong>
+        <small class="summary-card__helper">Por fechaInicio dentro del rango</small>
+      </article>
+
+      <article class="summary-card">
+        <span class="summary-card__label">Entregas procesadas</span>
+        <strong class="summary-card__value">{{ formatInt(entregasTotalRango()) }}</strong>
+        <small class="summary-card__helper">Incluye todos los estados dentro del rango</small>
+      </article>
+
+      <article class="summary-card">
+        <span class="summary-card__label">Vouchers registrados</span>
+        <strong class="summary-card__value">{{ formatInt(vouchersTotal()) }}</strong>
+        <small class="summary-card__helper">Vista global sin filtro temporal</small>
+      </article>
+    </div>
 
     <div class="table-wrap">
       <table class="dsf-table">
         <thead>
           <tr>
-            <th>Desafío</th>
-            <th class="right">Entregas</th>
-            <th class="right">Kg</th>
-            <th class="w30">Cumplimiento</th>
+            <th class="col-entity">Entidad</th>
+            <th class="right col-metric">Métrica</th>
+            <th class="col-detail">Detalle</th>
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let d of topDesafios(); trackBy: trackByNombre">
-            <td>{{ d.nombre }}</td>
-            <td class="right">{{ formatInt(d.entregas) }}</td>
-            <td class="right">{{ formatInt(d.kg) }}</td>
-            <td>
-              <div class="progress thin">
-                <div class="bar" [style.width.%]="d.cumplimientoPct * 100"></div>
-              </div>
-              <span class="muted small">{{ (d.cumplimientoPct * 100) | number:'1.0-0' }}%</span>
+          <tr>
+            <td>Entregas</td>
+            <td class="right">{{ formatInt(entregasTotalRango()) }}</td>
+            <td class="muted">
+              Pendientes {{ formatInt(entregasPorEstado()['PENDIENTE']) }},
+              Validadas {{ formatInt(entregasPorEstado()['VALIDADA']) }},
+              Rechazadas {{ formatInt(entregasPorEstado()['RECHAZADA']) }},
+              Puntos {{ formatInt(entregasPorEstado()['PUNTOS_OTORGADOS']) }}
+            </td>
+          </tr>
+          <tr>
+            <td>Desafíos</td>
+            <td class="right">{{ formatInt(desafiosCreadosRango()) }}</td>
+            <td class="muted">
+              Activos {{ formatInt(desafiosSummary()?.activos ?? 0) }},
+              Pausados {{ formatInt(desafiosSummary()?.pausados ?? 0) }},
+              Finalizados {{ formatInt(desafiosSummary()?.finalizados ?? 0) }}
+            </td>
+          </tr>
+          <tr>
+            <td>Usuarios</td>
+            <td class="right">{{ formatInt(totalUsuarios()) }}</td>
+            <td class="muted">
+              Admin {{ formatInt(totalPorRol().ADMIN) }},
+              Operario {{ formatInt(totalPorRol().OPERARIO) }},
+              Cliente {{ formatInt(totalPorRol().CLIENTE) }}
+            </td>
+          </tr>
+          <tr>
+            <td>Vouchers</td>
+            <td class="right">{{ formatInt(vouchersTotal()) }}</td>
+            <td class="muted">
+              Creados {{ formatInt(vouchersPorEstado().CREADO) }},
+              Adquiridos {{ formatInt(vouchersPorEstado().ADQUIRIDO) }},
+              Utilizados {{ formatInt(vouchersPorEstado().UTILIZADO) }},
+              Anulados {{ formatInt(vouchersPorEstado().ANULADO) }}
             </td>
           </tr>
         </tbody>

@@ -1,0 +1,103 @@
+<section class="mis-dsf-wrap">
+  <header class="mis-dsf-hero">
+    <div class="mis-dsf-hero__content">
+      <span class="mis-dsf-hero__eyebrow">Seguimiento personal</span>
+      <h1 class="mis-dsf-hero__title">Mis desafíos</h1>
+      <p class="mis-dsf-hero__text">
+        Revisá todos los desafíos en los que ya participás, su estado actual, tu avance y los puntos acumulados.
+      </p>
+    </div>
+  </header>
+
+  <section class="mis-dsf-section">
+    <div class="mis-dsf-section__head">
+      <div>
+        <h2 class="mis-dsf-section__title">Listado de desafíos adheridos</h2>
+        <p class="mis-dsf-section__sub">
+          Aquí se muestran únicamente los desafíos a los que ya te inscribiste.
+        </p>
+      </div>
+
+      <button type="button" class="mis-btn mis-btn--ghost" (click)="onVolver()">
+        ← Volver
+      </button>
+    </div>
+
+    <div *ngIf="loading" class="mis-empty mis-empty--loading">
+      Cargando tus desafíos...
+    </div>
+
+    <div *ngIf="!loading && errorMsg" class="mis-empty">
+      {{ errorMsg }}
+    </div>
+
+    <div *ngIf="!loading && !errorMsg && items.length === 0" class="mis-empty">
+      Todavía no estás inscripto en ningún desafío.
+    </div>
+
+    <div *ngIf="!loading && !errorMsg && items.length > 0" class="mis-table-wrap">
+      <table class="mis-table">
+        <thead>
+          <tr>
+            <th>Título</th>
+            <th>Tipo de residuo</th>
+            <th>Meta</th>
+            <th>Estado</th>
+            <th>Adhesión</th>
+            <th>Progreso</th>
+            <th>Puntos</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr *ngFor="let item of items; trackBy: trackById">
+            <td class="mis-table__title">{{ item.titulo }}</td>
+
+            <td>
+              <span class="chip chip--soft">{{ item.tipoResiduo }}</span>
+            </td>
+
+            <td>
+              <span class="mis-meta-strong">{{ item.meta }} {{ item.unidadMedida }}</span>
+            </td>
+
+            <td>
+              <span class="chip" [ngClass]="getEstadoClase(item.estado)">
+                {{ item.estado }}
+              </span>
+            </td>
+
+            <td>{{ item.fechaAdhesion | date:'dd/MM/yyyy' }}</td>
+
+            <td>
+              <div class="mis-progress">
+                <div class="mis-progress__head">
+                  <span>{{ item.progreso }}%</span>
+                </div>
+                <div class="mis-progress__bar">
+                  <div class="mis-progress__fill" [style.width]="getProgressWidth(item.progreso)"></div>
+                </div>
+              </div>
+            </td>
+
+            <td>
+              <span class="mis-meta-strong">{{ item.puntosAcumulados }}</span>
+            </td>
+
+            <td class="mis-table__actions">
+              <button
+                type="button"
+                class="mis-icon-btn"
+                title="Ver detalle"
+                (click)="onVerDetalle(item)"
+              >
+                👁️
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+</section>

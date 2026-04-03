@@ -1,61 +1,272 @@
-<!--La vista es solo decorativa, no posee logica-->
-<section class="dsf-wrap">
-  <!-- Secciones principales -->
-  <div class="dsf-grid">
-    <!-- VER VOUCHERS ACTIVOS -->
-    <article class="dsf-card">
-      <div class="dsf-card__media" aria-hidden="true">
-        <svg viewBox="0 0 24 24"><path fill="currentColor" d="M3 6h18v4H3V6Zm0 6h18v6H3v-6Z"/></svg>
-      </div>
-      <div class="dsf-card__body">
-        <h2 class="dsf-card__title">Vouchers activos</h2>
-        <p class="dsf-card__desc">Beneficios disponibles hoy según tu búsqueda y filtros.</p>
-        <div class="dsf-card__actions">
-          <button type="button" class="dsf-btn">EXPLORAR →</button>
-        </div>
-      </div>
-    </article>
+<section class="voucher-dashboard">
+  <header class="hero">
+    <div class="hero__content">
+      <p class="hero__eyebrow">Programa de beneficios</p>
+      <h1 class="hero__title">Mis vouchers</h1>
+      <p class="hero__text">
+        Canjeá tus puntos acumulados por beneficios disponibles y consultá el estado
+        de tus vouchers y movimientos recientes.
+      </p>
+    </div>
 
-    <!-- MIS VOUCHERS -->
-    <article class="dsf-card">
-      <div class="dsf-card__media" aria-hidden="true">
-        <svg viewBox="0 0 24 24"><path fill="currentColor" d="M4 6h16v12H4V6Zm4 2v8h8V8H8Z"/></svg>
-      </div>
-      <div class="dsf-card__body">
-        <h2 class="dsf-card__title">Mis vouchers</h2>
-        <p class="dsf-card__desc">Revisá tus vouchers obtenidos y su estado de canje.</p>
-        <div class="dsf-card__actions">
-          <button type="button" class="dsf-btn">VER MIS VOUCHERS →</button>
-        </div>
-      </div>
-    </article>
+    <aside class="hero__points">
+      <span class="hero__points-label">Puntos disponibles</span>
+      <strong class="hero__points-value">{{ puntosDisponibles }}</strong>
+      <span class="hero__points-help">Saldo actual para canjear vouchers</span>
+    </aside>
+  </header>
 
-    <!-- COMERCIOS ADHERIDOS -->
-    <article class="dsf-card">
-      <div class="dsf-card__media" aria-hidden="true">
-        <svg viewBox="0 0 24 24"><path fill="currentColor" d="M3 10l2-6h14l2 6H3Zm1 2h16v8H4v-8Z"/></svg>
-      </div>
-      <div class="dsf-card__body">
-        <h2 class="dsf-card__title">Comercios adheridos</h2>
-        <p class="dsf-card__desc">Conocé los locales donde podés canjear tus vouchers.</p>
-        <div class="dsf-card__actions">
-          <button type="button" class="dsf-btn">VER COMERCIOS →</button>
-        </div>
-      </div>
-    </article>
-
-    <!-- CÓMO USAR MIS VOUCHERS -->
-    <article class="dsf-card">
-      <div class="dsf-card__media" aria-hidden="true">
-        <svg viewBox="0 0 24 24"><path fill="currentColor" d="M11 7h2v6h-2V7Zm0 8h2v2h-2v-2Z"/></svg>
-      </div>
-      <div class="dsf-card__body">
-        <h2 class="dsf-card__title">¿Cómo usar mis vouchers?</h2>
-        <p class="dsf-card__desc">Pasos de canje, condiciones y preguntas frecuentes.</p>
-        <div class="dsf-card__actions">
-          <button type="button" class="dsf-btn">VER GUÍA →</button>
-        </div>
-      </div>
-    </article>
+  <div *ngIf="loading" class="info-box">
+    Cargando dashboard de vouchers...
   </div>
+
+  <div *ngIf="!loading && error" class="info-box info-box--error">
+    {{ error }}
+  </div>
+
+  <section *ngIf="!loading && !error" class="kpis">
+    <article class="kpi-card kpi-card--primary">
+      <span class="kpi-card__label">Puntos disponibles</span>
+      <strong class="kpi-card__value">{{ puntosDisponibles }}</strong>
+      <span class="kpi-card__hint">Listos para canjear</span>
+    </article>
+
+    <article class="kpi-card">
+      <span class="kpi-card__label">Vouchers adquiridos</span>
+      <strong class="kpi-card__value">{{ kpis.vouchersAdquiridos }}</strong>
+      <span class="kpi-card__hint">Canjes vigentes</span>
+    </article>
+
+    <article class="kpi-card">
+      <span class="kpi-card__label">Vouchers utilizados</span>
+      <strong class="kpi-card__value">{{ kpis.vouchersUtilizados }}</strong>
+      <span class="kpi-card__hint">Beneficios ya usados</span>
+    </article>
+
+    <article class="kpi-card">
+      <span class="kpi-card__label">Vouchers anulados</span>
+      <strong class="kpi-card__value">{{ kpis.vouchersAnulados }}</strong>
+      <span class="kpi-card__hint">Canjes revertidos</span>
+    </article>
+  </section>
+
+  <section *ngIf="!loading && !error && voucherRecomendado" class="featured">
+    <div class="section-head">
+      <div>
+        <h2 class="section-title">Voucher recomendado</h2>
+        <p class="section-subtitle">
+          Este beneficio se ajusta a tu saldo actual y está disponible para canje.
+        </p>
+      </div>
+
+      <button type="button" class="dsf-btn dsf-btn--ghost" (click)="irATiposDisponibles()">
+        Ver todos los disponibles
+      </button>
+    </div>
+
+    <article class="featured-card">
+      <div class="featured-card__main">
+        <div class="featured-card__top">
+          <span [class]="getEstadoClase(voucherRecomendado.estado)">
+            {{ getEstadoLabel(voucherRecomendado.estado) }}
+          </span>
+        </div>
+
+        <h3 class="featured-card__title">{{ voucherRecomendado.titulo }}</h3>
+        <p class="featured-card__desc">{{ voucherRecomendado.descripcion }}</p>
+
+        <div class="featured-card__stats">
+          <div class="stat-box">
+            <span class="stat-box__label">Beneficio</span>
+            <strong class="stat-box__value">$ {{ voucherRecomendado.montoBeneficio }}</strong>
+          </div>
+
+          <div class="stat-box">
+            <span class="stat-box__label">Puntos requeridos</span>
+            <strong class="stat-box__value">{{ voucherRecomendado.puntosRequeridos }}</strong>
+          </div>
+
+          <div class="stat-box">
+            <span class="stat-box__label">Vigencia</span>
+            <strong class="stat-box__value stat-box__value--small">
+              {{ voucherRecomendado.vigenciaTexto }}
+            </strong>
+          </div>
+        </div>
+      </div>
+
+      <div class="featured-card__actions">
+        <button
+          *ngIf="voucherRecomendado.estado === 'disponible'; else noDisponibleRecomendado"
+          type="button"
+          class="dsf-btn dsf-btn--primary"
+          (click)="adquirirVoucherTipo(voucherRecomendado.idVoucherTipo)"
+        >
+          Adquirir voucher
+        </button>
+
+        <ng-template #noDisponibleRecomendado>
+          <button type="button" class="dsf-btn dsf-btn--disabled" disabled>
+            Te faltan {{ voucherRecomendado.puntosFaltantes || 0 }} puntos
+          </button>
+        </ng-template>
+
+        <button
+          type="button"
+          class="dsf-btn dsf-btn--ghost"
+          (click)="irAMisVouchers()"
+        >
+          Ver mis vouchers
+        </button>
+      </div>
+    </article>
+  </section>
+
+  <section *ngIf="!loading && !error" class="available">
+    <div class="section-head">
+      <div>
+        <h2 class="section-title">Tipos de vouchers disponibles</h2>
+        <p class="section-subtitle">
+          Explorá algunos de los beneficios que podés obtener con tus puntos.
+        </p>
+      </div>
+
+      <button type="button" class="dsf-btn dsf-btn--ghost" (click)="irATiposDisponibles()">
+        Ver listado completo
+      </button>
+    </div>
+
+    <div class="cards-grid">
+      <article class="voucher-type-card" *ngFor="let item of vouchersDestacados(); trackBy: trackByVoucherTipo">
+        <div class="voucher-type-card__head">
+          <span [class]="getEstadoClase(item.estado)">
+            {{ getEstadoLabel(item.estado) }}
+          </span>
+        </div>
+
+        <h3 class="voucher-type-card__title">{{ item.titulo }}</h3>
+        <p class="voucher-type-card__desc">{{ item.descripcion }}</p>
+
+        <div class="voucher-type-card__meta">
+          <div class="meta-row">
+            <span>Beneficio</span>
+            <strong>$ {{ item.montoBeneficio }}</strong>
+          </div>
+          <div class="meta-row">
+            <span>Puntos requeridos</span>
+            <strong>{{ item.puntosRequeridos }}</strong>
+          </div>
+          <div class="meta-row">
+            <span>Vigencia</span>
+            <strong>{{ item.vigenciaTexto }}</strong>
+          </div>
+        </div>
+
+        <div class="voucher-type-card__footer">
+          <button
+            *ngIf="item.estado === 'disponible'; else disabledAction"
+            type="button"
+            class="dsf-btn dsf-btn--primary dsf-btn--block"
+            (click)="adquirirVoucherTipo(item.idVoucherTipo)"
+          >
+            Canjear
+          </button>
+
+          <ng-template #disabledAction>
+            <button type="button" class="dsf-btn dsf-btn--disabled dsf-btn--block" disabled>
+              Te faltan {{ item.puntosFaltantes || 0 }} puntos
+            </button>
+          </ng-template>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section *ngIf="!loading && !error" class="bottom-grid">
+    <article class="panel panel--table">
+      <div class="section-head">
+        <div>
+          <h2 class="section-title">Mis últimos vouchers</h2>
+          <p class="section-subtitle">Consultá rápidamente tus canjes más recientes.</p>
+        </div>
+
+        <button type="button" class="dsf-btn dsf-btn--ghost" (click)="irAMisVouchers()">
+          Ver todos
+        </button>
+      </div>
+
+      <div class="table-wrap">
+        <table class="dsf-table dsf-table--centered">
+          <thead>
+            <tr>
+              <th>Código</th>
+              <th>Tipo</th>
+              <th>Estado</th>
+              <th>Fecha adquisición</th>
+              <th class="th-actions">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of ultimosVouchers(); trackBy: trackByVoucher">
+              <td>#{{ item.codigo }}</td>
+              <td>{{ item.tipoTitulo }}</td>
+              <td>
+                <span [class]="getClaseEstadoVoucher(item.estado)">
+                  {{ item.estado }}
+                </span>
+              </td>
+              <td>{{ item.fechaAdquisicion | date:'dd/MM/yyyy' }}</td>
+              <td class="td-actions">
+                <button type="button" class="table-action-btn" (click)="verVoucher(item.idVoucher)">
+                  VER
+                </button>
+              </td>
+            </tr>
+
+            <tr *ngIf="!ultimosVouchers().length">
+              <td colspan="5">
+                <div class="empty-inline">Todavía no tenés vouchers registrados.</div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </article>
+
+    <article class="panel panel--movements">
+      <div class="section-head">
+        <div>
+          <h2 class="section-title">Últimos movimientos</h2>
+          <p class="section-subtitle">Seguimiento reciente de tus puntos acreditados y debitados.</p>
+        </div>
+
+        <button type="button" class="dsf-btn dsf-btn--ghost" (click)="irAHistorial()">
+          Ver historial
+        </button>
+      </div>
+
+      <div class="movements">
+        <div class="movement-item" *ngFor="let item of ultimosMovimientos(); trackBy: trackByMovimiento">
+          <div class="movement-item__left">
+            <div class="movement-item__top">
+              <strong>{{ item.origen }}</strong>
+              <span class="movement-item__date">{{ item.fecha | date:'dd/MM/yyyy' }}</span>
+            </div>
+            <p class="movement-item__desc">{{ item.descripcion }}</p>
+          </div>
+
+          <div class="movement-item__right">
+            <span class="movement-item__type">{{ item.tipo }}</span>
+            <strong [class]="getClaseMovimiento(item.tipo)">
+              {{ item.tipo === 'CREDITO' ? '+' : '-' }}{{ item.puntos }}
+            </strong>
+          </div>
+        </div>
+
+        <div *ngIf="!ultimosMovimientos().length" class="empty-inline">
+          Todavía no hay movimientos registrados.
+        </div>
+      </div>
+    </article>
+  </section>
 </section>

@@ -1,125 +1,255 @@
-<section class="dsf-wrap">
-  <header class="dsf-header">
-    <h1 class="dsf-title">Panel del Operario — ¡Yo Reciclo!</h1>
-    <p class="dsf-sub">Validá entregas, registrá retiros y seguí tus puntos asignados.</p>
-  </header>
+<section class="operario-dashboard">
+  <div class="hero-card">
+    <div class="hero-copy">
+      <span class="hero-eyebrow">Yo_Reciclo · Operario</span>
+      <h1>Inicio operativo</h1>
+      <p>
+        Gestioná entregas pendientes, seguí el ritmo del día y accedé rápidamente
+        a los módulos de operación y reportes.
+      </p>
 
-  <!-- MÉTRICAS RÁPIDAS -->
-  <div class="stat-grid">
-    <article class="stat-card">
-      <div class="stat-icon">
-        <svg viewBox="0 0 24 24"><path fill="currentColor" d="M3 6h18v2H3zM6 10h12v2H6zM8 14h8v2H8z"/></svg>
-      </div>
-      <div class="stat-body">
-        <h3 class="stat-title">Entregas pendientes</h3>
-        <div class="stat-value">{{ entregasPendientesAsignadas() }}</div>
-        <div class="stat-sub">Asignadas a tu usuario</div>
-      </div>
-    </article>
+      <div class="hero-actions">
+        <a class="btn btn-primary" routerLink="/menu-principal/operario/entregas">
+          <span class="material-symbols-outlined">fact_check</span>
+          Ir a entregas
+        </a>
 
-    <article class="stat-card">
-      <div class="stat-icon">
-        <svg viewBox="0 0 24 24"><path fill="currentColor" d="M4 4h16v4H4V4zm0 6h10v10H4V10zm12 0h4v10h-4V10z"/></svg>
+        <a class="btn btn-secondary" routerLink="/menu-principal/operario/reportes">
+          <span class="material-symbols-outlined">monitoring</span>
+          Ver reportes
+        </a>
       </div>
-      <div class="stat-body">
-        <h3 class="stat-title">Retiros de hoy</h3>
-        <div class="stat-value">{{ retirosHoy() }}</div>
-        <div class="stat-sub">Programados en agenda</div>
-      </div>
-    </article>
+    </div>
 
-    <article class="stat-card">
-      <div class="stat-icon">
-        <svg viewBox="0 0 24 24"><path fill="currentColor" d="M5 19V8h3v11H5zm5 0V5h3v14h-3zm5 0v-7h3v7h-3z"/></svg>
+    <div class="hero-highlight">
+      <div class="highlight-top">
+        <span class="chip chip-soft">Resumen del día</span>
+        <span class="chip">Operación activa</span>
       </div>
-      <div class="stat-body">
-        <h3 class="stat-title">Kg procesados (semana)</h3>
-        <div class="stat-value">{{ kgProcesadosSemana() }}</div>
-        <div class="stat-sub">Acumulado semanal</div>
-      </div>
-    </article>
 
-    <article class="stat-card">
-      <div class="stat-icon">
-        <svg viewBox="0 0 24 24"><path fill="currentColor" d="M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8z"/></svg>
-      </div>
-      <div class="stat-body">
-        <h3 class="stat-title">Incidencias abiertas</h3>
-        <div class="stat-value">{{ incidenciasAbiertas() }}</div>
-        <div class="stat-sub">Reportes pendientes</div>
-      </div>
-    </article>
-  </div>
+      <h2>Estado actual de tu flujo operativo</h2>
 
-  <!-- ACCESOS RÁPIDOS -->
-  <div class="dsf-grid">
-    <article class="dsf-card" *ngFor="let l of links()">
-      <div class="dsf-card__media">
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path fill="currentColor" [attr.d]="l.iconPath"></path>
-        </svg>
+      <div class="hero-stats">
+        <article class="hero-stat">
+          <span class="hero-stat__label">Pendientes</span>
+          <strong class="hero-stat__value">{{ heroPendientes() }}</strong>
+        </article>
+
+        <article class="hero-stat hero-stat--accent">
+          <span class="hero-stat__label">Procesadas</span>
+          <strong class="hero-stat__value">{{ heroProcesadas() }}</strong>
+        </article>
       </div>
-      <div class="dsf-card__body">
-        <h2 class="dsf-card__title">{{ l.title }}</h2>
-        <p class="dsf-card__desc">{{ l.desc }}</p>
-        <div class="dsf-card__actions">
-          <a class="dsf-btn" [routerLink]="l.route">IR →</a>
+
+      <div class="hero-progress">
+        <div class="hero-progress__head">
+          <span>Progreso operativo</span>
+          <strong>{{ heroProcesadas() + heroPendientes() > 0 ? ((heroProcesadas() / (heroProcesadas() + heroPendientes())) * 100 | number:'1.0-0') : 0 }}%</strong>
+        </div>
+        <div class="hero-progress__bar">
+          <div
+            class="hero-progress__fill"
+            [style.width.%]="heroProcesadas() + heroPendientes() > 0 ? (heroProcesadas() / (heroProcesadas() + heroPendientes())) * 100 : 0"
+          ></div>
         </div>
       </div>
-    </article>
+
+      <div class="hero-note">
+        <span class="material-symbols-outlined">info</span>
+        <span>
+          El panel se construye con información real del módulo de entregas y se actualiza al recargar la vista.
+        </span>
+      </div>
+    </div>
   </div>
 
-  <!-- TAREAS ASIGNADAS -->
-  <section class="assign">
-    <header class="assign__header">
-      <h2 class="assign__title">Puntos asignados</h2>
-      <p class="assign__sub">Distribución de pendientes por punto verde (total: {{ totalPendientes() }}).</p>
-    </header>
+  <div class="panel" *ngIf="loading()">
+    <p>Cargando inicio del operario...</p>
+  </div>
 
-    <div class="assign__grid">
-      <article class="assign__card" *ngFor="let t of tareasConPct()">
-        <header class="assign__head">
-          <h3 class="assign__name">{{ t.punto }}</h3>
-          <span class="assign__count">{{ t.pendientes }} pendientes</span>
-        </header>
-        <p class="assign__addr muted">{{ t.direccion }}</p>
-        <div class="assign__bar">
-          <div class="assign__bar-fill" [style.width.%]="t.pct"></div>
+  <div class="panel" *ngIf="errorMsg() as error">
+    <p>{{ error }}</p>
+  </div>
+
+  <section class="kpis-grid" *ngIf="!loading() && !errorMsg()">
+    <article class="kpi-card" *ngFor="let kpi of kpis(); trackBy: trackByKpi">
+      <div class="kpi-icon">
+        <span class="material-symbols-outlined">{{ kpi.icon }}</span>
+      </div>
+      <div class="kpi-body">
+        <span class="kpi-label">{{ kpi.label }}</span>
+        <strong class="kpi-value">{{ kpi.value }}</strong>
+        <small class="kpi-helper">{{ kpi.helper }}</small>
+      </div>
+    </article>
+  </section>
+
+  <section class="panel panel-links" *ngIf="!loading() && !errorMsg()">
+    <div class="panel-head">
+      <div>
+        <span class="section-eyebrow">Acción rápida</span>
+        <h3>Módulos principales</h3>
+        <p>Accesos directos a las tareas más frecuentes del rol operario.</p>
+      </div>
+    </div>
+
+    <div class="links-grid">
+      <article class="quick-card" *ngFor="let l of links(); trackBy: trackByLink">
+        <div class="quick-icon">
+          <span class="material-symbols-outlined">{{ l.icon }}</span>
         </div>
-        <div class="assign__pct muted">{{ t.pct | number:'1.0-0' }}%</div>
+
+        <div class="quick-body">
+          <h4>{{ l.title }}</h4>
+          <p>{{ l.desc }}</p>
+        </div>
+
+        <div class="quick-actions">
+          <a class="quick-link" [routerLink]="l.route">
+            <span class="material-symbols-outlined">arrow_forward</span>
+            Ir al módulo
+          </a>
+        </div>
       </article>
     </div>
   </section>
 
-  <!-- ACTIVIDAD RECIENTE -->
-  <section class="recent">
-    <header class="recent__header">
-      <h2 class="recent__title">Actividad reciente</h2>
-      <p class="recent__sub">Pendientes por validar y últimas validadas.</p>
-    </header>
+  <div class="content-grid" *ngIf="!loading() && !errorMsg()">
+    <section class="panel panel-rich">
+      <div class="panel-head">
+        <div>
+          <span class="section-eyebrow">Estados</span>
+          <h3>Distribución de entregas</h3>
+          <p>Conteo general por estado dentro del conjunto cargado.</p>
+        </div>
+      </div>
 
-    <div class="recent__grid">
-      <article class="recent__card">
-        <h3 class="recent__card-title">Pendientes</h3>
-        <ul class="recent__list">
-          <li *ngFor="let e of ultPendientes()">
-            <span class="pill pill--warn">PEND.</span>
-            <strong>{{ e.cliente }}</strong>
-            <span class="muted">· {{ e.desafio }} · {{ e.punto }} · {{ e.fecha }}</span>
-          </li>
-        </ul>
-      </article>
+      <div class="state-list">
+        <article class="state-card" *ngFor="let item of resumenEstados()">
+          <div class="state-card__head">
+            <span class="badge" [ngClass]="item.className">{{ item.label }}</span>
+            <strong>{{ item.value }}</strong>
+          </div>
+        </article>
+      </div>
+    </section>
 
-      <article class="recent__card">
-        <h3 class="recent__card-title">Validadas</h3>
-        <ul class="recent__list">
-          <li *ngFor="let e of ultValidadas()">
-            <span class="pill pill--ok">OK</span>
-            <strong>{{ e.cliente }}</strong>
-            <span class="muted">· {{ e.desafio }} · {{ e.punto }} · {{ e.fecha }}</span>
-          </li>
-        </ul>
-      </article>
+    <section class="panel panel-rich">
+      <div class="panel-head">
+        <div>
+          <span class="section-eyebrow">Pendientes</span>
+          <h3>Entregas a revisar</h3>
+          <p>Las más recientes en estado pendiente, listas para control.</p>
+        </div>
+
+        <a
+          class="btn btn-secondary"
+          [routerLink]="['/menu-principal/operario/entregas/listado']"
+          [queryParams]="{ estado: 2, origen: 'dashboard-pendientes' }"
+        >
+          <span class="material-symbols-outlined">visibility</span>
+          Ver todas
+        </a>
+      </div>
+
+      <div class="action-list" *ngIf="pendientes().length; else emptyPendientes">
+        <article
+          class="action-card"
+          *ngFor="let entrega of pendientes().slice(0, 4); trackBy: trackByEntrega"
+        >
+          <div class="action-card-head">
+            <div>
+              <h4>{{ entrega.codigoVisible }}</h4>
+              <small>{{ entrega.desafioTitulo }}</small>
+            </div>
+
+            <span class="badge" [ngClass]="getEstadoClass(entrega.estado)">
+              {{ getEstadoLabel(entrega.estado) }}
+            </span>
+          </div>
+
+          <div class="action-meta">
+            <div>
+              <span class="label">Cliente</span>
+              <strong>{{ entrega.clienteNombre }}</strong>
+            </div>
+            <div>
+              <span class="label">Cantidad</span>
+              <strong>{{ entrega.cantidadDeclarada | number:'1.0-3' }} {{ entrega.unidadMedida }}</strong>
+            </div>
+            <div>
+              <span class="label">Ubicación</span>
+              <strong>{{ entrega.ubicacion || '-' }}</strong>
+            </div>
+            <div>
+              <span class="label">Vencimiento</span>
+              <strong>{{ entrega.fechaVencimiento | date:'dd/MM/yyyy HH:mm' }}</strong>
+            </div>
+          </div>
+        </article>
+      </div>
+
+      <ng-template #emptyPendientes>
+        <div class="empty-state">
+          <span class="material-symbols-outlined">task_alt</span>
+          <strong>No hay entregas pendientes</strong>
+          <p>Cuando existan entregas listas para revisión, aparecerán aquí.</p>
+        </div>
+      </ng-template>
+    </section>
+  </div>
+
+  <section class="panel panel-history" *ngIf="!loading() && !errorMsg()">
+    <div class="panel-head">
+      <div>
+        <span class="section-eyebrow">Actividad reciente</span>
+        <h3>Últimas entregas procesadas</h3>
+        <p>Incluye entregas validadas, rechazadas o con puntos otorgados.</p>
+      </div>
+
+      <a class="btn btn-secondary" routerLink="/menu-principal/operario/reportes">
+        <span class="material-symbols-outlined">table_view</span>
+        Ir a reportes
+      </a>
     </div>
+
+    <div class="table-wrap" *ngIf="recientesProcesadas().length; else emptyProcesadas">
+      <table class="history-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Código</th>
+            <th>Cliente</th>
+            <th>Desafío</th>
+            <th>Fecha</th>
+            <th>Estado</th>
+            <th>Ubicación</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of recientesProcesadas(); trackBy: trackByEntrega">
+            <td class="codigo-cell">{{ item.idEntrega }}</td>
+            <td>{{ item.codigoVisible }}</td>
+            <td>{{ item.clienteNombre }}</td>
+            <td>{{ item.desafioTitulo }}</td>
+            <td>{{ item.fechaValidacion || item.fechaCreacion | date:'dd/MM/yyyy HH:mm' }}</td>
+            <td>
+              <span class="badge" [ngClass]="getEstadoClass(item.estado)">
+                {{ getEstadoLabel(item.estado) }}
+              </span>
+            </td>
+            <td>{{ item.ubicacion || '-' }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <ng-template #emptyProcesadas>
+      <div class="empty-state">
+        <span class="material-symbols-outlined">history</span>
+        <strong>No hay actividad procesada reciente</strong>
+        <p>Cuando el operario valide, rechace o cierre entregas, aparecerán aquí.</p>
+      </div>
+    </ng-template>
   </section>
 </section>

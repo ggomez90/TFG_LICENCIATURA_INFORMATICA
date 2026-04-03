@@ -1,0 +1,162 @@
+<section class="historial-page">
+  <header class="page-header">
+    <div>
+      <p class="page-header__eyebrow">Trazabilidad de puntos</p>
+      <h1 class="page-header__title">Historial de movimientos</h1>
+      <p class="page-header__text">
+        Consultá los créditos y débitos de puntos generados por entregas, vouchers y ajustes.
+      </p>
+    </div>
+
+    <div class="page-header__actions">
+      <button type="button" class="dsf-btn dsf-btn--ghost" (click)="irAlDashboard()">
+        Volver al dashboard
+      </button>
+      <button type="button" class="dsf-btn dsf-btn--primary" (click)="verMisVouchers()">
+        Ver mis vouchers
+      </button>
+    </div>
+  </header>
+
+
+  <div *ngIf="loading" class="info-box">Cargando movimientos...</div>
+  <div *ngIf="!loading && error" class="info-box info-box--error">{{ error }}</div>
+
+  <section class="kpi-grid">
+    <article class="kpi-card kpi-card--primary">
+      <span class="kpi-card__label">Puntos actuales</span>
+      <strong class="kpi-card__value">{{ puntosActuales }}</strong>
+    </article>
+
+    <article class="kpi-card">
+      <span class="kpi-card__label">Créditos acumulados</span>
+      <strong class="kpi-card__value">{{ totalCreditos() }}</strong>
+    </article>
+
+    <article class="kpi-card">
+      <span class="kpi-card__label">Débitos acumulados</span>
+      <strong class="kpi-card__value">{{ totalDebitos() }}</strong>
+    </article>
+
+    <article class="kpi-card">
+      <span class="kpi-card__label">Movimientos totales</span>
+      <strong class="kpi-card__value">{{ movimientos().length }}</strong>
+    </article>
+  </section>
+
+  <section class="filters-card">
+    <div class="filters-group">
+      <span class="filters-group__label">Origen</span>
+
+      <button
+        type="button"
+        class="filter-chip"
+        [class.filter-chip--active]="filtroOrigen() === 'TODOS'"
+        (click)="filtroOrigen.set('TODOS')"
+      >
+        Todos
+      </button>
+
+      <button
+        type="button"
+        class="filter-chip"
+        [class.filter-chip--active]="filtroOrigen() === 'ENTREGA'"
+        (click)="filtroOrigen.set('ENTREGA')"
+      >
+        Entrega
+      </button>
+
+      <button
+        type="button"
+        class="filter-chip"
+        [class.filter-chip--active]="filtroOrigen() === 'VOUCHER'"
+        (click)="filtroOrigen.set('VOUCHER')"
+      >
+        Voucher
+      </button>
+
+      <button
+        type="button"
+        class="filter-chip"
+        [class.filter-chip--active]="filtroOrigen() === 'AJUSTE'"
+        (click)="filtroOrigen.set('AJUSTE')"
+      >
+        Ajuste
+      </button>
+    </div>
+
+    <div class="filters-group">
+      <span class="filters-group__label">Tipo</span>
+
+      <button
+        type="button"
+        class="filter-chip"
+        [class.filter-chip--active]="filtroTipo() === 'TODOS'"
+        (click)="filtroTipo.set('TODOS')"
+      >
+        Todos
+      </button>
+
+      <button
+        type="button"
+        class="filter-chip"
+        [class.filter-chip--active]="filtroTipo() === 'CREDITO'"
+        (click)="filtroTipo.set('CREDITO')"
+      >
+        Crédito
+      </button>
+
+      <button
+        type="button"
+        class="filter-chip"
+        [class.filter-chip--active]="filtroTipo() === 'DEBITO'"
+        (click)="filtroTipo.set('DEBITO')"
+      >
+        Débito
+      </button>
+    </div>
+  </section>
+
+  <section class="table-card">
+    <div class="table-wrap">
+      <table class="dsf-table">
+        <thead>
+          <tr>
+            <th>Fecha</th>
+            <th>Tipo</th>
+            <th>Origen</th>
+            <th>Puntos</th>
+            <th>Descripción</th>
+            <th>Referencia</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of movimientosFiltrados(); trackBy: trackById">
+            <td>{{ item.fecha | date:'dd/MM/yyyy' }}</td>
+            <td>
+              <span [class]="getClaseTipo(item.tipo)">
+                {{ item.tipo }}
+              </span>
+            </td>
+            <td>{{ item.origen }}</td>
+            <td>
+              <strong [class]="getClasePuntos(item.tipo)">
+                {{ item.tipo === 'CREDITO' ? '+' : '-' }}{{ item.puntos }}
+              </strong>
+            </td>
+            <td>{{ item.descripcion }}</td>
+            <td>{{ item.referencia || '-' }}</td>
+          </tr>
+
+          <tr *ngIf="!movimientosFiltrados().length">
+            <td colspan="6">
+              <div class="empty-state">
+                No hay movimientos para los filtros seleccionados.
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+</section>

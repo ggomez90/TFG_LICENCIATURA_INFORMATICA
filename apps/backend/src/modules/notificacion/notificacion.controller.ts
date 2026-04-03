@@ -26,31 +26,31 @@ export class NotificacionController {
   // - visible=true (forzado en service)
   // - orden: fechaCreacion desc
   // - filtrado por rol del usuario autenticado
-@Get('mias')
-@UseGuards(KeycloakAuthGuard, RolesGuard)
-@Roles('OPERARIO', 'CLIENTE')
-async listForMyRole(@User() user: any, @Query() dto: ListNotificacionPublicDto) {
-  return this.notificacionService.listPublic(dto);
-}
+  @Get('mias')
+  @UseGuards(KeycloakAuthGuard, RolesGuard)
+  @Roles('OPERARIO', 'CLIENTE')
+  async listForMyRole(@User() user: any, @Query() dto: ListNotificacionPublicDto) {
+    return this.notificacionService.listPublic(user, dto);
+  }
 
   // ADMIN: CRUD + listado con filtros completos
   @Get()
   @UseGuards(KeycloakAuthGuard, RolesGuard)
-  @Roles('ADMIN')
+  @Roles('ADMIN', 'ADMINISTRADOR')
   async findAll(@Query() filter: FilterNotificacionDto) {
     return this.notificacionService.findAll(filter);
   }
 
   @Post()
   @UseGuards(KeycloakAuthGuard, RolesGuard)
-  @Roles('ADMIN')
-  async create(@Body() dto: CreateNotificacionDto) {
-    return this.notificacionService.create(dto);
+  @Roles('ADMIN', 'ADMINISTRADOR')
+  async create(@User() user: any, @Body() dto: CreateNotificacionDto) {
+    return this.notificacionService.create(user, dto);
   }
 
   @Patch(':id')
   @UseGuards(KeycloakAuthGuard, RolesGuard)
-  @Roles('ADMIN')
+  @Roles('ADMIN', 'ADMINISTRADOR')
   async update(
     @Param('id', ParseIntPipe) idNotificacion: number,
     @Body() dto: UpdateNotificacionDto,
@@ -60,26 +60,11 @@ async listForMyRole(@User() user: any, @Query() dto: ListNotificacionPublicDto) 
 
   @Patch(':id/visible')
   @UseGuards(KeycloakAuthGuard, RolesGuard)
-  @Roles('ADMIN')
+  @Roles('ADMIN', 'ADMINISTRADOR')
   async updateVisible(
     @Param('id', ParseIntPipe) idNotificacion: number,
     @Body() dto: UpdateVisibleNotificacionDto,
   ) {
     return this.notificacionService.updateVisible(idNotificacion, dto);
-  }
-
-  //helper
-  private pickRole(user: any): 'ADMIN' | 'OPERARIO' | 'CLIENTE' {
-    const roles =
-      user?.realm_access?.roles ??
-      user?.resource_access?.default?.roles ??
-      user?.roles ??
-      [];
-    if (Array.isArray(roles)) {
-      if (roles.includes('ADMIN')) return 'ADMIN';
-      if (roles.includes('OPERARIO')) return 'OPERARIO';
-      return 'CLIENTE';
-    }
-    return 'CLIENTE';
   }
 }

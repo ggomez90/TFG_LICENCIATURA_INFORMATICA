@@ -1,52 +1,59 @@
-import { IsDateString, IsInt, IsOptional, Min } from 'class-validator';
+import { IsDateString, IsIn, IsInt, IsOptional, IsString, Min } from 'class-validator';
+import { Type } from 'class-transformer';
 import { PaginationDto } from '../common/pagination.dto';
-import { OrderDto } from '../common/order.dto';
 
 export class FilterMovimientoDto extends PaginationDto {
-  // Filtro principal
   @IsOptional()
+  @Type(() => Number)
   @IsInt()
   @Min(1)
   idCliente?: number;
 
-  // Filtros adicionales
   @IsOptional()
+  @Type(() => Number)
   @IsInt()
   @Min(1)
-  idTipoMovimiento?: number;       // CREDITO/DEBITO (tabla catálogo)
+  idTipoMovimiento?: number;
 
   @IsOptional()
+  @Type(() => Number)
   @IsInt()
   @Min(1)
-  idOrigenMovimiento?: number;     // ENTREGA/VOUCHER/AJUSTE (tabla catálogo)
+  idOrigenMovimiento?: number;
 
-  // Otros posibles vínculos (opcionales)
   @IsOptional()
+  @Type(() => Number)
   @IsInt()
   @Min(1)
   idEntrega?: number;
 
   @IsOptional()
+  @Type(() => Number)
   @IsInt()
   @Min(1)
   idVoucher?: number;
 
   @IsOptional()
+  @Type(() => Number)
   @IsInt()
   @Min(1)
   idAdmin?: number;
 
-  // Rango de fechas (ISO 8601)
   @IsOptional()
   @IsDateString()
-  desde?: string;                  // inclusive
+  desde?: string;
 
   @IsOptional()
   @IsDateString()
-  hasta?: string;                  // inclusive
-}
+  hasta?: string;
 
-export class OrderMovimientoDto extends OrderDto {
-  // sortBy fecha, puntos, idmovimiento
-  // sortDir ascendente o descendente
+  @IsOptional()
+  @IsString()
+  @IsIn(['fecha', 'puntos', 'idMovimiento'])
+  sortBy?: 'fecha' | 'puntos' | 'idMovimiento';
+
+  @IsOptional()
+  @IsString()
+  @IsIn(['asc', 'desc', 'ASC', 'DESC'])
+  order?: 'asc' | 'desc' | 'ASC' | 'DESC';
 }

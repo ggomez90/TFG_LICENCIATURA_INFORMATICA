@@ -162,10 +162,22 @@ export class UsuariosApi {
   updateByAdmin(id: number, dto: UpdateUsuarioDto) {
     return this.http.patch<UsuarioDto>(apiUrl(`/usuarios/${id}`), dto);
   }
+
   enable(id: number, dto: HabilitarUsuarioDto) {
     return this.http.patch<UsuarioDto>(apiUrl(`/usuarios/${id}/enable`), dto);
   }
+  
   ban(id: number, dto: BanearUsuarioDto) {
     return this.http.patch<UsuarioDto>(apiUrl(`/usuarios/${id}/ban`), dto);
+  }
+
+  // apps/frontend/src/app/api/usuarios.api.ts
+  getById(id: number) {
+    return this.http.get<UsuarioDto>(apiUrl(`/usuarios/${id}`));
+  }
+
+  //editar perfil logueado
+  updateMe(dto: UpdateUsuarioDto): Observable<UsuarioDto> {
+    return this.http.patch<UsuarioDto>(apiUrl('/usuarios/me'), dto);
   }
 }

@@ -1,0 +1,158 @@
+<div class="modal-backdrop" *ngIf="visible">
+  <div class="modal-shell modal-shell--compact" *ngIf="entrega as item">
+    <div class="modal-head">
+      <div>
+        <span class="modal-eyebrow">Recepción operativa</span>
+        <h2>{{ item.codigoVisible }}</h2>
+        <p>
+          Revisá la información declarada por el cliente y resolvé la entrega desde esta ventana.
+        </p>
+      </div>
+
+      <button type="button" class="icon-btn" (click)="onClose()">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+
+    <div class="modal-status-row">
+      <span class="chip chip-soft">{{ item.tipoResiduo }}</span>
+      <span class="badge" [ngClass]="getEstadoClass(item.estado)">
+        {{ getEstadoLabel(item.estado) }}
+      </span>
+      <span class="id-chip">ID {{ item.idEntrega }}</span>
+    </div>
+
+    <div class="modal-grid modal-grid--compact">
+      <section class="info-card">
+        <h3>Datos de la entrega</h3>
+
+        <div class="info-grid info-grid--compact">
+          <div>
+            <span class="label">Cliente</span>
+            <strong>{{ item.clienteNombre }}</strong>
+          </div>
+          <div>
+            <span class="label">Desafío</span>
+            <strong>{{ item.desafioTitulo }}</strong>
+          </div>
+          <div>
+            <span class="label">Ubicación</span>
+            <strong>{{ item.ubicacion || 'Sin ubicación' }}</strong>
+          </div>
+          <div>
+            <span class="label">Fecha creación</span>
+            <strong>{{ item.fechaCreacion | date:'dd/MM/yyyy HH:mm' }}</strong>
+          </div>
+          <div>
+            <span class="label">Fecha vencimiento</span>
+            <strong>{{ item.fechaVencimiento | date:'dd/MM/yyyy HH:mm' }}</strong>
+          </div>
+          <div>
+            <span class="label">Operario</span>
+            <strong>{{ item.operarioNombre || '-' }}</strong>
+          </div>
+        </div>
+      </section>
+
+      <section class="info-card">
+        <h3>Control de material</h3>
+
+        <div class="info-grid info-grid--compact">
+          <div>
+            <span class="label">Cantidad declarada</span>
+            <strong>{{ item.cantidadDeclarada | number:'1.0-3' }} {{ item.unidadMedida }}</strong>
+          </div>
+          <div>
+            <span class="label">Cantidad verificada</span>
+            <strong>
+              {{ item.cantidadVerificada != null ? (item.cantidadVerificada | number:'1.0-3') + ' ' + item.unidadMedida : '-' }}
+            </strong>
+          </div>
+          <div>
+            <span class="label">Fecha validación</span>
+            <strong>{{ item.fechaValidacion ? (item.fechaValidacion | date:'dd/MM/yyyy HH:mm') : '-' }}</strong>
+          </div>
+          <div>
+            <span class="label">Puntos estimados</span>
+            <strong>{{ item.puntosEstimados ?? 0 }}</strong>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <section class="info-card info-card--compact" *ngIf="item.observaciones || item.motivoRechazo || esPendiente()">
+      <h3>Observaciones operativas</h3>
+
+      <p class="obs" *ngIf="item.observaciones">
+        <strong>Observaciones:</strong> {{ item.observaciones }}
+      </p>
+
+      <p class="obs obs-danger" *ngIf="item.motivoRechazo">
+        <strong>Motivo de rechazo:</strong> {{ item.motivoRechazo }}
+      </p>
+
+      <div class="reject-block reject-block--compact" *ngIf="esPendiente()">
+        <label for="motivoRechazo">Motivo de rechazo</label>
+        <textarea
+          id="motivoRechazo"
+          rows="3"
+          [value]="motivoRechazo()"
+          (input)="motivoRechazo.set($any($event.target).value)"
+          placeholder="Describe brevemente por qué la entrega no coincide o no puede validarse..."
+        ></textarea>
+      </div>
+    </section>
+
+    <div class="modal-actions">
+      <button
+        *ngIf="mostrarCerrar()"
+        type="button"
+        class="btn btn-secondary"
+        (click)="onClose()"
+      >
+        <span class="material-symbols-outlined">close</span>
+        Cerrar
+      </button>
+
+      <button
+        *ngIf="mostrarPendiente()"
+        type="button"
+        class="btn btn-soft"
+        (click)="onVolverPendiente()"
+      >
+        <span class="material-symbols-outlined">restart_alt</span>
+        Pendiente
+      </button>
+
+      <button
+        *ngIf="mostrarRechazar()"
+        type="button"
+        class="btn btn-danger"
+        (click)="onRechazar()"
+      >
+        <span class="material-symbols-outlined">cancel</span>
+        Rechazar
+      </button>
+
+      <button
+        *ngIf="mostrarValidar()"
+        type="button"
+        class="btn btn-primary"
+        (click)="onValidar()"
+      >
+        <span class="material-symbols-outlined">check_circle</span>
+        Validar
+      </button>
+
+      <button
+        *ngIf="mostrarConfirmarPuntos()"
+        type="button"
+        class="btn btn-success"
+        (click)="onConfirmarPuntos()"
+      >
+        <span class="material-symbols-outlined">workspace_premium</span>
+        Confirmar puntos
+      </button>
+    </div>
+  </div>
+</div>

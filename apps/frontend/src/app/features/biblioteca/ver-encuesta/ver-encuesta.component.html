@@ -1,12 +1,12 @@
 <section class="dsf-wrap ver-encuesta">
   <header class="dsf-header">
     <h1 class="dsf-title">Encuesta</h1>
+
     <p class="dsf-sub" *ngIf="data">
       Detalle de la encuesta seleccionada. Publicada el
       <strong>{{ fmtFecha(data.fechaPublicacion) }}</strong>
       <ng-container *ngIf="data.fechaCierre">
-        · Cierre
-        <strong>{{ fmtFecha(data.fechaCierre) }}</strong>
+        · Cierre <strong>{{ fmtFecha(data.fechaCierre) }}</strong>
       </ng-container>
     </p>
   </header>
@@ -23,51 +23,159 @@
 
   <!-- DETALLE -->
   <ng-container *ngIf="!loading && !errorMsg && data">
-    <article class="dsf-card">
-      <header class="dsf-card__head">
+    <article class="dsf-card dsf-card--survey">
+
+      <!-- ALERTA ENCUESTA VENCIDA -->
+      <div *ngIf="closedByDate" class="dsf-alert dsf-alert--warn dsf-alert--compact">
+        Esta encuesta está cerrada por fecha. Podés verla, pero ya no admite respuestas.
+      </div>
+
+      <!-- CABECERA -->
+      <header class="dsf-card__head dsf-card__head--spaced">
         <h2 class="dsf-card__title" [innerHTML]="tituloHtml"></h2>
 
         <div class="preview-chips">
           <span class="dsf-badge" [ngClass]="data.activa ? 'dsf-badge--ok' : 'dsf-badge--muted'">
             {{ data.activa ? 'Activa' : 'Cerrada' }}
           </span>
+
           <span class="dsf-badge dsf-badge--kind">
             {{ isMultiple ? 'Múltiples respuestas' : 'Una sola respuesta' }}
+          </span>
+
+          <span *ngIf="closedByDate" class="dsf-badge dsf-badge--warn">
+            Vencida
+          </span>
+
+          <span *ngIf="locked && !closedByDate" class="dsf-badge dsf-badge--muted">
+            Respuesta registrada
           </span>
         </div>
       </header>
 
-      <!-- meta fechas -->
-      <div class="dsf-card__meta">
-        <div><strong>Publicación:</strong> {{ fmtFecha(data.fechaPublicacion) }}</div>
-        <div><strong>Cierre:</strong> {{ fmtFecha(data.fechaCierre) }}</div>
-      </div>
-
-      <div class="dsf-card__body">
-        <!-- Descripción con formato -->
-        <div class="dsf-descripcion" [innerHTML]="descripcionHtml"></div>
-
-        <!-- Opciones -->
-        <div class="opt-preview" *ngIf="opciones.length > 0; else sinOpcionesTpl">
-          <div class="opt-preview__item" *ngFor="let opt of opciones">
-            <input
-              [attr.type]="isMultiple ? 'checkbox' : 'radio'"
-              [disabled]="locked"
-              [checked]="isChecked(opt.id)"
-              (change)="onSeleccionChange($any($event.target).checked, opt.id)"
-              name="encuesta-options"
-            />
-            <span class="opt-preview__text">{{ opt.texto }}</span>
-            <small class="opt-preview__detalle" *ngIf="opt.detalle">{{ opt.detalle }}</small>
-          </div>
+      <!-- META FECHAS -->
+      <section class="dsf-meta dsf-meta--grid">
+        <div class="dsf-meta__item">
+          <span class="dsf-meta__label">Publicación</span>
+          <span class="dsf-meta__value">{{ fmtFecha(data.fechaPublicacion) }}</span>
         </div>
+        <div class="dsf-meta__item">
+          <span class="dsf-meta__label">Cierre</span>
+          <span class="dsf-meta__value">{{ fmtFecha(data.fechaCierre) }}</span>
+        </div>
+      </section>
 
-        <ng-template #sinOpcionesTpl>
-          <p class="dsf-hint">Esta encuesta no tiene opciones cargadas.</p>
-        </ng-template>
+      <div class="dsf-divider"></div>
+
+      <!-- CUERPO -->
+      <div class="dsf-card__body dsf-card__body--spaced">
+        <!-- DESCRIPCIÓN -->
+        <section class="dsf-block">
+          <h3 class="dsf-section-title">Descripción</h3>
+          <div class="dsf-descripcion" [innerHTML]="descripcionHtml"></div>
+        </section>
+
+        <div class="dsf-divider"></div>
+
+        <!-- INVITADO -->
+        <section class="dsf-block" *ngIf="isGuest">
+          <h3 class="dsf-section-title">Datos para responder (invitado)</h3>
+
+          <div class="dsf-guest-grid">
+            <label class="dsf-field">
+              <span class="dsf-field__label">Nombre</span>
+              <input
+                type="text"
+                class="dsf-input"
+                [(ngModel)]="guestNombre"
+                name="guestNombre"
+                [disabled]="locked || closedByDate"
+              />
+            </label>
+
+            <label class="dsf-field">
+              <span class="dsf-field__label">Apellido</span>
+              <input
+                type="text"
+                class="dsf-input"
+                [(ngModel)]="guestApellido"
+                name="guestApellido"
+                [disabled]="locked || closedByDate"
+              />
+            </label>
+
+            <label class="dsf-field">
+              <span class="dsf-field__label">DNI</span>
+              <input
+                type="text"
+                class="dsf-input"
+                [(ngModel)]="guestDni"
+                name="guestDni"
+                [disabled]="locked || closedByDate"
+              />
+            </label>
+
+            <div class="dsf-field dsf-field--btn">
+              <button
+                type="button"
+                class="dsf-btn dsf-btn--outline"
+                (click)="onVerificarDniInvitado()"
+                [disabled]="locked || closedByDate"
+              >
+                Verificar DNI
+              </button>
+            </div>
+          </div>
+
+          <div *ngIf="guestMustLogin" class="dsf-alert dsf-alert--error dsf-alert--compact">
+            Este DNI pertenece a un usuario registrado. Iniciá sesión para responder.
+          </div>
+
+          <div *ngIf="guestAlreadyResponded" class="dsf-alert dsf-alert--compact">
+            Ya existe una respuesta registrada con este DNI. La encuesta queda en modo lectura.
+          </div>
+
+          <div *ngIf="guestVerified && !guestMustLogin && !guestAlreadyResponded" class="dsf-hint dsf-hint--ok">
+            DNI verificado. Ya podés seleccionar y enviar tu respuesta.
+          </div>
+        </section>
+
+        <div class="dsf-divider" *ngIf="isGuest"></div>
+
+        <!-- OPCIONES -->
+        <section class="dsf-block">
+          <h3 class="dsf-section-title">Opciones</h3>
+
+          <div class="opt-preview" *ngIf="opciones.length > 0; else sinOpcionesTpl">
+            <div
+              class="opt-preview__item"
+              *ngFor="let opt of opciones"
+              [class.opt-preview__item--disabled]="!canInteractOptions"
+            >
+              <input
+                [attr.type]="isMultiple ? 'checkbox' : 'radio'"
+                [disabled]="!canInteractOptions"
+                [checked]="isChecked(opt.id)"
+                (change)="onSeleccionChange($any($event.target).checked, opt.id)"
+                name="encuesta-options"
+              />
+              <div class="opt-preview__content">
+                <span class="opt-preview__text">{{ opt.texto }}</span>
+                <small class="opt-preview__detalle" *ngIf="opt.detalle">{{ opt.detalle }}</small>
+              </div>
+            </div>
+          </div>
+
+          <ng-template #sinOpcionesTpl>
+            <p class="dsf-hint">Esta encuesta no tiene opciones cargadas.</p>
+          </ng-template>
+        </section>
       </div>
 
-      <footer class="dsf-card__actions">
+      <div class="dsf-divider"></div>
+
+      <!-- ACCIONES -->
+      <footer class="dsf-card__actions dsf-card__actions--spaced">
         <button type="button" class="dsf-btn dsf-btn--ghost" (click)="onVolver()">
           ← Volver a la biblioteca
         </button>
@@ -77,7 +185,7 @@
         <button
           type="button"
           class="dsf-btn dsf-btn--primary"
-          [disabled]="locked || selectedIds.size === 0"
+          [disabled]="!canSend"
           (click)="onEnviarRespuesta()"
         >
           Enviar respuesta

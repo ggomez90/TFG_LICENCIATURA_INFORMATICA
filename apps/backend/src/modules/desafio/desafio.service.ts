@@ -14,6 +14,7 @@ export class DesafioService {
   private readonly MODEL = 'desafio' as const;
   private readonly ID_FIELD = 'idDesafio' as const;
 
+  //helpers para fechas, crear y editar
   // funcion para mantener la coercion entre las fechas
   private coerceCreate(dto: CreateDesafioDto) {
     const data: any = { ...dto };
@@ -27,6 +28,18 @@ export class DesafioService {
     if ((dto as any).fechaInicio) data.fechaInicio = new Date((dto as any).fechaInicio);
     if ((dto as any).fechaFin) data.fechaFin = new Date((dto as any).fechaFin);
     return data;
+  }
+
+  async findOne(idDesafio: number): Promise<Desafio> {
+    const item = await (this.prisma as any)[this.MODEL].findUnique({
+      where: { [this.ID_FIELD]: idDesafio },
+    });
+
+    if (!item) {
+      throw new NotFoundException('Desafío no encontrado');
+    }
+
+    return item;
   }
 
   // Listado para cualquier rol autenticado

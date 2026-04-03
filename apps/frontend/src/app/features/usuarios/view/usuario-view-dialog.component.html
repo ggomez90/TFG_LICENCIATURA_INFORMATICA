@@ -1,64 +1,145 @@
-<div class="modal__backdrop" (click)="cancel()"></div>
-<div class="modal__panel" (click)="$event.stopPropagation()">
-  <section class="modal__card" role="dialog" aria-modal="true" aria-labelledby="dlg-title">
-    <header class="modal__header">
-      <h3 id="dlg-title">Ver usuario</h3>
-      <button type="button" class="icon-btn close" (click)="cancel()" aria-label="Cerrar">×</button>
-    </header>
+<div class="modal-backdrop" (click)="cancel()"></div>
 
-    <div class="modal__body">
-      <div class="form">
-        <div class="grid">
-          <label class="field">
-            <span class="lbl">Nombres</span>
-            <input type="text" [value]="nombres" readonly />
-          </label>
+<div class="modal-shell-wrap" (click)="$event.stopPropagation()">
+  <section
+    class="modal-shell"
+    [class.modal-shell--compact]="usuario.tipo !== 'cliente'"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="dlg-title"
+  >
+    <div class="modal-head">
+      <div>
+        <span class="modal-eyebrow">Consulta administrativa</span>
+        <h2 id="dlg-title">Ver usuario</h2>
+        <p>
+          Consultá los datos principales del usuario y, si corresponde, la información adicional
+          del perfil cliente.
+        </p>
+      </div>
 
-          <label class="field">
-            <span class="lbl">Apellidos</span>
-            <input type="text" [value]="apellidos" readonly />
-          </label>
-
-          <label class="field">
-            <span class="lbl">Usuario</span>
-            <input type="text" [value]="usuario.nombreUsuario" readonly />
-          </label>
-
-          <label class="field">
-            <span class="lbl">Email</span>
-            <input type="text" [value]="usuario.email" readonly />
-          </label>
-
-          <label class="field field--full">
-            <span class="lbl">DNI/CUIT/CUIL</span>
-            <input type="text" [value]="usuario.dniCuitCuil" readonly />
-          </label>
-
-          <label class="field">
-            <span class="lbl">Rol</span>
-            <input type="text" [value]="usuario.tipo.toUpperCase()" readonly />
-          </label>
-
-          <label class="field">
-            <span class="lbl">Estado</span>
-            <input
-              type="text"
-              [value]="usuario.estadoId === 3 ? 'BANEADO' : (usuario.estadoId === 2 ? 'HABILITADO' : 'PENDIENTE')"
-              readonly
-            />
-          </label>
+      <div class="head-actions">
+        <div *ngIf="usuario.idCliente" class="id-chip" title="ID del cliente asociado">
+          ID Cliente: {{ usuario.idCliente }}
         </div>
 
-        <!-- Motivo del ban (solo si está baneado y hay motivo) -->
-        <div *ngIf="usuario.estadoId === 3 && usuario.motivoBan" class="ban-box" role="note" aria-live="polite">
-          <div class="ban-title">Motivo del ban</div>
-          <div class="ban-text">{{ usuario.motivoBan }}</div>
-        </div>
+        <button type="button" class="icon-btn" (click)="cancel()" aria-label="Cerrar">
+          ×
+        </button>
       </div>
     </div>
 
-    <footer class="modal__footer">
-      <button type="button" class="dsf-btn" (click)="cancel()">Cerrar</button>
-    </footer>
+    <div class="modal-status-row">
+      <span class="chip chip-soft">{{ usuario.tipo.toUpperCase() }}</span>
+      <span class="chip" [class.chip-danger]="usuario.estadoId === 3">
+        {{ usuario.estadoId === 3 ? 'BANEADO' : (usuario.estadoId === 2 ? 'HABILITADO' : 'PENDIENTE') }}
+      </span>
+      <span class="id-chip">ID {{ usuario.id }}</span>
+    </div>
+
+    <div class="modal-grid" [class.modal-grid--single]="usuario.tipo !== 'cliente'">
+      <section class="info-card">
+        <h3>Datos generales</h3>
+
+        <div class="info-grid">
+          <div>
+            <span class="label">Nombres</span>
+            <strong>{{ nombres || '—' }}</strong>
+          </div>
+
+          <div>
+            <span class="label">Apellidos</span>
+            <strong>{{ apellidos || '—' }}</strong>
+          </div>
+
+          <div>
+            <span class="label">Usuario</span>
+            <strong>{{ usuario.nombreUsuario }}</strong>
+          </div>
+
+          <div>
+            <span class="label">Email</span>
+            <strong>{{ usuario.email }}</strong>
+          </div>
+
+          <div>
+            <span class="label">Rol</span>
+            <strong>{{ usuario.tipo.toUpperCase() }}</strong>
+          </div>
+
+          <div>
+            <span class="label">Estado</span>
+            <strong>{{ usuario.estadoId === 3 ? 'BANEADO' : (usuario.estadoId === 2 ? 'HABILITADO' : 'PENDIENTE') }}</strong>
+          </div>
+
+          <div class="info-full">
+            <span class="label">DNI/CUIT/CUIL</span>
+            <strong>{{ usuario.dniCuitCuil || '—' }}</strong>
+          </div>
+        </div>
+      </section>
+
+      <section *ngIf="usuario.tipo === 'cliente'" class="info-card" role="note" aria-live="polite">
+        <h3>Datos de cliente</h3>
+
+        <div *ngIf="clienteLoading" class="feedback-box">
+          Cargando datos del cliente…
+        </div>
+
+        <div *ngIf="!clienteLoading && clienteError" class="feedback-box feedback-box--error">
+          {{ clienteError }}
+        </div>
+
+        <div *ngIf="!clienteLoading && !clienteError && clienteExtra" class="info-grid">
+          <div>
+            <span class="label">Tipo de cliente</span>
+            <strong>{{ tipoClienteLabel }}</strong>
+          </div>
+
+          <div>
+            <span class="label">Puntos</span>
+            <strong>{{ clienteExtra.puntos ?? 0 }}</strong>
+          </div>
+
+          <div class="info-full">
+            <span class="label">Razón social</span>
+            <strong>{{ clienteExtra.razonSocial || '—' }}</strong>
+          </div>
+
+          <div class="info-full">
+            <span class="label">Dirección</span>
+            <strong>{{ clienteExtra.direccion || '—' }}</strong>
+          </div>
+
+          <div>
+            <span class="label">Provincia</span>
+            <strong>
+              {{ clienteExtra.provinciaNombre || (clienteExtra.idProvincia ? ('#' + clienteExtra.idProvincia) : '—') }}
+            </strong>
+          </div>
+
+          <div>
+            <span class="label">Localidad</span>
+            <strong>
+              {{ clienteExtra.localidadNombre || (clienteExtra.idLocalidad ? ('#' + clienteExtra.idLocalidad) : '—') }}
+            </strong>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <section
+      *ngIf="usuario.estadoId === 3 && usuario.motivoBan"
+      class="info-card info-card--danger"
+      role="note"
+      aria-live="polite"
+    >
+      <h3>Motivo del ban</h3>
+      <p class="obs obs-danger">{{ usuario.motivoBan }}</p>
+    </section>
+
+    <div class="modal-actions">
+      <button type="button" class="btn btn-primary" (click)="cancel()">Cerrar</button>
+    </div>
   </section>
 </div>
