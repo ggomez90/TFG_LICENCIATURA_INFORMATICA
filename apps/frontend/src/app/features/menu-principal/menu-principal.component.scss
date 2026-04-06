@@ -251,7 +251,7 @@
 .f-col{
   display: flex;
   flex-direction: column;
-  justify-content: center;  /* centra vertical */
+  justify-content: center; 
   gap: 8px;
   min-height: 100%;
 }
@@ -267,7 +267,7 @@
 
 /* Sección 1: marca escudo + “Gobierno de la Ciudad / de Ceres” */
 .f-col--brand{
-  align-items: flex-start;  /* centro-izquierda */
+  align-items: flex-start;
 }
 .f-brand{
   display: inline-flex;
@@ -294,13 +294,13 @@
   white-space: nowrap;
 }
 
-/*Listas / enlaces (secciones 2 y 5)*/
+/*Listas / enlaces*/
 .f-list{
   list-style: none;
   padding: 0; margin: 0;
   display: grid; gap: 6px;
   font-size: 14px;
-  width: 100%;              /* aprovecha todo el ancho */
+  width: 100%;
 }
 .f-list--full{ width: 100%; }
 .f-list a{
@@ -319,12 +319,12 @@
   display: flex;
   gap: 18px;
   flex-wrap: wrap;
-  justify-content: space-evenly; /* ocupan todo el ancho de la sección */
+  justify-content: space-evenly;
   width: 100%;
 }
 .f-social--center{ justify-content: space-evenly; }
 
-/* Íconos grandes, sin fondo ni bordes */
+/* Íconos grandes */
 .f-soc{
   display: inline-block;
   padding: 0;
@@ -340,10 +340,10 @@
   .f-soc img{ width: 40px; height: 40px; }
 }
 
-/*Stores (sección 4): SVG uno debajo del otro, más grandes y sin marcos*/
+/*Stores (sección 4): SVG uno debajo del otro*/
 .f-stores{
   display: flex;
-  flex-direction: column;   /* uno debajo del otro */
+  flex-direction: column;
   align-items: center;
   gap: 18px;
   width: 100%;
@@ -364,17 +364,17 @@
 }
 .f-store__img{
   display: block;
-  height: 60px;            /* más grande en version movil */
+  height: 60px;
   width: auto;
   background: transparent !important;
   border: 0 !important;
   box-shadow: none !important;
   outline: none !important;
-  object-fit: contain;     /* evita marcos por desborde */
+  object-fit: contain;
 }
-.f-store span{ display: none; } /* oculta textos redundantes */
+.f-store span{ display: none; }
 @media (min-width: 900px){
-  .f-store__img{ height: 40px; } /* mas grande en desktop */
+  .f-store__img{ height: 40px; }
 }
 
 /*Copy final */
@@ -387,7 +387,7 @@
   background: linear-gradient(180deg, rgba(0,0,0,.0), rgba(0,0,0,.04));
 }
 
-/* --- Desktop (≥900px): redistribución de anchos (menos ancho a 1, más a 2 y 5) --- */
+/* --- Desktop (≥900px): redistribución de anchos--- */
 @media (min-width: 900px){
   .app-footer__wrap{
     /* proporciones:
@@ -398,7 +398,7 @@
        - Sección 5 (términos): 1.9fr (un poco más ancha)
     */
     grid-template-columns: 1.4fr 2.3fr 1fr 1.2fr 1.9fr;
-    align-items: stretch; /* cada columna ocupa todo el alto */
+    align-items: stretch;
     gap: 18px;
   }
 

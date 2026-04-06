@@ -90,7 +90,6 @@
 .dsf-table-wrap { overflow-x: auto; }
 .dsf-table { width: 100%; border-collapse: collapse; font-size: 0.95rem; table-layout: fixed; }
 
-/* CAMBIO: Columna ID más angosta + blindaje contra nth-child */
 .dsf-th--id,
 .dsf-td--id {
   width: 48px;
@@ -124,8 +123,7 @@
 /* Fuerte */
 .dsf-table__cell--strong { font-weight: 700; color: #1b5e20; }
 
-/* CAMBIO: Recalibrar anchos por la nueva primer columna ID
-   ID | Título | Vigencia | Estado | Acciones */
+/* anchos ID | Título | Vigencia | Estado | Acciones */
 .dsf-table thead th:nth-child(1),
 .dsf-table tbody td:nth-child(1) { width: 48px !important; }
 

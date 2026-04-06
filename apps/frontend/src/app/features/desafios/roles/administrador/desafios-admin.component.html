@@ -4,7 +4,7 @@
     <p class="dsf-sub">Gestión de desafíos: creación, listado, búsqueda, visualización y edición.</p>
   </header>
 
-  <!-- ===== KPIs (estilo usuarios, a todo el ancho) ===== -->
+  <!-- KPIs -->
   <div class="dsf-grid stats">
     <article class="dsf-card stat">
       <div class="stat__num">{{ loadingSummary() ? '—' : (summary()?.total ?? 0) }}</div>
@@ -40,7 +40,7 @@
   </div>
 
 
-  <!-- ===== Filtros (Buscar | Estado | Botones a la derecha) ===== -->
+  <!-- Filtros -->
   <div class="filters dsf-card filters--row">
     <div class="filters__row filters__row--desafios">
       <label class="field field--grow">
@@ -73,7 +73,7 @@
     </div>
   </div>
 
-  <!-- ===== Tabla (widget últimos 10 por ID desc) ===== -->
+  <!-- Tabla-->
   <div class="tbl dsf-card">
     <div class="tbl__scroll">
       <table>

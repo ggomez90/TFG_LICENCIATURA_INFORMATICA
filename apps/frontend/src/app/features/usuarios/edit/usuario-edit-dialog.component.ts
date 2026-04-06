@@ -115,7 +115,7 @@ export class UsuarioEditDialogComponent {
     const idRolUsuario = Number(this.f['idRolUsuario'].value) as 1|2|3;
     const idEstadoUsuario = Number(this.f['idEstadoUsuario'].value) as 1|2|3;
 
-    // Validar motivo SOLO si pasa de habilitado -> baneado
+    // Validar motivo SOLO si pasa de habilitado a baneado
     if (idEstadoUsuario === 3 && this.estadoOriginal !== 3) {
       const m = (this.banMotivo || '').trim();
       if (!m || m.length < 1 || m.length > 300) {
@@ -130,7 +130,6 @@ export class UsuarioEditDialogComponent {
       dniCuitCuil: this.f['dniCuitCuil'].value?.trim() || null,
       idRolUsuario,
       // email no editable
-      // estado se gestiona con endpoints específicos abajo
     };
 
     this.loading = true;
@@ -160,7 +159,6 @@ export class UsuarioEditDialogComponent {
             error: (e: any) => { this.loading = false; alert(e?.message || 'Error al habilitar'); }
           });
         } else {
-          // Otros cambios no contemplados
           this.loading = false;
           this.saved.emit();
         }

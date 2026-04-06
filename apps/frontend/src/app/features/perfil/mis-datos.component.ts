@@ -61,7 +61,7 @@ export class MisDatosComponent {
   provinciaNombre = signal<string | null>(null);
   localidadNombre = signal<string | null>(null);
 
-  // view model listo para pintar
+  // view model
   usuario = computed<UsuarioPerfilVM | null>(() => {
     const u = this.me();
     if (!u) return null;
@@ -71,7 +71,7 @@ export class MisDatosComponent {
 
     const cli = this.cliente();
 
-    // prioridad: si viene cliente -> usar sus campos (direccion/ids/puntos/razonSocial)
+    // prioridad: si viene cliente usar sus campos (direccion/ids/puntos/razonSocial)
     const direccion = (cli?.direccion ?? u.cliente?.direccion ?? null);
     const idProvincia = (cli?.idProvincia ?? u.cliente?.idProvincia ?? null);
     const idLocalidad = (cli?.idLocalidad ?? u.cliente?.idLocalidad ?? null);
@@ -139,10 +139,9 @@ export class MisDatosComponent {
         const rol = this.mapRol(u.idRolUsuario);
 
         if (rol === 'CLIENTE') {
-          // ✅ PERFIL PROPIO: usar /clientes/me (evita 403 de /clientes/:id)
+          //PERFIL PROPIO: usa /clientes/me 
           this.loadClienteMe();
         } else {
-          // si no es cliente, igual podemos intentar resolver provincia/localidad si viene embebido
           const idProv = Number(u?.cliente?.idProvincia ?? 0);
           const idLoc = Number(u?.cliente?.idLocalidad ?? 0);
           this.resolveUbicacion(idProv, idLoc);
@@ -209,7 +208,7 @@ export class MisDatosComponent {
     return '—';
   }
 
-  // helper de formato (por si lo usás en el html)
+  // helper de formato
   formatInt(n: number): string {
     return new Intl.NumberFormat('es-AR').format(Math.round(Number(n) || 0));
   }

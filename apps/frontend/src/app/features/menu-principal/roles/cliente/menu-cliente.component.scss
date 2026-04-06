@@ -10,9 +10,7 @@
   color: #173326;
 }
 
-/* =========================
-   HERO
-========================= */
+//HERO
 
 .hero {
   display: grid;
@@ -159,9 +157,7 @@
   line-height: 1;
 }
 
-/* =========================
-   STATS
-========================= */
+// STATS
 
 .stats-grid {
   display: grid;
@@ -226,9 +222,7 @@
   line-height: 1.5;
 }
 
-/* =========================
-   SECTION TITLES
-========================= */
+// SECTION TITLES
 
 .section-head {
   display: flex;
@@ -251,9 +245,7 @@
   line-height: 1.55;
 }
 
-/* =========================
-   HIGHLIGHT
-========================= */
+//HIGHLIGHT
 
 .highlight-card {
   position: relative;
@@ -337,9 +329,7 @@
   gap: 0.75rem;
 }
 
-/* =========================
-   QUICK ACCESS
-========================= */
+//QUICK ACCESS
 
 .quick-grid {
   display: grid;
@@ -458,9 +448,7 @@
   box-shadow: 0 8px 16px rgba(46, 125, 50, 0.08);
 }
 
-/* =========================
-   BOTTOM GRID
-========================= */
+//BOTTOM GRID
 
 .bottom-grid {
   display: grid;
@@ -588,9 +576,7 @@
   line-height: 1.65;
 }
 
-/* =========================
-   BUTTONS
-========================= */
+//BUTTONS
 
 .dsf-btn {
   height: 44px;
@@ -659,9 +645,7 @@
 }
 
 
-/* =========================
-   RESPONSIVE
-========================= */
+//RESPONSIVE
 
 @media (max-width: 1200px) {
   .stats-grid,

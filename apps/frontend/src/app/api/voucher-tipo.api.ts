@@ -83,7 +83,6 @@ export class VoucherTipoApi {
     return this.http.patch<{ idVoucherTipo: number; activa: boolean }>(`${this.base}/${idVoucherTipo}/activa`, { activa });
   }
 
-  // GET /api/desafios/:id
   getById(id: number) {
     return this.http.get<AdminVoucherTipoItem>(`${this.base}/${id}`);
   }

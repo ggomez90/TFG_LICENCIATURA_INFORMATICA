@@ -81,7 +81,7 @@
 
   .dsf-field--wide { width: 100%; max-width: 100%; }
 
-  /* ====== Dos columnas que ocupan todo el ancho (tipo residuo / unidad) ====== */
+  /*Dos columnas que ocupan todo el ancho (tipo residuo / unidad)*/
   .two-wide {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -99,7 +99,7 @@
   }
 
 
-  /* ================== NUMÉRICOS ================== */
+  /* NUMÉRICOS */
   .num-grid {
     display: grid;
     grid-template-columns: repeat(4, minmax(180px, 1fr));
@@ -112,7 +112,7 @@
     width: 100%;
   }
 
-  /* ================== SWITCH ================== */
+  /* SWITCH */
   .switches-row {
     display: flex;
     flex-wrap: wrap;
@@ -154,7 +154,7 @@
 
   .dsf-note { font-size: 0.8rem; color: #6b7f70; margin-top: 0.5rem; }
 
-  /* ================== ACCIONES (mismo alto en los 4 botones) ================== */
+  /* ACCIONES */
   .dsf-form__actions {
     display: flex;
     align-items: center;
@@ -172,7 +172,7 @@
   }
   .dsf-form__spacer { flex: 1; }
 
-  /* ================== TOOLBAR ================== */
+  /* TOOLBAR */
   .editor-toolbar {
     display: flex;
     flex-wrap: wrap;
@@ -247,7 +247,7 @@
     margin: 0 0.25rem;
   }
 
-  /* ================== ÁREAS EDITOR ================== */
+  /*  ÁREAS EDITOR */
   .editor-area {
     border: 1px solid #d3e4d8;
     background: #f9fdfb;
@@ -271,7 +271,7 @@
     background: #ffffff;
   }
 
-  /* ================== RESPONSIVE ================== */
+  /*  RESPONSIVE */
   @media (max-width: 980px) {
     .two-wide { grid-template-columns: 1fr; }
     .num-grid { grid-template-columns: repeat(2, minmax(180px, 1fr)); }

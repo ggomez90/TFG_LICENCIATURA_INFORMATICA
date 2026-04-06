@@ -264,7 +264,6 @@ export class ListarVoucherTipoAdministradorComponent implements OnInit {
     this.errorMsg = null;
     this.cdr.markForCheck();
 
-    // Igual que dashboard: NO mandamos sortBy/order para no chocar con DTOs
     const params: any = {
       limit: this.limit,   // 50
       offset: this.offset, // 0, 50, 100...
@@ -287,13 +286,12 @@ export class ListarVoucherTipoAdministradorComponent implements OnInit {
           activa: !!x.activa,
         }));
 
-        // Tus filtros actuales (no se tocan)
         let filtered = this.applyClientFilters(mapped);
 
-        // Orden fijo como dashboard: ID desc
+        // ID desc
         filtered = filtered.sort((a, b) => (b.idVoucherTipo || 0) - (a.idVoucherTipo || 0));
 
-        // Si el back devuelve paginado: usamos su paginación, pero ordenamos igual por seguridad
+        // Si el back devuelve paginado: usamos su paginación
         if (resp && Array.isArray(resp.items) && typeof resp.total === 'number') {
           this.items = filtered;
           this.total = resp.total ?? filtered.length;
@@ -318,5 +316,4 @@ export class ListarVoucherTipoAdministradorComponent implements OnInit {
       },
     });
   }
-
 }

@@ -49,15 +49,13 @@
     letter-spacing: 0.03em;
   }
 
-  /* =========================================================
-     FILA CENTRAL — CÓDIGO | BENEFICIO | ESTADO | PUNTOS
-     Ajuste fino: centrados y más juntos
-     ========================================================= */
+// FILA CENTRAL — CÓDIGO | BENEFICIO | ESTADO | PUNTOS
+
   .voucher-values {
     display: grid;
     grid-template-columns: repeat(4, max-content);
-    justify-content: center;      /* centra el bloque completo */
-    gap: 4rem;                 /* separación justa */
+    justify-content: center;
+    gap: 4rem;
     text-align: center;
     align-items: start;
   }

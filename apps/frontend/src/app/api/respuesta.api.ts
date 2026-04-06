@@ -40,7 +40,7 @@ export class RespuestaApi {
     return this.http.get<RespuestaItem | null>(apiUrl('/respuestas/mine'), { params });
   }
 
-  // LOGUEADO: listado general (lo dejamos por si te sirve más adelante)
+  // LOGUEADO: listado general
   list(params: { idEncuesta: number; limit?: number }): Observable<RespuestaListResponse> {
     let p = new HttpParams().set('idEncuesta', String(params.idEncuesta));
     if (params.limit) p = p.set('limit', String(params.limit));

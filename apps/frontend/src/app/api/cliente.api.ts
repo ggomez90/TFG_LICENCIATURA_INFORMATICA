@@ -1,4 +1,3 @@
-// apps/frontend/src/app/api/cliente.api.ts
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';

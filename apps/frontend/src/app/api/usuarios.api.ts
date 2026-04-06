@@ -101,7 +101,7 @@ export class UsuariosApi {
   queryAdmin(
     q: AdminUsuarioQuery & {
       tipo?: 'cliente' | 'operario' | 'admin';
-      tipoCliente?: 'todos' | 'pendiente' | number; // aceptamos number directo (1|2|3)
+      tipoCliente?: 'todos' | 'pendiente' | number; // acepta number directo (1|2|3)
     }
   ) {
     // ver si el filtro de cliente con subtipo activo
@@ -112,7 +112,7 @@ export class UsuariosApi {
       q.tipoCliente !== 'todos';
 
     if (isClienteSub) {
-      // Para /clientes/admin  mandamos: page, pageSize, tipoCliente
+      // Para /clientes/admin  manda: page, pageSize, tipoCliente
       let params = new HttpParams()
         .set('page', String(q.page ?? 1))
         .set('pageSize', String(q.pageSize ?? 50));
@@ -120,7 +120,7 @@ export class UsuariosApi {
       if (q.tipoCliente === 'pendiente') {
         params = params.set('tipoCliente', 'pendiente');
       } else {
-        // Forzamos número para 1/2/3
+        // Forza número para 1/2/3
         params = params.set('tipoCliente', String(Number(q.tipoCliente)));
       }
 
@@ -131,7 +131,7 @@ export class UsuariosApi {
     }
 
     // RUTA USUARIOS
-    // Para /usuarios mandamos page/pageSize y (opcionalmente) sortBy/order/tipo/q/estado
+    // Para /usuarios manda page/pageSize y sortBy/order/tipo/q/estado
     let params = new HttpParams();
 
     const safeSet = (k: string, v: any) => {
@@ -171,7 +171,6 @@ export class UsuariosApi {
     return this.http.patch<UsuarioDto>(apiUrl(`/usuarios/${id}/ban`), dto);
   }
 
-  // apps/frontend/src/app/api/usuarios.api.ts
   getById(id: number) {
     return this.http.get<UsuarioDto>(apiUrl(`/usuarios/${id}`));
   }

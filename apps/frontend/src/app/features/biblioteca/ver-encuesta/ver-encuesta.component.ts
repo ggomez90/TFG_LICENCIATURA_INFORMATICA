@@ -153,7 +153,7 @@ export class VerEncuestaComponent implements OnInit {
         // --- cierre por fecha ---
         this.closedByDate = this.isClosedByDate(detalle.fechaCierre);
 
-        // Si no está activa -> lock
+        // Si no está activa > lock
         if (!detalle.activa) {
           this.locked = true;
           this.loading = false;
@@ -161,11 +161,9 @@ export class VerEncuestaComponent implements OnInit {
           return;
         }
 
-        // Si venció por fecha -> lock (pero se muestra)
+        // Si venció por fecha > lock (pero se muestra)
         if (this.closedByDate) {
           this.locked = true;
-          // Si es cliente: igual podemos precargar si ya respondió (no es obligatorio).
-          // Lo dejamos simple: no buscamos respuesta previa si está vencida.
           this.loading = false;
           this.cdr.markForCheck();
           return;
@@ -196,7 +194,7 @@ export class VerEncuestaComponent implements OnInit {
     return cierre < Date.now();
   }
 
-  // ====== parse opciones ======
+  //parse opciones
   private parseDescripcion(raw: string): { plainHtml: string; tipo: TipoSeleccion; opciones: OpcionUI[] } {
     let html = raw || '';
     let jsonStr: string | null = null;
@@ -245,7 +243,7 @@ export class VerEncuestaComponent implements OnInit {
     return { plainHtml: html || '(Sin descripción)', tipo, opciones };
   }
 
-  // ====== helpers ======
+  //helpers
   fmtFecha(iso?: string): string {
     if (!iso) return '-';
     const d = new Date(iso);
@@ -261,7 +259,7 @@ export class VerEncuestaComponent implements OnInit {
     return String(input ?? '').replace(/\D+/g, '').trim();
   }
 
-  // ====== selección ======
+  //selección
   onSeleccionChange(checked: boolean | undefined, opcionId: string): void {
     if (!this.canInteractOptions) return;
 
@@ -276,7 +274,7 @@ export class VerEncuestaComponent implements OnInit {
     this.cdr.markForCheck();
   }
 
-  // ====== verificación respuesta previa (cliente logueado) ======
+  //verificación respuesta previa (cliente logueado)
   private verificarRespuestaPreviaCliente(): void {
     this.respuestaApi.getMine(this.id).subscribe({
       next: (resp) => {
@@ -299,7 +297,7 @@ export class VerEncuestaComponent implements OnInit {
     });
   }
 
-  // ====== verificación invitado (por DNI) ======
+  //verificación invitado (por DNI)
   onVerificarDniInvitado(): void {
     if (this.isCliente || this.isAdmin) return;
     if (this.closedByDate || !this.data?.activa) return;
@@ -367,7 +365,7 @@ export class VerEncuestaComponent implements OnInit {
     this.selectedIds = new Set(ids);
   }
 
-  // ====== enviar respuesta ======
+  //enviar respuesta
   onEnviarRespuesta(): void {
     if (!this.data) return;
     if (!this.canSend) return;
@@ -435,7 +433,7 @@ export class VerEncuestaComponent implements OnInit {
       });
   }
 
-  // ====== navegación ======
+  // navegación
   onVolver(): void {
     if (this.isAdmin) {
       this.router.navigate(['/menu-principal/admin/biblioteca']);

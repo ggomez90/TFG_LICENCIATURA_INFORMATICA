@@ -94,7 +94,7 @@ export class EditarVoucherAdministradorComponent implements OnInit {
   }
 
   onToggleCambiarEstado(): void {
-    // si apagan el switch, volvemos al estado original (para no dejar un estado “colgado”)
+    // si apaga el switch, volvemos al estado original
     if (!this.cambiarEstado) {
       this.form.estadoVoucher = this.original.estadoVoucher;
     }
@@ -125,13 +125,13 @@ export class EditarVoucherAdministradorComponent implements OnInit {
       {
         state: {
           mode: 'edit',
-          idVoucherEdit: this.idVoucher,          // 👈 ID real del voucher
-          cambiarEstado: this.cambiarEstado,      // 👈 estado del switch
+          idVoucherEdit: this.idVoucher,
+          cambiarEstado: this.cambiarEstado,
 
           borrador: {
             idCliente: this.form.idCliente,
             idVoucherTipo: this.form.idVoucherTipo,
-            estadoVoucher: this.form.estadoVoucher,   // 👈 nombre REAL
+            estadoVoucher: this.form.estadoVoucher,
             fechaAdquisicion: this.form.fechaAdquisicion,
           },
 
@@ -149,9 +149,6 @@ export class EditarVoucherAdministradorComponent implements OnInit {
     const payloadUpdate: any = {
       idCliente: this.coerceInt(this.form.idCliente, 0),
       idVoucherTipo: this.coerceInt(this.form.idVoucherTipo, 0),
-      // NO mandamos fechaAdquisicion porque la grisaste y dijiste que no se edita
-      // NO mandamos estadoVoucher acá si el switch está ON y el estado es 3/4 (lo hace updateEstado)
-      // pero si el switch está OFF, el estado NO debería cambiar (select deshabilitado)
     };
 
     const estadoNuevo = this.coerceInt(this.form.estadoVoucher, this.ESTADO.ADQUIRIDO);
@@ -159,10 +156,9 @@ export class EditarVoucherAdministradorComponent implements OnInit {
 
     this.loading = true; this.errorMsg = null; this.cdr.markForCheck();
 
-    // Siempre actualizamos datos “libres”
     const reqUpdate$ = this.http.patch<any>(`/api/vouchers/${this.idVoucher}`, payloadUpdate);
 
-    // Si switch ON y cambió el estado => pegamos al /estado
+    // Si switch ON y cambió el estado, pegamos al /estado
     const debeCambiarEstado = this.cambiarEstado && (estadoNuevo !== estadoOriginal);
     const reqEstado$ = debeCambiarEstado
       ? this.http.patch<any>(`/api/vouchers/${this.idVoucher}/estado`, { idEstadoVoucher: estadoNuevo })
@@ -184,7 +180,7 @@ export class EditarVoucherAdministradorComponent implements OnInit {
     });
   }
 
-  // ===== Helpers
+  // Helpers
   private emptyForm(): EditarVoucherForm {
     return {
       idCliente: null,
@@ -215,7 +211,7 @@ export class EditarVoucherAdministradorComponent implements OnInit {
 
   private isoToYmd(iso?: string | null): string | null {
     if (!iso) return null;
-    // ISO => yyyy-MM-dd
+    // ISO a yyyy-MM-dd
     try { return new Date(iso).toISOString().slice(0, 10); } catch { return null; }
   }
 

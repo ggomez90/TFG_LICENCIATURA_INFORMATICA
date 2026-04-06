@@ -2,7 +2,7 @@
   display: block;
 }
 
-/* ===== Wrapper base ===== */
+/* Wrapper base */
 .dsf-wrap {
   display: grid;
   gap: 1rem;
@@ -38,7 +38,7 @@
   line-height: 1.45;
 }
 
-/* ===== Grid / cards base ===== */
+/* Grid / cards base */
 .dsf-grid {
   display: grid;
   gap: 0.85rem;
@@ -57,7 +57,7 @@
     0 3px 10px rgba(15, 81, 50, 0.04);
 }
 
-/* ===== KPIs ===== */
+/* KPIs */
 .dsf-grid.stats {
   display: grid;
   gap: 0.85rem;
@@ -95,7 +95,7 @@
   text-align: center;
 }
 
-/* ===== Bloque de error summary ===== */
+/* Bloque de error summary */
 .empty {
   text-align: center;
 }
@@ -124,7 +124,7 @@
   font-size: 0.9rem;
 }
 
-/* ===== Filtros ===== */
+/* Filtros*/
 .filters {
   display: flex;
   gap: 12px;
@@ -280,7 +280,7 @@ select {
   border-color: #9fd3b3;
 }
 
-/* ===== Tabla ===== */
+/* Tabla*/
 .tbl {
   display: grid;
   gap: 10px;
@@ -336,7 +336,7 @@ tbody tr:hover td {
   color: #163024;
 }
 
-/* ===== Badge estado ===== */
+/* Badge estado */
 .dsf-badge {
   display: inline-flex;
   align-items: center;
@@ -370,7 +370,7 @@ tbody tr:hover td {
   border-color: #d1d5db;
 }
 
-/* ===== Acciones ===== */
+/* Acciones */
 .dsf-table__th--actions {
   text-align: center;
 }
@@ -417,7 +417,7 @@ tbody tr:hover td {
   border-color: #9fd3b3;
 }
 
-/* ===== Paginación ===== */
+/* Paginación */
 .pager {
   display: flex;
   align-items: center;
@@ -456,7 +456,7 @@ tbody tr:hover td {
   border-color: inherit;
 }
 
-/* ===== Mobile / touch ===== */
+/* Mobile / touch */
 @media (pointer: coarse) {
   .dsf-icon-btn {
     width: 42px;
@@ -469,7 +469,7 @@ tbody tr:hover td {
   }
 }
 
-/* ===== Responsive ===== */
+/* Responsive */
 @media (max-width: 1280px) {
   .filters__row--desafios {
     grid-template-columns: 1fr 220px;
@@ -557,7 +557,7 @@ tbody tr:hover td {
   }
 }
 
-/* ===== Accesibilidad ===== */
+/*Accesibilidad */
 :focus-visible {
   outline: 2px solid #10b981;
   outline-offset: 2px;

@@ -133,17 +133,13 @@
     .dsf-form__actions .dsf-btn { min-width: 120px; }
   }
 
-  /* ============================================================
-   * EXTENSIONES PARA EDITAR-VOUCHER (SIN ROMPER TU ESTILO BASE)
-   * ============================================================ */
-
   .dsf-field__hint {
     font-size: 0.8rem;
     color: #5e7a6a;
     line-height: 1.25;
   }
 
-  /* look "grisado" para disabled sin cambiar layout */
+  /* look grisado para disabled */
   .dsf-input:disabled,
   .dsf-input.is-disabled {
     opacity: 0.65;
@@ -151,12 +147,12 @@
     background: #f2f7f4;
   }
 
-  /* Fila especial donde va el select + switch (mantiene 2 columnas) */
+  /* Fila especial donde va el select + switch */
   .dsf-fields-row--estado {
     align-items: flex-start;
   }
 
-  /* Switch simple estilo DSF (no toca botones ni inputs) */
+  /* Switch simple estilo DSF */
   .dsf-switch-field {
     display: inline-flex;
     align-items: center;

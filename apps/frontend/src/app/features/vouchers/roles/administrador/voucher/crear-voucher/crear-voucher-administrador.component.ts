@@ -52,7 +52,7 @@ export class CrearVoucherAdministradorComponent implements OnInit {
 
   backTo: BackTo = 'dashboard';
 
-  // Catálogo de estados (coincide con backend)
+  // Catálogo de estados
   readonly ESTADO = {
     CREADO: 1,
     ADQUIRIDO: 2,
@@ -67,7 +67,7 @@ export class CrearVoucherAdministradorComponent implements OnInit {
     { value: 4, label: 'Anulado' },
   ];
 
-  // Listado de tipos para seleccionar (si querés usar un <select> de títulos)
+  // Listado de tipos para seleccionar
   tipos: VoucherTipoOption[] = [];
   cargandoTipos = false;
 
@@ -77,7 +77,6 @@ export class CrearVoucherAdministradorComponent implements OnInit {
   errorMsg: string | null = null;
 
   ngOnInit(): void {
-    // Desde dónde llegamos
     const state = history.state ?? {};
     this.backTo = state?.backTo === 'listar' ? 'listar' : 'dashboard';
 
@@ -97,11 +96,11 @@ export class CrearVoucherAdministradorComponent implements OnInit {
       this.original = { ...this.form };
     }
 
-    // Cargar tipos para el selector (si lo usás en el HTML)
+    // Cargar tipos para el selector
     this.cargarTipos();
   }
 
-  // ===== Navegación
+  // Navegación
   onVolver(): void {
     if (this.backTo === 'listar') {
       this.router.navigate(['/menu-principal/admin/vouchers/voucher-tipo/listar']);
@@ -135,7 +134,7 @@ export class CrearVoucherAdministradorComponent implements OnInit {
             const tipoCli = Number(cli.idTipoCliente ?? 1);
             const voucherTipoTitulo = String(tipo.titulo ?? '(Sin título)');
 
-            // 3) Resolver beneficiario (dniCuitCuil siempre viene de Usuario)
+            // 3) Resolver beneficiario con dniCuitCuil 
             if (tipoCli === 1) {
               // ciudadano: idCliente === idUsuario
               this.http.get<any>(`/api/usuarios/${idCliente}`).subscribe({
@@ -150,7 +149,7 @@ export class CrearVoucherAdministradorComponent implements OnInit {
                     {
                       state: {
                         borrador: this.form,
-                        from: this.backTo, // dashboard|listar (reutilizamos tu lógica)
+                        from: this.backTo, // dashboard|listar
                         extras: {
                           voucherTipoTitulo,
                           beneficiario: {
@@ -167,8 +166,6 @@ export class CrearVoucherAdministradorComponent implements OnInit {
             } else {
               // PYME/EMPRESA o INSTITUCIÓN
               const razon = String(cli?.razonSocial ?? '').trim() || '(Sin razón social)';
-
-              // Ideal: cli.idUsuario. Si no viene, fallback: usamos idCliente (si tu modelo lo permite)
               const idUsuario = Number(cli?.idUsuario ?? idCliente);
 
               this.http.get<any>(`/api/usuarios/${idUsuario}`).subscribe({
@@ -193,7 +190,7 @@ export class CrearVoucherAdministradorComponent implements OnInit {
                   );
                 },
                 error: () => {
-                  // fallback: si no pudimos traer usuario, igual dejamos avanzar con CUIT no disponible
+                  // fallback: si no pudimos traer usuario avanzar con CUIT no disponible
                   this.router.navigate(
                     ['/menu-principal', 'admin', 'vouchers', 'voucher', 'preview'],
                     {
@@ -260,7 +257,7 @@ export class CrearVoucherAdministradorComponent implements OnInit {
     });
   }
 
-  // ===== Carga de Tipos (para mostrar títulos y validar ids)
+  // Carga de Tipos
   private cargarTipos(): void {
     this.cargandoTipos = true;
 
@@ -289,12 +286,12 @@ export class CrearVoucherAdministradorComponent implements OnInit {
     });
   }
 
-  // ===== Helpers
+  // Helpers
   private emptyForm(): CrearVoucherForm {
     return {
       idCliente: null,
       idVoucherTipo: null,
-      idEstadoVoucher: this.ESTADO.ADQUIRIDO,  // por defecto
+      idEstadoVoucher: this.ESTADO.ADQUIRIDO,
       fechaAdquisicion: this.todayYmd(),
     };
   }
@@ -338,7 +335,6 @@ export class CrearVoucherAdministradorComponent implements OnInit {
     if (!f.fechaAdquisicion) {
       return 'La fecha de adquisición es obligatoria.';
     }
-    // Si marcan UTILIZADO, NO pedimos fechaUso acá (se quitaron esos campos del flujo de creación)
 
     return null;
   }

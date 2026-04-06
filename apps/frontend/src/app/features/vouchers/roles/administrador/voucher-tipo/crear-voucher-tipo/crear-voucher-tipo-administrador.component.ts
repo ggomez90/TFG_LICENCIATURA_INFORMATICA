@@ -130,7 +130,7 @@ export class CrearVoucherTipoAdministradorComponent implements OnInit {
     return null;
   }
 
-  // Restringe a enteros (0–9) en inputs numéricos
+  // Restringe a enteros en inputs numéricos
   onNumberKeydown(event: KeyboardEvent) {
     const invalidKeys = ['.', ',', '-', 'e', '+'];
     if (invalidKeys.includes(event.key)) {

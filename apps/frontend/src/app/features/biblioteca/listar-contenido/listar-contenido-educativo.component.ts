@@ -202,7 +202,7 @@ export class ListarContenidoEducativoComponent implements OnInit {
       return;
     }
 
-    // invitado (cuando exista esa ruta)
+    // invitado
     this.router.navigate(['/public/recursos/contenidos/ver', item.idContenido]);
   }
 
@@ -326,8 +326,6 @@ export class ListarContenidoEducativoComponent implements OnInit {
         const rawItems = Array.isArray(resp) ? resp : [];
 
         const mapped: AdminContenidoListItem[] = rawItems.map((raw: any) => ({
-          // OJO: acá depende de tu respuesta pública. Si ya devuelve idContenidoEducativo, perfecto.
-          // Si devolviera "id" u otro nombre, ajustamos aquí.
           idContenido: raw.idContenidoEducativo ?? raw.idContenido ?? raw.id ?? 0,
           titulo: raw.titulo ?? null,
           descripcion: raw.descripcion ?? null,
@@ -338,7 +336,7 @@ export class ListarContenidoEducativoComponent implements OnInit {
         // cliente/invitado: siempre visibles
         const forced = mapped.filter((x) => x.visible);
 
-        // aplicar filtros (sin visible, porque ya está forzado)
+        // aplicar filtros
         const filtered = this.applyClientFilters(forced);
 
         this.total = filtered.length;

@@ -29,7 +29,7 @@ interface AdminVoucherListItem {
 
   tituloTipo: string;
 
-  beneficiario?: string;        // ✅ calculado con lógica preview
+  beneficiario?: string;
 
   estadoVoucher: EstadoVoucherCode;   // 1,2,3,4
   fechaAdquisicion: string;           // ISO
@@ -246,7 +246,7 @@ export class AdministradorVouchersComponent implements OnInit {
           .sort((a, b) => (b.idVoucher || 0) - (a.idVoucher || 0))
           .slice(0, 10);
 
-        // ✅ completar beneficiario (misma lógica que preview)
+        //completar beneficiario (misma lógica que preview)
         this._vouchers.forEach(v => this.resolverBeneficiario(v));
 
         this._loadingVouchers = false;
@@ -272,17 +272,17 @@ export class AdministradorVouchersComponent implements OnInit {
     return this.fmtDate(v.fechaUso ?? null);
   }
 
-  // Estado igual al tipo voucher: verde para todo excepto ANULADO gris
+  // Estado igual al tipo voucher
   badgeClaseVoucher(v: AdminVoucherListItem): 'dsf-badge--ok' | 'dsf-badge--muted' {
     if (v.estadoVoucher === 4) return 'dsf-badge--muted'; // ANULADO
     return 'dsf-badge--ok'; // CREADO / ADQUIRIDO / UTILIZADO
   }
 
   /**
-   * Regla (igual a preview):
-   * - Si Cliente.idTipoCliente ∈ {2,3} => beneficiario = razonSocial
-   * - Si Cliente.idTipoCliente = 1 => beneficiario = Apellidos + Nombres (desde /api/usuarios/:id)
-   * Nota: idCliente = idUsuario
+    Regla (igual a preview):
+    - Si Cliente.idTipoCliente es 2 o 3 va beneficiario = razonSocial
+    - Si Cliente.idTipoCliente es 1 va beneficiario = Apellidos + Nombres (desde /api/usuarios/:id)
+   idCliente = idUsuario
    */
   private resolverBeneficiario(v: AdminVoucherListItem): void {
     const idCliente = Number(v.idCliente ?? 0);
@@ -296,7 +296,7 @@ export class AdministradorVouchersComponent implements OnInit {
       next: (cli: any) => {
         const tipo = Number(cli?.idTipoCliente ?? 0);
 
-        // PYME/Empresa o Institución => Razón Social
+        // PYME/Empresa o Institución va Razón Social
         if (tipo === 2 || tipo === 3) {
           const rs = String(cli?.razonSocial ?? '').trim();
           v.beneficiario = rs || `Cliente #${idCliente}`;
@@ -304,7 +304,7 @@ export class AdministradorVouchersComponent implements OnInit {
           return;
         }
 
-        // Ciudadano => Apellidos + Nombres desde Usuario (idUsuario = idCliente)
+        // Ciudadano va Apellidos + Nombres desde Usuario (idUsuario = idCliente)
         this.http.get<any>(`/api/usuarios/${idCliente}`).subscribe({
           next: (u: any) => {
             const ape = String(u?.apellidos ?? '').trim();

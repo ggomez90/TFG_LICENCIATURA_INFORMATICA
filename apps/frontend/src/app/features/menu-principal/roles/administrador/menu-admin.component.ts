@@ -38,7 +38,7 @@ export class MenuAdminComponent {
   loading = signal(false);
   error = signal<string | null>(null);
 
-  // ======= KPIs (reales) =======
+  // KPIs
   usuariosTotal = signal(0);
   usuariosAdmin = signal(0);
   usuariosOperarios = signal(0);
@@ -53,13 +53,13 @@ export class MenuAdminComponent {
   desafiosFinalizados = signal(0);
   vouchersUtilizadosMes = signal(0);
 
-  // ======= Actividad reciente =======
+  //Actividad reciente
   ultUsuarios = signal<UsuarioMini[]>([]);
   ultDesafios = signal<DesafioMini[]>([]);
   ultVouchers = signal<VoucherMini[]>([]);
   ultEntregas = signal<EntregaMini[]>([]);
 
-  // ======= Accesos rápidos (RUTAS REALES) =======
+  //Accesos rápidos
   links = signal<QuickLink[]>([
     { title: 'Usuarios', desc: 'Altas, bajas, edición y búsqueda', route: '/menu-principal/admin/usuarios', iconPath: 'M12 12c2.761 0 5-2.239 5-5s-2.239-5-5-5-5 2.239-5 5 2.239 5 5 5zm0 2c-4.418 0-8 2.239-8 5v3h16v-3c0-2.761-3.582-5-8-5z' },
 
@@ -78,7 +78,7 @@ export class MenuAdminComponent {
     { title: 'Indicadores', desc: 'Más adelante lo refinamos', route: '/menu-principal/admin/indicadores', iconPath: 'M5 19V8h3v11H5zm5 0V5h3v14h-3zm5 0v-7h3v7h-3z' },
   ]);
 
-  // ======= Lifecycle =======
+  // Lifecycle
   ngOnInit(): void {
     this.loadDashboard();
   }
@@ -87,7 +87,7 @@ export class MenuAdminComponent {
     this.loadDashboard();
   }
 
-  // ======= Loaders =======
+  // Loaders
   private loadDashboard(): void {
     if (this.loading()) return;
     this.loading.set(true);
@@ -130,7 +130,7 @@ export class MenuAdminComponent {
       catchError(() => of({ items: [], total: 0, limit: 5, offset: 0 } as any))
     );
 
-    // 3) Vouchers: traemos un lote y calculamos
+    // 3) Vouchers
     const vouchersAll$ = this.voucherApi.list({
       limit: 100,
       offset: 0,
@@ -176,7 +176,7 @@ export class MenuAdminComponent {
     ).subscribe((res) => {
       if (!res) return;
 
-      // --- Usuarios counters ---
+      // Usuarios
       const all = res.usuariosCounters ?? [];
       const total = all.length;
       const admins = all.filter(u => Number(u.idRolUsuario) === 1).length;
@@ -186,7 +186,7 @@ export class MenuAdminComponent {
       this.usuariosAdmin.set(admins);
       this.usuariosOperarios.set(ops);
 
-      // --- Usuarios recientes ---
+      // Usuarios recientes
       const ur = res.usuariosRecientes as any;
       const uItems: UsuarioDto[] = Array.isArray(ur?.items)
         ? ur.items
@@ -201,7 +201,7 @@ export class MenuAdminComponent {
         }))
       );
 
-      // --- Desafíos summary + recientes ---
+      // Desafíos summary + recientes
       this.desafiosActivos.set(Number(res.desafiosSummary?.activos ?? 0));
       this.desafiosPausados.set(Number(res.desafiosSummary?.pausados ?? 0));
       this.desafiosFinalizados.set(Number(res.desafiosSummary?.finalizados ?? 0));
@@ -217,7 +217,7 @@ export class MenuAdminComponent {
         }))
       );
 
-      // --- Vouchers (mes + recientes) calculados en front ---
+      // Vouchers (mes + recientes)
       const vAll: VoucherListItem[] = (res.vouchersAll as any)?.items ?? [];
 
       const inMonth = (iso: string) => {
@@ -247,7 +247,7 @@ export class MenuAdminComponent {
         }))
       );
 
-      // --- Entregas pendientes + recientes ---
+      // Entregas pendientes + recientes
       const ePend = res.entregasPendientes as any;
       const pendientesTotal =
         Number(ePend?.total ?? 0) > 0
@@ -271,7 +271,7 @@ export class MenuAdminComponent {
     });
   }
 
-  // ======= Helpers =======
+  // Helpers
   pctAdmins = computed(() => this.safePct(this.usuariosAdmin(), this.usuariosTotal()));
   pctOperarios = computed(() => this.safePct(this.usuariosOperarios(), this.usuariosTotal()));
   pctClientes = computed(() => this.safePct(this.usuariosClientes(), this.usuariosTotal()));
@@ -288,7 +288,7 @@ export class MenuAdminComponent {
   private getMonthRangeIso(): { desdeMesIso: string; hastaHoyIso: string } {
     const now = new Date();
     const desde = new Date(now.getFullYear(), now.getMonth(), 1);
-    // usamos yyyy-MM-dd porque tus filtros suelen usar eso
+    // usa yyyy-MM-dd
     const ymd = (d: Date) => d.toISOString().slice(0, 10);
     return { desdeMesIso: ymd(desde), hastaHoyIso: ymd(now) };
   }

@@ -46,7 +46,7 @@ export class EditarDesafioAdministradorComponent implements OnInit, AfterViewIni
 
   id!: number;
 
-  // guardamos las “fechas originales” para validar fechaFin mínima
+  // guarda las fechas originales para validar fechaFin mínima
   private fechaInicioOriginalYmd = '';
   private fechaFinOriginalYmd: string | null = null;
 
@@ -74,7 +74,7 @@ export class EditarDesafioAdministradorComponent implements OnInit, AfterViewIni
       return;
     }
 
-    // Tomamos datos desde el state (enviado desde el dashboard)
+    // Toma datos desde el state
     const st = history.state?.item as any | undefined;
     if (!st) {
       alert('No se encontraron datos del desafío para editar.');
@@ -82,7 +82,7 @@ export class EditarDesafioAdministradorComponent implements OnInit, AfterViewIni
       return;
     }
 
-    // Normalizamos lo que viene del dashboard (igual que ver-desafio)
+    // Normalizar lo que viene del dashboard (igual que ver-desafio)
     const toYmd = (iso?: string | null) => {
       if (!iso) return null;
       const d = new Date(iso);
@@ -127,12 +127,11 @@ export class EditarDesafioAdministradorComponent implements OnInit, AfterViewIni
       idRecursoEducativo: st.idRecursoEducativo?.toString?.() ?? '',
     };
 
-    // guardamos “originales” para validación
+    // guarda originales para validación
     this.fechaInicioOriginalYmd = this.form.fechaInicio;
     this.fechaFinOriginalYmd = this.form.fechaFin;
 
     // precargar editores
-    // (en AfterViewInit también, por si no existen aún los ViewChild)
     setTimeout(() => {
       if (this.tituloEditor) this.tituloEditor.nativeElement.innerHTML = this.form.titulo || '';
       if (this.descripcionEditor) this.descripcionEditor.nativeElement.innerHTML = this.form.descripcion || '';
@@ -152,17 +151,17 @@ export class EditarDesafioAdministradorComponent implements OnInit, AfterViewIni
       : ['/menu-principal','admin','desafios'];
   }
 
-  // ========= Navegación =========
+  // Navegación
   onVolver(): void {
     this.router.navigate(this.destinoLuego());
   }
 
   onBorrar(): void {
-    // Limpia sólo los editables (no tiene mucho sentido aquí, pero mantenemos paridad)
+    // Limpia sólo los editables
     const keep = this.form;
     this.form = {
       ...this.emptyForm(),
-      // volvemos a cargar los NO editables / fechas originales
+      // carga los NO editables / fechas originales
       meta: keep.meta,
       puntosTotales: keep.puntosTotales,
       puntosPorUnidad: keep.puntosPorUnidad,
@@ -174,7 +173,7 @@ export class EditarDesafioAdministradorComponent implements OnInit, AfterViewIni
     if (this.descripcionEditor) this.descripcionEditor.nativeElement.innerHTML = '';
   }
 
-  // ========= Submit =========
+  //Submit
   onGuardar(): void {
     // actualizamos desde editores
     if (this.tituloEditor) this.form.titulo = this.tituloEditor.nativeElement.innerHTML;
@@ -245,7 +244,7 @@ export class EditarDesafioAdministradorComponent implements OnInit, AfterViewIni
     });
   }
 
-  // ========= Helpers =========
+  // Helpers
   private emptyForm(): DesafioForm {
     return {
       titulo: '',
@@ -270,7 +269,7 @@ export class EditarDesafioAdministradorComponent implements OnInit, AfterViewIni
     return this.fechaFinOriginalYmd || this.fechaInicioOriginalYmd || '';
   }
 
-  // ====== WYSIWYG ======
+  // WYSIWYG
   setActiveEditor(editor: 'titulo' | 'descripcion') { this.activeEditor = editor; }
   onTituloChange(e: Event) {
     const el = e.target as HTMLElement;
@@ -293,7 +292,7 @@ export class EditarDesafioAdministradorComponent implements OnInit, AfterViewIni
   onColorChange(e: Event) { const v = (e.target as HTMLInputElement).value; if (!v) return; this.currentColor = v; this.formatWithValue('foreColor', v); }
   clearFormat() { document.execCommand('removeFormat', false); document.execCommand('unlink', false); }
 
-  // ====== Inputs numéricos (idénticos a crear, para campos que quedan editables) ======
+  // Inputs numéricos
   integerKeydown(e: KeyboardEvent) {
     const allowed = ['Backspace','Delete','Tab','Escape','Enter','ArrowLeft','ArrowRight','Home','End'];
     if (allowed.includes(e.key)) return;

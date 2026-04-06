@@ -42,7 +42,6 @@ export class BibliotecaClienteComponent implements OnInit {
 
   contenidoRecomendado: ClienteContenidoCard | null = null;
 
-  // por ahora dashboard cliente => no invitado
   isGuest = false;
 
   constructor(
@@ -122,11 +121,11 @@ export class BibliotecaClienteComponent implements OnInit {
           idContenido: c.idContenidoEducativo,
           titulo: this.stripHtml(c.titulo, 'Sin título'),
           fechaPublicacion: c.fechaPublicacion,
-          descripcionCorta: '', // el listado público no trae descripción (está bien)
+          descripcionCorta: '',
           etiqueta: 'Educación',
         }));
 
-        // Orden DESC por id (o por fecha si preferís)
+        // Orden DESC por id
         mapped.sort((a, b) => (b.idContenido || 0) - (a.idContenido || 0));
 
         this.contenidoRecomendado = mapped.length > 0 ? mapped[0] : null;
@@ -153,11 +152,10 @@ export class BibliotecaClienteComponent implements OnInit {
     this.errorEncuestas = null;
     this.cdr.markForCheck();
 
-    // Intento 1: pedir activas + orden desc
+    // pedir activas + orden desc
     const baseParams = {
       limit: 50,
       offset: 0,
-      // OJO: tu EncuestaApi setea activa como "true"/"false" string
       activa: true,
       sortBy: 'idEncuesta' as const,
       order: 'desc' as const,
@@ -181,7 +179,6 @@ export class BibliotecaClienteComponent implements OnInit {
             fechaCierre: (e as any).fechaCierre ?? null,
             activa: !!(e as any).activa,
           }))
-          // por las dudas: filtrar activas (cliente no debería ver cerradas)
           .filter((e) => e.activa);
 
         mapped.sort((a, b) => {
@@ -199,7 +196,7 @@ export class BibliotecaClienteComponent implements OnInit {
         this.cdr.markForCheck();
       },
       error: (err) => {
-        // Reintento sin params si backend se queja por query params
+        // Reintento sin params
         const msg = err?.error?.message;
         const is400 = err?.status === 400;
         const complainsParams =

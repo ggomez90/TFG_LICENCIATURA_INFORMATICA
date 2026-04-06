@@ -26,7 +26,6 @@ export class LocalidadApi {
     sortBy?: 'idLocalidad' | 'nombre' | 'idProvincia';
   }) {
     // El back de Localidad usa page/pageSize y devuelve { data, meta }
-    // Además, el controller está "quisquilloso" con tipos, así que mandamos strings limpios.
     const safe: any = {};
 
     if (params?.page !== undefined && params?.page !== null) safe.page = String(Number(params.page));
@@ -39,8 +38,6 @@ export class LocalidadApi {
       if (Number.isFinite(n) && n > 0) safe.idProvincia = String(n);
     }
 
-    // OJO: si tu controller todavía rechaza order/sortBy, en el componente dejalos de enviar.
-    // Pero este método los soporta por si luego arreglás el controller con ValidationPipe(transform+whitelist).
     if (params?.order) safe.order = params.order;
     if (params?.sortBy) safe.sortBy = params.sortBy;
 

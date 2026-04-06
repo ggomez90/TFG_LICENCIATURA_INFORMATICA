@@ -21,21 +21,21 @@ export class DesafiosAdministradorComponent implements OnInit, OnDestroy {
   private host = inject(ElementRef<HTMLElement>);
   private destroy$ = new Subject<void>();
 
-  // --- KPIs
+  // KPIs
   summary = signal<DesafioSummaryResponse | null>(null);
   loadingSummary = signal<boolean>(false);
-  errorSummary = signal<boolean>(false); // flag genérico (sin detalle crudo)
+  errorSummary = signal<boolean>(false); // flag genérico
 
-  // --- Filtros rápidos: SOLO buscar + estado
+  // Filtros rápidos: SOLO buscar + estado
   q = signal<string>('');
   filtroEstado = signal<FiltroEstado>('todos');
 
-  // --- Resultados (widget "últimos 10")
+  // Resultados (widget últimos 10)
   latest = signal<DesafioItem[]>([]);
   loadingLatest = signal<boolean>(false);
-  errorLatest = signal<boolean>(false); // flag genérico (sin detalle crudo)
+  errorLatest = signal<boolean>(false); // flag genérico
 
-  // --- Triggers
+  // Triggers
   private refreshSummary$ = new Subject<void>();
   private refreshLatest$ = new Subject<void>();
 
@@ -43,7 +43,6 @@ export class DesafiosAdministradorComponent implements OnInit, OnDestroy {
   onDocClick(ev: MouseEvent) {
     const root = this.host.nativeElement;
     if (!root.contains(ev.target as Node)) {
-      // no custom menus acá, mantenemos patrón
     }
   }
 
@@ -74,7 +73,7 @@ export class DesafiosAdministradorComponent implements OnInit, OnDestroy {
       )
       .subscribe(res => this.summary.set(res));
 
-    // “Últimos 10” (respeta q + estado)
+    // Últimos 10 (respeta q + estado)
     combineLatest([
       this.refreshLatest$.pipe(startWith(void 0)),
       of(null).pipe(
@@ -111,7 +110,7 @@ export class DesafiosAdministradorComponent implements OnInit, OnDestroy {
         takeUntil(this.destroy$)
       )
       .subscribe(items => {
-        // Normalizamos para búsqueda local: quitar HTML en título/descr.
+        // Normaliza para búsqueda local
         const term = this.q().trim().toLowerCase();
         const plain = items.map(i => ({
           ...i,
@@ -119,7 +118,7 @@ export class DesafiosAdministradorComponent implements OnInit, OnDestroy {
           descripcion: this.stripHtml(i.descripcion),
         }));
 
-        // Filtro local por q (por si el backend no filtra)
+        // Filtro local por q
         const filtered = term
           ? plain.filter(i =>
               (i.titulo || '').toLowerCase().includes(term) ||
@@ -137,14 +136,14 @@ export class DesafiosAdministradorComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  // === Toolbar actions
+  // Toolbar actions
   onLimpiar() {
     this.q.set('');
     this.filtroEstado.set('todos');
     this.refreshLatest$.next();
   }
   onVerTodos() {
-    this.router.navigate(['/menu-principal/admin/desafios/listado']); // ajusta si tu ruta difiere
+    this.router.navigate(['/menu-principal/admin/desafios/listado']);
   }
   onNuevo() {
     this.router.navigate(['/menu-principal/admin/desafios/nuevo']);
@@ -164,7 +163,7 @@ export class DesafiosAdministradorComponent implements OnInit, OnDestroy {
     );
   }
 
-  // === Filtros handlers
+  // Filtros handlers
   onBuscar(value: string) {
     this.q.set(value.trim());
     this.refreshLatest$.next();
@@ -175,7 +174,7 @@ export class DesafiosAdministradorComponent implements OnInit, OnDestroy {
     this.refreshLatest$.next();
   }
 
-  // === UI helpers
+  // UI helpers
   estadoBadge(item: DesafioItem): { text: string; cls: string } {
     switch (item.estado) {
       case 1: return { text: 'ACTIVO',     cls: 'dsf-badge dsf-badge--ok' };

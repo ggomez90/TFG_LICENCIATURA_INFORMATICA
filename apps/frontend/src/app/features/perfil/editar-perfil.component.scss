@@ -111,7 +111,7 @@ label{
   display:block;
 }
 
-/* Campo read-only con iconito (base) */
+/* Campo read-only */
 .ro-field{
   min-height: 40px;
   border: 1px solid rgba(16,185,129,.28);
@@ -170,10 +170,10 @@ label{
   border-color: rgba(15,23,42,.10);
 }
 
-/* EDIT MODE: input/select ocupan el espacio sin romper layout */
+/* EDIT MODE */
 .ro-field--edit{ padding-right: 12px; }
 
-/* Inputs y selects dentro de ro-field (para que NO se superpongan) */
+/* Inputs y selects */
 .ro-input,
 .ro-select{
   width: 100%;
@@ -187,13 +187,11 @@ label{
   margin: 0;
 }
 
-/* select: que no “reviente” altura */
 .ro-select{
   appearance: none;
   line-height: 1.2;
 }
 
-/* estado disabled visual (grisado como pediste) */
 .ro-field--disabled{
   opacity: .9;
   background: linear-gradient(0deg, rgba(241,245,249,.95), rgba(241,245,249,.95));

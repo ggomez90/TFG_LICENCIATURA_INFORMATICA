@@ -30,8 +30,6 @@ export class ProvinciaApi {
 
     if (params?.q !== undefined && params?.q !== null && String(params.q).trim() !== '') safe.q = String(params.q);
 
-    // Igual que en otros módulos: si tu controller está con whitelist estricto y te rompe
-    // por order/sortBy, simplemente NO los mandes desde el componente.
     if (params?.order) safe.order = params.order;
     if (params?.sortBy) safe.sortBy = params.sortBy;
 

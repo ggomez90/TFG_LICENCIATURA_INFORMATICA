@@ -38,7 +38,6 @@ export class VerVoucherAdministradorComponent implements OnInit {
   fechaAdqISO?: string; // ISO
   fechaUsoISO?: string | null;
 
-  // en preview esto era "(se asigna al guardar)"
   codigoTexto: string = '-';
 
   ngOnInit(): void {
@@ -113,10 +112,10 @@ export class VerVoucherAdministradorComponent implements OnInit {
     });
   }
 
-  /**
-   * Regla (igual preview):
-   * - Si Cliente.idTipoCliente ∈ {2,3} => Razón Social + CUIT(dniCuitCuil desde /api/usuarios/:id).
-   * - Si Cliente.idTipoCliente = 1 => Apellidos+Nombres + DNI(dniCuitCuil) desde /api/usuarios/:id.
+  /*
+    Regla (igual preview):
+    - Si Cliente.idTipoCliente es 2 o 3 va Razón Social + CUIT(dniCuitCuil desde /api/usuarios/:id).
+    - Si Cliente.idTipoCliente es 1 va Apellidos+Nombres + DNI(dniCuitCuil) desde /api/usuarios/:id.
    */
   private cargarBeneficiario(idCliente: number): void {
     if (!idCliente || idCliente <= 0) {
@@ -182,7 +181,7 @@ export class VerVoucherAdministradorComponent implements OnInit {
   }
 
   onVolver(): void {
-    // vuelve al listado/dashboard (ajustá a tu navegación real)
+    // vuelve al listado/dashboard
     this.router.navigate(['/menu-principal/admin/vouchers'], { queryParams: { t: Date.now() } });
   }
 

@@ -52,10 +52,9 @@ export class PreviewVoucherAdministradorComponent implements OnInit {
     this.mode = (state?.mode === 'edit') ? 'edit' : 'create';
     this.idVoucherEdit = Number(state?.idVoucherEdit ?? state?.idVoucher ?? 0);
 
-    // ✅ viene desde editar-voucher (switch) - si no viene, queda false
+    // si viene desde editar-voucher (switch) - si no viene, queda false
     this.cambiarEstado = Boolean(state?.cambiarEstado ?? false);
 
-    // ✅ soportar ambos nombres (estadoVoucher es el real del backend)
     const estado = Number(
       state?.borrador?.estadoVoucher ?? state?.borrador?.idEstadoVoucher ?? 0
     );
@@ -69,7 +68,7 @@ export class PreviewVoucherAdministradorComponent implements OnInit {
 
     this.fechaAdqISO = this.toIso(this.borrador.fechaAdquisicion);
 
-    // ✅ Código visible en la gift card
+    // Código visible en la gift card
     if (this.mode === 'edit' && this.idVoucherEdit > 0) {
       this.codigoTexto = String(this.idVoucherEdit);
     } else {
@@ -90,11 +89,10 @@ export class PreviewVoucherAdministradorComponent implements OnInit {
       this.beneficiarioLinea2 = doc;
     }
 
-    // SIEMPRE cargamos el voucher-tipo por ID para asegurar:
+    // SIEMPRE cargamos el voucher-tipo por ID para asegurar
     // titulo, descripcion, montoBeneficio, puntosRequeridos
     this.cargarTipo(this.borrador.idVoucherTipo);
 
-    // Si no vino beneficiario por extras, lo buscamos por endpoints
     if (!this.beneficiarioLinea1) {
       this.cargarBeneficiario(this.borrador.idCliente);
     }
@@ -129,16 +127,14 @@ export class PreviewVoucherAdministradorComponent implements OnInit {
         this.cdr.markForCheck();
       },
       error: () => {
-        // dejamos placeholders, no rompemos UI
         this.cdr.markForCheck();
       },
     });
   }
 
-  /**
-   * Regla:
-   * - Si Cliente.idTipoCliente ∈ {2,3} => Razón Social + CUIT(dniCuitCuil desde /api/usuarios/:id).
-   * - Si Cliente.idTipoCliente = 1 => Apellidos+Nombres + DNI(dniCuitCuil) desde /api/usuarios/:id.
+  /* Regla:
+    - Si Cliente.idTipoCliente es 2 o 3 va Razón Social + CUIT(dniCuitCuil desde /api/usuarios/:id).
+    - Si Cliente.idTipoCliente es 1 va Apellidos+Nombres + DNI(dniCuitCuil) desde /api/usuarios/:id.
    */
   private cargarBeneficiario(idCliente: number): void {
     if (!idCliente || idCliente <= 0) {
@@ -223,7 +219,7 @@ export class PreviewVoucherAdministradorComponent implements OnInit {
     const payload = {
       idCliente: this.borrador.idCliente,
       idVoucherTipo: this.borrador.idVoucherTipo,
-      estadoVoucher: this.borrador.idEstadoVoucher, // <-- CAMBIO
+      estadoVoucher: this.borrador.idEstadoVoucher,
       fechaAdquisicion: this.fechaAdqISO,
     };
 
@@ -263,7 +259,7 @@ export class PreviewVoucherAdministradorComponent implements OnInit {
 
     const estadoNuevo = Number(this.borrador.idEstadoVoucher);
 
-    // Si el switch está apagado => SOLO update
+    // Si el switch está apagado SOLO update
     if (!this.cambiarEstado) {
       this.http.patch(`/api/vouchers/${this.idVoucherEdit}`, payloadUpdate).subscribe({
         next: () => {
@@ -281,10 +277,9 @@ export class PreviewVoucherAdministradorComponent implements OnInit {
       return;
     }
 
-    // Switch encendido => update + updateEstado
+    // Switch encendido update + updateEstado
     this.http.patch(`/api/vouchers/${this.idVoucherEdit}`, payloadUpdate).subscribe({
       next: () => {
-        // luego cambio de estado
         this.http.patch(`/api/vouchers/${this.idVoucherEdit}/estado`, { idEstadoVoucher: estadoNuevo }).subscribe({
           next: () => {
             alert('Voucher actualizado correctamente.');

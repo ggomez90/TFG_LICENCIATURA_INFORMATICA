@@ -61,7 +61,6 @@ export class UsuarioCreateDialogComponent implements OnInit, OnDestroy {
   }
 
   private focusControl(controlName: 'email' | 'usuario' | 'dniCuitCuil') {
-    // intenta enfocar el input correspondiente si está en el DOM
     const el = document.querySelector<HTMLInputElement>(`[formcontrolname="${controlName}"]`);
     el?.focus();
   }
@@ -90,7 +89,7 @@ export class UsuarioCreateDialogComponent implements OnInit, OnDestroy {
       this.saved.emit();
       this.close.emit();
     } catch (e) {
-      // Mensaje base (fallback)
+      // Mensaje base
       const fallback = normalizeHttpError(e);
 
       // Intento extraer status y mensaje del backend

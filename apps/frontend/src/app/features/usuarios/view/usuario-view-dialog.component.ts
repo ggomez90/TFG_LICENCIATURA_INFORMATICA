@@ -18,7 +18,7 @@ type Rol = 'admin' | 'operario' | 'cliente';
 
 export interface UsuarioViewVM {
   id: number;                    // idUsuario (y para cliente = idCliente)
-  idCliente?: number | null;      // lo podés seguir mostrando si ya lo tenés
+  idCliente?: number | null;
   nombreUsuario: string;
   propietario: string;
   dniCuitCuil: string;
@@ -117,9 +117,9 @@ export class UsuarioViewDialogComponent implements OnChanges {
         };
 
         this.clienteLoading = false;
-        this.cdr.markForCheck(); // ✅ pinta datos del cliente sin click
+        this.cdr.markForCheck();
 
-        // Resolver provincia/localidad (en paralelo)
+        // Resolver provincia/localidad
         this.loadProvinciaNombre(idProv);
         this.loadLocalidadNombre(idLoc);
       },
@@ -127,7 +127,7 @@ export class UsuarioViewDialogComponent implements OnChanges {
         console.error('[UsuarioView] Error cargando cliente extra', err);
         this.clienteLoading = false;
         this.clienteError = 'No se pudieron cargar los datos del cliente.';
-        this.cdr.markForCheck(); // ✅ muestra error sin click
+        this.cdr.markForCheck(); // muestra error sin click
       },
     });
   }
@@ -139,7 +139,7 @@ export class UsuarioViewDialogComponent implements OnChanges {
       next: (p: any) => {
         if (!this.clienteExtra) return;
         this.clienteExtra.provinciaNombre = (p?.nombre ?? null);
-        this.cdr.markForCheck(); // ✅ refresca cuando llega provincia
+        this.cdr.markForCheck(); //refresca cuando llega provincia
       },
       error: () => {
         if (!this.clienteExtra) return;
@@ -155,9 +155,8 @@ export class UsuarioViewDialogComponent implements OnChanges {
     this.localidadApi.getById(idLoc).subscribe({
       next: (l: any) => {
         if (!this.clienteExtra) return;
-        // tu backend localidad.findOne devuelve un objeto que incluye "nombre" (normalmente)
         this.clienteExtra.localidadNombre = (l?.nombre ?? null);
-        this.cdr.markForCheck(); // ✅ refresca cuando llega localidad
+        this.cdr.markForCheck(); //refresca cuando llega localidad
       },
       error: () => {
         if (!this.clienteExtra) return;

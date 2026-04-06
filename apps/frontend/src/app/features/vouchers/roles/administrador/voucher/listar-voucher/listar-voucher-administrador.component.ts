@@ -18,7 +18,6 @@ interface AdminVoucherListItem {
 }
 
 interface VouchersFilter {
-  // “rangos” por fechaAdquisicion (client-side)
   fechaDesde: string | null; // yyyy-MM-dd
   fechaHasta: string | null; // yyyy-MM-dd
 
@@ -54,7 +53,7 @@ export class ListarVoucherAdministradorComponent implements OnInit {
   loading = false;
   errorMsg: string | null = null;
 
-  // 50 por página (igual que voucher-tipo)
+  // 50 por página
   limit = 50;
   offset = 0;
   total = 0;
@@ -75,7 +74,7 @@ export class ListarVoucherAdministradorComponent implements OnInit {
     this.cargar();
   }
 
-  // ================= Helpers =================
+  //Helpers
   onNumberKeydown(event: KeyboardEvent) {
     const invalid = ['.', ',', '-', 'e', '+'];
     if (invalid.includes(event.key)) event.preventDefault();
@@ -102,10 +101,6 @@ export class ListarVoucherAdministradorComponent implements OnInit {
   }
 
   badgeClass(e: EstadoVoucherCode): string {
-    // reutilizamos los badges del estilo existente
-    // ok = "bueno", muted = "gris"
-    // para voucher: UTILIZADO ok, ANULADO muted (o danger si querés),
-    // ADQUIRIDO ok-ish y CREADO muted-ish
     switch (Number(e)) {
       case 3: return 'dsf-badge--ok';     // UTILIZADO
       case 2: return 'dsf-badge--ok';     // ADQUIRIDO
@@ -167,7 +162,7 @@ export class ListarVoucherAdministradorComponent implements OnInit {
     return r;
   }
 
-  // ================= Navegación =================
+  // Navegación
   onVolver(): void {
     if (this.isAdmin) {
       this.router.navigate(['/menu-principal/admin/vouchers']);
@@ -178,7 +173,7 @@ export class ListarVoucherAdministradorComponent implements OnInit {
     }
   }
 
-  // ================= Filtros + paginación =================
+  // Filtros + paginación
   onAplicarFiltros(): void {
     this.offset = 0;
     this.cargar();
@@ -209,10 +204,9 @@ export class ListarVoucherAdministradorComponent implements OnInit {
     this.cargar();
   }
 
-  // ================= Acciones por fila =================
+  // Acciones por fila
   onVer(item: AdminVoucherListItem): void {
     if (!item.idVoucher) return;
-    // Si no tenés "ver", dejalo igual y lo cableás después
     this.router.navigate(
       ['/menu-principal', 'admin', 'vouchers', 'voucher', 'ver', item.idVoucher],
       { state: { backTo: 'listar' } }
@@ -227,24 +221,17 @@ export class ListarVoucherAdministradorComponent implements OnInit {
     );
   }
 
-  // ================= Carga HTTP =================
+  // Carga HTTP
   private cargar(): void {
     this.loading = true;
     this.errorMsg = null;
     this.cdr.markForCheck();
 
-    // Igual que listar-voucher-tipo:
-    // NO mandamos sortBy/order ni filtros “conflictivos” al back.
-    // Pedimos solo limit/offset y filtramos/ordenamos client-side.
-    //
-    // OJO: tu back tiene limit <= 100.
-    // Vamos a traer una "ventana" más grande (100) para que el filtrado tenga sentido.
-    // Luego paginamos del lado cliente con limit=50 (como voucher-tipo).
     const reqLimit = 100;
 
     const params: any = {
       limit: reqLimit,
-      offset: 0, // traemos el “bloque” para filtrar bien
+      offset: 0,
     };
 
     this.voucherApi.list(params).subscribe({
@@ -268,10 +255,10 @@ export class ListarVoucherAdministradorComponent implements OnInit {
         // filtros client-side
         let filtered = this.applyClientFilters(mapped);
 
-        // orden fijo: ID desc (como voucher-tipo)
+        // orden fijo: ID desc
         filtered = filtered.sort((a, b) => (b.idVoucher || 0) - (a.idVoucher || 0));
 
-        // paginación client-side (como voucher-tipo cuando el back devuelve array)
+        // paginación client-side
         this.total = filtered.length;
         this.items = filtered.slice(this.offset, this.offset + this.limit);
 

@@ -161,7 +161,7 @@ export class ListarEncuestaComponent implements OnInit {
     } else if (this.isCliente) {
       this.router.navigate(['/menu-principal/cliente/biblioteca/encuestas/ver', e.idEncuesta]);
     } else {
-      // futuro: ruta pública
+      // ruta pública
       this.router.navigate(['/public/recursos/encuestas/ver', e.idEncuesta]);
     }
   }

@@ -12,15 +12,15 @@ interface DesafioForm {
   tipoResiduo: string;
   requiereInscripcion: boolean;
   unidadMedida: string;
-  meta: string;                 // texto -> decimal
+  meta: string;                 // texto decimal
   puntosTotales: number;        // entero
-  puntosPorUnidad: string;      // texto -> decimal
-  bonificacionDesafioCompleto: string; // texto -> entero
+  puntosPorUnidad: string;      // texto decimal
+  bonificacionDesafioCompleto: string; // texto entero
   otorgaPuntosParcial: boolean;
   fechaInicio: string;          // YYYY-MM-DD
   fechaFin: string | null;      // YYYY-MM-DD | null
   estado: EstadoDesafio;
-  idRecursoEducativo: string;   // texto -> entero
+  idRecursoEducativo: string;   // texto entero
 }
 
 @Component({
@@ -102,9 +102,9 @@ export class PreviewDesafioAdministradorComponent implements OnInit {
     });
   }
 
-  // ===== Helpers (idénticos a crear-desafio) =====
+  // Helpers (idénticos a crear-desafio)
   private toCreateDto(f: DesafioForm): DesafioCreateDto {
-    const idAdmin = 1; // TODO: reemplazar por el ID real del admin autenticado
+    const idAdmin = 1;
 
     const parseDecimal = (v: string): number | null => {
       const t = (v ?? '').trim();

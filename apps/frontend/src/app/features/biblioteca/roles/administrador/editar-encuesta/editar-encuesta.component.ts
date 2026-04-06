@@ -163,7 +163,7 @@ export class EditarEncuestaComponent implements OnInit, AfterViewInit {
   }
 
   //Extraccion de bloque JSON embebido en la descripcion, devuelve
-  //consignaHtml: la parte de HTML sin el JSON y  opciones + tipoSeleccion (si existen)
+  //consignaHtml: la parte de HTML sin el JSON y  opciones + tipoSeleccion
   private parseDescripcion(descripcion: string | null | undefined): {
     consignaHtml: string;
     opciones: OpcionEncuesta[];

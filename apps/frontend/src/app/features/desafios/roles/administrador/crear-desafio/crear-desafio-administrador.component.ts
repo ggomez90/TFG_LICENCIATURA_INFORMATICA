@@ -18,15 +18,15 @@ interface DesafioForm {
   tipoResiduo: string;
   requiereInscripcion: boolean;
   unidadMedida: string;
-  meta: string; // texto -> decimal
+  meta: string; // texto decimal
   puntosTotales: number; // entero
-  puntosPorUnidad: string; // texto -> decimal
-  bonificacionDesafioCompleto: string; // texto -> entero
+  puntosPorUnidad: string; // texto decimal
+  bonificacionDesafioCompleto: string; // texto entero
   otorgaPuntosParcial: boolean;
   fechaInicio: string; // YYYY-MM-DD
   fechaFin: string | null; // YYYY-MM-DD | null
   estado: EstadoDesafio;
-  idRecursoEducativo: string; // texto -> entero
+  idRecursoEducativo: string; // texto entero
 }
 
 @Component({
@@ -44,7 +44,7 @@ export class CrearDesafioAdministradorComponent implements OnInit, AfterViewInit
   currentColor = '#0b3b25';
 
   form: DesafioForm = this.emptyForm();
-  minFechaInicio = ''; // hoy en America/Argentina/Cordoba
+  minFechaInicio = '';
   loading = false;
 
   constructor(
@@ -65,7 +65,7 @@ export class CrearDesafioAdministradorComponent implements OnInit, AfterViewInit
     if (this.descripcionEditor) this.descripcionEditor.nativeElement.innerHTML = this.form.descripcion || '';
   }
 
-  // ========= Navegación =========
+  // Navegación
 
   onVolver(): void {
     this.router.navigate(['/menu-principal/admin/desafios']);
@@ -126,7 +126,7 @@ export class CrearDesafioAdministradorComponent implements OnInit, AfterViewInit
     });
   }
 
-  // ========= Helpers =========
+  //Helpers
 
   private emptyForm(): DesafioForm {
     return {
@@ -147,7 +147,7 @@ export class CrearDesafioAdministradorComponent implements OnInit, AfterViewInit
     };
   }
 
-  /** Hoy en la TZ dada como YYYY-MM-DD (evita desfases por UTC). */
+  /** Hoy en la TZ dada como YYYY-MM-DD */
   private todayInTz(tz: string): string {
     const fmt = new Intl.DateTimeFormat('en-CA', {
       timeZone: tz,
@@ -155,12 +155,12 @@ export class CrearDesafioAdministradorComponent implements OnInit, AfterViewInit
       month: '2-digit',
       day: '2-digit',
     });
-    return fmt.format(new Date()); // en-CA => YYYY-MM-DD
+    return fmt.format(new Date()); // YYYY-MM-DD
   }
 
   /** Mapea el formulario al DTO del API. */
   private toCreateDto(f: DesafioForm): DesafioCreateDto {
-    const idAdmin = 1; // TODO: reemplazar por el real
+    const idAdmin = 1;
 
     const parseDecimal = (v: string): number | null => {
       const t = (v ?? '').trim();
@@ -203,10 +203,10 @@ export class CrearDesafioAdministradorComponent implements OnInit, AfterViewInit
     return this.form.fechaInicio || this.minFechaInicio;
   }
 
-  // ====== Sanitizadores y validadores de inputs ======
+  // Sanitizadores y validadores de inputs
 
   /** Permite sólo dígitos y UN punto, impide punto en primera posición
-   *  y además BLOQUEA escribir más de 2 decimales (considerando caret/selección). */
+   * BLOQUEA escribir más de 2 decimales */
   decimalKeydown(e: KeyboardEvent, current: string) {
     const allowedControl = [
       'Backspace', 'Delete', 'Tab', 'Escape', 'Enter',
@@ -232,7 +232,7 @@ export class CrearDesafioAdministradorComponent implements OnInit, AfterViewInit
 
     // Dígitos
     if (/^[0-9]$/.test(e.key)) {
-      // Simulamos el valor resultante si se inserta en la posición/selección actual
+      // Simulamos el valor resultante si se inserta en la posición actual
       const before = value.slice(0, start);
       const after  = value.slice(end);
       const next   = before + e.key + after;
@@ -252,7 +252,7 @@ export class CrearDesafioAdministradorComponent implements OnInit, AfterViewInit
     e.preventDefault();
   }
 
-  /** Sólo dígitos (para enteros). */
+  // Sólo dígitos enteros
   integerKeydown(e: KeyboardEvent) {
     const allowedControl = [
       'Backspace', 'Delete', 'Tab', 'Escape', 'Enter',
@@ -264,7 +264,7 @@ export class CrearDesafioAdministradorComponent implements OnInit, AfterViewInit
     e.preventDefault();
   }
 
-  /** Normaliza decimales y limita a 2 dígitos luego del punto. */
+  // Normaliza decimales y limita a 2 dígitos luego del punto.
   private normalizeDecimalInput(v: string): string {
     let s = (v || '').replace(/[^\d.]/g, '');
 
@@ -303,7 +303,7 @@ export class CrearDesafioAdministradorComponent implements OnInit, AfterViewInit
     this.form.idRecursoEducativo = t.replace(/\D+/g, '');
   }
 
-  // ====== Switch dependiente de puntosPorUnidad ======
+  // Switch dependiente de puntosPorUnidad
   onToggleParcial(ev: Event) {
     const input = (ev.target as HTMLInputElement);
     const wants = input.checked;
@@ -316,7 +316,7 @@ export class CrearDesafioAdministradorComponent implements OnInit, AfterViewInit
     this.form.otorgaPuntosParcial = wants;
   }
 
-  // ================== EDITOR RICO ==================
+  //EDITOR
   setActiveEditor(editor: 'titulo' | 'descripcion') { this.activeEditor = editor; }
 
   onTituloChange(event: Event) {

@@ -188,7 +188,7 @@ export class CrearEncuestaComponent implements OnInit, AfterViewInit {
     });
   }
 
-  // EDITOR RICO
+  // EDITOR
   setActiveEditor(editor: 'titulo' | 'descripcion') {
     this.activeEditor = editor;
   }

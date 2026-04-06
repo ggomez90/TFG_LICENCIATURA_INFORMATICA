@@ -346,7 +346,7 @@ export class UsuariosAdministradorComponent implements OnInit {
       pageSize: this.pageSize,
     };
 
-    // Rol y subfiltro (para ver a que endpoint va a ir el servicio)
+    // Rol y subfiltro
     const rol = this.filtroRol();
     if (rol !== 'todos') {
       query.tipo = rol; // cliente, operario o admin

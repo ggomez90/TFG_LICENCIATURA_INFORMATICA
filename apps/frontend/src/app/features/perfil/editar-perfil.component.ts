@@ -72,9 +72,7 @@ export class EditarPerfilComponent {
     this.load();
   }
 
-  // =========================
   // LOAD
-  // =========================
   private load(): void {
     if (this.loading()) return;
 
@@ -93,7 +91,7 @@ export class EditarPerfilComponent {
 
         const rol = this.mapRol(u.idRolUsuario);
 
-        // 2) si es cliente: /clientes/me (evita 403 de /clientes/:id)
+        // 2) si es cliente: /clientes/me
         if (rol === 'CLIENTE') {
           return this.clienteApi.me().pipe(
             map((cli) => ({ u, cli })),
@@ -158,11 +156,9 @@ export class EditarPerfilComponent {
     });
   }
 
-  // =========================
   // Provincias / Localidades
-  // =========================
+
   private loadProvincias$() {
-    // backend paginado (pero provincias son pocas)
     return this.provinciaApi.getAll({ page: 1, pageSize: 100 }).pipe(
       map((resp: any) => {
           const data = Array.isArray(resp?.data) ? resp.data : (Array.isArray(resp) ? resp : []);
@@ -231,9 +227,7 @@ export class EditarPerfilComponent {
     });
   }
 
-  // =========================
   // Guardar
-  // =========================
   onGuardar(): void {
     const f = this.form();
     const u = this.me();
@@ -290,9 +284,7 @@ export class EditarPerfilComponent {
     });
   }
 
-  // =========================
   // Helpers
-  // =========================
 
   private mapRol(idRolUsuario: number): Rol {
     if (Number(idRolUsuario) === 1) return 'ADMIN';
