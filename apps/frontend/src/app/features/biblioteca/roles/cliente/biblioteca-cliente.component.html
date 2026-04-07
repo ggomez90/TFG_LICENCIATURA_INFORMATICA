@@ -1,5 +1,4 @@
 <section class="dsf-wrap biblioteca-cliente">
-  <!-- HERO -->
   <header class="hero">
     <div class="hero__content">
       <div class="hero__kicker">Yo_Reciclo</div>
@@ -14,9 +13,18 @@
           Explorar contenidos
         </button>
 
-        <a class="dsf-btn dsf-btn--ghost hero__btn" [routerLink]="['/menu-principal/cliente/biblioteca/encuestas/lista']">
+        <button type="button" class="dsf-btn dsf-btn--ghost hero__btn" (click)="onVerTodasEncuestas()">
           Ver encuestas
-        </a>
+        </button>
+
+        <button
+          *ngIf="isGuest"
+          type="button"
+          class="dsf-btn dsf-btn--login hero__btn"
+          (click)="onIrInicio()"
+        >
+          LOG IN
+        </button>
       </div>
 
       <div class="hero__chips">
@@ -28,6 +36,7 @@
 
     <div class="hero__aside">
       <div class="hero-card">
+
         <div class="hero-card__icon">⭐</div>
         <div class="hero-card__title">Recomendado</div>
 
@@ -38,12 +47,13 @@
           <div class="meta">Publicado: {{ fmtFecha(contenidoRecomendado.fechaPublicacion) }}</div>
 
           <div class="hero-card__actions">
-            <a
+            <button
+              type="button"
               class="dsf-btn dsf-btn--primary dsf-btn--sm"
-              [routerLink]="['/menu-principal/cliente/biblioteca/contenidos/ver', contenidoRecomendado.idContenido]"
+              (click)="onVerContenido(contenidoRecomendado.idContenido)"
             >
               Ver contenido
-            </a>
+            </button>
           </div>
         </ng-container>
 
@@ -56,9 +66,7 @@
     </div>
   </header>
 
-  <!-- GRID PRINCIPAL -->
   <div class="client-grid">
-    <!-- CONTENIDOS -->
     <section class="panel panel--glass">
       <header class="panel__header">
         <div>
@@ -73,13 +81,11 @@
         </div>
       </header>
 
-      <!-- Error -->
       <div class="hint" *ngIf="errorContenidos">
         <span class="hint__icon">⚠️</span>
         <span class="hint__text">{{ errorContenidos }}</span>
       </div>
 
-      <!-- Loading -->
       <ng-container *ngIf="loadingContenidos; else contenidosLoadedTpl">
         <div class="cards-grid">
           <div class="card skeleton" *ngFor="let _ of [1,2,3,4]">
@@ -90,7 +96,6 @@
         </div>
       </ng-container>
 
-      <!-- Loaded -->
       <ng-template #contenidosLoadedTpl>
         <div *ngIf="contenidos.length === 0 && !errorContenidos" class="empty">
           <div class="empty__icon">📭</div>
@@ -109,25 +114,19 @@
             <p class="card__desc">{{ c.descripcionCorta || 'Abrí el contenido para ver el detalle.' }}</p>
 
             <div class="card__actions">
-              <!-- <button type="button" class="dsf-btn dsf-btn--primary dsf-btn--sm" (click)="onVerContenido(c.idContenido)">
-                Ver contenido
-              </button> -->
-              <a
+              <button
+                type="button"
                 class="dsf-btn dsf-btn--primary dsf-btn--sm"
-                [routerLink]="['/menu-principal/cliente/biblioteca/contenidos/ver', c.idContenido]"
+                (click)="onVerContenido(c.idContenido)"
               >
                 Ver contenido
-              </a>
-              <!-- <button type="button" class="dsf-btn dsf-btn--ghost dsf-btn--sm" (click)="onVerTodosContenidos()">
-                Más contenidos
-              </button> -->
+              </button>
             </div>
           </article>
         </div>
       </ng-template>
     </section>
 
-    <!-- ENCUESTAS -->
     <section class="panel panel--solid">
       <header class="panel__header">
         <div>
@@ -142,13 +141,11 @@
         </div>
       </header>
 
-      <!-- Error -->
       <div class="hint" *ngIf="errorEncuestas">
         <span class="hint__icon">⚠️</span>
         <span class="hint__text">{{ errorEncuestas }}</span>
       </div>
 
-      <!-- Loading -->
       <ng-container *ngIf="loadingEncuestas; else encuestasLoadedTpl">
         <div class="list">
           <div class="row skeleton-row" *ngFor="let _ of [1,2,3]">
@@ -158,7 +155,6 @@
         </div>
       </ng-container>
 
-      <!-- Loaded -->
       <ng-template #encuestasLoadedTpl>
         <div *ngIf="encuestas.length === 0 && !errorEncuestas" class="empty">
           <div class="empty__icon">🗳️</div>
@@ -192,3 +188,5 @@
     </section>
   </div>
 </section>
+
+<app-footer-invitado *ngIf="isGuest"></app-footer-invitado>

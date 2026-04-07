@@ -4,6 +4,7 @@ import { RouterModule, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { RolesService } from '../../../auth/roles.service';
+import { FooterInvitadoComponent } from '../roles/invitado/footer-invitado.component';
 
 interface EncuestaRow {
   idEncuesta: number;
@@ -25,29 +26,25 @@ interface PaginatedResponse<T> {
 @Component({
   selector: 'app-listar-encuesta',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule],
+  imports: [CommonModule, RouterModule, FormsModule, FooterInvitadoComponent],
   templateUrl: './listar-encuesta.component.html',
   styleUrls: ['./listar-encuesta.component.scss'],
 })
-
 export class ListarEncuestaComponent implements OnInit {
-  // estado
   items: EncuestaRow[] = [];
   loading = false;
   errorMsg = '';
   isAdmin = false;
   isCliente = false;
+  isGuest = false;
 
-  // paginación
   limit = 30;
   offset = 0;
   total = 0;
 
-  // orden idéntico al dashboard
   sortBy: string = 'idEncuesta';
   order: 'asc' | 'desc' = 'desc';
 
-  // filtros
   filtro = {
     fechaDesde: null as string | null,
     fechaHasta: null as string | null,
@@ -65,8 +62,8 @@ export class ListarEncuestaComponent implements OnInit {
   ngOnInit(): void {
     this.isAdmin = this.roles.hasAnyRole(['ADMIN', 'ADMINISTRADOR']);
     this.isCliente = this.roles.hasRole('CLIENTE');
+    this.isGuest = !this.isAdmin && !this.isCliente && this.router.url.startsWith('/invitado');
 
-    // No-admin (cliente o invitado): solo activas
     if (!this.isAdmin) {
       this.filtro.activa = true;
     }
@@ -74,7 +71,6 @@ export class ListarEncuestaComponent implements OnInit {
     this.cargar();
   }
 
-  // helpers/funciones
   getTituloPlano(texto: string | null | undefined): string {
     if (!texto) return 'Sin título';
     return texto.replace(/<[^>]+>/g, '').trim() || 'Sin título';
@@ -84,14 +80,12 @@ export class ListarEncuestaComponent implements OnInit {
     if (!iso) return '';
     const d = new Date(iso);
     if (isNaN(d.getTime())) return '';
-    // yyyy-MM-dd para comparaciones de rango
     const y = d.getFullYear();
     const m = String(d.getMonth() + 1).padStart(2, '0');
     const day = String(d.getDate()).padStart(2, '0');
     return `${y}-${m}-${day}`;
   }
 
-  // filtros en cliente
   private applyClientFilters(rows: EncuestaRow[]): EncuestaRow[] {
     let r = [...rows];
 
@@ -109,23 +103,22 @@ export class ListarEncuestaComponent implements OnInit {
       r = r.filter(e => this.getTituloPlano(e.titulo).toLowerCase().includes(q));
     }
 
-    // orden por ID desc
     r.sort((a, b) => (b.idEncuesta || 0) - (a.idEncuesta || 0));
     return r;
   }
 
-  //Navegación
   onVolver(): void {
     if (this.isAdmin) {
       this.router.navigate(['/menu-principal/admin/biblioteca']);
     } else if (this.isCliente) {
       this.router.navigate(['/menu-principal/cliente/biblioteca']);
+    } else if (this.isGuest) {
+      this.router.navigate(['/invitado/biblioteca']);
     } else {
       this.router.navigate(['/']);
     }
   }
 
-  //Filtros / Paginación
   onAplicarFiltros(): void {
     this.offset = 0;
     this.cargar();
@@ -154,15 +147,15 @@ export class ListarEncuestaComponent implements OnInit {
     this.cargar();
   }
 
-  //Acciones de fila
   onVer(e: EncuestaRow): void {
     if (this.isAdmin) {
       this.router.navigate(['/menu-principal/admin/biblioteca/encuestas/ver', e.idEncuesta]);
     } else if (this.isCliente) {
       this.router.navigate(['/menu-principal/cliente/biblioteca/encuestas/ver', e.idEncuesta]);
+    } else if (this.isGuest) {
+      this.router.navigate(['/invitado/biblioteca/encuestas/ver', e.idEncuesta]);
     } else {
-      // ruta pública
-      this.router.navigate(['/public/recursos/encuestas/ver', e.idEncuesta]);
+      this.router.navigate(['/']);
     }
   }
 
@@ -200,7 +193,6 @@ export class ListarEncuestaComponent implements OnInit {
       });
   }
 
-  //Carga HTTP
   private cargar(): void {
     this.loading = true;
     this.errorMsg = '';
@@ -209,12 +201,12 @@ export class ListarEncuestaComponent implements OnInit {
     let params = new HttpParams()
       .set('limit', this.limit)
       .set('offset', this.offset)
-      .set('sortBy', this.sortBy)  // idEncuesta
-      .set('order', this.order);   // desc
+      .set('sortBy', this.sortBy)
+      .set('order', this.order);
 
     if (this.filtro.fechaDesde) params = params.set('fechaDesde', this.filtro.fechaDesde);
     if (this.filtro.fechaHasta) params = params.set('fechaHasta', this.filtro.fechaHasta);
-    if (this.filtro.activa !== null) params = params.set('activa', String(this.filtro.activa)); // "true"/"false"
+    if (this.filtro.activa !== null) params = params.set('activa', String(this.filtro.activa));
     if (this.filtro.q?.trim()) params = params.set('q', this.filtro.q.trim());
 
     const doRequest = (p: HttpParams | null) =>
@@ -236,17 +228,13 @@ export class ListarEncuestaComponent implements OnInit {
           activa: !!e.activa,
         }));
 
-        // Filtros de refuerzo en cliente
         const filtered = this.applyClientFilters(mapped);
 
-        // Totales: si viene filtrado del back se usa ese sino se filtra en el front
         if (Array.isArray(resp)) {
           this.total = filtered.length;
-          // ventana de paginación local por si backend no paginó
           this.items = filtered.slice(0, this.limit);
           this.offset = 0;
         } else {
-          // si el backend paginó, mostramos lo que hay pero ya filtrado
           this.items = filtered;
           this.total = (resp as PaginatedResponse<any>).total ?? filtered.length;
           this.limit = (resp as PaginatedResponse<any>).limit ?? this.limit;
@@ -257,7 +245,6 @@ export class ListarEncuestaComponent implements OnInit {
         this.cdr.markForCheck();
       },
       error: (err) => {
-        // reintento sin params si el backend se queja de los query params
         const msg = err?.error?.message;
         const is400 = err?.status === 400;
         const complainsParams =

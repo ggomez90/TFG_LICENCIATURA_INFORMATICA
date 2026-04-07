@@ -1,10 +1,10 @@
 import { Component, ChangeDetectionStrategy, ChangeDetectorRef, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
-import { HttpParams } from '@angular/common/http';
 
-import { ContenidoApi, ContenidoItem } from '../../../../api/contenido.api';
+import { ContenidoApi } from '../../../../api/contenido.api';
 import { EncuestaApi, EncuestaItem } from '../../../../api/encuesta.api';
+import { FooterInvitadoComponent } from '../invitado/footer-invitado.component';
 
 interface ClienteContenidoCard {
   idContenido: number;
@@ -17,7 +17,7 @@ interface ClienteContenidoCard {
 interface ClienteEncuestaCard {
   idEncuesta: number;
   titulo: string;
-  fechaPublicacion: string; // ISO
+  fechaPublicacion: string;
   fechaCierre?: string | null;
   activa: boolean;
 }
@@ -25,7 +25,7 @@ interface ClienteEncuestaCard {
 @Component({
   selector: 'app-biblioteca-cliente',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, FooterInvitadoComponent],
   templateUrl: './biblioteca-cliente.component.html',
   styleUrls: ['./biblioteca-cliente.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -52,20 +52,15 @@ export class BibliotecaClienteComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.isGuest = this.router.url.startsWith('/invitado');
     this.cargarContenidos();
     this.cargarEncuestas();
   }
 
-  // Helpers
-  private getContenidoId(raw: any): number {
-    const v =
-      raw?.idContenidoEducativo ??
-      raw?.idContenido ??
-      raw?.id ??
-      null;
-
-    const n = Number(v);
-    return Number.isFinite(n) && n > 0 ? n : 0;
+  private getBaseBibliotecaPath(): string {
+    return this.isGuest
+      ? '/invitado/biblioteca'
+      : '/menu-principal/cliente/biblioteca';
   }
 
   private stripHtml(input: string | null | undefined, fallback = 'Sin título'): string {
@@ -88,28 +83,50 @@ export class BibliotecaClienteComponent implements OnInit {
     return d.toLocaleDateString('es-AR', { day: '2-digit', month: '2-digit', year: 'numeric' });
   }
 
-  // Navegación
+  onIrInicio(): void {
+    window.location.href = 'http://localhost';
+  }
+
   onVerTodosContenidos(): void {
+    if (this.isGuest) {
+      this.router.navigate(['/invitado/biblioteca/contenidos']);
+      return;
+    }
+
     this.router.navigate(['/menu-principal/cliente/biblioteca/contenidos/lista']);
   }
 
   onVerTodasEncuestas(): void {
+    if (this.isGuest) {
+      this.router.navigate(['/invitado/biblioteca/encuestas']);
+      return;
+    }
+
     this.router.navigate(['/menu-principal/cliente/biblioteca/encuestas/lista']);
   }
 
   onVerContenido(idContenido: number): void {
+    if (this.isGuest) {
+      this.router.navigate(['/invitado/biblioteca/contenidos/ver', idContenido]);
+      return;
+    }
+
     this.router.navigate(['/menu-principal/cliente/biblioteca/contenidos/ver', idContenido]);
   }
 
   onVerEncuesta(idEncuesta: number): void {
+    if (this.isGuest) {
+      this.router.navigate(['/invitado/biblioteca/encuestas/ver', idEncuesta]);
+      return;
+    }
+
     this.router.navigate(['/menu-principal/cliente/biblioteca/encuestas/ver', idEncuesta]);
   }
-
+  
   onCallToAction(): void {
     this.onVerTodosContenidos();
   }
 
-  // Data
   private cargarContenidos(): void {
     this.loadingContenidos = true;
     this.errorContenidos = null;
@@ -121,11 +138,10 @@ export class BibliotecaClienteComponent implements OnInit {
           idContenido: c.idContenidoEducativo,
           titulo: this.stripHtml(c.titulo, 'Sin título'),
           fechaPublicacion: c.fechaPublicacion,
-          descripcionCorta: '',
+          descripcionCorta: this.truncateText(c.descripcion, 110),
           etiqueta: 'Educación',
         }));
 
-        // Orden DESC por id
         mapped.sort((a, b) => (b.idContenido || 0) - (a.idContenido || 0));
 
         this.contenidoRecomendado = mapped.length > 0 ? mapped[0] : null;
@@ -152,7 +168,6 @@ export class BibliotecaClienteComponent implements OnInit {
     this.errorEncuestas = null;
     this.cdr.markForCheck();
 
-    // pedir activas + orden desc
     const baseParams = {
       limit: 50,
       offset: 0,
@@ -196,7 +211,6 @@ export class BibliotecaClienteComponent implements OnInit {
         this.cdr.markForCheck();
       },
       error: (err) => {
-        // Reintento sin params
         const msg = err?.error?.message;
         const is400 = err?.status === 400;
         const complainsParams =

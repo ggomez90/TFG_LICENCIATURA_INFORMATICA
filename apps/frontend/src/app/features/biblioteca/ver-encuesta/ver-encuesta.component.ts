@@ -7,6 +7,7 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { RolesService } from '../../../auth/roles.service';
 import { EncuestaApi, EncuestaItem } from '../../../api/encuesta.api';
 import { RespuestaApi } from '../../../api/respuesta.api';
+import { FooterInvitadoComponent } from '../roles/invitado/footer-invitado.component';
 
 interface EncuestaDetalle {
   idEncuesta: number;
@@ -29,7 +30,7 @@ interface OpcionUI {
 @Component({
   selector: 'app-ver-encuesta',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule],
+  imports: [CommonModule, RouterModule, FormsModule, FooterInvitadoComponent],
   templateUrl: './ver-encuesta.component.html',
   styleUrls: ['./ver-encuesta.component.scss'],
 })
@@ -37,6 +38,7 @@ export class VerEncuestaComponent implements OnInit {
   id!: number;
 
   loading = false;
+  submitting = false;
   errorMsg: string | null = null;
 
   data: EncuestaDetalle | null = null;
@@ -49,22 +51,22 @@ export class VerEncuestaComponent implements OnInit {
   selectedIds = new Set<string>();
 
   locked = false;
-
-  // cierre por fecha
   closedByDate = false;
 
-  // roles
   isAdmin = false;
   isCliente = false;
-
-  // invitado
   isGuest = false;
+
   guestNombre = '';
   guestApellido = '';
   guestDni = '';
   guestVerified = false;
   guestAlreadyResponded = false;
   guestMustLogin = false;
+
+  showGuestModal = false;
+  guestModalError = '';
+  guestModalInfo = '';
 
   constructor(
     private readonly route: ActivatedRoute,
@@ -79,7 +81,7 @@ export class VerEncuestaComponent implements OnInit {
   ngOnInit(): void {
     this.isAdmin = this.roles.hasAnyRole(['ADMIN', 'ADMINISTRADOR']);
     this.isCliente = this.roles.hasRole('CLIENTE');
-    this.isGuest = !this.isAdmin && !this.isCliente;
+    this.isGuest = !this.isAdmin && !this.isCliente && this.router.url.startsWith('/invitado');
 
     const param = this.route.snapshot.paramMap.get('idEncuesta');
     this.id = Number(param);
@@ -97,32 +99,17 @@ export class VerEncuestaComponent implements OnInit {
 
   get canInteractOptions(): boolean {
     if (this.isAdmin) return false;
-
-    // si está vencida por fecha o inactiva o locked, no interactúa
     if (this.closedByDate) return false;
     if (!this.data?.activa) return false;
     if (this.locked) return false;
-
-    if (this.isCliente) return true;
-
-    // invitado
-    return this.guestVerified && !this.guestMustLogin;
+    return true;
   }
 
   get canSend(): boolean {
+    if (this.isAdmin) return false;
     if (!this.canInteractOptions) return false;
     if (this.selectedIds.size === 0) return false;
-
-    if (this.isCliente) return true;
-
-    // invitado: requiere nombre+apellido+dni
-    return (
-      this.guestVerified &&
-      !this.guestMustLogin &&
-      this.guestNombre.trim().length > 0 &&
-      this.guestApellido.trim().length > 0 &&
-      this.normalizeDni(this.guestDni).length > 0
-    );
+    return true;
   }
 
   private cargarEncuesta(): void {
@@ -150,30 +137,18 @@ export class VerEncuestaComponent implements OnInit {
         this._tipo = parsed.tipo;
         this.opciones = parsed.opciones;
 
-        // --- cierre por fecha ---
         this.closedByDate = this.isClosedByDate(detalle.fechaCierre);
 
-        // Si no está activa > lock
-        if (!detalle.activa) {
+        if (!detalle.activa || this.closedByDate) {
           this.locked = true;
           this.loading = false;
           this.cdr.markForCheck();
           return;
         }
 
-        // Si venció por fecha > lock (pero se muestra)
-        if (this.closedByDate) {
-          this.locked = true;
-          this.loading = false;
-          this.cdr.markForCheck();
-          return;
-        }
-
-        // Verificación “ya respondí”
         if (this.isCliente) {
           this.verificarRespuestaPreviaCliente();
         } else {
-          // Invitado: NO se verifica hasta que ingrese DNI
           this.loading = false;
           this.cdr.markForCheck();
         }
@@ -194,7 +169,6 @@ export class VerEncuestaComponent implements OnInit {
     return cierre < Date.now();
   }
 
-  //parse opciones
   private parseDescripcion(raw: string): { plainHtml: string; tipo: TipoSeleccion; opciones: OpcionUI[] } {
     let html = raw || '';
     let jsonStr: string | null = null;
@@ -243,7 +217,6 @@ export class VerEncuestaComponent implements OnInit {
     return { plainHtml: html || '(Sin descripción)', tipo, opciones };
   }
 
-  //helpers
   fmtFecha(iso?: string): string {
     if (!iso) return '-';
     const d = new Date(iso);
@@ -259,7 +232,6 @@ export class VerEncuestaComponent implements OnInit {
     return String(input ?? '').replace(/\D+/g, '').trim();
   }
 
-  //selección
   onSeleccionChange(checked: boolean | undefined, opcionId: string): void {
     if (!this.canInteractOptions) return;
 
@@ -274,7 +246,6 @@ export class VerEncuestaComponent implements OnInit {
     this.cdr.markForCheck();
   }
 
-  //verificación respuesta previa (cliente logueado)
   private verificarRespuestaPreviaCliente(): void {
     this.respuestaApi.getMine(this.id).subscribe({
       next: (resp) => {
@@ -297,9 +268,23 @@ export class VerEncuestaComponent implements OnInit {
     });
   }
 
-  //verificación invitado (por DNI)
+  openGuestModal(): void {
+    if (!this.isGuest || !this.canSend) return;
+    this.guestModalError = '';
+    this.guestModalInfo = '';
+    this.showGuestModal = true;
+    this.cdr.markForCheck();
+  }
+
+  closeGuestModal(): void {
+    this.showGuestModal = false;
+    this.guestModalError = '';
+    this.guestModalInfo = '';
+    this.cdr.markForCheck();
+  }
+
   onVerificarDniInvitado(): void {
-    if (this.isCliente || this.isAdmin) return;
+    if (!this.isGuest) return;
     if (this.closedByDate || !this.data?.activa) return;
 
     const dni = this.normalizeDni(this.guestDni);
@@ -307,43 +292,50 @@ export class VerEncuestaComponent implements OnInit {
       this.guestVerified = false;
       this.guestMustLogin = false;
       this.guestAlreadyResponded = false;
-      this.errorMsg = 'Ingresá un DNI válido para continuar.';
+      this.guestModalError = 'Ingresá un DNI válido para continuar.';
+      this.guestModalInfo = '';
       this.cdr.markForCheck();
       return;
     }
 
-    this.loading = true;
-    this.errorMsg = null;
+    this.submitting = true;
+    this.guestModalError = '';
+    this.guestModalInfo = '';
     this.guestVerified = false;
     this.guestMustLogin = false;
     this.guestAlreadyResponded = false;
     this.cdr.markForCheck();
 
-    this.respuestaApi.checkPublic(this.id, dni).subscribe({
+    this.respuestaApi.validatePublic(this.id, dni).subscribe({
       next: (resp) => {
         this.guestVerified = true;
 
-        if (resp?.responded && resp?.item) {
+        if (resp?.mustLogin) {
+          this.guestMustLogin = true;
+          this.guestAlreadyResponded = false;
+          this.locked = false;
+          this.guestModalError = 'Este DNI pertenece a un usuario registrado. Debes iniciar sesión.';
+        } else if (resp?.responded && resp?.item) {
           this.guestAlreadyResponded = true;
+          this.guestMustLogin = false;
           this.locked = true;
           this.applyContenidoToSelectedIds(String(resp.item.contenido ?? ''));
+          this.guestModalInfo = 'Ya existe una respuesta registrada con este DNI.';
         } else {
+          this.guestAlreadyResponded = false;
+          this.guestMustLogin = false;
           this.locked = false;
+          this.guestModalInfo = 'DNI validado correctamente. Ya podés enviar la respuesta.';
         }
 
-        this.loading = false;
+        this.submitting = false;
         this.cdr.markForCheck();
       },
       error: (err) => {
-        const msg = err?.error?.message;
-        if (typeof msg === 'string' && msg.toLowerCase().includes('inicie sesión')) {
-          this.guestMustLogin = true;
-          this.guestVerified = true;
-        } else {
-          this.errorMsg = 'No se pudo verificar el DNI. Intentá nuevamente.';
-        }
-
-        this.loading = false;
+        console.error('Error validando DNI invitado', err);
+        this.guestModalError = err?.error?.message ?? 'No se pudo verificar el DNI. Intentá nuevamente.';
+        this.guestModalInfo = '';
+        this.submitting = false;
         this.cdr.markForCheck();
       },
     });
@@ -365,14 +357,68 @@ export class VerEncuestaComponent implements OnInit {
     this.selectedIds = new Set(ids);
   }
 
-  //enviar respuesta
   onEnviarRespuesta(): void {
     if (!this.data) return;
     if (!this.canSend) return;
 
-    // bloqueo duro en front
     if (!this.data.activa || this.closedByDate) {
       this.errorMsg = 'La encuesta está cerrada y no admite respuestas.';
+      this.cdr.markForCheck();
+      return;
+    }
+
+    if (this.isGuest) {
+      this.openGuestModal();
+      return;
+    }
+
+    this.enviarRespuestaCliente();
+  }
+
+  enviarRespuestaCliente(): void {
+    const ids = Array.from(this.selectedIds);
+    const payloadContenido = JSON.stringify({ ids });
+
+    const dtoBase = {
+      idEncuesta: this.id,
+      fechaRespuesta: new Date().toISOString(),
+      contenido: payloadContenido,
+    };
+
+    this.submitting = true;
+    this.errorMsg = null;
+    this.cdr.markForCheck();
+
+    this.respuestaApi.createMine(dtoBase).subscribe({
+      next: () => {
+        this.locked = true;
+        this.submitting = false;
+        this.cdr.markForCheck();
+      },
+      error: (err) => {
+        console.error('Error enviando respuesta (cliente)', err);
+        this.errorMsg = err?.error?.message ?? 'No se pudo enviar la respuesta.';
+        this.submitting = false;
+        this.cdr.markForCheck();
+      },
+    });
+  }
+
+  confirmarEnvioInvitado(): void {
+    if (!this.isGuest) return;
+
+    const dni = this.normalizeDni(this.guestDni);
+    const nombre = this.guestNombre.trim();
+    const apellido = this.guestApellido.trim();
+
+    if (!nombre || !apellido || !dni) {
+      this.guestModalError = 'Completá nombre, apellido y DNI.';
+      this.cdr.markForCheck();
+      return;
+    }
+
+    if (!this.guestVerified || this.guestMustLogin || this.guestAlreadyResponded) {
+      this.guestModalError = 'Primero debés verificar un DNI válido antes de enviar.';
       this.cdr.markForCheck();
       return;
     }
@@ -386,31 +432,12 @@ export class VerEncuestaComponent implements OnInit {
       contenido: payloadContenido,
     };
 
-    this.loading = true;
+    const datosInvitado = `${nombre} ${apellido}`.trim();
+
+    this.submitting = true;
+    this.guestModalError = '';
     this.errorMsg = null;
     this.cdr.markForCheck();
-
-    // Cliente logueado
-    if (this.isCliente) {
-      this.respuestaApi.createMine(dtoBase).subscribe({
-        next: () => {
-          this.locked = true;
-          this.loading = false;
-          this.cdr.markForCheck();
-        },
-        error: (err) => {
-          console.error('Error enviando respuesta (cliente)', err);
-          this.errorMsg = err?.error?.message ?? 'No se pudo enviar la respuesta.';
-          this.loading = false;
-          this.cdr.markForCheck();
-        },
-      });
-      return;
-    }
-
-    // Invitado
-    const dni = this.normalizeDni(this.guestDni);
-    const datosInvitado = `${this.guestNombre.trim()} ${this.guestApellido.trim()}`.trim();
 
     this.respuestaApi
       .createPublic({
@@ -421,20 +448,30 @@ export class VerEncuestaComponent implements OnInit {
       .subscribe({
         next: () => {
           this.locked = true;
-          this.loading = false;
+          this.submitting = false;
+          this.showGuestModal = false;
           this.cdr.markForCheck();
         },
         error: (err) => {
           console.error('Error enviando respuesta (invitado)', err);
-          this.errorMsg = err?.error?.message ?? 'No se pudo enviar la respuesta.';
-          this.loading = false;
+          this.guestModalError = err?.error?.message ?? 'No se pudo enviar la respuesta.';
+          this.submitting = false;
           this.cdr.markForCheck();
         },
       });
   }
 
-  // navegación
   onVolver(): void {
+    if (window.history.length > 1) {
+      window.history.back();
+      return;
+    }
+
+    if (this.isGuest) {
+      this.router.navigate(['/invitado/biblioteca']);
+      return;
+    }
+
     if (this.isAdmin) {
       this.router.navigate(['/menu-principal/admin/biblioteca']);
     } else if (this.isCliente) {

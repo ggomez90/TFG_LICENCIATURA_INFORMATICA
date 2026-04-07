@@ -15,22 +15,17 @@
 
   <div class="dsf-card dsf-card--preview">
     <div class="dsf-card__body">
-      <!-- LOADING -->
       <p *ngIf="loading" class="dsf-empty dsf-empty--loading">
         Cargando contenido educativo...
       </p>
 
-      <!-- ERROR -->
       <p *ngIf="!loading && errorMsg" class="dsf-empty">
         {{ errorMsg }}
       </p>
 
-      <!-- CONTENIDO -->
       <ng-container *ngIf="!loading && !errorMsg && contenido">
-        <!-- TÍTULO -->
         <h2 class="preview-title" [innerHTML]="tituloHtml"></h2>
 
-        <!-- METADATOS -->
         <div class="preview-meta">
           <span class="preview-meta__item">
             Publicación:
@@ -57,7 +52,6 @@
           </span>
         </div>
 
-        <!-- VIDEO / RECURSO -->
         <div class="preview-media" *ngIf="videoEmbedUrl || contenido.urlRecurso">
           <ng-container *ngIf="videoEmbedUrl; else linkSolo">
             <div class="preview-media__frame">
@@ -94,7 +88,6 @@
           </ng-template>
         </div>
 
-        <!-- DESCRIPCIÓN / CUERPO -->
         <div class="preview-body" [innerHTML]="descripcionHtml"></div>
       </ng-container>
     </div>
@@ -110,3 +103,5 @@
     </button>
   </footer>
 </section>
+
+<app-footer-invitado *ngIf="isGuest"></app-footer-invitado>

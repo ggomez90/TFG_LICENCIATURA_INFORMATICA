@@ -68,4 +68,19 @@ export class RespuestaApi {
       { params },
     );
   }
+
+  // INVITADO: validar DNI completo (si ya respondió o si debe iniciar sesión)
+  validatePublic(
+    idEncuesta: number,
+    dni: string,
+  ): Observable<{ responded: boolean; item: RespuestaItem | null; mustLogin: boolean }> {
+    const params = new HttpParams()
+      .set('idEncuesta', String(idEncuesta))
+      .set('dni', dni);
+
+    return this.http.get<{ responded: boolean; item: RespuestaItem | null; mustLogin: boolean }>(
+      apiUrl('/respuestas/public/validate'),
+      { params },
+    );
+  }
 }

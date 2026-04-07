@@ -19,7 +19,7 @@ import { CreateEncuestaDto } from './create-encuesta.dto';
 import { UpdateEncuestaDto } from './update-encuesta.dto';
 import { UpdateActivaEncuestaDto } from './update-activa-encuesta.dto';
 import { FilterEncuestaPublicDto } from './filter-encuesta.dto';
-
+import { Public } from 'nest-keycloak-connect';
 import { KeycloakAuthGuard, RolesGuard, Roles } from '../../auth';
 
 @Controller('encuestas')
@@ -27,6 +27,7 @@ export class EncuestaController {
   constructor(private readonly encuestaService: EncuestaService) {}
 
   // listado con filtros publico
+  @Public()
   @Get()
   @UsePipes(
     new ValidationPipe({
@@ -45,6 +46,7 @@ export class EncuestaController {
   }
 
   // get de encuesta por id publico
+  @Public()
   @Get(':id')
   async getOne(@Param('id', ParseIntPipe) id: number) {
     return this.encuestaService.getOne(id);

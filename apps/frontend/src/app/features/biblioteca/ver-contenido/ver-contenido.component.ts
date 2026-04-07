@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { DomSanitizer, SafeHtml, SafeResourceUrl } from '@angular/platform-browser';
 import { ContenidoApi, ContenidoItem } from '../../../api/contenido.api';
+import { FooterInvitadoComponent } from '../roles/invitado/footer-invitado.component';
 
 @Component({
   selector: 'app-ver-contenido',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, FooterInvitadoComponent],
   templateUrl: './ver-contenido.component.html',
   styleUrls: ['./ver-contenido.component.scss'],
 })
@@ -17,7 +18,8 @@ export class VerContenidoComponent implements OnInit {
   loading = false;
   errorMsg = '';
   esAdminView = false;
-  publicMode = false; //modo publico arranca en falso
+  isGuest = false;
+  publicMode = false;
 
   tituloHtml: SafeHtml | null = null;
   descripcionHtml: SafeHtml | null = null;
@@ -35,10 +37,8 @@ export class VerContenidoComponent implements OnInit {
     const idParam = this.route.snapshot.paramMap.get('idContenido');
     const id = idParam ? Number(idParam) : null;
 
-    //detectar modo público desde la ruta
     this.publicMode = !!this.route.snapshot.data?.['public'];
-
-    // Si es público, forzamos no-admin
+    this.isGuest = this.router.url.startsWith('/invitado');
     this.esAdminView = !this.publicMode && this.router.url.includes('/admin/biblioteca');
 
     if (!id) {
@@ -55,7 +55,6 @@ export class VerContenidoComponent implements OnInit {
     this.errorMsg = '';
     this.cdr.markForCheck();
 
-    // Si es admin usa endpoint admin; si es cliente o público va endpoint público
     const obs = this.esAdminView
       ? this.contenidoApi.getAdminById(idContenido)
       : this.contenidoApi.getPublicById(idContenido);
@@ -110,17 +109,21 @@ export class VerContenidoComponent implements OnInit {
   }
 
   onVolver(): void {
-    //si se abrió en modo público, volvemos atrás o a la raíz
-    if (this.publicMode) {
-      if (window.history.length > 1) {
-        window.history.back();
-      } else {
-        this.router.navigate(['/']);
-      }
+    if (window.history.length > 1) {
+      window.history.back();
       return;
     }
 
-    // volver para admin o cliente
+    if (this.isGuest) {
+      this.router.navigate(['/invitado/biblioteca']);
+      return;
+    }
+
+    if (this.publicMode) {
+      this.router.navigate(['/']);
+      return;
+    }
+
     if (this.esAdminView) {
       this.router.navigate(['/menu-principal/admin/biblioteca']);
     } else {

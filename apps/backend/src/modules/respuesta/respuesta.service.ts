@@ -359,6 +359,47 @@ export class RespuestaService {
     };
   }
 
+  async validatePublic(idEncuesta: number, dni: string) {
+    const ndni = this.normalizeDni(dni);
+    if (!ndni) {
+      throw new BadRequestException('DNI inválido.');
+    }
+
+    // 1) Ver si ese DNI pertenece a un usuario registrado
+    const user = await this.prisma.usuario.findFirst({
+      where: { dniCuitCuil: ndni },
+      select: { idUsuario: true },
+    });
+
+    if (user) {
+      return {
+        responded: false,
+        item: null,
+        mustLogin: true,
+      };
+    }
+
+    // 2) Ver si ya respondió como invitado esa encuesta
+    const item = await this.prisma.respuestaEncuesta.findFirst({
+      where: {
+        idEncuesta: Number(idEncuesta),
+        dniCuilCuitInvitado: ndni,
+      },
+      orderBy: { fechaRespuesta: 'desc' },
+      select: {
+        idRespuesta: true,
+        contenido: true,
+        fechaRespuesta: true,
+      },
+    });
+
+    return {
+      responded: !!item,
+      item: item ?? null,
+      mustLogin: false,
+    };
+  }
+
   async findMine(idEncuesta: number, ctx: ActorCtx): Promise<RespuestaEncuesta | null> {
     const myId = await this.resolveMyUserId(ctx);
 

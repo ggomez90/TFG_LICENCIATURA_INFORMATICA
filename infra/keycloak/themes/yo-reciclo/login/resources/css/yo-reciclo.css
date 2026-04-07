@@ -310,3 +310,31 @@ body,
   align-self: center !important;
   justify-self: center !important;
 }
+
+.yr-guest-access {
+  display: flex;
+  justify-content: center;
+  margin: 6px 0 2px 0;
+}
+
+.yr-guest-btn {
+  display: inline-block;
+  width: 170px;
+  max-width: 90%;
+  text-align: center;
+  background-color: transparent;
+  border: 2px solid #059669;
+  color: #059669 !important;
+  border-radius: 8px;
+  padding: 6px 6px;
+  font-weight: 600;
+  font-size: 14px;
+  text-decoration: none !important;
+  transition: all 0.2s ease;
+}
+
+.yr-guest-btn:hover {
+  background-color: #059669;
+  color: #ffffff !important;
+  text-decoration: none !important;
+}

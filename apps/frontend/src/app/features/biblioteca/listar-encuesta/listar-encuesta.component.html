@@ -4,11 +4,9 @@
     <p class="dsf-sub">Listado completo de encuestas de la biblioteca.</p>
   </header>
 
-  <!-- FILTROS -->
   <section class="dsf-panel">
     <form class="dsf-filters" (ngSubmit)="onAplicarFiltros()">
       <div class="dsf-filters__row">
-        <!-- DESDE -->
         <label class="dsf-field">
           <span class="dsf-field__label">Desde</span>
           <input
@@ -20,7 +18,6 @@
           />
         </label>
 
-        <!-- HASTA -->
         <label class="dsf-field">
           <span class="dsf-field__label">Hasta</span>
           <input
@@ -32,7 +29,6 @@
           />
         </label>
 
-        <!-- ACTIVA (solo admin) -->
         <label class="dsf-field" *ngIf="isAdmin">
           <span class="dsf-field__label">Estado</span>
           <select
@@ -46,7 +42,6 @@
           </select>
         </label>
 
-        <!-- BUSCADOR -->
         <label class="dsf-field dsf-field--search">
           <span class="dsf-field__label">Buscar</span>
           <input
@@ -58,7 +53,6 @@
           />
         </label>
 
-        <!-- BOTONES FILTRO -->
         <div class="dsf-filters__buttons">
           <button type="submit" class="dsf-btn dsf-btn--outline">Aplicar</button>
           <button type="button" class="dsf-btn dsf-btn--outline" (click)="onLimpiarFiltros()">Limpiar</button>
@@ -67,24 +61,19 @@
     </form>
   </section>
 
-  <!-- RESULTADOS (IGUAL A BIBLIOTECA-EDUCATIVA) -->
   <section class="dsf-panel">
-    <!-- LOADING -->
     <div *ngIf="loading" class="dsf-empty dsf-empty--loading">
       <p class="dsf-empty__text">Cargando encuestas...</p>
     </div>
 
-    <!-- ERROR -->
     <div *ngIf="!loading && errorMsg" class="dsf-empty">
       {{ errorMsg }}
     </div>
 
-    <!-- SIN RESULTADOS -->
     <div *ngIf="!loading && !errorMsg && items.length === 0" class="dsf-empty">
       <p class="dsf-empty__text">No se encontraron encuestas con los filtros seleccionados.</p>
     </div>
 
-    <!-- TABLA (DISEÑO CLONADO) -->
     <div *ngIf="!loading && !errorMsg && items.length > 0" class="dsf-table-wrap">
       <table class="dsf-table">
         <thead>
@@ -136,7 +125,6 @@
               </div>
             </td>
 
-            <!-- Acciones para cliente/invitado: solo ver -->
             <td class="dsf-table__cell--actions" *ngIf="!isAdmin">
               <div class="dsf-actions-inline">
                 <button
@@ -153,7 +141,6 @@
         </tbody>
       </table>
 
-      <!-- PAGINACIÓN + VOLVER-->
       <footer class="dsf-pagination">
         <span class="dsf-pagination__info">
           Mostrando
@@ -180,3 +167,5 @@
     </div>
   </section>
 </section>
+
+<app-footer-invitado *ngIf="isGuest"></app-footer-invitado>

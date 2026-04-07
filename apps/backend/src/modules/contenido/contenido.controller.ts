@@ -20,7 +20,7 @@ import { CreateContenidoEducativoDto } from './create-contenido-educativo.dto';
 import { UpdateContenidoEducativoDto } from './update-contenido-educativo.dto';
 import { UpdateVisibleContenidoDto } from './update-visible-contenido.dto';
 import { FilterContenidoAdminDto } from './filter-contenido-admin.dto';
-
+import { Public } from 'nest-keycloak-connect';
 import { KeycloakAuthGuard, RolesGuard, Roles } from '../../auth';
 
 @Controller('contenidos')
@@ -28,6 +28,7 @@ export class ContenidoController {
   constructor(private readonly contenidoService: ContenidoService) {}
 
   // listado de contenidos visibles, endpoint publico
+  @Public()
   @Get()
   async listPublic() {
     return this.contenidoService.listPublic();
@@ -51,6 +52,7 @@ export class ContenidoController {
   }
 
   // ver un contenido por id (solo si es visible)
+  @Public()
   @Get(':id')
   async getPublicById(@Param('id', ParseIntPipe) id: number) {
     const contenido = await this.contenidoService.getPublicById(id);

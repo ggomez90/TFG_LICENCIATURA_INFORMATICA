@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { RolesService } from '../../../auth/roles.service';
+import { FooterInvitadoComponent } from '../roles/invitado/footer-invitado.component';
 
 interface AdminContenidoListItem {
   idContenido: number;
@@ -32,7 +33,7 @@ interface ContenidosFilter {
 @Component({
   selector: 'app-listar-contenido-educativo',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule],
+  imports: [CommonModule, FormsModule, RouterModule, FooterInvitadoComponent],
   templateUrl: './listar-contenido-educativo.component.html',
   styleUrls: ['./listar-contenido-educativo.component.scss'],
 })
@@ -48,18 +49,16 @@ export class ListarContenidoEducativoComponent implements OnInit {
   loading = false;
   errorMsg: string | null = null;
 
-  // 30 por página
   limit = 30;
   offset = 0;
   total = 0;
 
-  // orden por fecha de publicacion en forma descentende
   sortBy: string = 'fechaPublicacion';
   order: 'asc' | 'desc' = 'desc';
 
-  // roles
   isAdmin = false;
   isCliente = false;
+  isGuest = false;
 
   constructor(
     private readonly http: HttpClient,
@@ -71,6 +70,7 @@ export class ListarContenidoEducativoComponent implements OnInit {
   ngOnInit(): void {
     this.isAdmin = this.roles.hasAnyRole(['ADMIN', 'ADMINISTRADOR']);
     this.isCliente = this.roles.hasRole('CLIENTE');
+    this.isGuest = !this.isAdmin && !this.isCliente && this.router.url.startsWith('/invitado');
 
     if (!this.isAdmin) {
       this.filtro.visible = true;
@@ -79,16 +79,12 @@ export class ListarContenidoEducativoComponent implements OnInit {
     this.cargar();
   }
 
-  //Helpers/funciones
-
-  // Limpia etiquetas HTML del título
   getTituloPlano(titulo: string | null | undefined): string {
     if (!titulo) return 'Sin título';
     const sinTags = titulo.replace(/<[^>]+>/g, '').trim();
     return sinTags || 'Sin título';
   }
 
-  // yyyy-MM-dd para comparaciones de rango
   private parseDateOnly(iso: string): string {
     if (!iso) return '';
     const d = new Date(iso);
@@ -99,7 +95,6 @@ export class ListarContenidoEducativoComponent implements OnInit {
     return `${y}-${m}-${day}`;
   }
 
-  //filtros en cliente: fechaDesde / fechaHasta - visible (true/false) - query en título
   private applyClientFilters(rows: AdminContenidoListItem[]): AdminContenidoListItem[] {
     let r = [...rows];
 
@@ -123,19 +118,17 @@ export class ListarContenidoEducativoComponent implements OnInit {
     return r;
   }
 
-  // NAVEGACIÓN
-
   onVolver(): void {
     if (this.isAdmin) {
       this.router.navigate(['/menu-principal/admin/biblioteca']);
     } else if (this.isCliente) {
       this.router.navigate(['/menu-principal/cliente/biblioteca']);
+    } else if (this.isGuest) {
+      this.router.navigate(['/invitado/biblioteca']);
     } else {
       this.router.navigate(['/menu-principal']);
     }
   }
-
-  //FILTROS Y PAGINACIÓN
 
   onAplicarFiltros(): void {
     this.offset = 0;
@@ -165,30 +158,6 @@ export class ListarContenidoEducativoComponent implements OnInit {
     this.cargar();
   }
 
-  // ACCIONES
-
-  // onVer(item: AdminContenidoListItem): void {
-  //   if (!item.idContenido) return;
-
-  //   if (this.isAdmin) {
-  //     this.router.navigate([
-  //       '/menu-principal',
-  //       'admin',
-  //       'biblioteca',
-  //       'contenidos',
-  //       'ver',
-  //       item.idContenido,
-  //     ]);
-  //   } else {
-  //     this.router.navigate([
-  //       '/menu-principal',
-  //       'biblioteca',
-  //       'contenidos',
-  //       item.idContenido,
-  //     ]);
-  //   }
-  // }
-
   onVer(item: AdminContenidoListItem): void {
     if (!item.idContenido) return;
 
@@ -202,8 +171,7 @@ export class ListarContenidoEducativoComponent implements OnInit {
       return;
     }
 
-    // invitado
-    this.router.navigate(['/public/recursos/contenidos/ver', item.idContenido]);
+    this.router.navigate(['/invitado/biblioteca/contenidos/ver', item.idContenido]);
   }
 
   onEditar(item: AdminContenidoListItem): void {
@@ -254,8 +222,6 @@ export class ListarContenidoEducativoComponent implements OnInit {
       });
   }
 
-  //CARGA HTTP
-
   private cargar(): void {
     this.loading = true;
     this.errorMsg = null;
@@ -263,7 +229,6 @@ export class ListarContenidoEducativoComponent implements OnInit {
 
     const isPublic = !this.isAdmin;
 
-    // ADMIN: soporta filtros/params en /admin
     if (!isPublic) {
       let params = new HttpParams()
         .set('limit', this.limit)
@@ -320,7 +285,6 @@ export class ListarContenidoEducativoComponent implements OnInit {
       return;
     }
 
-    // CLIENTE/INVITADO: endpoint público /api/contenidos (sin params)
     this.http.get<any[]>('/api/contenidos').subscribe({
       next: (resp) => {
         const rawItems = Array.isArray(resp) ? resp : [];
@@ -333,10 +297,7 @@ export class ListarContenidoEducativoComponent implements OnInit {
           visible: raw.visible !== undefined ? !!raw.visible : true,
         }));
 
-        // cliente/invitado: siempre visibles
         const forced = mapped.filter((x) => x.visible);
-
-        // aplicar filtros
         const filtered = this.applyClientFilters(forced);
 
         this.total = filtered.length;

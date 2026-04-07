@@ -62,6 +62,14 @@ import { ListarNotificacionesAdminComponent } from './features/notificaciones/ad
 import { CrearNotificacionAdminComponent } from './features/notificaciones/admin/crear-notificacion-admin.component';
 import { EditarNotificacionAdminComponent } from './features/notificaciones/admin/editar-notificacion-admin.component';
 
+//INVITADO
+
+/*
+import { ListarContenidoEducativoInvitadoComponent } from './features/biblioteca/roles/invitado/listar-contenido/listar-contenido-educativo-invitado.component';
+import { VerContenidoInvitadoComponent } from './features/biblioteca/roles/invitado/ver-contenido/ver-contenido-invitado.component';
+import { ListarEncuestaInvitadoComponent } from './features/biblioteca/roles/invitado/listar-encuesta/listar-encuesta-invitado.component';
+import { VerEncuestaInvitadoComponent } from './features/biblioteca/roles/invitado/ver-encuesta/ver-encuesta-invitado.component';
+*/
 export const routes: Routes = [
   {
     path: '',
@@ -454,6 +462,38 @@ export const routes: Routes = [
         component: VerEncuestaComponent,
       },
     ],
+  },
+
+  //-------------------------------------------------------------------------------------//
+  //RUTAS INVITADO (PUBLICAS)
+  {
+    path: 'invitado/biblioteca',
+    component: BibliotecaClienteComponent,
+    data: { public: true },
+  },
+
+  {
+    path: 'invitado/biblioteca/contenidos',
+    component: ListarContenidoEducativoComponent,
+    data: { public: true },
+  },
+
+  {
+    path: 'invitado/biblioteca/encuestas',
+    component: ListarEncuestaComponent,
+    data: { public: true },
+  },
+
+  {
+    path: 'invitado/biblioteca/contenidos/ver/:idContenido',
+    component: VerContenidoComponent,
+    data: { public: true },
+  },
+
+  {
+    path: 'invitado/biblioteca/encuestas/ver/:idEncuesta',
+    component: VerEncuestaComponent,
+    data: { public: true },
   },
 
   // Recurso educativo publico

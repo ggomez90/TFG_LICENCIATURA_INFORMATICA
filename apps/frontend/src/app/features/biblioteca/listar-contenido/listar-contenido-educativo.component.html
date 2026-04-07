@@ -6,11 +6,9 @@
     </p>
   </header>
 
-  <!-- FILTROS -->
   <section class="dsf-panel">
     <form class="dsf-filters" (ngSubmit)="onAplicarFiltros()">
       <div class="dsf-filters__row">
-        <!-- DESDE -->
         <label class="dsf-field">
           <span class="dsf-field__label">Desde</span>
           <input
@@ -22,7 +20,6 @@
           />
         </label>
 
-        <!-- HASTA -->
         <label class="dsf-field">
           <span class="dsf-field__label">Hasta</span>
           <input
@@ -34,7 +31,6 @@
           />
         </label>
 
-        <!-- VISIBLE (solo admin) -->
         <label class="dsf-field" *ngIf="isAdmin">
           <span class="dsf-field__label">Visible</span>
           <select
@@ -48,7 +44,6 @@
           </select>
         </label>
 
-        <!-- BUSCADOR -->
         <label class="dsf-field dsf-field--search">
           <span class="dsf-field__label">Buscar</span>
           <input
@@ -60,7 +55,6 @@
           />
         </label>
 
-        <!-- BOTONES FILTRO -->
         <div class="dsf-filters__buttons">
           <button type="submit" class="dsf-btn dsf-btn--outline">
             Aplicar
@@ -77,26 +71,21 @@
     </form>
   </section>
 
-  <!--  RESULTADOS -->
   <section class="dsf-panel">
-    <!-- LOADING -->
     <div *ngIf="loading" class="dsf-empty dsf-empty--loading">
       <p class="dsf-empty__text">Cargando contenidos educativos...</p>
     </div>
 
-    <!-- ERROR -->
     <div *ngIf="!loading && errorMsg" class="dsf-empty">
       {{ errorMsg }}
     </div>
 
-    <!-- SIN RESULTADOS -->
     <div *ngIf="!loading && !errorMsg && items.length === 0" class="dsf-empty">
       <p class="dsf-empty__text">
         No se encontraron contenidos con los filtros seleccionados.
       </p>
     </div>
 
-    <!-- TABLA  -->
     <div *ngIf="!loading && !errorMsg && items.length > 0" class="dsf-table-wrap">
       <table class="dsf-table">
         <thead>
@@ -123,7 +112,6 @@
             </td>
             <td class="dsf-table__cell--actions">
               <div class="dsf-actions-inline">
-                <!-- Ver: todos los roles -->
                 <button
                   type="button"
                   class="dsf-icon-btn"
@@ -133,7 +121,6 @@
                   👁️
                 </button>
 
-                <!-- Editar: solo admin -->
                 <button
                   *ngIf="isAdmin"
                   type="button"
@@ -144,7 +131,6 @@
                   ✏️
                 </button>
 
-                <!-- Toggle visibilidad: solo admin -->
                 <label
                   *ngIf="isAdmin"
                   class="dsf-icon-toggle"
@@ -163,7 +149,6 @@
         </tbody>
       </table>
 
-      <!-- PAGINACION + VOLVER -->
       <footer class="dsf-pagination">
         <span class="dsf-pagination__info">
           Mostrando
@@ -206,3 +191,5 @@
     </div>
   </section>
 </section>
+
+<app-footer-invitado *ngIf="isGuest"></app-footer-invitado>
