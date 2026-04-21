@@ -1,73 +1,142 @@
 @use '../../../../../biblioteca/roles/administrador/crear-contenido/crear-contenido-educativo.component.scss' as *;
 
-.crear-voucher {
-  *, *::before, *::after { box-sizing: border-box; }
+:host {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}
 
-  .dsf-header { margin-bottom: 1.25rem; }
-  .dsf-title  { color: #1b5e20; }
-  .dsf-sub    { color: #2e7d32; }
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+.crear-voucher {
+  width: 100%;
+  max-width: 100%;
+  padding: 1rem;
+  border-radius: 24px;
+  background:
+    radial-gradient(circle at top left, rgba(34, 197, 94, 0.16), transparent 26%),
+    radial-gradient(circle at bottom right, rgba(16, 185, 129, 0.12), transparent 30%),
+    linear-gradient(180deg, #eefcf3 0%, #f7fff9 55%, #f8fafc 100%);
+  border: 1px solid #d8ebdf;
+  box-shadow:
+    0 18px 36px rgba(15, 81, 50, 0.08),
+    0 4px 14px rgba(15, 81, 50, 0.04);
+  overflow-x: hidden;
+
+  .dsf-header {
+    display: grid;
+    gap: 0.35rem;
+    margin-bottom: 0.35rem;
+  }
+
+  .dsf-title {
+    margin: 0;
+    font-size: clamp(1.55rem, 2.5vw, 2.15rem);
+    line-height: 1.15;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: #0f562a;
+    overflow-wrap: anywhere;
+  }
+
+  .dsf-sub {
+    margin: 0;
+    color: #5f7b6c;
+    font-size: 1.05rem;
+    line-height: 1.5;
+    max-width: 850px;
+    overflow-wrap: anywhere;
+  }
 
   .dsf-form {
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
     width: 100%;
+    max-width: 100%;
   }
 
   .dsf-card--form {
-    background: #ffffff;
-    border-radius: 16px;
-    padding: 1.75rem 1.5rem;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.04);
-    border: 1px solid rgba(0, 128, 0, 0.06);
-    width: 100%;
+    position: relative;
+    background:
+      radial-gradient(circle at top right, rgba(34, 197, 94, 0.08), transparent 24%),
+      linear-gradient(180deg, #ffffff 0%, #f4fbf6 100%);
+    border-radius: 24px;
+    padding: 1.5rem;
+    box-shadow:
+      0 14px 28px rgba(15, 81, 50, 0.08),
+      0 4px 12px rgba(15, 81, 50, 0.04);
+    border: 1px solid #d4e9dc;
+    overflow: hidden;
   }
 
   .dsf-card__body {
     display: flex;
     flex-direction: column;
     gap: 1.25rem;
-    min-width: 0;
+    width: 100%;
+    max-width: 100%;
   }
 
   .dsf-field {
     display: flex;
     flex-direction: column;
-    gap: 0.4rem;
+    gap: 0.45rem;
     min-width: 0;
   }
 
   .dsf-field__label {
-    font-weight: 600;
-    color: #0b3b25;
+    font-weight: 700;
+    color: #0f3f29;
     display: inline-flex;
     align-items: baseline;
-    gap: 0.4rem;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    line-height: 1.35;
+    overflow-wrap: anywhere;
+    font-size: 1.2rem;
+  }
+
+  .dsf-field__hint {
+    font-size: 0.9rem;
+    color: #6a8577;
+    line-height: 1.35;
   }
 
   .dsf-field__required {
     color: #c0392b;
-    font-weight: 700;
+    font-weight: 800;
   }
 
-  .dsf-input {
-    border-radius: 999px;
-    border: 1px solid #d3e4d8;
-    padding: 0.7rem 1rem;
-    font-size: 0.95rem;
-    outline: none;
-    transition:
-      border-color 0.15s ease,
-      box-shadow 0.15s ease,
-      background-color 0.15s ease;
-    background: #f9fdfb;
+  .dsf-input,
+  select.dsf-input {
     width: 100%;
     max-width: 100%;
+    min-width: 0;
+    border-radius: 18px;
+    border: 1px solid #cfe3d5;
+    padding: 0.82rem 1rem;
+    font-size: 0.98rem;
+    outline: none;
+    transition:
+      border-color 0.18s ease,
+      box-shadow 0.18s ease,
+      background-color 0.18s ease,
+      transform 0.18s ease;
+    background: linear-gradient(180deg, #fbfefc 0%, #f4fbf6 100%);
+    color: #183528;
+    box-sizing: border-box;
   }
 
-  .dsf-input:focus {
-    border-color: #2e8b57;
-    box-shadow: 0 0 0 2px rgba(46, 139, 87, 0.18);
+  .dsf-input:focus,
+  select.dsf-input:focus {
+    border-color: #22a05a;
+    box-shadow: 0 0 0 3px rgba(46, 139, 87, 0.16);
     background: #ffffff;
   }
 
@@ -76,24 +145,25 @@
     flex-wrap: wrap;
     gap: 1rem;
     width: 100%;
-  }
-
-  .dsf-fields-row > * {
-    min-width: 0;
-    flex: 1 1 220px;
+    max-width: 100%;
   }
 
   .dsf-field--half {
     flex: 1 1 220px;
+    min-width: 0;
   }
 
-  /* ACCIONES: igual que crear-voucher-tipo */
+  .dsf-field--half .dsf-input {
+    width: 100%;
+    max-width: 100%;
+  }
+
   .dsf-form__actions {
     display: flex;
     align-items: center;
     gap: 0.75rem;
-    margin-top: 0.5rem;
-    width: 100%;
+    margin-top: 0.25rem;
+    flex-wrap: wrap;
   }
 
   .dsf-form__actions .dsf-btn {
@@ -104,32 +174,79 @@
     align-items: center;
   }
 
-  .dsf-form__spacer { flex: 1; }
+  .dsf-form__spacer {
+    flex: 1;
+    min-width: 0;
+  }
 
-  /* Responsive */
   @media (max-width: 768px) {
-    .dsf-card--form { padding: 1.25rem 1rem; }
+    .dsf-card--form {
+      padding: 1.15rem 1rem;
+    }
+
+    .dsf-header {
+      gap: 0.25rem;
+    }
+
+    .dsf-title {
+      font-size: clamp(1.35rem, 5vw, 1.75rem);
+    }
+
+    .dsf-sub {
+      font-size: 0.98rem;
+    }
 
     .dsf-fields-row {
       flex-direction: column;
       gap: 0.75rem;
     }
 
-    .dsf-field--half { flex: 1 1 100%; }
+    .dsf-field--half {
+      flex: 1 1 100%;
+    }
 
     .dsf-form__actions {
       flex-wrap: wrap;
       justify-content: flex-end;
       gap: 0.5rem;
 
-      .dsf-btn { min-width: 140px; text-align: center; }
-      .dsf-form__spacer { display: none; }
+      .dsf-btn {
+        min-width: 140px;
+        text-align: center;
+      }
+
+      .dsf-form__spacer {
+        display: none;
+      }
     }
   }
 
-  @media (max-width: 520px) {
-    .dsf-card--form { padding: 1rem .85rem; }
-    .dsf-input { font-size: .95rem; padding: .6rem .9rem; }
-    .dsf-form__actions .dsf-btn { min-width: 120px; }
+  @media (max-width: 560px) {
+    padding: 0.75rem;
+    border-radius: 18px;
+
+    .dsf-card--form {
+      padding: 0.95rem;
+      border-radius: 20px;
+    }
+
+    .dsf-card__body {
+      gap: 1rem;
+    }
+
+    .dsf-input {
+      padding: 0.8rem 0.9rem;
+      font-size: 0.95rem;
+    }
+
+    .dsf-form__actions {
+      flex-direction: column;
+      align-items: stretch;
+
+      .dsf-btn {
+        width: 100%;
+        min-width: 0;
+      }
+    }
   }
 }

@@ -4,11 +4,10 @@
   <section class="modal-shell" role="dialog" aria-modal="true" aria-labelledby="dlg-title">
     <div class="modal-head">
       <div>
-        <span class="modal-eyebrow">Alta administrativa</span>
-        <h2 id="dlg-title">Nuevo usuario</h2>
+        <span class="modal-eyebrow">Alta administrativa - Nuevo usuario</span>
+        <!-- <h2 id="dlg-title">Nuevo usuario</h2> -->
         <p>
-          Completá los datos principales, asigná el rol correspondiente y generá la cuenta
-          para continuar con el flujo de verificación.
+          *Los datos son obligatorios.
         </p>
       </div>
 
@@ -65,7 +64,7 @@
         </label>
 
         <label class="field field--full">
-          <span class="field__label">DNI/CUIT/CUIL (opcional)</span>
+          <span class="field__label">DNI/CUIT/CUIL</span>
           <input type="text" formControlName="dniCuitCuil" />
           <small class="err" *ngIf="f['dniCuitCuil'].errors?.duplicate">
             El documento ya está registrado

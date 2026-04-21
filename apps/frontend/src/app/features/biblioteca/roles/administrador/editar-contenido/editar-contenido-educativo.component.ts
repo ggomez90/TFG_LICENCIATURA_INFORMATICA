@@ -190,7 +190,11 @@ export class EditarContenidoEducativoComponent
     this.router.navigate(
       ['/menu-principal/admin/biblioteca/contenidos/preview'],
       {
-        state: { borrador: this.form },
+        state: {
+          borrador: this.form,
+          modo: 'editar',
+          idContenido: this.idContenido,
+        },
       },
     );
   }

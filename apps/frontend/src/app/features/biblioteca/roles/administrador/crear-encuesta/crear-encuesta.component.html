@@ -2,7 +2,7 @@
   <!-- CABECERA -->
   <header class="dsf-header">
     <h1 class="dsf-title">Nueva encuesta</h1>
-    <p class="dsf-sub">Definí la consigna y el período de respuesta.</p>
+    <p class="dsf-sub">Definí la consigna, las opciones y el período de respuesta.</p>
   </header>
 
   <!-- FORMULARIO -->
@@ -69,7 +69,7 @@
         <label class="dsf-field dsf-field--wide">
           <span class="dsf-field__label">
             Título
-            <small class="dsf-field__hint">(opcional, máx. 300 caracteres)</small>
+            <small class="dsf-field__hint">(Máx. 300 caracteres)</small>
           </span>
           <div
             #tituloEditor
@@ -84,7 +84,7 @@
         <label class="dsf-field dsf-field--wide">
           <span class="dsf-field__label">
             Descripción / Consigna
-            <small class="dsf-field__hint">(opcional, máx. 5000 caracteres — admite formato)</small>
+            <small class="dsf-field__hint">(Máx. 5000 caracteres)</small>
           </span>
           <div
             #descripcionEditor
@@ -139,7 +139,7 @@
         <div class="dsf-card dsf-card--form" style="margin-top: .5rem;">
           <div class="dsf-card__body">
             <div class="dsf-fields-row" style="align-items:center;">
-              <strong>Opciones (borrador)</strong>
+              <strong>Opciones</strong>
               <button type="button" class="dsf-btn dsf-btn--outline" (click)="addOpcion()">+ Añadir opción</button>
               <button type="button" class="dsf-btn dsf-btn--ghost" (click)="toggleTipoSeleccion()">
                 Tipo: {{ form.tipoSeleccion === 'single' ? 'Una sola respuesta' : 'Múltiples respuestas' }}
@@ -153,9 +153,9 @@
               </li>
             </ul>
             <ng-template #noOptions>
-              <p class="dsf-field__hint">
+<!--               <p class="dsf-field__hint">
                 (Podés definir opciones ahora para previsualizarlas; se guardarán cuando definamos persistencia.)
-              </p>
+              </p> -->
             </ng-template>
           </div>
         </div>

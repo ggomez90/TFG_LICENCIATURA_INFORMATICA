@@ -1,7 +1,7 @@
 <section class="users-admin-page">
   <header class="page-head panel-soft">
     <div class="page-head__copy">
-      <h1 class="page-title">Usuarios (Administrador)</h1>
+      <h1 class="page-title">Panel Usuarios</h1>
       <p class="page-sub">
         Gestión de usuarios: creación, listado, búsqueda, visualización y edición.
       </p>
@@ -59,25 +59,24 @@
       </label>
 
       <label class="field field--fixed">
-        <span class="field__label">Tipo</span>
+        <span class="field__label field__label--em">Tipo</span>
 
         <div
-          class="custom-select"
+          class="dsf-custom-select"
           [class.is-open]="menuOpen()"
-          (keydown.escape)="closeMenus()"
         >
           <button
             type="button"
-            class="custom-select__btn"
+            class="dsf-custom-select__btn"
             (click)="toggleMenu()"
-            aria-haspopup="true"
             [attr.aria-expanded]="menuOpen()"
+            aria-haspopup="menu"
           >
-            {{ labelTipoCombined() }}
-            <span class="chev" aria-hidden="true">▾</span>
+            <span>{{ labelTipoCombined() }}</span>
+            <span class="chev">▼</span>
           </button>
 
-          <nav class="custom-select__menu" *ngIf="menuOpen()">
+          <div class="dsf-custom-select__menu" *ngIf="menuOpen()">
             <ul class="root">
               <li>
                 <button type="button" (click)="selectTipoCombined('todos')">
@@ -94,40 +93,28 @@
                   type="button"
                   class="parent"
                   (click)="toggleSubmenu($event)"
-                  aria-haspopup="true"
-                  [attr.aria-expanded]="submenuOpen()"
                 >
-                  Cliente
-                  <span class="arrow" aria-hidden="true">▸</span>
+                  <span>Cliente</span>
+                  <span>▶</span>
                 </button>
 
-                <ul class="submenu" [class.open]="submenuOpen()">
-                  <li>
-                    <button type="button" (click)="selectTipoCombined('cliente:todos')">
-                      Todos
-                    </button>
-                  </li>
-                  <li>
-                    <button type="button" (click)="selectTipoCombined('cliente:pendiente')">
-                      Pendiente
-                    </button>
-                  </li>
-                  <li>
-                    <button type="button" (click)="selectTipoCombined('cliente:1')">
-                      Ciudadano
-                    </button>
-                  </li>
-                  <li>
-                    <button type="button" (click)="selectTipoCombined('cliente:2')">
-                      PYME/Empresa
-                    </button>
-                  </li>
-                  <li>
-                    <button type="button" (click)="selectTipoCombined('cliente:3')">
-                      Institución
-                    </button>
-                  </li>
-                </ul>
+                <div class="submenu" [class.open]="submenuOpen()">
+                  <button type="button" (click)="selectTipoCombined('cliente:todos')">
+                    Todos
+                  </button>
+                  <button type="button" (click)="selectTipoCombined('cliente:pendiente')">
+                    Pendiente
+                  </button>
+                  <button type="button" (click)="selectTipoCombined('cliente:1')">
+                    Ciudadano
+                  </button>
+                  <button type="button" (click)="selectTipoCombined('cliente:2')">
+                    PYME/Empresa
+                  </button>
+                  <button type="button" (click)="selectTipoCombined('cliente:3')">
+                    Institución
+                  </button>
+                </div>
               </li>
 
               <li>
@@ -135,13 +122,14 @@
                   Operario
                 </button>
               </li>
+
               <li>
                 <button type="button" (click)="selectTipoCombined('admin')">
                   Administrador
                 </button>
               </li>
             </ul>
-          </nav>
+          </div>
         </div>
       </label>
 
@@ -232,7 +220,7 @@
                   <input
                     type="checkbox"
                     [checked]="u.isBanned"
-                    (change)="toggleBan(u)"
+                    (change)="toggleBan(u, $event)"
                   />
                   <span class="icon-toggle__pill"></span>
                 </label>

@@ -2,7 +2,7 @@
   <!-- CABECERA -->
   <header class="dsf-header">
     <h1 class="dsf-title">Editar voucher</h1>
-    <p class="dsf-sub">Modificá datos del voucher. El cambio de estado es opcional y se realiza por un flujo separado.</p>
+    <p class="dsf-sub">Modificá datos o estado del voucher.</p>
   </header>
 
   <!-- FORMULARIO -->
@@ -90,10 +90,6 @@
                 {{ cambiarEstado ? 'Activado' : 'Desactivado' }}
               </span>
             </label>
-
-            <p class="dsf-field__hint">
-              Si está activado, al actualizar se llamará también al endpoint de cambio de estado.
-            </p>
           </div>
         </div>
 
@@ -108,7 +104,7 @@
               name="fechaAdquisicion"
               disabled
             />
-            <small class="dsf-field__hint">Este campo no es editable.</small>
+            <small class="dsf-field__hint">Campo no editable.</small>
           </label>
 
           <!-- Spacer visual -->

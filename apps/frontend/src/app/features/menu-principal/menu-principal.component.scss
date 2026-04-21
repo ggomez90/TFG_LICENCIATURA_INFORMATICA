@@ -1,4 +1,15 @@
-:host { display: contents; }
+:host {
+  display: block; // CAMBIO: antes display: contents, ahora el host controla mejor el ancho
+  width: 100%; // CAMBIO: asegura que el componente use solo el ancho disponible
+  max-width: 100%; // CAMBIO: evita desborde horizontal del host
+  overflow-x: hidden; // CAMBIO: bloquea scroll horizontal general
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box; // CAMBIO: evita que padding y border agranden el ancho real
+}
 
 /*TOPBAR */
 .topbar{
@@ -9,26 +20,38 @@
   background: rgba(255,255,255,0.9);
   backdrop-filter: blur(6px);
   border-bottom:1px solid rgba(16,185,129,0.15);
+  width: 100%; // CAMBIO: asegura ajuste horizontal
+  max-width: 100%; // CAMBIO: evita desborde horizontal
+  min-width: 0; // CAMBIO: permite que los hijos flex se encojan bien
 }
 
-.spacer{ flex:1 1 auto; }
+.spacer{ flex:1 1 auto; min-width: 0; } // CAMBIO: agregado min-width para mejor comportamiento flex
 
 /* Izquierda */
 .brand{
   display:flex; align-items:center; gap:12px; min-width:0;
   flex: 0 1 auto; /* permite encoger sin desbordar */
+  max-width: 100%; // CAMBIO: evita que el bloque izquierdo desborde
 
-  .logo{ height:76px; width:auto; display:block; }
+  .logo{
+    height:76px; width:auto; display:block;
+    max-width: 100%; // CAMBIO: evita desborde del logo
+    flex: 0 0 auto; // CAMBIO: evita deformación del logo
+  }
 
   .welcome{
     display:flex; align-items:baseline; gap:6px;
     white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+    min-width: 0; // CAMBIO: permite que el texto recorte correctamente
+    max-width: 100%; // CAMBIO: evita que el nombre empuje el layout
 
     .lbl{
-      font-size:16px; letter-spacing:.04em; color:#065f46; font-weight:700;
+      font-size:20px; letter-spacing:.04em; color:#065f46; font-weight:700;
     }
     .name{
-      font-size:16px; font-weight:800; color:#065f46;
+      font-size:20px; font-weight:800; color:#065f46;
+      overflow: hidden; // CAMBIO: evita desborde del nombre
+      text-overflow: ellipsis; // CAMBIO: recorta si el nombre es largo
     }
   }
 }
@@ -37,12 +60,16 @@
 .actions{
   display:flex; align-items:center; gap:8px;
   flex: 0 0 auto;
+  min-width: 0; // CAMBIO: mejora ajuste responsive
+  max-width: 100%; // CAMBIO: evita que el bloque derecho empuje el ancho
+  overflow: visible; // CAMBIO: permite que overlays floten sin romper el layout
 
   .icon-btn{
     display:inline-flex; align-items:center; justify-content:center;
     width:50px; height:50px; position:relative;
     border:1px solid rgba(2,6,23,0.06); background:#fff; border-radius:10px;
     color:#065f46; cursor:pointer; outline:none;
+    flex: 0 0 auto; // CAMBIO: evita deformaciones
     &:hover{ background:#f8fafc; color:#047857; }
     .icon{ width:30px; height:30px; display:block; }
     .badge{
@@ -55,18 +82,21 @@
 
   .profile{
     position:relative;
+    min-width: 0; // CAMBIO: mejora ajuste en anchos chicos
 
     .profile-btn{
       display:flex; align-items:center; gap:8px;
       background:#fff; border:1px solid rgba(2,6,23,0.06);
       border-radius:16px; padding:4px 8px; cursor:pointer; width:80px; height:50px;
+      max-width: 100%; // CAMBIO: evita desborde del botón de perfil
 
       .avatar{
         width:40px; height:40px; border-radius:999px;
         background:#10b98120; color:#065f46; font-weight:800;
         display:grid; place-items:center; font-size:14px;
+        flex: 0 0 auto; // CAMBIO: evita deformación del avatar
       }
-      .chev{ font-size:18px; color:#065f46; }
+      .chev{ font-size:18px; color:#065f46; flex: 0 0 auto; } // CAMBIO: evita deformación del chevron
     }
 
     .dropdown{
@@ -96,6 +126,8 @@
   background: rgba(255,255,255,0.9);
   backdrop-filter: blur(6px);
   border-bottom:1px solid rgba(16,185,129,0.15);
+  width: 100%; // CAMBIO: asegura ajuste al ancho disponible
+  max-width: 100%; // CAMBIO: evita overflow lateral
 }
 
 /* Contenedor de tabs */
@@ -105,6 +137,8 @@
   justify-content:center; align-items:center;
   min-height:48px;
   flex-wrap: nowrap;
+  width: 100%; // CAMBIO: asegura ajuste al ancho disponible
+  min-width: 0; // CAMBIO: permite mejor comportamiento flexible
 }
 
 /* Estilo de tab tipo enlace con subrayado */
@@ -113,19 +147,20 @@
   display:inline-block;
   padding:12px 2px;
   text-decoration:none;
-  color:#065f46; font-weight:700; font-size:16px; letter-spacing:.02em;
+  color: #0f562a; font-weight:700; font-size:18px; letter-spacing:.02em;
   text-transform:uppercase;
   white-space:nowrap;
+  flex: 0 0 auto; // CAMBIO: evita deformaciones en scroll/tab vertical
 
   &::after{
     content:""; position:absolute; left:0; right:0; bottom:6px;
     height:2px; background: transparent; transition: background .2s ease;
   }
-  &:hover{ color:#065f46; }
+  &:hover{ color: #0f562a; }
   &:hover::after{ background: rgba(16,185,129,.6); }
 
   &.active{
-    color:#065f46;
+    color: #0f562a;
   }
   &.active::after{
     background:#10b981;
@@ -138,7 +173,13 @@
 }
 
 /* CONTENIDO */
-.content{ padding:16px; }
+.content{
+  padding:16px;
+  width: 100%; // CAMBIO: asegura que el contenido no exceda el viewport
+  max-width: 100%; // CAMBIO: evita desborde horizontal
+  min-width: 0; // CAMBIO: permite mejor ajuste interno
+  overflow-x: hidden; // CAMBIO: bloquea pequeños overflows laterales
+}
 
 /* RESPONSIVE */
 
@@ -149,15 +190,30 @@
 
 @media (max-width: 900px){
   /* Header compacto y sin solapes */
+  .topbar{
+    gap: 8px; // CAMBIO: reduce separación interna
+    padding: 8px 12px; // CAMBIO: compacta padding lateral
+  }
+
+  .brand{
+    flex: 1 1 auto; // CAMBIO: permite mejor reparto del espacio
+    gap: 8px; // CAMBIO: reduce espacio entre logo y texto
+  }
+
   .brand .logo{ height:48px; }
   .brand .welcome .lbl{ display:none; } /* ahorra espacio */
   .brand .welcome .name{ font-size:14px; }
+
+  .actions{
+    gap: 6px; // CAMBIO: compacta el bloque derecho
+  }
 
   /* Tabs con scroll horizontal si no caben */
   .tabs{
     justify-content:flex-start; gap:12px;
     overflow-x:auto; -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
+    padding: 0 12px; // CAMBIO: reduce padding lateral para ganar espacio
   }
   .tabs::-webkit-scrollbar{ display:none; }
 
@@ -166,21 +222,47 @@
 
 /* Móvil más compacto */
 @media (max-width: 600px){
-  .topbar{ padding:6px 12px; }
+  .topbar{
+    padding:6px 12px;
+    min-height:56px; // CAMBIO: compacta la altura del topbar
+    gap: 6px; // CAMBIO: reduce separación interna
+  }
+
+  .brand{
+    gap: 6px; // CAMBIO: compacta el bloque izquierdo
+  }
+
   .brand .logo{ height:42px; }
+
+  .brand .welcome{
+    max-width: 120px; // CAMBIO: evita que el nombre empuje el layout
+  }
+
   .actions .icon-btn{ width:36px; height:36px; }
-  .actions .profile .profile-btn{ height:36px; }
+  .actions .icon-btn .icon{ width:22px; height:22px; } // CAMBIO: ajusta icono al botón reducido
+
+  .actions .profile .profile-btn{
+    height:36px;
+    width:auto; // CAMBIO: evita ancho rígido en mobile
+    min-width:44px; // CAMBIO: mantiene buen área táctil
+    padding:4px 6px; // CAMBIO: compacta padding
+    border-radius:12px; // CAMBIO: armoniza con el tamaño más chico
+  }
+
   .actions .profile .profile-btn .avatar{ width:28px; height:28px; font-size:12px; }
+  .actions .profile .profile-btn .chev{ font-size:14px; } // CAMBIO: compacta el chevron
 
   .primary-nav{ top:56px; }
   .tab{ font-size:11px; padding:8px 2px; }
+
+  .content{ padding:12px; } // CAMBIO: reduce padding del contenido en mobile
 }
 
 /* Toggle + comportamiento */
 .nav-toggle{ position:absolute; left:-9999px; }
 
 /* Hamburgesa SIEMPRE visible */
-.hamburger{ display:inline-flex; }
+.hamburger{ display:inline-flex; flex: 0 0 auto; } // CAMBIO: evita deformación del botón hamburguesa
 
 /* Menú oculto por defecto, se muestra sólo al togglear */
 .primary-nav{ display:none; }
@@ -219,6 +301,7 @@
   .tab{
     display:block;
     padding:12px 2px;
+    width: 100%; // CAMBIO: hace que cada tab ocupe todo el ancho
   }
 }
 
@@ -233,6 +316,9 @@
   background: linear-gradient(180deg, #059669 0%, #047857 100%);
   color: #fff;
   border-top: 1px solid rgba(255,255,255,.18);
+  width: 100%; // CAMBIO: asegura ajuste al ancho disponible
+  max-width: 100%; // CAMBIO: evita overflow lateral
+  overflow-x: hidden; // CAMBIO: bloquea scroll horizontal del footer
 }
 
 /* Full-bleed y columnas que estiran en alto */
@@ -245,6 +331,7 @@
   gap: 16px;
   grid-template-columns: 1fr;   /* en version movil una columna */
   align-items: stretch;         /* cada columna ocupa el alto total del footer */
+  min-width: 0; // CAMBIO: permite que las columnas se adapten sin romper
 }
 
 /* Cada sección ocupa el alto y centra su contenido verticalmente */
@@ -254,6 +341,7 @@
   justify-content: center; 
   gap: 8px;
   min-height: 100%;
+  min-width: 0; // CAMBIO: evita overflow interno
 }
 
 .f-title{
@@ -262,6 +350,7 @@
   font-size: 16px;
   letter-spacing: .02em;
   color: #fff;
+  overflow-wrap: anywhere; // CAMBIO: evita desborde de títulos
 }
 .f-title--center{ text-align: center; }
 
@@ -274,16 +363,21 @@
   align-items: center;
   gap: 12px;
   justify-content: flex-start;
+  min-width: 0; // CAMBIO: permite ajuste del bloque de marca
+  max-width: 100%; // CAMBIO: evita desborde
 }
 .f-escudo{
   width: 96px;
   height: auto;
   display: block;
   filter: drop-shadow(0 6px 14px rgba(0,0,0,.15));
+  max-width: 100%; // CAMBIO: evita desborde del escudo
+  flex: 0 0 auto; // CAMBIO: evita deformación
 }
 .f-brand__text{
   display: grid;
   line-height: 1.05;
+  min-width: 0; // CAMBIO: permite ajuste del texto
 }
 .f-brand__text .line1,
 .f-brand__text .line2{
@@ -292,6 +386,8 @@
   letter-spacing: .02em;
   color: #fff;
   white-space: nowrap;
+  overflow: hidden; // CAMBIO: evita desborde horizontal
+  text-overflow: ellipsis; // CAMBIO: recorta si no entra
 }
 
 /*Listas / enlaces*/
@@ -301,11 +397,13 @@
   display: grid; gap: 6px;
   font-size: 14px;
   width: 100%;
+  min-width: 0; // CAMBIO: evita que la lista empuje el ancho
 }
 .f-list--full{ width: 100%; }
 .f-list a{
   color: #ffffff; text-decoration: underline;
   text-underline-offset: 2px;
+  overflow-wrap: anywhere; // CAMBIO: evita overflow por enlaces largos
 }
 /* Viñetas (items) para secciones 2 y 5 */
 .app-footer__wrap > .f-col:nth-child(2) .f-list,
@@ -361,11 +459,13 @@
   box-shadow: none !important;
   outline: none;
   border-radius: 0;
+  max-width: 100%; // CAMBIO: evita desborde del store
 }
 .f-store__img{
   display: block;
   height: 60px;
   width: auto;
+  max-width: 100%; // CAMBIO: evita desborde de la imagen
   background: transparent !important;
   border: 0 !important;
   box-shadow: none !important;
@@ -380,29 +480,22 @@
 /*Copy final */
 .app-footer__copy{
   text-align: center;
-  font-size: 13px; font-weight: 600;
+  font-size: 16px; font-weight: 600;
   padding: 10px 16px 14px;
   border-top: 1px solid rgba(255,255,255,.18);
   color: #fff;
   background: linear-gradient(180deg, rgba(0,0,0,.0), rgba(0,0,0,.04));
+  overflow-wrap: anywhere; // CAMBIO: evita overflow por texto largo
 }
 
 /* --- Desktop (≥900px): redistribución de anchos--- */
 @media (min-width: 900px){
   .app-footer__wrap{
-    /* proporciones:
-       - Sección 1 (brand): 1.4fr (menos ancho, como pediste)
-       - Sección 2 (contacto): 2.3fr (más ancho para que todo entre en un renglón)
-       - Sección 3 (redes): 1fr
-       - Sección 4 (stores): 1.2fr (columna)
-       - Sección 5 (términos): 1.9fr (un poco más ancha)
-    */
     grid-template-columns: 1.4fr 2.3fr 1fr 1.2fr 1.9fr;
     align-items: stretch;
     gap: 18px;
   }
 
-  /* Leve desplazamiento a la derecha para 2 y 5 */
   .app-footer__wrap > .f-col:nth-child(2),
   .app-footer__wrap > .f-col:nth-child(5){
     padding-left: 18px;
@@ -456,6 +549,7 @@
   font-size: 14px;
   letter-spacing: 0.03em;
   border-bottom: 1px solid #edf2ea;
+  overflow-wrap: anywhere; // CAMBIO: evita desborde por títulos largos
 }
 
 .bell-dropdown__body {
@@ -474,6 +568,7 @@
   text-align: center;
   color: #687076;
   font-size: 14px;
+  overflow-wrap: anywhere; // CAMBIO: evita desborde por mensajes largos
 }
 
 .bell-item {
@@ -495,6 +590,7 @@
   font-weight: 800;
   color: #1f2a1f;
   margin-bottom: 4px;
+  overflow-wrap: anywhere; // CAMBIO: evita desborde por títulos largos
 }
 
 .bell-item__message {
@@ -502,6 +598,7 @@
   color: #4d5a50;
   line-height: 1.4;
   margin-bottom: 8px;
+  overflow-wrap: anywhere; // CAMBIO: evita desborde por mensajes largos
 }
 
 .bell-item__date {
@@ -516,4 +613,74 @@
   border-radius: 12px;
   font-weight: 800;
   cursor: pointer;
+}
+
+/* Ajustes extra para mobile chico */
+@media (max-width: 480px){
+  .topbar{
+    padding: 6px 10px; // CAMBIO: compacta aún más el header en móviles chicos
+  }
+
+  .brand{
+    gap: 6px; // CAMBIO: compacta la marca en mobile chico
+  }
+
+  .brand .welcome{
+    max-width: 90px; // CAMBIO: controla mejor el nombre largo en pantallas chicas
+  }
+
+  .actions{
+    gap: 4px; // CAMBIO: compacta el bloque derecho
+  }
+
+  .actions .icon-btn{
+    width: 34px; height: 34px; // CAMBIO: compacta botones del header
+  }
+
+  .actions .icon-btn .icon{
+    width: 20px; height: 20px; // CAMBIO: ajusta iconos al nuevo tamaño
+  }
+
+  .actions .profile .profile-btn{
+    min-width: 38px; // CAMBIO: reduce ancho mínimo del perfil
+    height: 34px; // CAMBIO: compacta altura
+    padding: 3px 5px; // CAMBIO: compacta padding
+  }
+
+  .actions .profile .profile-btn .avatar{
+    width: 26px; height: 26px; font-size: 11px; // CAMBIO: compacta avatar
+  }
+
+  .actions .profile .profile-btn .chev{
+    font-size: 12px; // CAMBIO: compacta el chevron
+  }
+
+  .app-footer__wrap{
+    padding: 14px 16px; // CAMBIO: reduce padding del footer en mobile
+  }
+
+  .f-brand{
+    gap: 10px; // CAMBIO: compacta la marca del footer
+  }
+
+  .f-escudo{
+    width: 78px; // CAMBIO: reduce el escudo en mobile
+  }
+
+  .f-brand__text .line1,
+  .f-brand__text .line2{
+    white-space: normal; // CAMBIO: permite salto de línea en pantallas chicas
+  }
+
+  .f-social{
+    gap: 14px; // CAMBIO: compacta separación de iconos sociales
+  }
+
+  .f-soc img{
+    width: 34px; height: 34px; // CAMBIO: compacta iconos sociales en mobile
+  }
+
+  .f-store__img{
+    height: 48px; // CAMBIO: compacta stores en mobile
+  }
 }

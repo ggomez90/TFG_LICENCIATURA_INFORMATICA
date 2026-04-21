@@ -7,15 +7,33 @@ $dsf-border: #c8e6c9;
 $shadow-soft: 0 10px 25px rgba(56, 142, 60, 0.10);
 $shadow-hover: 0 18px 45px rgba(56, 142, 60, 0.18);
 
+:host {
+  display: block;
+  width: 100%; // CAMBIO: asegura que el componente no exceda el ancho disponible
+  max-width: 100%; // CAMBIO: evita desborde horizontal del host
+  overflow-x: hidden; // CAMBIO: oculta cualquier pequeño overflow lateral del componente
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box; // CAMBIO: hace que padding y border no agranden el ancho real de los elementos
+}
+
 .biblioteca-cliente {
   padding-bottom: 1.25rem;
+  width: 100%; // CAMBIO: fuerza al contenedor principal a ocupar solo el ancho disponible
+  max-width: 100%; // CAMBIO: evita que el contenedor principal se pase del viewport
+  overflow-x: hidden; // CAMBIO: elimina scroll horizontal general en este módulo
+  min-width: 0; // CAMBIO: importante para que hijos dentro de grid/flex puedan encogerse
 }
 
 /* Botones (reutilizable) */
 .dsf-btn {
   border-radius: 999px;
   padding: 0.55rem 1rem;
-  font-size: 0.95rem;
+  font-size: 1rem; // CAMBIO: antes 0.95rem, sube 1 medida la fuente
+  line-height: 1.2; // CAMBIO: controla altura del texto para que no deforme el botón
   font-weight: 700;
   border: 1px solid transparent;
   cursor: pointer;
@@ -25,6 +43,10 @@ $shadow-hover: 0 18px 45px rgba(56, 142, 60, 0.18);
   justify-content: center;
   gap: .5rem;
   text-decoration: none;
+  max-width: 100%; // CAMBIO: evita que un botón empuje más allá de su contenedor
+  white-space: nowrap; // CAMBIO: mantiene el texto del botón en una sola línea
+  overflow: hidden; // CAMBIO: evita overflow visual interno del botón
+  text-overflow: ellipsis; // CAMBIO: si no entra, corta con ... sin romper layout
 
   &:active { transform: translateY(1px); }
   &:disabled { opacity: 0.55; cursor: not-allowed; transform: none; }
@@ -47,13 +69,14 @@ $shadow-hover: 0 18px 45px rgba(56, 142, 60, 0.18);
 
 .dsf-btn--sm {
   padding: 0.45rem 0.85rem;
-  font-size: 0.85rem;
+  font-size: 0.95rem; // CAMBIO: antes 0.85rem, sube 1 medida la fuente
+  line-height: 1.2; // CAMBIO: mantiene consistente la altura del texto en botones pequeños
 }
 
 /* HERO */
 .hero {
   display: grid;
-  grid-template-columns: 1.2fr 0.8fr;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr); // CAMBIO: minmax(0, ...) evita overflow en columnas grid
   gap: 1.25rem;
   margin-bottom: 1.25rem;
 
@@ -64,6 +87,9 @@ $shadow-hover: 0 18px 45px rgba(56, 142, 60, 0.18);
   border-radius: 18px;
   padding: 1.25rem;
   box-shadow: $shadow-soft;
+  width: 100%; // CAMBIO: asegura ancho fluido
+  max-width: 100%; // CAMBIO: evita desbordes laterales del bloque hero
+  min-width: 0; // CAMBIO: permite que el grid se contraiga correctamente
 }
 
 .hero__kicker {
@@ -73,25 +99,29 @@ $shadow-hover: 0 18px 45px rgba(56, 142, 60, 0.18);
   background: rgba(46,125,50,.12);
   color: $dsf-green-900;
   font-weight: 800;
-  font-size: .75rem;
+  font-size: 0.82rem; // CAMBIO: antes .75rem, sube 1 medida la fuente
+  line-height: 1.2; // CAMBIO: mejora legibilidad sin agrandar demasiado el badge
   letter-spacing: .06em;
   text-transform: uppercase;
   margin-bottom: .5rem;
+  max-width: 100%; // CAMBIO: evita que el kicker empuje el ancho del hero
 }
 
 .hero__title {
   margin: 0 0 .25rem 0;
   color: $dsf-green-900;
-  font-size: 2rem;
-  line-height: 1.1;
+  font-size: 2.15rem; // CAMBIO: antes 2rem, sube 1 medida la fuente
+  line-height: 1.15; // CAMBIO: controla la altura para títulos grandes
+  overflow-wrap: anywhere; // CAMBIO: si el texto es largo, rompe línea sin generar overflow
 }
 
 .hero__sub {
   margin: 0;
   color: #2e7d32;
-  font-size: 1rem;
-  line-height: 1.45;
+  font-size: 1.08rem; // CAMBIO: antes 1rem, sube 1 medida la fuente
+  line-height: 1.5; // CAMBIO: mejora lectura del párrafo
   max-width: 58ch;
+  overflow-wrap: anywhere; // CAMBIO: evita scroll horizontal por textos largos
 }
 
 .hero__actions {
@@ -99,6 +129,7 @@ $shadow-hover: 0 18px 45px rgba(56, 142, 60, 0.18);
   flex-wrap: wrap;
   gap: .7rem;
   margin-top: 1rem;
+  min-width: 0; // CAMBIO: permite ajuste correcto de los hijos flex
 }
 
 .hero__chips {
@@ -106,6 +137,7 @@ $shadow-hover: 0 18px 45px rgba(56, 142, 60, 0.18);
   flex-wrap: wrap;
   gap: .5rem;
   margin-top: 1rem;
+  min-width: 0; // CAMBIO: evita que el grupo de chips fuerce ancho extra
 }
 
 .chip {
@@ -115,10 +147,12 @@ $shadow-hover: 0 18px 45px rgba(56, 142, 60, 0.18);
   padding: .3rem .65rem;
   border-radius: 999px;
   font-weight: 700;
-  font-size: .82rem;
+  font-size: .9rem; // CAMBIO: antes .82rem, sube 1 medida la fuente
+  line-height: 1.2; // CAMBIO: mantiene compacto el chip con fuente más grande
   border: 1px solid rgba(46,125,50,.20);
   background: rgba(255,255,255,.65);
   color: $dsf-green-900;
+  max-width: 100%; // CAMBIO: evita que chips largos rompan el contenedor
 }
 
 .chip--ok { background: rgba(232,245,233,.9); border-color: rgba(46,125,50,.25); }
@@ -127,10 +161,13 @@ $shadow-hover: 0 18px 45px rgba(56, 142, 60, 0.18);
 .hero__aside {
   display: flex;
   align-items: stretch;
+  min-width: 0; // CAMBIO: permite que la columna lateral no provoque overflow
 }
 
 .hero-card {
   width: 100%;
+  max-width: 100%; // CAMBIO: evita que esta card se pase del ancho de la columna
+  min-width: 0; // CAMBIO: permite ajuste interno de textos y acciones
   background: rgba(255,255,255,.75);
   border: 1px solid rgba(46,125,50,.22);
   border-radius: 16px;
@@ -150,24 +187,33 @@ $shadow-hover: 0 18px 45px rgba(56, 142, 60, 0.18);
   background: rgba(46,125,50,.12);
   display: grid;
   place-items: center;
-  font-size: 1.3rem;
+  font-size: 1.45rem; // CAMBIO: antes 1.3rem, sube 1 medida la fuente/icono
+  flex: 0 0 auto; // CAMBIO: evita deformaciones del icono
 }
 
 .hero-card__title {
   font-weight: 900;
   color: $dsf-green-900;
+  font-size: 1.08rem; // CAMBIO: agregado para subir la fuente del título de la card
+  line-height: 1.25; // CAMBIO: mantiene ordenado el alto del título
+  overflow-wrap: anywhere; // CAMBIO: evita desborde por títulos largos
 }
 
 .hero-card__text {
   color: #2e7d32;
-  line-height: 1.4;
+  line-height: 1.5; // CAMBIO: antes 1.4, mejora lectura
+  font-size: 1rem; // CAMBIO: agregado para subir la fuente del texto de la card
+  overflow-wrap: anywhere; // CAMBIO: evita overflow horizontal por textos largos
 }
 
 /* GRID */
 .client-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); // CAMBIO: minmax(0, ...) evita overflow en grid
   gap: 1.25rem;
+  width: 100%; // CAMBIO: asegura ancho fluido
+  max-width: 100%; // CAMBIO: evita desborde lateral
+  min-width: 0; // CAMBIO: deja encoger correctamente las columnas
 }
 
 /* PANELS */
@@ -176,6 +222,7 @@ $shadow-hover: 0 18px 45px rgba(56, 142, 60, 0.18);
   border: 1px solid $dsf-border;
   box-shadow: $shadow-soft;
   overflow: hidden;
+  min-width: 0; // CAMBIO: importante en items de grid/flex para evitar scroll horizontal
 }
 
 .panel--glass {
@@ -193,25 +240,31 @@ $shadow-hover: 0 18px 45px rgba(56, 142, 60, 0.18);
   justify-content: space-between;
   gap: 1rem;
   border-bottom: 1px solid rgba(200,230,201,.55);
+  min-width: 0; // CAMBIO: permite que sus hijos se ajusten sin romper el ancho
 }
 
 .panel__title {
   margin: 0;
-  font-size: 1.25rem;
+  font-size: 1.38rem; // CAMBIO: antes 1.25rem, sube 1 medida la fuente
+  line-height: 1.2; // CAMBIO: controla la altura del título
   font-weight: 900;
   color: $dsf-green-900;
+  overflow-wrap: anywhere; // CAMBIO: evita desborde por títulos largos
 }
 
 .panel__sub {
   margin: .25rem 0 0 0;
-  font-size: .95rem;
+  font-size: 1rem; // CAMBIO: antes .95rem, sube 1 medida la fuente
+  line-height: 1.45; // CAMBIO: mejora legibilidad
   color: #2e7d32;
+  overflow-wrap: anywhere; // CAMBIO: evita overflow horizontal por subtítulos largos
 }
 
 .panel__actions {
   display: inline-flex;
   gap: .6rem;
   flex-wrap: wrap;
+  min-width: 0; // CAMBIO: deja romper línea si las acciones ocupan mucho ancho
 }
 
 /* CARDS GRID */
@@ -220,6 +273,9 @@ $shadow-hover: 0 18px 45px rgba(56, 142, 60, 0.18);
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: .9rem;
+  width: 100%; // CAMBIO: asegura ancho controlado
+  max-width: 100%; // CAMBIO: evita overflow del grid interno
+  min-width: 0; // CAMBIO: permite contracción correcta
 }
 
 .card {
@@ -231,6 +287,7 @@ $shadow-hover: 0 18px 45px rgba(56, 142, 60, 0.18);
   transition: transform .12s ease, box-shadow .12s ease, border-color .12s ease;
   display: grid;
   gap: .55rem;
+  min-width: 0; // CAMBIO: evita que el contenido interno haga crecer la card
 
   &:hover {
     transform: translateY(-2px);
@@ -244,21 +301,25 @@ $shadow-hover: 0 18px 45px rgba(56, 142, 60, 0.18);
   align-items: center;
   justify-content: space-between;
   gap: .6rem;
+  min-width: 0; // CAMBIO: permite que el título se ajuste en vez de desbordar
 }
 
 .card__title {
   margin: 0;
   color: $dsf-green-900;
   font-weight: 900;
-  font-size: 1rem;
-  line-height: 1.25;
+  font-size: 1.08rem; // CAMBIO: antes 1rem, sube 1 medida la fuente
+  line-height: 1.3; // CAMBIO: mejora legibilidad del título
+  overflow-wrap: anywhere; // CAMBIO: evita desborde horizontal por títulos largos
+  min-width: 0; // CAMBIO: ayuda en contenedores flex/grid
 }
 
 .card__desc {
   margin: 0;
   color: #2e7d32;
-  line-height: 1.4;
-  font-size: .93rem;
+  line-height: 1.5; // CAMBIO: antes 1.4, mejora lectura
+  font-size: 1rem; // CAMBIO: antes .93rem, sube 1-2 medidas la fuente
+  overflow-wrap: anywhere; // CAMBIO: evita scroll horizontal por texto largo
 }
 
 .card__actions {
@@ -266,9 +327,16 @@ $shadow-hover: 0 18px 45px rgba(56, 142, 60, 0.18);
   flex-wrap: wrap;
   gap: .6rem;
   margin-top: .1rem;
+  min-width: 0; // CAMBIO: permite que las acciones bajen de línea si hace falta
 }
 
-.hero-card__actions { margin-top: .65rem; display: flex; }
+.hero-card__actions {
+  margin-top: .65rem;
+  display: flex;
+  flex-wrap: wrap; // CAMBIO: permite que botones/acciones no desborden horizontalmente
+  gap: .6rem; // CAMBIO: separa mejor acciones cuando saltan de línea
+}
+
 .hero-card__text--strong { font-weight: 900; }
 
 /* LIST (encuestas) */
@@ -276,6 +344,9 @@ $shadow-hover: 0 18px 45px rgba(56, 142, 60, 0.18);
   padding: .8rem 1.1rem 1.1rem 1.1rem;
   display: grid;
   gap: .7rem;
+  width: 100%; // CAMBIO: asegura ancho controlado
+  max-width: 100%; // CAMBIO: evita overflow del listado
+  min-width: 0; // CAMBIO: permite que hijos en grid encogan correctamente
 }
 
 .row {
@@ -290,6 +361,7 @@ $shadow-hover: 0 18px 45px rgba(56, 142, 60, 0.18);
   padding: .85rem;
 
   transition: transform .12s ease, box-shadow .12s ease, border-color .12s ease, background .12s ease;
+  min-width: 0; // CAMBIO: evita que el contenido interno fuerce el ancho de la fila
 
   &:hover {
     transform: translateY(-2px);
@@ -300,6 +372,7 @@ $shadow-hover: 0 18px 45px rgba(56, 142, 60, 0.18);
 }
 
 .row__left { min-width: 0; }
+
 .row__title {
   font-weight: 900;
   color: $dsf-green-900;
@@ -308,6 +381,8 @@ $shadow-hover: 0 18px 45px rgba(56, 142, 60, 0.18);
   text-overflow: ellipsis;
   white-space: nowrap;
   max-width: 52ch;
+  font-size: 1.02rem; // CAMBIO: agregado para subir la fuente del título de fila
+  line-height: 1.25; // CAMBIO: controla la altura del texto
 }
 
 .row__meta {
@@ -315,9 +390,13 @@ $shadow-hover: 0 18px 45px rgba(56, 142, 60, 0.18);
   flex-wrap: wrap;
   gap: .45rem .7rem;
   align-items: center;
+  min-width: 0; // CAMBIO: permite ajuste correcto de metadatos
 }
 
-.row__right { flex: 0 0 auto; }
+.row__right {
+  flex: 0 0 auto;
+  max-width: 100%; // CAMBIO: evita que las acciones laterales desborden
+}
 
 /* Badges/Pills/Meta */
 .badge {
@@ -326,8 +405,10 @@ $shadow-hover: 0 18px 45px rgba(56, 142, 60, 0.18);
   padding: .2rem .6rem;
   border-radius: 999px;
   font-weight: 800;
-  font-size: .78rem;
+  font-size: .86rem; // CAMBIO: antes .78rem, sube 1 medida la fuente
+  line-height: 1.2; // CAMBIO: mantiene compacto el badge con fuente más grande
   border: 1px solid rgba(46,125,50,.20);
+  max-width: 100%; // CAMBIO: evita que badges largos empujen el ancho
 }
 .badge--soft { background: rgba(232,245,233,.9); color: $dsf-green-900; }
 
@@ -337,8 +418,10 @@ $shadow-hover: 0 18px 45px rgba(56, 142, 60, 0.18);
   padding: .2rem .6rem;
   border-radius: 999px;
   font-weight: 800;
-  font-size: .78rem;
+  font-size: .86rem; // CAMBIO: antes .78rem, sube 1 medida la fuente
+  line-height: 1.2; // CAMBIO: mantiene compacto el pill
   border: 1px solid rgba(46,125,50,.20);
+  max-width: 100%; // CAMBIO: evita que pills largos provoquen overflow
 }
 .pill--ok { background: rgba(232,245,233,.95); color: $dsf-green-900; }
 .pill--muted { background: rgba(238,238,238,.95); color: #616161; border-color: rgba(120,120,120,.18); }
@@ -346,7 +429,9 @@ $shadow-hover: 0 18px 45px rgba(56, 142, 60, 0.18);
 .meta {
   color: rgba(27, 94, 32, 0.75);
   font-weight: 700;
-  font-size: .82rem;
+  font-size: .9rem; // CAMBIO: antes .82rem, sube 1 medida la fuente
+  line-height: 1.3; // CAMBIO: mejora lectura de metadatos
+  overflow-wrap: anywhere; // CAMBIO: evita overflow en textos meta largos
 }
 
 /* Empty + hint */
@@ -357,11 +442,29 @@ $shadow-hover: 0 18px 45px rgba(56, 142, 60, 0.18);
   border: 1px dashed rgba(46,125,50,.28);
   background: rgba(255,255,255,.80);
   text-align: center;
+  width: auto;
+  max-width: 100%; // CAMBIO: evita que este bloque vacío provoque overflow
 }
 
-.empty__icon { font-size: 1.3rem; margin-bottom: .25rem; }
-.empty__title { font-weight: 900; color: $dsf-green-900; margin-bottom: .2rem; }
-.empty__text { color: #2e7d32; }
+.empty__icon {
+  font-size: 1.45rem; // CAMBIO: antes 1.3rem, sube 1 medida la fuente/icono
+  margin-bottom: .25rem;
+}
+
+.empty__title {
+  font-weight: 900;
+  color: $dsf-green-900;
+  margin-bottom: .2rem;
+  font-size: 1.08rem; // CAMBIO: agregado para subir la fuente del título vacío
+  line-height: 1.25; // CAMBIO: controla el alto del título
+}
+
+.empty__text {
+  color: #2e7d32;
+  font-size: 1rem; // CAMBIO: agregado para subir la fuente del texto vacío
+  line-height: 1.45; // CAMBIO: mejora lectura
+  overflow-wrap: anywhere; // CAMBIO: evita overflow por textos largos
+}
 
 .hint {
   display: flex;
@@ -371,9 +474,17 @@ $shadow-hover: 0 18px 45px rgba(56, 142, 60, 0.18);
   padding: .75rem .9rem;
   border: 1px solid rgba(46,125,50,.18);
   background: rgba(255,255,255,.75);
+  min-width: 0; // CAMBIO: deja que el contenido se adapte al ancho disponible
 }
-.hint__icon { font-size: 1rem; }
-.hint__text { color: #2e7d32; font-weight: 700; font-size: .9rem; }
+.hint__icon { font-size: 1.1rem; } // CAMBIO: antes 1rem, sube 1 medida la fuente/icono
+
+.hint__text {
+  color: #2e7d32;
+  font-weight: 700;
+  font-size: .98rem; // CAMBIO: antes .9rem, sube 1 medida la fuente
+  line-height: 1.4; // CAMBIO: mejora lectura
+  overflow-wrap: anywhere; // CAMBIO: evita desbordes por textos largos
+}
 
 /* SKELETON */
 .skeleton {
@@ -411,12 +522,14 @@ $shadow-hover: 0 18px 45px rgba(56, 142, 60, 0.18);
   .panel__actions { justify-content: flex-start; }
   .row { flex-direction: column; align-items: stretch; }
   .row__right { display: flex; justify-content: flex-end; }
-  .row__title { white-space: normal; }
+  .row__title { white-space: normal; } // CAMBIO: en móvil permite salto de línea para evitar overflow
 }
 
 .hero-card__top-actions {
   display: flex;
   justify-content: flex-end;
+  flex-wrap: wrap; // CAMBIO: evita overflow si hay varias acciones arriba
+  gap: .5rem; // CAMBIO: mejora separación cuando las acciones bajan de línea
 }
 
 .dsf-btn--login {

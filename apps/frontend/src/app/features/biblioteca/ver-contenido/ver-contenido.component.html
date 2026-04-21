@@ -1,7 +1,7 @@
 <section class="dsf-wrap ver-contenido">
   <header class="dsf-header">
     <h1 class="dsf-title">
-      Contenido educativo
+      Recurso educativo
     </h1>
     <p class="dsf-sub" *ngIf="contenido">
       Publicado el
@@ -37,6 +37,13 @@
           <span class="preview-meta__item" *ngIf="contenido.fechaBaja">
             Baja:
             <strong>{{ contenido.fechaBaja | date: 'dd/MM/yyyy' }}</strong>
+          </span>
+
+          <span
+            class="preview-badge preview-badge--info"
+            *ngIf="esAdminView && contenido.idContenidoEducativo"
+          >
+            ID: {{ contenido.idContenidoEducativo }}
           </span>
 
           <span

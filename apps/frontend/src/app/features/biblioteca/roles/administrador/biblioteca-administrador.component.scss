@@ -1,7 +1,17 @@
-@use '../cliente/biblioteca-cliente.component' as *;
+@use '../cliente/biblioteca-cliente.component.scss' as *;
 
 :host {
   display: block;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  min-width: 0;
 }
 
 /* Wrapper general */
@@ -18,31 +28,40 @@
   box-shadow:
     0 18px 36px rgba(15, 81, 50, 0.08),
     0 4px 14px rgba(15, 81, 50, 0.04);
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
 }
 
 /* Encabezado general */
 .biblioteca-admin {
+  width: 100%;
+  max-width: 100%;
+
   .dsf-header {
     display: grid;
     gap: 0.3rem;
     margin-bottom: 0.2rem;
     text-align: left;
+    width: 100%;
   }
 
   .dsf-title {
-    font-size: clamp(1.45rem, 2.3vw, 1.95rem);
-    line-height: 1.15;
-    color: #163024;
-    margin: 0;
+    font-size: clamp(1.45rem, 2.35vw, 2rem);
     font-weight: 800;
+    color: #0f562a;
+    line-height: 1.15;
+    margin: 0;
     letter-spacing: -0.02em;
+    overflow-wrap: anywhere;
   }
 
   .dsf-sub {
-    font-size: 0.97rem;
-    color: #5f7b6c;
+    color: #678074;
+    font-size: 1.2rem;
     margin: 0;
     line-height: 1.45;
+    overflow-wrap: anywhere;
   }
 }
 
@@ -50,6 +69,8 @@
 .dsf-sections-grid {
   display: grid;
   gap: 1.25rem;
+  width: 100%;
+  max-width: 100%;
 }
 
 .dsf-panel {
@@ -62,6 +83,9 @@
     0 14px 28px rgba(15, 81, 50, 0.08),
     0 4px 12px rgba(15, 81, 50, 0.04);
   padding: 1.1rem;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
 }
 
 .dsf-panel__header {
@@ -71,20 +95,25 @@
   gap: 1rem;
   margin-bottom: 0.9rem;
   flex-wrap: wrap;
+  width: 100%;
+  max-width: 100%;
 }
 
 .dsf-panel__title {
-  font-size: 1.22rem;
+  font-size: 1.4rem;
+  color: #0f562a;
   font-weight: 800;
-  color: #163024;
+  color: #0f562a;
   margin: 0;
   letter-spacing: -0.01em;
+  overflow-wrap: anywhere;
 }
 
 .dsf-panel__actions {
   display: flex;
   gap: 0.65rem;
   flex-wrap: wrap;
+  max-width: 100%;
 }
 
 /* Botones */
@@ -107,6 +136,10 @@
   align-items: center;
   justify-content: center;
   gap: 0.45rem;
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 
   &:hover:not(:disabled) {
     transform: translateY(-1px);
@@ -123,6 +156,7 @@
   color: #ffffff;
   border-color: #15803d;
   box-shadow: 0 10px 18px rgba(34, 197, 94, 0.22);
+  font-size: 1.1rem;
 }
 
 .dsf-btn--primary:hover {
@@ -140,6 +174,9 @@
   place-items: center;
   text-align: center;
   padding: 1.2rem;
+  font-size: 1.2rem;
+  width: 100%;
+  max-width: 100%;
 }
 
 .dsf-empty--loading {
@@ -149,35 +186,41 @@
 .dsf-empty__text {
   margin: 0;
   color: #5c7768;
-  font-size: 0.96rem;
+  font-size: 1.2rem;
   font-weight: 700;
   line-height: 1.45;
+  overflow-wrap: anywhere;
 }
 
 /* Tabla */
 .dsf-table-wrap {
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
   border-radius: 18px;
   border: 1px solid #deede4;
   background: linear-gradient(180deg, rgba(255,255,255,.96) 0%, rgba(243,251,246,.96) 100%);
+  width: 100%;
+  max-width: 100%;
 }
 
 .dsf-table {
   width: 100%;
+  min-width: 760px;
   border-collapse: collapse;
-  font-size: 0.95rem;
+  font-size: 1rem;
   table-layout: fixed;
 }
 
 /* Encabezados */
 .dsf-table thead th {
   text-align: center;
-  font-size: 0.82rem;
+  font-size: 1.2rem;
   letter-spacing: 0.05em;
-  color: #5f7b6c;
+  color: #0f562a;
   background: rgba(226, 247, 234, 0.95);
   text-transform: uppercase;
   font-weight: 800;
+  overflow-wrap: anywhere;
 }
 
 /* Celdas comunes */
@@ -186,11 +229,13 @@
   padding: 0.82rem 0.8rem;
   border-bottom: 1px solid #e7f2eb;
   vertical-align: middle;
+  font-size: 1.1rem;
 }
 
 .dsf-table tbody td {
   background: rgba(255, 255, 255, 0.94);
   color: #244233;
+  overflow-wrap: anywhere;
 }
 
 .dsf-table tbody tr:hover td {
@@ -198,12 +243,13 @@
 }
 
 /* Alineaciones */
-.dsf-td--center { text-align: center; }
-.dsf-td--title { text-align: left; }
+.dsf-td--center { text-align: center; font-size: 1rem; }
+.dsf-td--title { text-align: left; font-size: 1rem; }
 
 .dsf-table__cell--strong {
   font-weight: 800;
   color: #163024;
+  overflow-wrap: anywhere;
 }
 
 /* Anchos */
@@ -235,6 +281,7 @@
   justify-content: center;
   gap: 0.55rem;
   flex-wrap: wrap;
+  max-width: 100%;
 }
 
 /* Botones de ícono */
@@ -257,6 +304,7 @@
     transform 0.18s ease,
     box-shadow 0.18s ease;
   box-shadow: 0 8px 16px rgba(15, 81, 50, 0.06);
+  flex: 0 0 auto;
 }
 
 .dsf-icon-btn:hover {
@@ -274,6 +322,7 @@
   justify-content: center;
   position: relative;
   cursor: pointer;
+  flex: 0 0 auto;
 }
 
 .dsf-icon-toggle input {
@@ -324,9 +373,10 @@
   white-space: nowrap;
   border-radius: 999px;
   font-weight: 800;
-  font-size: 0.76rem;
+  font-size: 0.9rem;
   padding: 0.38rem 0.78rem;
   border: 1px solid transparent;
+  max-width: 100%;
 }
 
 .dsf-badge--ok {
@@ -354,6 +404,10 @@
   .dsf-btn {
     flex: 1 1 auto;
   }
+
+  .dsf-table {
+    min-width: 720px;
+  }
 }
 
 @media (max-width: 780px) {
@@ -367,12 +421,38 @@
     padding: 0.95rem;
   }
 
+  .biblioteca-admin {
+    .dsf-title {
+      font-size: clamp(1.3rem, 5vw, 1.7rem);
+    }
+
+    .dsf-sub {
+      font-size: 1rem;
+    }
+  }
+
   .dsf-table {
-    min-width: 760px;
+    min-width: 680px;
+  }
+
+  .dsf-table th,
+  .dsf-table td {
+    padding: 0.75rem 0.7rem;
   }
 }
 
 @media (max-width: 560px) {
+  .dsf-wrap.biblioteca-admin {
+    padding: 0.75rem;
+    border-radius: 18px;
+    gap: 1rem;
+  }
+
+  .dsf-panel {
+    padding: 0.85rem;
+    border-radius: 18px;
+  }
+
   .dsf-panel__actions {
     flex-direction: column;
     align-items: stretch;
@@ -380,5 +460,63 @@
 
   .dsf-btn {
     width: 100%;
+  }
+
+  .dsf-empty {
+    min-height: 130px;
+    padding: 1rem;
+  }
+
+  .dsf-empty,
+  .dsf-empty__text {
+    font-size: 1rem;
+  }
+
+  .dsf-table {
+    min-width: 620px;
+  }
+
+  .dsf-badge {
+    font-size: 0.82rem;
+    padding: 0.34rem 0.68rem;
+  }
+
+  .dsf-icon-btn {
+    width: 38px;
+    height: 38px;
+  }
+}
+
+@media (max-width: 400px) {
+  .dsf-wrap.biblioteca-admin {
+    padding: 0.65rem;
+  }
+
+  .dsf-panel {
+    padding: 0.8rem;
+  }
+
+  .biblioteca-admin {
+    .dsf-title {
+      font-size: 1.2rem;
+    }
+
+    .dsf-sub {
+      font-size: 0.94rem;
+    }
+  }
+
+  .dsf-table {
+    min-width: 580px;
+  }
+
+  .dsf-table th,
+  .dsf-table td {
+    padding: 0.68rem 0.6rem;
+    font-size: 0.94rem;
+  }
+
+  .dsf-icon-toggle {
+    transform: scale(0.95);
   }
 }

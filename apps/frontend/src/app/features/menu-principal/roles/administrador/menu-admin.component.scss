@@ -1,5 +1,14 @@
 :host {
   display: block;
+  width: 100%; // CAMBIO: asegura que el host ocupe solo el ancho disponible
+  max-width: 100%; // CAMBIO: evita desborde horizontal del componente
+  overflow-x: hidden; // CAMBIO: bloquea scroll horizontal general
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box; // CAMBIO: evita que padding y border agranden el ancho real
 }
 
 .admin-dashboard {
@@ -13,11 +22,15 @@
     linear-gradient(180deg, #f6fff9 0%, #f8fafc 100%);
   min-height: 100%;
   color: #163024;
+  width: 100%; // CAMBIO: fuerza al contenedor principal a respetar el ancho disponible
+  max-width: 100%; // CAMBIO: evita overflow lateral
+  overflow-x: hidden; // CAMBIO: elimina scroll horizontal del dashboard
+  min-width: 0; // CAMBIO: permite que hijos grid/flex se encojan correctamente
 }
 
 .hero-card {
   display: grid;
-  grid-template-columns: 1.25fr 1fr;
+  grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); // CAMBIO: minmax(0, ...) evita overflow en grid
   gap: 1.25rem;
   padding: 1.5rem;
   border-radius: 24px;
@@ -27,27 +40,33 @@
   color: #fff;
   box-shadow: 0 20px 44px rgba(22, 48, 36, 0.22);
   overflow: hidden;
+  width: 100%; // CAMBIO: asegura ancho fluido
+  max-width: 100%; // CAMBIO: evita desborde lateral
+  min-width: 0; // CAMBIO: permite que el grid se contraiga sin romper
 }
 
 .hero-copy {
   display: flex;
   flex-direction: column;
   justify-content: center;
+  min-width: 0; // CAMBIO: evita que el texto empuje el ancho del grid
 
   h1 {
     margin: 0 0 0.6rem;
-    font-size: clamp(1.8rem, 2.5vw, 2.7rem);
-    line-height: 1.05;
+    font-size: clamp(2rem, 2.8vw, 3rem); // CAMBIO: antes clamp(1.8rem, 2.5vw, 2.7rem), sube la fuente
+    line-height: 1.08; // CAMBIO: mejora legibilidad del título grande
     font-weight: 800;
     letter-spacing: -0.02em;
+    overflow-wrap: anywhere; // CAMBIO: evita overflow por títulos largos
   }
 
   p {
     margin: 0;
     max-width: 760px;
     color: rgba(255, 255, 255, 0.88);
-    font-size: 1rem;
-    line-height: 1.55;
+    font-size: 1.08rem; // CAMBIO: antes 1rem, sube la fuente
+    line-height: 1.6; // CAMBIO: mejora lectura
+    overflow-wrap: anywhere; // CAMBIO: evita desborde horizontal
   }
 }
 
@@ -56,10 +75,11 @@
   display: inline-flex;
   align-items: center;
   margin-bottom: 0.55rem;
-  font-size: 0.78rem;
+  font-size: 1.2rem; // CAMBIO: antes 0.78rem, sube la fuente
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.08em;
+  max-width: 100%; // CAMBIO: evita que empuje el ancho del contenedor
 }
 
 .hero-actions {
@@ -67,6 +87,9 @@
   flex-wrap: wrap;
   gap: 0.75rem;
   margin-top: 1.3rem;
+  width: 100%; // CAMBIO: asegura ajuste al ancho del contenedor
+  max-width: 100%; // CAMBIO: evita overflow
+  min-width: 0; // CAMBIO: permite reacomodo correcto
 }
 
 .hero-highlight {
@@ -79,12 +102,14 @@
   flex-direction: column;
   gap: 1rem;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  min-width: 0; // CAMBIO: evita desborde dentro del bloque lateral
 
   h2 {
     margin: 0;
-    font-size: 1.35rem;
-    line-height: 1.2;
+    font-size: 1.5rem; // CAMBIO: antes 1.35rem, sube la fuente
+    line-height: 1.25; // CAMBIO: mejora legibilidad
     font-weight: 800;
+    overflow-wrap: anywhere; // CAMBIO: evita desborde por títulos largos
   }
 }
 
@@ -98,12 +123,19 @@
   justify-content: space-between;
   gap: 0.75rem;
   flex-wrap: wrap;
+  min-width: 0; // CAMBIO: ayuda a prevenir overflow en layouts flex
+
+  h4 {
+    font-size: 1.1rem; // CAMBIO: antes 1rem, sube la fuente
+  }
 }
 
 .hero-stats {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 0.85rem;
+  width: 100%; // CAMBIO: asegura ajuste al ancho del contenedor
+  max-width: 100%; // CAMBIO: evita desbordes
 }
 
 .hero-stat {
@@ -114,6 +146,7 @@
   display: flex;
   flex-direction: column;
   gap: 0.2rem;
+  min-width: 0; // CAMBIO: permite que el contenido interno se adapte
 }
 
 .hero-stat--accent {
@@ -121,13 +154,15 @@
 }
 
 .hero-stat__label {
-  font-size: 0.82rem;
+  font-size: 0.95rem; // CAMBIO: antes 0.82rem, sube la fuente
   color: rgba(255, 255, 255, 0.82);
   font-weight: 700;
+  line-height: 1.3; // CAMBIO: mejora lectura
+  overflow-wrap: anywhere; // CAMBIO: evita overflow
 }
 
 .hero-stat__value {
-  font-size: 2rem;
+  font-size: 2.2rem; // CAMBIO: antes 2rem, sube la fuente
   font-weight: 800;
   line-height: 1;
   color: #fff;
@@ -144,8 +179,9 @@
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  font-size: 0.88rem;
+  font-size: 0.98rem; // CAMBIO: antes 0.88rem, sube la fuente
   color: rgba(255, 255, 255, 0.88);
+  flex-wrap: wrap; // CAMBIO: permite que el contenido baje de línea en mobile
 }
 
 .hero-progress__bar {
@@ -178,23 +214,25 @@
   align-items: flex-start;
   gap: 0.55rem;
   color: rgba(255, 255, 255, 0.88);
-  font-size: 0.9rem;
-  line-height: 1.45;
+  font-size: 1rem; // CAMBIO: antes 0.9rem, sube la fuente
+  line-height: 1.5; // CAMBIO: mejora lectura
+  overflow-wrap: anywhere; // CAMBIO: evita overflow
 }
 
 .hero-note__icon {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 22px;
-  width: 22px;
-  height: 22px;
+  min-width: 24px; // CAMBIO: antes 22px, crece levemente
+  width: 24px; // CAMBIO: antes 22px
+  height: 24px; // CAMBIO: antes 22px
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.18);
   color: #ffffff;
-  font-size: 0.78rem;
+  font-size: 0.85rem; // CAMBIO: antes 0.78rem, sube la fuente
   font-weight: 800;
   line-height: 1;
+  flex: 0 0 auto; // CAMBIO: evita deformaciones
 }
 
 .panel {
@@ -205,6 +243,10 @@
   box-shadow:
     0 14px 30px rgba(15, 81, 50, 0.08),
     0 3px 10px rgba(15, 81, 50, 0.04);
+  width: 100%; // CAMBIO: asegura ancho fluido
+  max-width: 100%; // CAMBIO: evita desborde horizontal
+  min-width: 0; // CAMBIO: permite ajuste de hijos grid/flex
+  overflow-x: hidden; // CAMBIO: bloquea pequeños overflows laterales
 }
 
 .panel-links,
@@ -225,6 +267,9 @@
     margin: 0;
     color: #567364;
     font-weight: 700;
+    font-size: 1rem; // CAMBIO: agregado para subir la fuente
+    line-height: 1.5; // CAMBIO: mejora lectura
+    overflow-wrap: anywhere; // CAMBIO: evita overflow
   }
 }
 
@@ -244,16 +289,20 @@
 
   h3 {
     margin: 0.2rem 0 0.3rem;
-    font-size: 1.2rem;
+    font-size: 1.35rem; // CAMBIO: antes 1.2rem, sube la fuente
     font-weight: 800;
     color: #163024;
+    line-height: 1.25; // CAMBIO: mejora legibilidad
+    overflow-wrap: anywhere; // CAMBIO: evita overflow
   }
 
   p {
     margin: 0;
     color: #678074;
-    line-height: 1.5;
+    line-height: 1.6; // CAMBIO: mejora lectura
     max-width: 760px;
+    font-size: 1.1rem; // CAMBIO: agregado para subir la fuente
+    overflow-wrap: anywhere; // CAMBIO: evita desborde
   }
 }
 
@@ -261,6 +310,8 @@
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 1rem;
+  width: 100%; // CAMBIO: asegura ajuste correcto
+  max-width: 100%; // CAMBIO: evita overflow
 }
 
 .kpi-card {
@@ -274,23 +325,25 @@
   box-shadow:
     0 14px 30px rgba(15, 81, 50, 0.08),
     0 3px 10px rgba(15, 81, 50, 0.04);
+  min-width: 0; // CAMBIO: evita que el contenido interno desborde
 }
 
 .kpi-icon {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 46px;
-  width: 46px;
-  height: 46px;
+  min-width: 50px; // CAMBIO: antes 46px, agranda el bloque del icono
+  width: 50px; // CAMBIO: antes 46px
+  height: 50px; // CAMBIO: antes 46px
   border-radius: 15px;
   background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
   color: #166534;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.55);
+  flex: 0 0 auto; // CAMBIO: evita deformaciones
 
   svg {
-    width: 24px;
-    height: 24px;
+    width: 26px; // CAMBIO: antes 24px, agranda el icono
+    height: 26px; // CAMBIO: antes 24px
   }
 }
 
@@ -302,13 +355,17 @@
 }
 
 .kpi-label {
-  font-size: 0.88rem;
+  font-size: 1.2rem; // CAMBIO: antes 0.88rem, sube la fuente
   font-weight: 700;
   color: #315743;
+  line-height: 1.3; // CAMBIO: mejora lectura
+  overflow-wrap: anywhere; // CAMBIO: evita desborde
+  text-align: center;
 }
 
 .kpi-value {
-  font-size: 1.7rem;
+  font-size: 2.2rem; // CAMBIO: antes 1.7rem, sube la fuente
+  text-align: center;
   line-height: 1;
   font-weight: 800;
   color: #163024;
@@ -316,14 +373,18 @@
 
 .kpi-helper {
   color: #6d8578;
-  font-size: 0.78rem;
-  line-height: 1.35;
+  font-size: 1rem; // CAMBIO: antes 0.78rem, sube la fuente
+  line-height: 1.45; // CAMBIO: mejora lectura
+  overflow-wrap: anywhere; // CAMBIO: evita overflow
+  text-align: center;
 }
 
 .links-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 1rem;
+  width: 100%; // CAMBIO: asegura ajuste correcto
+  max-width: 100%; // CAMBIO: evita overflow
 }
 
 .quick-card,
@@ -340,6 +401,7 @@
   box-shadow:
     0 10px 24px rgba(15, 81, 50, 0.06),
     inset 0 1px 0 rgba(255, 255, 255, 0.75);
+  min-width: 0; // CAMBIO: evita que contenido interno genere overflow
 }
 
 .quick-card {
@@ -348,36 +410,41 @@
 }
 
 .quick-icon {
-  width: 52px;
-  height: 52px;
+  width: 56px; // CAMBIO: antes 52px, agranda el icono
+  height: 56px; // CAMBIO: antes 52px
   border-radius: 16px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
   color: #166534;
+  flex: 0 0 auto; // CAMBIO: evita deformaciones
 
   svg {
-    width: 26px;
-    height: 26px;
+    width: 28px; // CAMBIO: antes 26px, agranda el icono
+    height: 28px; // CAMBIO: antes 26px
   }
 }
 
 .quick-body {
   flex: 1;
+  min-width: 0; // CAMBIO: evita overflow del texto dentro de la card
 
   h4 {
     margin: 0;
-    font-size: 1rem;
-    line-height: 1.3;
+    font-size: 1.2rem; // CAMBIO: antes 1rem, sube la fuente
+    line-height: 1.35; // CAMBIO: mejora lectura
     font-weight: 800;
     color: #163024;
+    overflow-wrap: anywhere; // CAMBIO: evita desborde
   }
 
   p {
     margin: 0.35rem 0 0;
     color: #678074;
-    line-height: 1.5;
+    line-height: 1.6; // CAMBIO: mejora lectura
+    font-size: 1.1rem; // CAMBIO: agregado para subir la fuente
+    overflow-wrap: anywhere; // CAMBIO: evita overflow
   }
 }
 
@@ -390,15 +457,20 @@
   align-items: center;
   justify-content: space-between;
   gap: 0.35rem;
-  min-height: 40px;
-  padding: 0.7rem 0.95rem;
+  min-height: 44px; // CAMBIO: antes 40px, mejora tactilidad y acompaña fuente más grande
+  padding: 0.8rem 1rem; // CAMBIO: antes 0.7rem 0.95rem, acompaña fuente mayor
   border-radius: 12px;
   background: #f3fdf6;
   color: #166534;
   border: 1px solid #ccebd7;
   text-decoration: none;
   font-weight: 700;
+  font-size: 1.1rem; // CAMBIO: agregado para subir la fuente
+  line-height: 1.3; // CAMBIO: mejora lectura
   transition: transform 0.18s ease, background 0.18s ease, border-color 0.18s ease;
+  max-width: 100%; // CAMBIO: evita overflow del link
+  overflow: hidden; // CAMBIO: evita desbordes visuales
+  text-overflow: ellipsis; // CAMBIO: recorta si no entra
 
   &:hover {
     transform: translateY(-1px);
@@ -411,16 +483,22 @@
   border: none;
   outline: none;
   cursor: pointer;
-  min-height: 44px;
-  padding: 0.8rem 1rem;
+  min-height: 46px; // CAMBIO: antes 44px, mejora experiencia táctil
+  padding: 0.9rem 1.1rem; // CAMBIO: antes 0.8rem 1rem, acompaña fuentes más grandes
   border-radius: 14px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
   font-weight: 700;
+  font-size: 1rem; // CAMBIO: agregado para subir la fuente
+  line-height: 1.2; // CAMBIO: controla altura del texto
   transition: transform 0.18s ease, box-shadow 0.18s ease, opacity 0.18s ease;
   text-decoration: none;
+  max-width: 100%; // CAMBIO: evita que botones excedan el contenedor
+  white-space: nowrap; // CAMBIO: mantiene el texto en una sola línea
+  overflow: hidden; // CAMBIO: evita overflow visual
+  text-overflow: ellipsis; // CAMBIO: recorta con ...
 
   &:hover:not(:disabled) {
     transform: translateY(-1px);
@@ -447,12 +525,14 @@
 .chip {
   display: inline-flex;
   align-items: center;
-  padding: 0.34rem 0.7rem;
+  padding: 0.42rem 0.8rem; // CAMBIO: antes 0.34rem 0.7rem, acompaña fuente mayor
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.16);
   color: inherit;
-  font-size: 0.78rem;
+  font-size: 0.9rem; // CAMBIO: antes 0.78rem, sube la fuente
   font-weight: 700;
+  line-height: 1.2; // CAMBIO: controla altura del texto
+  max-width: 100%; // CAMBIO: evita desborde
 
   &.chip-soft {
     background: #ecfdf3;
@@ -469,11 +549,13 @@
   white-space: nowrap;
   border-radius: 999px;
   font-weight: 700;
+  max-width: 100%; // CAMBIO: evita que estos elementos rompan el layout
 }
 
 .badge {
-  padding: 0.4rem 0.75rem;
-  font-size: 0.8rem;
+  padding: 0.45rem 0.82rem; // CAMBIO: antes 0.4rem 0.75rem, acompaña fuente mayor
+  font-size: 1rem; // CAMBIO: antes 0.8rem, sube la fuente
+  line-height: 1.2; // CAMBIO: controla altura del texto
 }
 
 .badge-admin {
@@ -492,17 +574,19 @@
 }
 
 .tag {
-  font-size: 0.74rem;
-  padding: 0.34rem 0.68rem;
+  font-size: 1rem; // CAMBIO: antes 0.74rem, sube la fuente
+  padding: 0.42rem 0.76rem; // CAMBIO: antes 0.34rem 0.68rem
   background: #f3fdf6;
   color: #315743;
   border: 1px solid #d8ede1;
+  line-height: 1.2; // CAMBIO: controla altura
 }
 
 .pill {
-  font-size: 0.74rem;
-  padding: 0.35rem 0.7rem;
+  font-size: 0.86rem; // CAMBIO: antes 0.74rem, sube la fuente
+  padding: 0.42rem 0.8rem; // CAMBIO: antes 0.35rem 0.7rem
   border: 1px solid transparent;
+  line-height: 1.2; // CAMBIO: controla altura
 }
 
 .pill--admin {
@@ -549,8 +633,10 @@
 
 .content-grid {
   display: grid;
-  grid-template-columns: 0.9fr 1.1fr;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); // CAMBIO: minmax(0, ...) evita overflow en grid
   gap: 1.25rem;
+  width: 100%; // CAMBIO: asegura ajuste correcto
+  max-width: 100%; // CAMBIO: evita desborde
 }
 
 .distribution-list,
@@ -558,6 +644,7 @@
   display: flex;
   flex-direction: column;
   gap: 0.9rem;
+  min-width: 0; // CAMBIO: evita overflow de textos internos
 }
 
 .distribution-progress {
@@ -567,8 +654,9 @@
 
   small {
     color: #678074;
-    font-size: 0.8rem;
+    font-size: 0.92rem; // CAMBIO: antes 0.8rem, sube la fuente
     font-weight: 700;
+    line-height: 1.35; // CAMBIO: mejora lectura
   }
 }
 
@@ -621,24 +709,32 @@
 
   strong {
     color: #163024;
-    line-height: 1.35;
+    line-height: 1.45; // CAMBIO: antes 1.35, mejora lectura
+    font-size: 1rem; // CAMBIO: agregado para subir la fuente
+    overflow-wrap: anywhere; // CAMBIO: evita overflow
   }
 
   small {
     color: #708578;
-    line-height: 1.35;
+    line-height: 1.45; // CAMBIO: antes 1.35, mejora lectura
+    font-size: 0.92rem; // CAMBIO: agregado para subir la fuente
+    overflow-wrap: anywhere; // CAMBIO: evita overflow
   }
 }
 
 .history-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); // CAMBIO: minmax(0, ...) evita overflow
   gap: 1rem;
+  width: 100%; // CAMBIO: asegura ajuste al ancho
+  max-width: 100%; // CAMBIO: evita desborde
 }
 
 .table-wrap {
   width: 100%;
+  max-width: 100%; // CAMBIO: evita desborde lateral extra
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch; // CAMBIO: mejora scroll táctil
 }
 
 .history-table {
@@ -648,14 +744,14 @@
 
   th,
   td {
-    padding: 0.9rem 0.8rem;
+    padding: 0.95rem 0.85rem; // CAMBIO: antes 0.9rem 0.8rem, acompaña fuentes mayores
     vertical-align: middle;
     border-bottom: 1px solid #ebf5ee;
     text-align: center;
   }
 
   th {
-    font-size: 0.82rem;
+    font-size: 0.92rem; // CAMBIO: antes 0.82rem, sube la fuente
     text-transform: uppercase;
     letter-spacing: 0.04em;
     color: #6a8175;
@@ -665,8 +761,9 @@
 
   td {
     color: #254032;
-    font-size: 0.95rem;
+    font-size: 1rem; // CAMBIO: antes 0.95rem, sube la fuente
     background: rgba(255, 255, 255, 0.9);
+    overflow-wrap: anywhere; // CAMBIO: evita desborde por contenido largo
   }
 }
 
@@ -688,15 +785,19 @@
 
   strong {
     display: block;
-    font-size: 1.05rem;
+    font-size: 1.18rem; // CAMBIO: antes 1.05rem, sube la fuente
     color: #1e3a2b;
     margin-bottom: 0.3rem;
+    line-height: 1.3; // CAMBIO: mejora lectura
+    overflow-wrap: anywhere; // CAMBIO: evita desborde
   }
 
   p {
     margin: 0;
     max-width: 340px;
-    line-height: 1.5;
+    line-height: 1.6; // CAMBIO: antes 1.5, mejora lectura
+    font-size: 1rem; // CAMBIO: agregado para subir la fuente
+    overflow-wrap: anywhere; // CAMBIO: evita overflow
   }
 }
 
@@ -745,7 +846,8 @@
 
 @media (max-width: 780px) {
   .admin-dashboard {
-    padding: 0.9rem;
+    padding: 0.95rem; // CAMBIO: antes 0.9rem, pequeño ajuste
+    gap: 1rem; // CAMBIO: reduce separación para mobile
   }
 
   .hero-card,
@@ -758,6 +860,19 @@
     border-radius: 20px;
   }
 
+  .hero-card {
+    padding: 1.1rem; // CAMBIO: reduce padding para mobile sin perder aire
+  }
+
+  .panel,
+  .kpi-card,
+  .quick-card,
+  .distribution-card,
+  .activity-card,
+  .table-card {
+    padding: 0.95rem; // CAMBIO: mejora encaje en pantallas chicas
+  }
+
   .kpis-grid,
   .links-grid,
   .hero-stats {
@@ -767,15 +882,155 @@
   .hero-actions,
   .panel-head {
     flex-direction: column;
-    align-items: flex-start;
+    align-items: stretch; // CAMBIO: antes flex-start, mejor para mobile
   }
 
   .hero-actions .btn,
-  .quick-link {
-    width: 100%;
+  .quick-link,
+  .btn {
+    width: 100%; // CAMBIO: botones y enlaces ocupan todo el ancho en mobile
+  }
+
+  .hero-copy h1 {
+    font-size: clamp(1.7rem, 7vw, 2.2rem); // CAMBIO: escala más amigable para mobile
+  }
+
+  .hero-copy p {
+    font-size: 1rem; // CAMBIO: mantiene buena lectura en mobile
+  }
+
+  .hero-highlight h2 {
+    font-size: 1.25rem; // CAMBIO: baja un poco para evitar roturas en mobile
   }
 
   .history-table {
     min-width: 640px;
+  }
+}
+
+@media (max-width: 640px) {
+  .hero-card {
+    gap: 1rem; // CAMBIO: ajusta separación interna en mobile
+  }
+
+  .hero-stat__value {
+    font-size: 1.95rem; // CAMBIO: reduce un poco para mobile sin perder protagonismo
+  }
+
+  .kpi-value {
+    font-size: 1.75rem; // CAMBIO: ajusta tamaño para pantallas chicas
+  }
+
+  .hero-progress__head {
+    font-size: 0.92rem; // CAMBIO: controla proporción del texto en mobile
+  }
+
+  .panel-head h3 {
+    font-size: 1.2rem; // CAMBIO: reduce un poco para mobile
+  }
+
+  .quick-body h4 {
+    font-size: 1.05rem; // CAMBIO: ajusta el título de tarjetas
+  }
+
+  .history-table th,
+  .history-table td {
+    padding: 0.8rem 0.7rem; // CAMBIO: compacta tabla para mobile
+  }
+}
+
+@media (max-width: 520px) {
+  .admin-dashboard {
+    padding: 0.8rem; // CAMBIO: reduce padding exterior en celulares
+  }
+
+  .hero-card,
+  .panel,
+  .kpi-card,
+  .quick-card,
+  .distribution-card,
+  .activity-card,
+  .table-card {
+    border-radius: 18px; // CAMBIO: un poco más compacto para mobile
+  }
+
+  .hero-card,
+  .panel,
+  .kpi-card,
+  .quick-card,
+  .distribution-card,
+  .activity-card,
+  .table-card {
+    padding: 0.85rem; // CAMBIO: compacta padding en mobile
+  }
+
+  .hero-copy h1 {
+    font-size: clamp(1.55rem, 8vw, 2rem); // CAMBIO: ajusta más el título principal
+    line-height: 1.12; // CAMBIO: mejora lectura en pantallas chicas
+  }
+
+  .hero-copy p,
+  .panel-head p,
+  .quick-body p,
+  .empty-state p {
+    font-size: 0.96rem; // CAMBIO: controla proporción de textos en mobile
+  }
+
+  .hero-eyebrow,
+  .section-eyebrow,
+  .chip,
+  .badge,
+  .pill,
+  .tag {
+    font-size: 0.82rem; // CAMBIO: compacta elementos pequeños en celular
+  }
+
+  .btn,
+  .quick-link {
+    min-height: 44px; // CAMBIO: mantiene buen tap target
+    padding: 0.8rem 0.9rem; // CAMBIO: compacta sin perder comodidad
+    font-size: 0.95rem; // CAMBIO: ajusta fuente para mobile
+  }
+
+  .kpi-label,
+  .kpi-helper,
+  .distribution-progress small,
+  .activity-list__body small {
+    font-size: 0.88rem; // CAMBIO: compacta textos secundarios
+  }
+
+  .history-table {
+    min-width: 560px; // CAMBIO: baja un poco el mínimo para mejorar visualización en móvil
+  }
+}
+
+@media (max-width: 400px) {
+  .admin-dashboard {
+    padding: 0.7rem; // CAMBIO: compacta aún más el contenedor exterior
+  }
+
+  .hero-copy h1 {
+    font-size: 1.45rem; // CAMBIO: evita roturas en celulares muy chicos
+  }
+
+  .hero-copy p,
+  .panel-head p,
+  .quick-body p,
+  .empty-state p {
+    font-size: 0.92rem; // CAMBIO: baja un poco para móviles muy chicos
+  }
+
+  .hero-stat__value,
+  .kpi-value {
+    font-size: 1.6rem; // CAMBIO: controla los números grandes
+  }
+
+  .btn,
+  .quick-link {
+    font-size: 0.92rem; // CAMBIO: ajusta botones para móviles muy chicos
+  }
+
+  .history-table {
+    min-width: 520px; // CAMBIO: mantiene tabla usable sin romper layout general
   }
 }

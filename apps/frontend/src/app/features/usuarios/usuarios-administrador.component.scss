@@ -1,5 +1,14 @@
 :host {
   display: block;
+  width: 100%; // CAMBIO: asegura que el host use solo el ancho disponible
+  max-width: 100%; // CAMBIO: evita overflow horizontal del componente
+  overflow-x: hidden; // CAMBIO: bloquea scroll horizontal general
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box; // CAMBIO: evita que padding y border agranden el ancho real
 }
 
 .users-admin-page {
@@ -11,6 +20,10 @@
     radial-gradient(circle at bottom right, rgba(16, 185, 129, 0.14), transparent 32%),
     linear-gradient(180deg, #ecfdf3 0%, #f6fff9 55%, #f8fafc 100%);
   min-height: 100%;
+  width: 100%; // CAMBIO: asegura ancho completo sin exceder viewport
+  max-width: 100%; // CAMBIO: evita desborde lateral
+  min-width: 0; // CAMBIO: permite que hijos grid/flex se encojan correctamente
+  overflow-x: hidden; // CAMBIO: elimina scroll horizontal del módulo
 }
 
 .panel-soft,
@@ -23,6 +36,9 @@
   box-shadow:
     0 14px 30px rgba(15, 81, 50, 0.08),
     0 3px 10px rgba(15, 81, 50, 0.04);
+  width: 100%; // CAMBIO: asegura ajuste correcto al ancho disponible
+  max-width: 100%; // CAMBIO: evita overflow lateral
+  min-width: 0; // CAMBIO: importante para hijos internos en flex/grid
 }
 
 .page-head {
@@ -35,27 +51,33 @@
 .page-head__copy {
   display: grid;
   gap: 0.25rem;
+  min-width: 0; // CAMBIO: permite que el contenido textual se ajuste mejor
 }
 
 .page-title {
   margin: 0;
-  font-size: clamp(1.35rem, 2.2vw, 1.9rem);
+  font-size: clamp(1.45rem, 2.35vw, 2rem);
   font-weight: 800;
-  color: #163024;
+  color: #0f562a; // CAMBIO: título en verde
   letter-spacing: -0.02em;
+  line-height: 1.15; // CAMBIO: mejora legibilidad
+  overflow-wrap: anywhere; // CAMBIO: evita desborde con títulos largos
 }
 
 .page-sub {
   margin: 0;
   color: #678074;
-  font-size: 0.95rem;
-  line-height: 1.45;
+  font-size: 1.2rem; // CAMBIO: antes 0.95rem, sube una medida
+  line-height: 1.5; // CAMBIO: mejora lectura
+  overflow-wrap: anywhere; // CAMBIO: evita overflow horizontal
 }
 
 .stats-grid {
   display: grid;
   gap: 0.85rem;
   grid-template-columns: repeat(7, minmax(0, 1fr));
+  width: 100%; // CAMBIO: asegura que el grid respete el ancho del contenedor
+  max-width: 100%; // CAMBIO: evita desborde
 }
 
 .stat-card {
@@ -72,20 +94,23 @@
   box-shadow:
     0 10px 24px rgba(15, 81, 50, 0.06),
     0 3px 10px rgba(15, 81, 50, 0.04);
+  min-width: 0; // CAMBIO: evita overflow interno por textos largos
 }
 
 .stat__num {
-  font-size: clamp(1.7rem, 2.4vw, 2.2rem);
+  font-size: clamp(2rem, 2.55vw, 2.5rem); // CAMBIO: antes clamp(1.7rem, 2.4vw, 2.2rem), sube una medida
   font-weight: 900;
   line-height: 1;
   color: #0f5132;
 }
 
 .stat__label {
-  font-size: 0.84rem;
+  font-size: 1rem; // CAMBIO: antes 0.84rem, sube una medida
   color: #547062;
   font-weight: 700;
   text-align: center;
+  line-height: 1.3; // CAMBIO: mejora lectura
+  overflow-wrap: anywhere; // CAMBIO: evita desborde
 }
 
 .panel-filters,
@@ -98,6 +123,8 @@
   gap: 0.9rem;
   align-items: end;
   grid-template-columns: minmax(320px, 1.6fr) minmax(240px, .9fr) minmax(200px, .8fr) auto;
+  width: 100%; // CAMBIO: asegura ajuste al ancho del contenedor
+  max-width: 100%; // CAMBIO: evita overflow horizontal
 }
 
 .field {
@@ -111,14 +138,17 @@
 }
 
 .field__label {
-  font-size: 0.88rem;
+  font-size: 1.1rem; // CAMBIO: antes 0.88rem, sube una medida
   font-weight: 800;
+  text-align: center;
   color: #315743;
+  line-height: 1.3; // CAMBIO: mejora lectura
+  overflow-wrap: anywhere; // CAMBIO: evita desborde del label
 }
 
 .search-input,
 select,
-.custom-select__btn {
+.dsf-custom-select__btn {
   appearance: none;
   width: 100%;
   min-width: 0;
@@ -128,7 +158,7 @@ select,
   background: #fff;
   color: #163024;
   padding: 0.8rem 0.95rem;
-  font-size: 0.95rem;
+  font-size: 1rem; // CAMBIO: antes 0.95rem, sube una medida
   box-sizing: border-box;
   outline: none;
   transition: border-color 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
@@ -139,13 +169,13 @@ select,
   }
 }
 
-.custom-select {
+.dsf-custom-select {
   position: relative;
   min-width: 0;
   z-index: 20;
 }
 
-.custom-select__btn {
+.dsf-custom-select__btn {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -154,11 +184,12 @@ select,
   cursor: pointer;
 }
 
-.custom-select__menu {
+.dsf-custom-select__menu {
   position: absolute;
   top: calc(100% + 0.45rem);
   left: 0;
   min-width: 100%;
+  max-width: min(100%, 360px); // CAMBIO: evita que el menú se salga del viewport
   border-radius: 16px;
   border: 1px solid #cfe7d7;
   background: #fff;
@@ -166,6 +197,7 @@ select,
     0 20px 34px rgba(15, 81, 50, 0.12),
     0 6px 14px rgba(15, 81, 50, 0.08);
   padding: 0.45rem;
+  z-index: 60; // CAMBIO: asegura que se vea por encima del resto
 }
 
 .root,
@@ -180,7 +212,7 @@ select,
   position: relative;
 }
 
-.custom-select__menu button {
+.dsf-custom-select__menu button {
   width: 100%;
   min-height: 40px;
   border: none;
@@ -190,8 +222,10 @@ select,
   padding: 0.7rem 0.85rem;
   text-align: left;
   font-weight: 700;
+  font-size: 0.95rem;
   cursor: pointer;
   transition: background 0.18s ease, color 0.18s ease;
+  overflow-wrap: anywhere;
 
   &:hover {
     background: #e7f8ed;
@@ -211,15 +245,32 @@ select,
 }
 
 .submenu {
-  margin-top: 0.35rem;
-  padding-top: 0.35rem;
-  border-top: 1px solid #e6f2ea;
+  display: none;
+  position: absolute;
+  top: 0;
+  left: calc(100% + 0.45rem);
+  min-width: 220px;
+  max-width: 260px;
+  padding: 0.45rem;
+  border-radius: 16px;
+  border: 1px solid #cfe7d7;
+  background: #fff;
+  box-shadow:
+    0 20px 34px rgba(15, 81, 50, 0.12),
+    0 6px 14px rgba(15, 81, 50, 0.08);
+  z-index: 70;
+}
+
+.has-sub:hover > .submenu,
+.submenu.open {
+  display: block;
 }
 
 .filters__cta {
   display: flex;
   align-items: end;
   justify-content: flex-end;
+  min-width: 0; // CAMBIO: mejora ajuste responsive
 }
 
 .btn {
@@ -234,8 +285,14 @@ select,
   justify-content: center;
   gap: 0.55rem;
   font-weight: 800;
+  font-size: 1.2rem; // CAMBIO: agregado para subir una medida
+  line-height: 1.2; // CAMBIO: controla altura del texto
   transition: transform 0.18s ease, box-shadow 0.18s ease, opacity 0.18s ease;
   text-decoration: none;
+  max-width: 100%; // CAMBIO: evita que el botón desborde
+  white-space: nowrap; // CAMBIO: mantiene el texto en una línea
+  overflow: hidden; // CAMBIO: evita desborde visual
+  text-overflow: ellipsis; // CAMBIO: recorta si no entra
 
   &:hover:not(:disabled) {
     transform: translateY(-1px);
@@ -248,15 +305,17 @@ select,
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, #22c55e 0%, #15803d 100%);
+  background: linear-gradient(135deg, #136a33 0%, #1a9045 100%);
   color: #fff;
   box-shadow: 0 10px 18px rgba(34, 197, 94, 0.22);
+  font-size: 1rem;
 }
 
 .btn-secondary {
   background: #f3fdf6;
   color: #166534;
   border: 1px solid #ccebd7;
+  font-size: 1rem;
 }
 
 .btn-new-user {
@@ -267,21 +326,24 @@ select,
 .btn-new-user__icon {
   display: inline-grid;
   place-items: center;
-  width: 22px;
-  height: 22px;
+  width: 30px;
+  height: 30px;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.18);
-  font-size: 0.95rem;
+  background: #8bd1957c;
+  font-size: 1.6rem; // CAMBIO: antes 0.95rem, sube una medida
   line-height: 1;
   font-weight: 900;
+  flex: 0 0 auto; // CAMBIO: evita deformación del ícono
 }
 
 .table-scroll {
   width: 100%;
+  max-width: 100%; // CAMBIO: evita desborde lateral del wrapper
   overflow-x: auto;
   border-radius: 18px;
   border: 1px solid #d6ebde;
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.96) 0%, rgba(241, 251, 245, 0.96) 100%);
+  -webkit-overflow-scrolling: touch; // CAMBIO: mejora scroll táctil en mobile
 }
 
 .users-table {
@@ -294,22 +356,23 @@ select,
     padding: 0.95rem 0.85rem;
     vertical-align: middle;
     border-bottom: 1px solid #ebf5ee;
-    text-align: left;
+    text-align: center; // CAMBIO: centra todos los textos de la tabla
   }
 
   th {
-    font-size: 0.82rem;
+    font-size: 0.9rem; // CAMBIO: antes 0.82rem, sube una medida
     text-transform: uppercase;
     letter-spacing: 0.04em;
-    color: #6a8175;
+    color: #0f562a;
     font-weight: 800;
     background: rgba(226, 247, 234, 0.95);
   }
 
   td {
     color: #254032;
-    font-size: 0.94rem;
+    font-size: 1.1rem; // CAMBIO: antes 0.94rem, sube una medida
     background: rgba(255, 255, 255, 0.94);
+    overflow-wrap: anywhere; // CAMBIO: evita desborde por contenido largo
   }
 }
 
@@ -335,20 +398,24 @@ select,
 .td-strong {
   display: flex;
   align-items: center;
+  justify-content: center; // CAMBIO: centra contenido dentro de la celda
   gap: 0.5rem;
   flex-wrap: wrap;
   font-weight: 700;
   color: #163024;
+  min-width: 0; // CAMBIO: evita overflow interno
 }
 
 .badge {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 0.32rem 0.6rem;
+  padding: 0.36rem 0.65rem; // CAMBIO: antes 0.32rem 0.6rem, acompaña fuente mayor
   border-radius: 999px;
-  font-size: 0.72rem;
+  font-size: 0.8rem; // CAMBIO: antes 0.72rem, sube una medida
   font-weight: 800;
+  line-height: 1.2; // CAMBIO: controla altura del texto
+  max-width: 100%; // CAMBIO: evita desborde
 }
 
 .badge--ban {
@@ -366,11 +433,13 @@ select,
   font-weight: 700;
   border: 1px solid transparent;
   text-transform: capitalize;
+  max-width: 100%; // CAMBIO: evita desborde
 }
 
 .pill--lg {
-  padding: 0.42rem 0.8rem;
-  font-size: 0.78rem;
+  padding: 0.46rem 0.84rem; // CAMBIO: antes 0.42rem 0.8rem, acompaña fuente mayor
+  font-size: 0.86rem; // CAMBIO: antes 0.78rem, sube una medida
+  line-height: 1.2; // CAMBIO: controla altura del texto
 }
 
 .pill--admin {
@@ -410,6 +479,7 @@ select,
   background: #fff;
   color: #166534;
   border-radius: 12px;
+  font-size: 1rem;
   width: 40px;
   height: 40px;
   cursor: pointer;
@@ -419,6 +489,7 @@ select,
     0 8px 18px rgba(15, 81, 50, 0.06),
     inset 0 1px 0 rgba(255, 255, 255, 0.85);
   transition: transform 0.18s ease, background 0.18s ease, border-color 0.18s ease;
+  flex: 0 0 auto; // CAMBIO: evita deformaciones
 
   &:hover {
     transform: translateY(-1px);
@@ -449,6 +520,7 @@ select,
   background: #dcfce7;
   border: 1px solid #b7e4c7;
   transition: background 0.2s ease, border-color 0.2s ease;
+  flex: 0 0 auto; // CAMBIO: evita deformaciones
 
   &::after {
     content: '';
@@ -491,14 +563,18 @@ select,
 }
 
 .empty-title {
-  font-size: 1.05rem;
+  font-size: 1.3rem; // CAMBIO: antes 1.05rem, sube una medida
   color: #1e3a2b;
   font-weight: 800;
   margin-bottom: 0.3rem;
+  line-height: 1.3; // CAMBIO: mejora lectura
+  overflow-wrap: anywhere; // CAMBIO: evita desborde
 }
 
 .empty-sub {
-  line-height: 1.5;
+  line-height: 1.55; // CAMBIO: antes 1.5, mejora lectura
+  font-size: 1.1rem; // CAMBIO: agregado para subir una medida
+  overflow-wrap: anywhere; // CAMBIO: evita overflow
 }
 
 .pager {
@@ -513,6 +589,8 @@ select,
 .pager__info {
   color: #547062;
   font-weight: 700;
+  font-size: 1rem; // CAMBIO: agregado para subir una medida
+  overflow-wrap: anywhere; // CAMBIO: evita desborde
 }
 
 .pager__actions {
@@ -558,6 +636,21 @@ select,
     flex-direction: column;
     align-items: flex-start;
   }
+
+  .dsf-custom-select__menu {
+    max-width: 100%; // CAMBIO: asegura que el dropdown no se salga del contenedor
+  }
+
+  .submenu {
+    position: static;
+    min-width: 100%;
+    max-width: 100%;
+    margin-top: 0.35rem;
+    box-shadow: none;
+    border-radius: 12px;
+    border: 1px solid #e6f2ea;
+    background: #fcfffd;
+  }
 }
 
 @media (max-width: 780px) {
@@ -571,13 +664,152 @@ select,
     border-radius: 18px;
   }
 
+  .page-head,
+  .panel-filters,
+  .panel-table {
+    padding: 0.9rem; // CAMBIO: compacta padding para mobile
+  }
+
   .users-table {
     min-width: 980px;
+  }
+
+  .page-title {
+    font-size: clamp(1.3rem, 5vw, 1.7rem); // CAMBIO: controla mejor el título en mobile
+  }
+
+  .page-sub {
+    font-size: 0.96rem; // CAMBIO: mantiene buena lectura sin romper mobile
   }
 }
 
 @media (max-width: 560px) {
   .stats-grid {
     grid-template-columns: 1fr;
+  }
+
+  .users-admin-page {
+    padding: 0.75rem; // CAMBIO: reduce padding exterior en celular
+  }
+
+  .page-head,
+  .panel-soft,
+  .panel,
+  .stat-card {
+    border-radius: 16px; // CAMBIO: compacta esquinas en mobile
+  }
+
+  .page-head,
+  .panel-filters,
+  .panel-table {
+    padding: 0.8rem; // CAMBIO: compacta padding en pantallas chicas
+  }
+
+  .field__label {
+    font-size: 0.92rem; // CAMBIO: ajusta un poco en mobile para que todo entre mejor
+  }
+
+  .search-input,
+  select,
+  .dsf-custom-select__btn {
+    min-height: 44px; // CAMBIO: mantiene buen tamaño táctil sin ocupar demasiado
+    padding: 0.75rem 0.85rem; // CAMBIO: compacta inputs en mobile
+    font-size: 0.96rem; // CAMBIO: controla fuente en pantallas chicas
+  }
+
+  .btn,
+  .btn-new-user {
+    width: 100%; // CAMBIO: botones ocupan todo el ancho en mobile
+    min-width: 0; // CAMBIO: evita desborde por min-width fijo
+  }
+
+  .btn-new-user {
+    padding-inline: 1rem; // CAMBIO: compacta padding horizontal en mobile
+  }
+
+  .users-table {
+    min-width: 860px; // CAMBIO: baja un poco el ancho mínimo para mejorar uso en mobile
+  }
+
+  .users-table th,
+  .users-table td {
+    padding: 0.8rem 0.75rem; // CAMBIO: compacta tabla en mobile
+  }
+
+  .users-table th {
+    font-size: 0.86rem; // CAMBIO: ajusta encabezados para mobile
+  }
+
+  .users-table td {
+    font-size: 0.96rem; // CAMBIO: ajusta texto de tabla para mobile
+  }
+
+  .th-actions,
+  .td-actions {
+    width: 160px; // CAMBIO: compacta ancho de acciones
+  }
+
+  .icon-btn {
+    width: 38px; // CAMBIO: compacta botones de acción
+    height: 38px; // CAMBIO: compacta botones de acción
+  }
+
+  .icon-toggle__pill {
+    width: 48px; // CAMBIO: compacta toggle en mobile
+    height: 28px; // CAMBIO: compacta toggle en mobile
+  }
+
+  .icon-toggle__pill::after {
+    width: 20px; // CAMBIO: compacta perilla del toggle
+    height: 20px; // CAMBIO: compacta perilla del toggle
+  }
+
+  .icon-toggle input:checked + .icon-toggle__pill::after {
+    transform: translateX(20px); // CAMBIO: ajusta desplazamiento del toggle compacto
+  }
+
+  .pager__actions,
+  .pager__actions--spaced {
+    width: 100%; // CAMBIO: acciones del paginador ocupan todo el ancho
+    justify-content: stretch; // CAMBIO: mejora distribución en mobile
+  }
+
+  .pager__actions .btn {
+    flex: 1 1 100%; // CAMBIO: botones del paginador apilan y llenan ancho disponible
+  }
+}
+
+@media (max-width: 400px) {
+  .users-admin-page {
+    padding: 0.7rem; // CAMBIO: compacta aún más el contenedor exterior
+  }
+
+  .page-title {
+    font-size: 1.25rem; // CAMBIO: evita roturas en celulares muy chicos
+  }
+
+  .page-sub,
+  .empty-sub,
+  .pager__info {
+    font-size: 0.94rem; // CAMBIO: baja un poco textos secundarios en pantallas muy chicas
+  }
+
+  .stat__num {
+    font-size: 1.7rem; // CAMBIO: controla tamaño numérico en celulares chicos
+  }
+
+  .stat__label {
+    font-size: 0.88rem; // CAMBIO: compacta etiquetas de stats
+  }
+
+  .search-input,
+  select,
+  .dsf-custom-select__btn,
+  .btn {
+    font-size: 0.94rem; // CAMBIO: controla proporción de controles en pantallas chicas
+  }
+
+  .users-table {
+    min-width: 800px; // CAMBIO: mejora un poco la experiencia de tabla en mobile chico
   }
 }

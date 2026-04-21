@@ -201,24 +201,57 @@ export class UsuariosAdministradorComponent implements OnInit {
 
   // Ban / Habilitar
   async toggleBan(u: UsuarioVM, ev?: Event) {
-    const checked = (ev?.target as HTMLInputElement | null)?.checked;
-    if (u.isBanned && (checked === undefined || checked === false)) {
+    const input = ev?.target as HTMLInputElement | null;
+    const checked = input?.checked;
+
+    // Quitar ban: NO abre modal, pide confirmación simple
+    if (u.isBanned) {
+      if (checked === true) {
+        return;
+      }
+
+      const ok = window.confirm(
+        `¿Deseas rehabilitar al usuario "${u.nombreUsuario}"?\n\nSe quitará el estado BANEADO y se limpiará el motivo del ban.`
+      );
+
+      if (!ok) {
+        if (input) input.checked = true;
+        return;
+      }
+
       this.loading.set(true);
       this.api.enable(u.id, { idEstadoUsuario: 2 }).subscribe({
-        next: () => { this.loading.set(false); this.refreshAll(); },
-        error: (e) => { this.loading.set(false); alert(e?.message || 'Error al habilitar'); }
+        next: () => {
+          this.loading.set(false);
+          this.refreshAll();
+        },
+        error: (e) => {
+          this.loading.set(false);
+          if (input) input.checked = true;
+          alert(e?.message || 'Error al habilitar');
+        }
       });
       return;
     }
-    if (!u.isBanned && (checked === undefined || checked === true)) {
+
+    // Banear: abre modal, pero NO deja el switch visualmente encendido todavía
+    if (checked === true) {
+      if (input) input.checked = false;
       this.current.set(u);
       this.showBan.set(true);
       return;
     }
+
+    if (input) input.checked = false;
   }
 
-  onBanClosed() { this.showBan.set(false); this.current.set(null); }
+  onBanClosed() {
+    this.showBan.set(false);
+    this.current.set(null);
+  }
+
   onBanConfirmed() {
+    // solo se dispara cuando el modal realmente ejecutó el ban con éxito
     this.showBan.set(false);
     this.current.set(null);
     this.refreshAll();

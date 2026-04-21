@@ -2,7 +2,7 @@
   <header class="page-head panel-soft">
     <div class="page-head__row">
       <div class="page-head__copy">
-        <h1 class="page-title">Entregas (Administrador)</h1>
+        <h1 class="page-title">Panel de Entregas</h1>
         <p class="page-sub">
           Gestión de entregas: consulta, búsqueda, filtrado y visualización detallada.
         </p>
@@ -71,7 +71,7 @@
         <input
           type="search"
           class="search-input"
-          placeholder="ID, código, cliente, desafío, ubicación..."
+          placeholder="ID, código, cliente o desafío"
           [value]="q()"
           (input)="q.set($any($event.target).value)"
         />

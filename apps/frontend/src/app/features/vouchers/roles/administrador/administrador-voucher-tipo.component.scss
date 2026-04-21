@@ -2,6 +2,16 @@
 
 :host {
   display: block;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  min-width: 0;
 }
 
 /* Wrapper general */
@@ -18,40 +28,52 @@
   box-shadow:
     0 18px 36px rgba(15, 81, 50, 0.08),
     0 4px 14px rgba(15, 81, 50, 0.04);
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
 }
 
-/* Encabezado general */
+/* Header */
 .vouchers-admin {
+  width: 100%;
+  max-width: 100%;
+
   .dsf-header {
     display: grid;
     gap: 0.3rem;
     margin-bottom: 0.2rem;
     text-align: left;
+    width: 100%;
   }
 
   .dsf-title {
-    font-size: clamp(1.45rem, 2.3vw, 1.95rem);
-    line-height: 1.15;
-    color: #163024;
-    margin: 0;
+    font-size: clamp(1.45rem, 2.35vw, 2rem);
     font-weight: 800;
+    color: #0f562a;
+    line-height: 1.15;
+    margin: 0;
     letter-spacing: -0.02em;
+    overflow-wrap: anywhere;
   }
 
   .dsf-sub {
-    font-size: 0.97rem;
-    color: #5f7b6c;
+    color: #678074;
+    font-size: 1.2rem;
     margin: 0;
     line-height: 1.45;
+    overflow-wrap: anywhere;
   }
 }
 
-/* Secciones */
+/* Grid de secciones */
 .dsf-sections-grid {
   display: grid;
   gap: 1.25rem;
+  width: 100%;
+  max-width: 100%;
 }
 
+/* Panel */
 .dsf-panel {
   background:
     radial-gradient(circle at top right, rgba(34, 197, 94, 0.08), transparent 24%),
@@ -62,6 +84,9 @@
     0 14px 28px rgba(15, 81, 50, 0.08),
     0 4px 12px rgba(15, 81, 50, 0.04);
   padding: 1.1rem;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
 }
 
 .dsf-panel__header {
@@ -71,14 +96,16 @@
   gap: 1rem;
   margin-bottom: 0.9rem;
   flex-wrap: wrap;
+  width: 100%;
 }
 
 .dsf-panel__title {
-  font-size: 1.22rem;
+  font-size: 1.4rem;
+  color: #0f562a;
   font-weight: 800;
-  color: #163024;
   margin: 0;
   letter-spacing: -0.01em;
+  overflow-wrap: anywhere;
 }
 
 .dsf-panel__actions {
@@ -93,28 +120,22 @@
   border-radius: 14px;
   min-height: 42px;
   padding: 0.72rem 1rem;
-  font-size: 0.92rem;
+  font-size: 1.1rem;
   font-weight: 800;
   border: 1px solid transparent;
   cursor: pointer;
-  transition:
-    transform 0.18s ease,
-    box-shadow 0.18s ease,
-    background-color 0.18s ease,
-    border-color 0.18s ease,
-    color 0.18s ease;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 0.45rem;
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: all 0.18s ease;
 
   &:hover:not(:disabled) {
     transform: translateY(-1px);
-  }
-
-  &:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
   }
 }
 
@@ -127,10 +148,9 @@
 
 .dsf-btn--primary:hover {
   background: linear-gradient(135deg, #16a34a 0%, #166534 100%);
-  border-color: #166534;
 }
 
-/* Estados vacíos / loading */
+/* Empty */
 .dsf-empty {
   min-height: 150px;
   border: 1px dashed #cfe4d7;
@@ -140,18 +160,13 @@
   place-items: center;
   text-align: center;
   padding: 1.2rem;
-}
-
-.dsf-empty--loading {
-  background: linear-gradient(180deg, #f3fff6 0%, #eaf8ef 100%);
+  font-size: 1.2rem;
 }
 
 .dsf-empty__text {
   margin: 0;
   color: #5c7768;
-  font-size: 0.96rem;
   font-weight: 700;
-  line-height: 1.45;
 }
 
 /* Tabla */
@@ -164,88 +179,50 @@
 
 .dsf-table {
   width: 100%;
+  min-width: 780px;
   border-collapse: collapse;
-  font-size: 0.95rem;
-  table-layout: fixed;
+  font-size: 1.1rem;
 }
 
-/* Columnas ID */
-.dsf-th--id,
-.dsf-td--id {
-  width: 56px;
-  min-width: 56px;
-  max-width: 56px;
+.dsf-table th,
+.dsf-table td {
+  padding: 0.85rem;
+  border-bottom: 1px solid #e7f2eb;
   text-align: center;
-  white-space: nowrap;
-  padding-left: 0.4rem;
-  padding-right: 0.4rem;
-  font-weight: 800;
+  vertical-align: middle;
 }
 
-.dsf-th--id2,
-.dsf-td--id2 {
-  width: 72px;
-  min-width: 72px;
-  max-width: 72px;
-  text-align: center;
-  white-space: nowrap;
-  padding-left: 0.4rem;
-  padding-right: 0.4rem;
-  font-weight: 800;
-}
-
-/* Forzados */
-.dsf-panel:nth-of-type(1) .dsf-table thead th:nth-child(1),
-.dsf-panel:nth-of-type(1) .dsf-table tbody td:nth-child(1) {
-  width: 56px !important;
-  min-width: 56px !important;
-  max-width: 56px !important;
-}
-
-.dsf-panel:nth-of-type(2) .dsf-table thead th:nth-child(1),
-.dsf-panel:nth-of-type(2) .dsf-table tbody td:nth-child(1) {
-  width: 56px !important;
-  min-width: 56px !important;
-  max-width: 56px !important;
-}
-
-.dsf-panel:nth-of-type(2) .dsf-table thead th:nth-child(2),
-.dsf-panel:nth-of-type(2) .dsf-table tbody td:nth-child(2) {
-  width: 72px !important;
-  min-width: 72px !important;
-  max-width: 72px !important;
-}
-
-/* Encabezados */
 .dsf-table thead th {
-  text-align: center;
-  font-size: 0.82rem;
-  letter-spacing: 0.05em;
-  color: #5f7b6c;
+  font-size: 1.1rem;
+  color: #0f562a;
   background: rgba(226, 247, 234, 0.95);
   text-transform: uppercase;
   font-weight: 800;
 }
 
-/* Celdas comunes */
-.dsf-table th,
-.dsf-table td {
-  padding: 0.82rem 0.8rem;
-  border-bottom: 1px solid #e7f2eb;
-  vertical-align: middle;
-}
-
 .dsf-table tbody td {
   background: rgba(255, 255, 255, 0.94);
   color: #244233;
+  font-size: 1.1rem;
 }
 
 .dsf-table tbody tr:hover td {
   background: #f5fcf7;
 }
 
-/* Alineaciones */
-.dsf-td--center { text-align: center; }
+.dsf-th--id,
+.dsf-td--id {
+  width: 70px;
+  white-space: nowrap;
+}
+
+.dsf-th--id2,
+.dsf-td--id2 {
+  width: 90px;
+  white-space: nowrap;
+}
+
+.dsf-td--center { text-align: center;}
 .dsf-td--title  { text-align: left; }
 
 .dsf-table__cell--strong {
@@ -253,142 +230,16 @@
   color: #163024;
 }
 
-/* TIPOS: ID | Vigencia | Título | Estado | Acciones */
-.dsf-panel:nth-of-type(1) .dsf-table thead th:nth-child(2),
-.dsf-panel:nth-of-type(1) .dsf-table tbody td:nth-child(2) { width: 28%; }
-
-.dsf-panel:nth-of-type(1) .dsf-table thead th:nth-child(3),
-.dsf-panel:nth-of-type(1) .dsf-table tbody td:nth-child(3) { width: 42%; }
-
-.dsf-panel:nth-of-type(1) .dsf-table thead th:nth-child(4),
-.dsf-panel:nth-of-type(1) .dsf-table tbody td:nth-child(4) { width: 15%; }
-
-.dsf-panel:nth-of-type(1) .dsf-table thead th:nth-child(5),
-.dsf-panel:nth-of-type(1) .dsf-table tbody td:nth-child(5) { width: 15%; }
-
-/* VOUCHERS: ID | ID Tipo | F.Adq | F.Uso | Beneficiario | Estado | Acciones */
-.dsf-panel:nth-of-type(2) .dsf-table thead th:nth-child(3),
-.dsf-panel:nth-of-type(2) .dsf-table tbody td:nth-child(3) { width: 16%; }
-
-.dsf-panel:nth-of-type(2) .dsf-table thead th:nth-child(4),
-.dsf-panel:nth-of-type(2) .dsf-table tbody td:nth-child(4) { width: 16%; }
-
-.dsf-panel:nth-of-type(2) .dsf-table thead th:nth-child(5),
-.dsf-panel:nth-of-type(2) .dsf-table tbody td:nth-child(5) { width: 32%; }
-
-.dsf-panel:nth-of-type(2) .dsf-table thead th:nth-child(6),
-.dsf-panel:nth-of-type(2) .dsf-table tbody td:nth-child(6) { width: 12%; }
-
-.dsf-panel:nth-of-type(2) .dsf-table thead th:nth-child(7),
-.dsf-panel:nth-of-type(2) .dsf-table tbody td:nth-child(7) { width: 16%; }
-
-/* Acciones */
-.dsf-table__th--actions {
-  text-align: center;
-}
-
-.dsf-table__cell--actions {
-  text-align: center;
-  padding-right: 0.6rem;
-}
-
-.dsf-actions-inline {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.55rem;
-  flex-wrap: wrap;
-}
-
-/* Botones de ícono */
-.dsf-icon-btn {
-  width: 40px;
-  height: 40px;
-  border: 1px solid #d3e7db;
-  background: #ffffff;
-  color: #166534;
-  border-radius: 14px;
-  font-size: 16px;
-  line-height: 1;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition:
-    background 0.18s ease,
-    border-color 0.18s ease,
-    transform 0.18s ease,
-    box-shadow 0.18s ease;
-  box-shadow: 0 8px 16px rgba(15, 81, 50, 0.06);
-}
-
-.dsf-icon-btn:hover {
-  background: #eaf8ef;
-  border-color: #9fd3b3;
-  transform: translateY(-1px);
-}
-
-/* Toggle */
-.dsf-icon-toggle {
-  width: 52px;
-  height: 30px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  cursor: pointer;
-}
-
-.dsf-icon-toggle input {
-  position: absolute;
-  opacity: 0;
-  pointer-events: none;
-}
-
-.dsf-icon-toggle__pill {
-  position: relative;
-  display: inline-block;
-  width: 52px;
-  height: 30px;
-  border-radius: 999px;
-  background: #e5e7eb;
-  border: 1px solid #d1d5db;
-  transition: background 0.2s ease, border-color 0.2s ease;
-
-  &::after {
-    content: '';
-    position: absolute;
-    top: 3px;
-    left: 3px;
-    width: 22px;
-    height: 22px;
-    border-radius: 50%;
-    background: #6b7280;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.18);
-    transition: transform 0.2s ease, background 0.2s ease;
-  }
-}
-
-.dsf-icon-toggle input:checked + .dsf-icon-toggle__pill {
-  background: #dcfce7;
-  border-color: #86efac;
-}
-
-.dsf-icon-toggle input:checked + .dsf-icon-toggle__pill::after {
-  transform: translateX(22px);
-  background: #166534;
-}
-
 /* Badges */
 .dsf-badge {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  white-space: nowrap;
   border-radius: 999px;
+  padding: 0.4rem 0.8rem;
+  font-size: 1rem;
   font-weight: 800;
-  font-size: 0.76rem;
-  padding: 0.38rem 0.78rem;
+  line-height: 1.2;
   border: 1px solid transparent;
 }
 
@@ -404,34 +255,126 @@
   border-color: #d1d5db;
 }
 
-@media (max-width: 920px) {
-  .dsf-panel__header {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .dsf-panel__actions {
-    width: 100%;
-  }
-
-  .dsf-btn {
-    flex: 1 1 auto;
-  }
+/* Acciones */
+.dsf-table__th--actions {
+  text-align: center;
 }
 
+.dsf-table__cell--actions {
+  text-align: center;
+}
+
+.dsf-actions-inline {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  flex-wrap: wrap;
+}
+
+/* Botones ícono */
+.dsf-icon-btn {
+  width: 40px;
+  height: 40px;
+  font-size: 1rem;
+  border-radius: 14px;
+  background: #fff;
+  border: 1px solid #d3e7db;
+  color: #166534;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition:
+    background 0.18s ease,
+    border-color 0.18s ease,
+    transform 0.18s ease,
+    box-shadow 0.18s ease;
+  box-shadow: 0 8px 16px rgba(15, 81, 50, 0.06);
+}
+
+.dsf-icon-btn:hover {
+  background: #eaf8ef;
+  border-color: #9fd3b3;
+  transform: translateY(-1px);
+}
+
+/* SWITCH ESTILIZADO */
+.dsf-icon-toggle {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 54px;
+  height: 32px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.dsf-icon-toggle input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.dsf-icon-toggle__pill {
+  position: relative;
+  width: 50px;
+  height: 28px;
+  border-radius: 999px;
+  background: #d1d5db;
+  border: 1px solid #cbd5e1;
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+  box-shadow:
+    inset 0 1px 2px rgba(0, 0, 0, 0.08),
+    0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.dsf-icon-toggle__pill::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #ffffff;
+  box-shadow:
+    0 2px 6px rgba(0, 0, 0, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  transition: transform 0.2s ease;
+}
+
+.dsf-icon-toggle input:checked + .dsf-icon-toggle__pill {
+  background: linear-gradient(135deg, #22c55e 0%, #15803d 100%);
+  border-color: #15803d;
+}
+
+.dsf-icon-toggle input:checked + .dsf-icon-toggle__pill::after {
+  transform: translateX(22px);
+}
+
+.dsf-icon-toggle:hover .dsf-icon-toggle__pill {
+  box-shadow:
+    inset 0 1px 2px rgba(0, 0, 0, 0.08),
+    0 4px 10px rgba(34, 197, 94, 0.18);
+}
+
+/* Responsive */
 @media (max-width: 780px) {
   .dsf-wrap.vouchers-admin {
     padding: 0.85rem;
-    border-radius: 20px;
   }
 
   .dsf-panel {
-    border-radius: 20px;
     padding: 0.95rem;
   }
 
   .dsf-table {
-    min-width: 980px;
+    min-width: 700px;
   }
 }
 
@@ -443,5 +386,29 @@
 
   .dsf-btn {
     width: 100%;
+  }
+
+  .dsf-icon-btn {
+    width: 38px;
+    height: 38px;
+  }
+
+  .dsf-icon-toggle {
+    width: 52px;
+    height: 30px;
+  }
+
+  .dsf-icon-toggle__pill {
+    width: 48px;
+    height: 26px;
+  }
+
+  .dsf-icon-toggle__pill::after {
+    width: 20px;
+    height: 20px;
+  }
+
+  .dsf-icon-toggle input:checked + .dsf-icon-toggle__pill::after {
+    transform: translateX(22px);
   }
 }

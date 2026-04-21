@@ -1,5 +1,5 @@
 # Yo reciclo: Gestión ciudadana de residuos a través de una plataforma digital.
-Ver documentación del proyecto: https://drive.google.com/file/d/1IuTCQrO7X8hmnGz2slZLmgpZoiZCxhZT/view?usp=drive_link
+Ver documentación del proyecto: https://drive.google.com/file/d/1hASGZkR4IxtuvF9EOcAYRAQlKi5bEP5x/view?usp=sharing
 
 # Informe técnico — Estructura, tecnologías y configuración del proyecto “¡Yo Reciclo!”
 
@@ -307,11 +307,14 @@ KEYCLOAK_ADMIN_PASS=admin
 # 12.	Ciclo de vida y puesta en marcha.
 * Crear carpeta raiz Yo_Reciclo y dentro de el clonar el repositorio: git clone https://github.com/ggomez90/TFG_LICENCIATURA_INFORMATICA.git
 * Construir y levantar todo el proyecto:
-  * Desde carpeta infra ejecutar → docker compose up --build
+  * Desde carpeta infra ejecutar → docker compose build //para compilar
+  * Desde carpeta infra ejecutar → docker compose up //para construir y levantar contenedores
+  * Con el proyecto en funcionamiento desde una consola secundaria en carpeta infra ejecutar → docker compose exec backend pnpm prisma db push //para construir el esquema prisma
+  * Con el proyecto en funcionamiento desde una consola secundaria en carpeta infra ejecutar → docker compose exec backend pnpm prisma db seed //sembrar datos seeds
 * Solo levantar el proyecto (en caso de que ya se haya compilado antes y no haya sufrido cambios):
   * Desde carpeta infra ejecutar → docker compose up
 * Restarurar contenedores (de ser necesario):
-  * Desde carpeta infra ejecutar → docker compose down -v 
+  * Desde carpeta infra ejecutar → docker compose down -v //luego realizar procedimiento de construir y levantar todo de nuevo
 * Ver logs:
   * docker compose logs -f <servicio> (ej.: backend, frontend, db, keycloak, nginx)
 * Entrar a Keycloak:
@@ -325,7 +328,7 @@ KEYCLOAK_ADMIN_PASS=admin
 
 # 13. Usuarios de prueba
 Para el acceso a la app se conceder usuarios de prueba de diferentes roles:
-* ADMINISTRADOR: Usuario: admintester | Pass: Administrador1
-* CLIENTE: Usuario: clientetester | Pass: Clientetester1
-* OPERARIO: Usuario: operariotester | Pass: Operariotester1
+* ADMINISTRADOR: Usuario: admintester | admin@tester.com.ar | Pass: Administrador1
+* CLIENTE: Usuario: clientetester | cliente@tester.com.ar | Pass: Clientetester1
+* OPERARIO: Usuario: operariotester | operario@tester.com.ar | Pass: Operariotester1
 

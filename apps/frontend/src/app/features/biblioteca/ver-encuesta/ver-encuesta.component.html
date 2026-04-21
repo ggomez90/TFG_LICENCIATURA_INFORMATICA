@@ -5,11 +5,15 @@
       <h1 class="survey-hero__title">Encuesta</h1>
 
       <p class="survey-hero__sub" *ngIf="data">
-        Participá y ayudanos a mejorar la experiencia de la plataforma.
-        Publicada el <strong>{{ fmtFecha(data.fechaPublicacion) }}</strong>
-        <ng-container *ngIf="data.fechaCierre">
-          · Cierre <strong>{{ fmtFecha(data.fechaCierre) }}</strong>
-        </ng-container>
+        <span class="survey-hero__intro">
+          Participá y ayudanos a mejorar la experiencia de la plataforma.
+        </span>
+        <span class="survey-hero__dates">
+          Publicada el <strong>{{ fmtFecha(data.fechaPublicacion) }}</strong>
+          <ng-container *ngIf="data.fechaCierre">
+            - Cierre <strong>{{ fmtFecha(data.fechaCierre) }}</strong>
+          </ng-container>
+        </span>
       </p>
     </div>
 
