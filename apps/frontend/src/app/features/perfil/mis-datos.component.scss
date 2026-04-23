@@ -14,8 +14,19 @@
 }
 
 .dsf-header{ display:grid; gap:4px; }
-.dsf-title{ margin:0; font-weight:800; color:#065f46; font-size:18px; }
-.dsf-sub{ margin:0; color:#065f46; opacity:.9; font-size:14px; }
+.dsf-title{ 
+  //margin:0; font-weight:800; color:#065f46; font-size:18px; 
+  //font-size: clamp(1.45rem, 2.35vw, 2rem);
+  margin:0;
+  font-size: 2.15rem;
+  font-weight: 800;
+  color: #0f562a;
+}
+.dsf-sub{ 
+  //margin:0; color:#065f46; opacity:.9; font-size:14px; 
+  color: #678074;
+  font-size: 1.2rem;
+}
 
 /* Estados */
 .dsf-empty{
@@ -25,7 +36,7 @@
   border: 1px dashed rgba(16,185,129,.35);
   text-align: center;
   color: #065f46;
-  font-size: 0.95rem;
+  font-size: 1.1rem;
 }
 .dsf-empty--loading{
   background: linear-gradient(90deg,#ffffff 0%,#f0fdf4 50%,#ffffff 100%);
@@ -71,7 +82,7 @@
   display:flex;
   align-items:center;
   gap: 10px;
-  font-size: 15px;
+  font-size: 1.1rem;
   font-weight: 800;
   color: #065f46;
   border-bottom: 1px dashed rgba(16,185,129,.35);
@@ -98,7 +109,7 @@
 .col-12{ grid-column: span 12; }
 
 label{
-  font-size: 12px;
+  font-size: 1.1rem;
   color: #065f46;
   font-weight: 700;
   margin-bottom: 4px;
@@ -111,7 +122,7 @@ label{
   border: 1px solid rgba(16,185,129,.28);
   border-radius: 12px;
   padding: 8px 10px;
-  font-size: 14px;
+  font-size: 1.1rem;
   color: #064e3b;
   background: linear-gradient(0deg, rgba(240,253,244,.65), rgba(240,253,244,.65));
   display:flex;
@@ -181,7 +192,7 @@ label{
   padding: 10px 14px;
   cursor: pointer;
   font-weight: 800;
-  font-size: 14px;
+  font-size: 1rem;
   text-decoration: none;
   display:inline-flex;
   align-items:center;
