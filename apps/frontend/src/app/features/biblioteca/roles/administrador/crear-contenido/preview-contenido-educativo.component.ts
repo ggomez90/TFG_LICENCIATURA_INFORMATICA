@@ -138,7 +138,7 @@ export class PreviewContenidoEducativoComponent implements OnInit {
     }
 
     const payload: any = {
-      idAdmin: 1, //id real del admin logueado
+      idAdmin: 1,
       fechaPublicacion: this.toIsoDate(this.borrador.fechaPublicacion) as string,
       visible: this.borrador.visible,
     };

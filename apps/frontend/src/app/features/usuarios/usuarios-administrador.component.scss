@@ -1,14 +1,14 @@
 :host {
   display: block;
-  width: 100%; // CAMBIO: asegura que el host use solo el ancho disponible
-  max-width: 100%; // CAMBIO: evita overflow horizontal del componente
-  overflow-x: hidden; // CAMBIO: bloquea scroll horizontal general
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
 }
 
 *,
 *::before,
 *::after {
-  box-sizing: border-box; // CAMBIO: evita que padding y border agranden el ancho real
+  box-sizing: border-box;
 }
 
 .users-admin-page {
@@ -20,10 +20,10 @@
     radial-gradient(circle at bottom right, rgba(16, 185, 129, 0.14), transparent 32%),
     linear-gradient(180deg, #ecfdf3 0%, #f6fff9 55%, #f8fafc 100%);
   min-height: 100%;
-  width: 100%; // CAMBIO: asegura ancho completo sin exceder viewport
-  max-width: 100%; // CAMBIO: evita desborde lateral
-  min-width: 0; // CAMBIO: permite que hijos grid/flex se encojan correctamente
-  overflow-x: hidden; // CAMBIO: elimina scroll horizontal del módulo
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  overflow-x: hidden;
 }
 
 .panel-soft,
@@ -36,9 +36,9 @@
   box-shadow:
     0 14px 30px rgba(15, 81, 50, 0.08),
     0 3px 10px rgba(15, 81, 50, 0.04);
-  width: 100%; // CAMBIO: asegura ajuste correcto al ancho disponible
-  max-width: 100%; // CAMBIO: evita overflow lateral
-  min-width: 0; // CAMBIO: importante para hijos internos en flex/grid
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
 }
 
 .page-head {
@@ -51,33 +51,33 @@
 .page-head__copy {
   display: grid;
   gap: 0.25rem;
-  min-width: 0; // CAMBIO: permite que el contenido textual se ajuste mejor
+  min-width: 0;
 }
 
 .page-title {
   margin: 0;
   font-size: clamp(1.45rem, 2.35vw, 2rem);
   font-weight: 800;
-  color: #0f562a; // CAMBIO: título en verde
+  color: #0f562a;
   letter-spacing: -0.02em;
-  line-height: 1.15; // CAMBIO: mejora legibilidad
-  overflow-wrap: anywhere; // CAMBIO: evita desborde con títulos largos
+  line-height: 1.15;
+  overflow-wrap: anywhere;
 }
 
 .page-sub {
   margin: 0;
   color: #678074;
-  font-size: 1.2rem; // CAMBIO: antes 0.95rem, sube una medida
-  line-height: 1.5; // CAMBIO: mejora lectura
-  overflow-wrap: anywhere; // CAMBIO: evita overflow horizontal
+  font-size: 1.2rem;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
 }
 
 .stats-grid {
   display: grid;
   gap: 0.85rem;
   grid-template-columns: repeat(7, minmax(0, 1fr));
-  width: 100%; // CAMBIO: asegura que el grid respete el ancho del contenedor
-  max-width: 100%; // CAMBIO: evita desborde
+  width: 100%;
+  max-width: 100%;
 }
 
 .stat-card {
@@ -94,23 +94,23 @@
   box-shadow:
     0 10px 24px rgba(15, 81, 50, 0.06),
     0 3px 10px rgba(15, 81, 50, 0.04);
-  min-width: 0; // CAMBIO: evita overflow interno por textos largos
+  min-width: 0;
 }
 
 .stat__num {
-  font-size: clamp(2rem, 2.55vw, 2.5rem); // CAMBIO: antes clamp(1.7rem, 2.4vw, 2.2rem), sube una medida
+  font-size: clamp(2rem, 2.55vw, 2.5rem);
   font-weight: 900;
   line-height: 1;
   color: #0f5132;
 }
 
 .stat__label {
-  font-size: 1rem; // CAMBIO: antes 0.84rem, sube una medida
+  font-size: 1rem;
   color: #547062;
   font-weight: 700;
   text-align: center;
-  line-height: 1.3; // CAMBIO: mejora lectura
-  overflow-wrap: anywhere; // CAMBIO: evita desborde
+  line-height: 1.3;
+  overflow-wrap: anywhere;
 }
 
 .panel-filters,
@@ -123,8 +123,8 @@
   gap: 0.9rem;
   align-items: end;
   grid-template-columns: minmax(320px, 1.6fr) minmax(240px, .9fr) minmax(200px, .8fr) auto;
-  width: 100%; // CAMBIO: asegura ajuste al ancho del contenedor
-  max-width: 100%; // CAMBIO: evita overflow horizontal
+  width: 100%;
+  max-width: 100%;
 }
 
 .field {
@@ -138,12 +138,12 @@
 }
 
 .field__label {
-  font-size: 1.1rem; // CAMBIO: antes 0.88rem, sube una medida
+  font-size: 1.1rem;
   font-weight: 800;
   text-align: center;
   color: #315743;
-  line-height: 1.3; // CAMBIO: mejora lectura
-  overflow-wrap: anywhere; // CAMBIO: evita desborde del label
+  line-height: 1.3;
+  overflow-wrap: anywhere;
 }
 
 .search-input,
@@ -158,7 +158,7 @@ select,
   background: #fff;
   color: #163024;
   padding: 0.8rem 0.95rem;
-  font-size: 1rem; // CAMBIO: antes 0.95rem, sube una medida
+  font-size: 1rem;
   box-sizing: border-box;
   outline: none;
   transition: border-color 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
@@ -189,7 +189,7 @@ select,
   top: calc(100% + 0.45rem);
   left: 0;
   min-width: 100%;
-  max-width: min(100%, 360px); // CAMBIO: evita que el menú se salga del viewport
+  max-width: min(100%, 360px);
   border-radius: 16px;
   border: 1px solid #cfe7d7;
   background: #fff;
@@ -197,7 +197,7 @@ select,
     0 20px 34px rgba(15, 81, 50, 0.12),
     0 6px 14px rgba(15, 81, 50, 0.08);
   padding: 0.45rem;
-  z-index: 60; // CAMBIO: asegura que se vea por encima del resto
+  z-index: 60;
 }
 
 .root,
@@ -270,7 +270,7 @@ select,
   display: flex;
   align-items: end;
   justify-content: flex-end;
-  min-width: 0; // CAMBIO: mejora ajuste responsive
+  min-width: 0;
 }
 
 .btn {
@@ -285,14 +285,14 @@ select,
   justify-content: center;
   gap: 0.55rem;
   font-weight: 800;
-  font-size: 1.2rem; // CAMBIO: agregado para subir una medida
-  line-height: 1.2; // CAMBIO: controla altura del texto
+  font-size: 1.2rem;
+  line-height: 1.2;
   transition: transform 0.18s ease, box-shadow 0.18s ease, opacity 0.18s ease;
   text-decoration: none;
-  max-width: 100%; // CAMBIO: evita que el botón desborde
-  white-space: nowrap; // CAMBIO: mantiene el texto en una línea
-  overflow: hidden; // CAMBIO: evita desborde visual
-  text-overflow: ellipsis; // CAMBIO: recorta si no entra
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 
   &:hover:not(:disabled) {
     transform: translateY(-1px);
@@ -330,20 +330,20 @@ select,
   height: 30px;
   border-radius: 999px;
   background: #8bd1957c;
-  font-size: 1.6rem; // CAMBIO: antes 0.95rem, sube una medida
+  font-size: 1.6rem;
   line-height: 1;
   font-weight: 900;
-  flex: 0 0 auto; // CAMBIO: evita deformación del ícono
+  flex: 0 0 auto;
 }
 
 .table-scroll {
   width: 100%;
-  max-width: 100%; // CAMBIO: evita desborde lateral del wrapper
+  max-width: 100%;
   overflow-x: auto;
   border-radius: 18px;
   border: 1px solid #d6ebde;
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.96) 0%, rgba(241, 251, 245, 0.96) 100%);
-  -webkit-overflow-scrolling: touch; // CAMBIO: mejora scroll táctil en mobile
+  -webkit-overflow-scrolling: touch;
 }
 
 .users-table {
@@ -356,11 +356,11 @@ select,
     padding: 0.95rem 0.85rem;
     vertical-align: middle;
     border-bottom: 1px solid #ebf5ee;
-    text-align: center; // CAMBIO: centra todos los textos de la tabla
+    text-align: center;
   }
 
   th {
-    font-size: 0.9rem; // CAMBIO: antes 0.82rem, sube una medida
+    font-size: 0.9rem;
     text-transform: uppercase;
     letter-spacing: 0.04em;
     color: #0f562a;
@@ -370,9 +370,9 @@ select,
 
   td {
     color: #254032;
-    font-size: 1.1rem; // CAMBIO: antes 0.94rem, sube una medida
+    font-size: 1.1rem;
     background: rgba(255, 255, 255, 0.94);
-    overflow-wrap: anywhere; // CAMBIO: evita desborde por contenido largo
+    overflow-wrap: anywhere;
   }
 }
 
@@ -398,24 +398,24 @@ select,
 .td-strong {
   display: flex;
   align-items: center;
-  justify-content: center; // CAMBIO: centra contenido dentro de la celda
+  justify-content: center;
   gap: 0.5rem;
   flex-wrap: wrap;
   font-weight: 700;
   color: #163024;
-  min-width: 0; // CAMBIO: evita overflow interno
+  min-width: 0;
 }
 
 .badge {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 0.36rem 0.65rem; // CAMBIO: antes 0.32rem 0.6rem, acompaña fuente mayor
+  padding: 0.36rem 0.65rem;
   border-radius: 999px;
-  font-size: 0.8rem; // CAMBIO: antes 0.72rem, sube una medida
+  font-size: 0.8rem;
   font-weight: 800;
-  line-height: 1.2; // CAMBIO: controla altura del texto
-  max-width: 100%; // CAMBIO: evita desborde
+  line-height: 1.2;
+  max-width: 100%;
 }
 
 .badge--ban {
@@ -433,13 +433,13 @@ select,
   font-weight: 700;
   border: 1px solid transparent;
   text-transform: capitalize;
-  max-width: 100%; // CAMBIO: evita desborde
+  max-width: 100%;
 }
 
 .pill--lg {
-  padding: 0.46rem 0.84rem; // CAMBIO: antes 0.42rem 0.8rem, acompaña fuente mayor
-  font-size: 0.86rem; // CAMBIO: antes 0.78rem, sube una medida
-  line-height: 1.2; // CAMBIO: controla altura del texto
+  padding: 0.46rem 0.84rem;
+  font-size: 0.86rem;
+  line-height: 1.2;
 }
 
 .pill--admin {
@@ -489,7 +489,7 @@ select,
     0 8px 18px rgba(15, 81, 50, 0.06),
     inset 0 1px 0 rgba(255, 255, 255, 0.85);
   transition: transform 0.18s ease, background 0.18s ease, border-color 0.18s ease;
-  flex: 0 0 auto; // CAMBIO: evita deformaciones
+  flex: 0 0 auto;
 
   &:hover {
     transform: translateY(-1px);
@@ -520,7 +520,7 @@ select,
   background: #dcfce7;
   border: 1px solid #b7e4c7;
   transition: background 0.2s ease, border-color 0.2s ease;
-  flex: 0 0 auto; // CAMBIO: evita deformaciones
+  flex: 0 0 auto;
 
   &::after {
     content: '';
@@ -563,18 +563,18 @@ select,
 }
 
 .empty-title {
-  font-size: 1.3rem; // CAMBIO: antes 1.05rem, sube una medida
+  font-size: 1.3rem;
   color: #1e3a2b;
   font-weight: 800;
   margin-bottom: 0.3rem;
-  line-height: 1.3; // CAMBIO: mejora lectura
-  overflow-wrap: anywhere; // CAMBIO: evita desborde
+  line-height: 1.3;
+  overflow-wrap: anywhere;
 }
 
 .empty-sub {
-  line-height: 1.55; // CAMBIO: antes 1.5, mejora lectura
-  font-size: 1.1rem; // CAMBIO: agregado para subir una medida
-  overflow-wrap: anywhere; // CAMBIO: evita overflow
+  line-height: 1.55;
+  font-size: 1.1rem;
+  overflow-wrap: anywhere;
 }
 
 .pager {
@@ -589,8 +589,8 @@ select,
 .pager__info {
   color: #547062;
   font-weight: 700;
-  font-size: 1rem; // CAMBIO: agregado para subir una medida
-  overflow-wrap: anywhere; // CAMBIO: evita desborde
+  font-size: 1rem;
+  overflow-wrap: anywhere;
 }
 
 .pager__actions {
@@ -638,7 +638,7 @@ select,
   }
 
   .dsf-custom-select__menu {
-    max-width: 100%; // CAMBIO: asegura que el dropdown no se salga del contenedor
+    max-width: 100%;
   }
 
   .submenu {
@@ -667,7 +667,7 @@ select,
   .page-head,
   .panel-filters,
   .panel-table {
-    padding: 0.9rem; // CAMBIO: compacta padding para mobile
+    padding: 0.9rem;
   }
 
   .users-table {
@@ -675,11 +675,11 @@ select,
   }
 
   .page-title {
-    font-size: clamp(1.3rem, 5vw, 1.7rem); // CAMBIO: controla mejor el título en mobile
+    font-size: clamp(1.3rem, 5vw, 1.7rem);
   }
 
   .page-sub {
-    font-size: 0.96rem; // CAMBIO: mantiene buena lectura sin romper mobile
+    font-size: 0.96rem;
   }
 }
 
@@ -689,127 +689,127 @@ select,
   }
 
   .users-admin-page {
-    padding: 0.75rem; // CAMBIO: reduce padding exterior en celular
+    padding: 0.75rem;
   }
 
   .page-head,
   .panel-soft,
   .panel,
   .stat-card {
-    border-radius: 16px; // CAMBIO: compacta esquinas en mobile
+    border-radius: 16px;
   }
 
   .page-head,
   .panel-filters,
   .panel-table {
-    padding: 0.8rem; // CAMBIO: compacta padding en pantallas chicas
+    padding: 0.8rem;
   }
 
   .field__label {
-    font-size: 0.92rem; // CAMBIO: ajusta un poco en mobile para que todo entre mejor
+    font-size: 0.92rem;
   }
 
   .search-input,
   select,
   .dsf-custom-select__btn {
-    min-height: 44px; // CAMBIO: mantiene buen tamaño táctil sin ocupar demasiado
-    padding: 0.75rem 0.85rem; // CAMBIO: compacta inputs en mobile
-    font-size: 0.96rem; // CAMBIO: controla fuente en pantallas chicas
+    min-height: 44px;
+    padding: 0.75rem 0.85rem;
+    font-size: 0.96rem;
   }
 
   .btn,
   .btn-new-user {
-    width: 100%; // CAMBIO: botones ocupan todo el ancho en mobile
-    min-width: 0; // CAMBIO: evita desborde por min-width fijo
+    width: 100%;
+    min-width: 0;
   }
 
   .btn-new-user {
-    padding-inline: 1rem; // CAMBIO: compacta padding horizontal en mobile
+    padding-inline: 1rem;
   }
 
   .users-table {
-    min-width: 860px; // CAMBIO: baja un poco el ancho mínimo para mejorar uso en mobile
+    min-width: 860px;
   }
 
   .users-table th,
   .users-table td {
-    padding: 0.8rem 0.75rem; // CAMBIO: compacta tabla en mobile
+    padding: 0.8rem 0.75rem;
   }
 
   .users-table th {
-    font-size: 0.86rem; // CAMBIO: ajusta encabezados para mobile
+    font-size: 0.86rem;
   }
 
   .users-table td {
-    font-size: 0.96rem; // CAMBIO: ajusta texto de tabla para mobile
+    font-size: 0.96rem;
   }
 
   .th-actions,
   .td-actions {
-    width: 160px; // CAMBIO: compacta ancho de acciones
+    width: 160px;
   }
 
   .icon-btn {
-    width: 38px; // CAMBIO: compacta botones de acción
-    height: 38px; // CAMBIO: compacta botones de acción
+    width: 38px;
+    height: 38px;
   }
 
   .icon-toggle__pill {
-    width: 48px; // CAMBIO: compacta toggle en mobile
-    height: 28px; // CAMBIO: compacta toggle en mobile
+    width: 48px;
+    height: 28px;
   }
 
   .icon-toggle__pill::after {
-    width: 20px; // CAMBIO: compacta perilla del toggle
-    height: 20px; // CAMBIO: compacta perilla del toggle
+    width: 20px;
+    height: 20px;
   }
 
   .icon-toggle input:checked + .icon-toggle__pill::after {
-    transform: translateX(20px); // CAMBIO: ajusta desplazamiento del toggle compacto
+    transform: translateX(20px);
   }
 
   .pager__actions,
   .pager__actions--spaced {
-    width: 100%; // CAMBIO: acciones del paginador ocupan todo el ancho
-    justify-content: stretch; // CAMBIO: mejora distribución en mobile
+    width: 100%;
+    justify-content: stretch;
   }
 
   .pager__actions .btn {
-    flex: 1 1 100%; // CAMBIO: botones del paginador apilan y llenan ancho disponible
+    flex: 1 1 100%;
   }
 }
 
 @media (max-width: 400px) {
   .users-admin-page {
-    padding: 0.7rem; // CAMBIO: compacta aún más el contenedor exterior
+    padding: 0.7rem;
   }
 
   .page-title {
-    font-size: 1.25rem; // CAMBIO: evita roturas en celulares muy chicos
+    font-size: 1.25rem;
   }
 
   .page-sub,
   .empty-sub,
   .pager__info {
-    font-size: 0.94rem; // CAMBIO: baja un poco textos secundarios en pantallas muy chicas
+    font-size: 0.94rem;
   }
 
   .stat__num {
-    font-size: 1.7rem; // CAMBIO: controla tamaño numérico en celulares chicos
+    font-size: 1.7rem;
   }
 
   .stat__label {
-    font-size: 0.88rem; // CAMBIO: compacta etiquetas de stats
+    font-size: 0.88rem;
   }
 
   .search-input,
   select,
   .dsf-custom-select__btn,
   .btn {
-    font-size: 0.94rem; // CAMBIO: controla proporción de controles en pantallas chicas
+    font-size: 0.94rem;
   }
 
   .users-table {
-    min-width: 800px; // CAMBIO: mejora un poco la experiencia de tabla en mobile chico
+    min-width: 800px;
   }
 }

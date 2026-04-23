@@ -51,7 +51,6 @@ export class EditarContenidoEducativoComponent
 
   form: ContenidoForm = this.createEmptyForm();
 
-  /** mínima fecha para baja que en la publicacion */
   minFechaPublicacion = '';
 
   loading = false;

@@ -234,7 +234,7 @@ export class UsuariosAdministradorComponent implements OnInit {
       return;
     }
 
-    // Banear: abre modal, pero NO deja el switch visualmente encendido todavía
+    // Banear: abre modal
     if (checked === true) {
       if (input) input.checked = false;
       this.current.set(u);

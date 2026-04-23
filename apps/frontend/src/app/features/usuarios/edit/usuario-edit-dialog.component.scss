@@ -1,13 +1,13 @@
 :host {
   display: block;
-  width: 100%; // CAMBIO: asegura que el host use solo el ancho disponible
-  max-width: 100%; // CAMBIO: evita desborde horizontal del componente
+  width: 100%;
+  max-width: 100%;
 }
 
 *,
 *::before,
 *::after {
-  box-sizing: border-box; // CAMBIO: evita que padding y border agranden el ancho real
+  box-sizing: border-box;
 }
 
 .modal-backdrop {
@@ -28,16 +28,16 @@
   place-items: center;
   padding: 1rem;
   box-sizing: border-box;
-  overflow-y: auto; // CAMBIO: permite scroll vertical cuando el modal no entra completo
-  overflow-x: hidden; // CAMBIO: evita scroll horizontal
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .modal-shell {
   width: min(900px, 100%);
-  max-width: 100%; // CAMBIO: asegura que nunca exceda el ancho visible
-  max-height: calc(100dvh - 2rem); // CAMBIO: usa dvh para mejor ajuste en mobile
-  overflow-y: auto; // CAMBIO: permite scroll vertical dentro del modal si hace falta
-  overflow-x: hidden; // CAMBIO: evita scrollbar horizontal
+  max-width: 100%;
+  max-height: calc(100dvh - 2rem);
+  overflow-y: auto;
+  overflow-x: hidden;
   border-radius: 26px;
   background:
     radial-gradient(circle at top right, rgba(34, 197, 94, 0.08), transparent 22%),
@@ -48,7 +48,7 @@
     0 8px 24px rgba(15, 81, 50, 0.10);
   padding: 1.15rem;
   color: #163024;
-  min-width: 0; // CAMBIO: evita que el contenido interno empuje el ancho
+  min-width: 0;
 }
 
 .modal-head {
@@ -57,35 +57,35 @@
   justify-content: space-between;
   gap: 1rem;
   margin-bottom: 0.9rem;
-  min-width: 0; // CAMBIO: permite ajuste correcto del texto
+  min-width: 0;
 
   h2 {
     margin: 0.2rem 0 0.3rem;
-    font-size: 1.7rem; // CAMBIO: alineado al modal ejemplo
+    font-size: 1.7rem;
     font-weight: 800;
     color: #163024;
-    line-height: 1.2; // CAMBIO: mejora legibilidad
-    overflow-wrap: anywhere; // CAMBIO: evita desborde por títulos largos
+    line-height: 1.2;
+    overflow-wrap: anywhere;
   }
 
   p {
     margin: 0;
     color: #678074;
-    line-height: 1.55; // CAMBIO: mejora lectura
-    font-size: 1.1rem; // CAMBIO: alineado al modal ejemplo
-    overflow-wrap: anywhere; // CAMBIO: evita desborde horizontal
+    line-height: 1.55;
+    font-size: 1.1rem;
+    overflow-wrap: anywhere;
   }
 }
 
 .modal-eyebrow {
   display: inline-flex;
   align-items: center;
-  font-size: 1.4rem; // CAMBIO: sube la jerarquía para empatar con el ejemplo
+  font-size: 1.4rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: #0f562a;
-  max-width: 100%; // CAMBIO: evita desborde
+  max-width: 100%;
 }
 
 .icon-btn {
@@ -99,13 +99,13 @@
   cursor: pointer;
   display: inline-grid;
   place-items: center;
-  font-size: 1.35rem; // CAMBIO: ajusta ícono al estilo del ejemplo
+  font-size: 1.35rem;
   line-height: 1;
   box-shadow:
     0 8px 18px rgba(15, 81, 50, 0.06),
     inset 0 1px 0 rgba(255, 255, 255, 0.85);
   transition: transform 0.18s ease, background 0.18s ease, border-color 0.18s ease;
-  flex: 0 0 auto; // CAMBIO: evita deformaciones del botón
+  flex: 0 0 auto;
 
   &:hover {
     transform: translateY(-1px);
@@ -120,20 +120,20 @@
   gap: 0.65rem;
   flex-wrap: wrap;
   margin-bottom: 0.9rem;
-  min-width: 0; // CAMBIO: permite ajuste correcto del contenido
+  min-width: 0;
 }
 
 .chip {
   display: inline-flex;
   align-items: center;
-  padding: 0.42rem 0.82rem; // CAMBIO: acompaña fuente mayor
+  padding: 0.42rem 0.82rem;
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.16);
   color: inherit;
-  font-size: 1rem; // CAMBIO: alineado al modal ejemplo
+  font-size: 1rem;
   font-weight: 700;
-  max-width: 100%; // CAMBIO: evita desborde
-  line-height: 1.2; // CAMBIO: mejora comportamiento del texto
+  max-width: 100%;
+  line-height: 1.2;
 }
 
 .chip-soft {
@@ -144,14 +144,14 @@
 .id-chip {
   display: inline-flex;
   align-items: center;
-  padding: 0.46rem 0.84rem; // CAMBIO: acompaña fuente mayor
+  padding: 0.46rem 0.84rem;
   border-radius: 999px;
-  font-size: 1rem; // CAMBIO: alineado al modal ejemplo
+  font-size: 1rem;
   font-weight: 800;
   background: #eef6ff;
   color: #1d4ed8;
-  max-width: 100%; // CAMBIO: evita desborde
-  line-height: 1.2; // CAMBIO: mejora comportamiento del texto
+  max-width: 100%;
+  line-height: 1.2;
 }
 
 .info-card {
@@ -162,15 +162,15 @@
   box-shadow:
     0 12px 22px rgba(15, 81, 50, 0.06),
     inset 0 1px 0 rgba(255, 255, 255, 0.8);
-  min-width: 0; // CAMBIO: evita desborde por contenido interno
+  min-width: 0;
 
   h3 {
     margin: 0 0 0.75rem;
-    font-size: 1.25rem; // CAMBIO: alineado al modal ejemplo
+    font-size: 1.25rem;
     font-weight: 800;
     color: #163024;
-    line-height: 1.25; // CAMBIO: mejora lectura
-    overflow-wrap: anywhere; // CAMBIO: evita desborde
+    line-height: 1.25;
+    overflow-wrap: anywhere;
   }
 }
 
@@ -178,9 +178,9 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 0.9rem;
-  width: 100%; // CAMBIO: asegura ajuste completo al ancho del modal
-  max-width: 100%; // CAMBIO: evita overflow
-  min-width: 0; // CAMBIO: permite que hijos se encojan correctamente
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
 }
 
 .field {
@@ -194,11 +194,11 @@
 }
 
 .field__label {
-  font-size: 1rem; // CAMBIO: ajustado para igualar el modal de referencia
+  font-size: 1rem;
   font-weight: 800;
   color: #315743;
-  overflow-wrap: anywhere; // CAMBIO: evita desborde
-  line-height: 1.3; // CAMBIO: mejora lectura
+  overflow-wrap: anywhere;
+  line-height: 1.3;
 }
 
 input,
@@ -213,8 +213,8 @@ textarea {
   background: #fff;
   color: #163024;
   padding: 0.8rem 0.95rem;
-  font-size: 1.1rem; // CAMBIO: alineado al modal ejemplo
-  line-height: 1.35; // CAMBIO: mejora lectura
+  font-size: 1.1rem;
+  line-height: 1.35;
   outline: none;
   transition: border-color 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
 
@@ -230,9 +230,9 @@ select {
 
 textarea {
   min-height: 120px;
-  max-height: 220px; // CAMBIO: limita crecimiento para no romper el modal
+  max-height: 220px;
   resize: vertical;
-  overflow: auto; // CAMBIO: si el contenido crece, el scroll queda dentro del textarea
+  overflow: auto;
 }
 
 .ban-box {
@@ -241,24 +241,24 @@ textarea {
   background: linear-gradient(180deg, #fff5f5 0%, #fff 100%);
   border: 1px solid #fecaca;
   color: #7f1d1d;
-  min-width: 0; // CAMBIO: evita desborde del bloque
+  min-width: 0;
 }
 
 .ban-title {
   font-weight: 800;
-  font-size: 1.15rem; // CAMBIO: sube jerarquía para alinearlo con el ejemplo
+  font-size: 1.15rem;
   margin-bottom: 0.55rem;
-  overflow-wrap: anywhere; // CAMBIO: evita desborde
-  line-height: 1.3; // CAMBIO: mejora lectura
+  overflow-wrap: anywhere;
+  line-height: 1.3;
 }
 
 .ban-hint {
-  font-size: 0.98rem; // CAMBIO: sube el tamaño para empatar con el ejemplo
+  font-size: 0.98rem;
   opacity: 0.85;
   margin-top: 0.35rem;
   text-align: right;
-  overflow-wrap: anywhere; // CAMBIO: evita desborde en textos largos
-  line-height: 1.45; // CAMBIO: mejora lectura
+  overflow-wrap: anywhere;
+  line-height: 1.45;
 }
 
 textarea[disabled],
@@ -287,12 +287,12 @@ textarea[readonly] {
   justify-content: center;
   gap: 0.5rem;
   font-weight: 700;
-  font-size: 1rem; // CAMBIO: conserva la escala del botón
+  font-size: 1rem;
   transition: transform 0.18s ease, box-shadow 0.18s ease, opacity 0.18s ease;
-  max-width: 100%; // CAMBIO: evita desborde de botones
-  white-space: nowrap; // CAMBIO: mantiene texto en una línea
-  overflow: hidden; // CAMBIO: evita desborde visual
-  text-overflow: ellipsis; // CAMBIO: recorta si no entra
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 
   &:hover:not(:disabled) {
     transform: translateY(-1px);
@@ -320,7 +320,7 @@ textarea[readonly] {
   .modal-shell {
     border-radius: 22px;
     padding: 1rem;
-    max-height: calc(100dvh - 1.5rem); // CAMBIO: mejora encaje vertical en mobile
+    max-height: calc(100dvh - 1.5rem);
   }
 
   .modal-head,
@@ -338,63 +338,63 @@ textarea[readonly] {
   }
 
   .icon-btn {
-    align-self: flex-end; // CAMBIO: mantiene el botón cerrar alineado
+    align-self: flex-end;
   }
 }
 
 @media (max-width: 560px) {
   .modal-shell-wrap {
-    padding: 0.75rem; // CAMBIO: reduce margen exterior para aprovechar mejor la pantalla
+    padding: 0.75rem;
   }
 
   .modal-shell {
-    padding: 0.9rem; // CAMBIO: compacta padding interno en mobile
-    border-radius: 20px; // CAMBIO: ajusta la forma al tamaño móvil
-    max-height: calc(100dvh - 1rem); // CAMBIO: encuadra mejor el modal en celulares
+    padding: 0.9rem;
+    border-radius: 20px;
+    max-height: calc(100dvh - 1rem);
   }
 
   .modal-head {
-    gap: 0.75rem; // CAMBIO: reduce separación interna en mobile
-    margin-bottom: 0.8rem; // CAMBIO: compacta cabecera
+    gap: 0.75rem;
+    margin-bottom: 0.8rem;
   }
 
   .modal-head h2 {
-    font-size: 1.45rem; // CAMBIO: mantiene la jerarquía del ejemplo en mobile
+    font-size: 1.45rem;
   }
 
   .modal-head p {
-    font-size: 1rem; // CAMBIO: mantiene la escala del ejemplo en mobile
+    font-size: 1rem;
   }
 
   .info-card {
-    padding: 0.85rem; // CAMBIO: compacta bloques internos
-    border-radius: 18px; // CAMBIO: ajusta radios en mobile
+    padding: 0.85rem;
+    border-radius: 18px;
   }
 
   .icon-btn {
-    width: 40px; // CAMBIO: compacta levemente botón de cierre
-    height: 40px; // CAMBIO: compacta levemente botón de cierre
+    width: 40px;
+    height: 40px;
   }
 
   textarea {
-    min-height: 110px; // CAMBIO: reduce altura mínima para que entre mejor en celular
-    max-height: 180px; // CAMBIO: controla crecimiento del textarea
+    min-height: 110px;
+    max-height: 180px;
   }
 }
 
 @media (max-width: 400px) {
   .modal-shell-wrap {
-    padding: 0.5rem; // CAMBIO: reduce aún más el margen exterior en pantallas muy chicas
+    padding: 0.5rem;
   }
 
   .modal-shell {
-    padding: 0.8rem; // CAMBIO: compacta el interior del modal
-    border-radius: 18px; // CAMBIO: reduce radio para pantallas muy pequeñas
-    max-height: calc(100dvh - 0.75rem); // CAMBIO: encuadre más ajustado
+    padding: 0.8rem;
+    border-radius: 18px;
+    max-height: calc(100dvh - 0.75rem);
   }
 
   .modal-head h2 {
-    font-size: 1.3rem; // CAMBIO: evita rotura del título en celulares muy chicos
+    font-size: 1.3rem;
   }
 
   .modal-head p,
@@ -403,17 +403,17 @@ textarea[readonly] {
   select,
   textarea,
   .btn {
-    font-size: 0.96rem; // CAMBIO: controla proporción del texto en pantallas muy chicas
+    font-size: 0.96rem;
   }
 
   .chip,
   .id-chip,
   .field__label,
   .modal-eyebrow {
-    font-size: 0.9rem; // CAMBIO: compacta elementos pequeños
+    font-size: 0.9rem;
   }
 
   .btn {
-    min-height: 44px; // CAMBIO: mantiene buen tap target sin ocupar demasiado
+    min-height: 44px;
   }
 }
