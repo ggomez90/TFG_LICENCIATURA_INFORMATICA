@@ -59,8 +59,8 @@ export class EntregaClienteModalComponent implements OnChanges {
   }
 
   get title(): string {
-    if (this.mode === 'create') return 'Registrar entrega';
-    if (this.mode === 'edit') return 'Editar entrega';
+    if (this.mode === 'create') return 'Registrar nueva entrega';
+    if (this.mode === 'edit') return 'Editar entrega creada';
     return 'Detalle de entrega';
   }
 

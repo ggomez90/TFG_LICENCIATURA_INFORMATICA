@@ -31,15 +31,15 @@
 
       <div class="highlight-meta">
         <div class="meta-item">
-          <span class="label">Meta</span>
+          <span class="label">· Meta:</span>
           <strong>{{ destacado.meta | number:'1.0-3' }} {{ destacado.unidadMedida }}</strong>
         </div>
         <div class="meta-item">
-          <span class="label">Progreso actual</span>
+          <span class="label">· Progreso actual:</span>
           <strong>{{ getProgressLabel(destacado.progresoActual) }}</strong>
         </div>
         <div class="meta-item">
-          <span class="label">Comprometido</span>
+          <span class="label">· Comprometido:</span>
           <strong>{{ getProgressLabel(destacado.progresoComprometido) }}</strong>
         </div>
       </div>
@@ -54,12 +54,12 @@
         </div>
       </div>
 
-      <div class="hero-note">
+<!--       <div class="hero-note">
         <span class="material-symbols-outlined">info</span>
         <span>
           El destacado se define sobre desafíos donde el cliente está inscripto y aún puede registrar entregas.
         </span>
-      </div>
+      </div> -->
 
       <button
         type="button"
@@ -101,9 +101,7 @@
           <span class="section-eyebrow">Acción principal</span>
           <h3>Desafíos desde los que puedes registrar entregas</h3>
           <p>
-            Se muestran inscripciones vigentes y desafíos activos. Si el desafío está pausado,
-            vencido o completado, se informa visualmente.
-          </p>
+            Se muestran inscripciones vigentes de desafíos activos.
         </div>
 
         <button type="button" class="btn btn-secondary" (click)="goToDesafiosEntregables()">
@@ -133,15 +131,15 @@
 
           <div class="desafio-details">
             <div>
-              <span class="label">Meta</span>
+              <span class="label">· Meta:</span>
               <strong>{{ desafio.meta | number:'1.0-3' }} {{ desafio.unidadMedida }}</strong>
             </div>
             <div>
-              <span class="label">Progreso actual</span>
+              <span class="label">· Progreso actual:</span>
               <strong>{{ getProgressLabel(desafio.progresoActual) }}</strong>
             </div>
             <div>
-              <span class="label">Comprometido</span>
+              <span class="label">· Comprometido: </span>
               <strong>{{ getProgressLabel(desafio.progresoComprometido) }}</strong>
             </div>
           </div>
@@ -173,10 +171,9 @@
       <div class="panel-head">
         <div>
           <span class="section-eyebrow">Seguimiento</span>
-          <h3>Borradores pendientes de confirmación</h3>
+          <h3>Pendientes de confirmación</h3>
           <p>
-            Aquí se muestran solo entregas en estado creada, para que el cliente pueda
-            verlas, editarlas, confirmarlas o anularlas.
+            Entregas creadas, asegúrate de que los datos están correctos antes de confirmar.
           </p>
         </div>
 
@@ -199,26 +196,26 @@
         >
           <div class="action-card-head">
             <div>
-              <h4>{{ entrega.desafioTitulo }}</h4>
               <small>{{ entrega.codigoVisible }}</small>
+              <!-- <h4>{{ entrega.desafioTitulo }}</h4> -->
             </div>
 
-            <span class="badge" [ngClass]="getEstadoClass(entrega.estado)">
+            <span class="badge-seguimiento" [ngClass]="getEstadoClass(entrega.estado)">
               {{ getEstadoLabel(entrega.estado) }}
             </span>
           </div>
 
           <div class="action-meta">
             <div>
-              <span class="label">Cantidad declarada</span>
+              <span class="label">· Cantidad declarada:</span>
               <strong>{{ entrega.cantidadDeclarada | number:'1.0-3' }} {{ entrega.unidadMedida }}</strong>
             </div>
             <div>
-              <span class="label">Creación</span>
+              <span class="label">· Creación:</span>
               <strong>{{ entrega.fechaCreacion | date:'dd/MM/yyyy HH:mm' }}</strong>
             </div>
             <div>
-              <span class="label">Vencimiento</span>
+              <span class="label">· Vencimiento:</span>
               <strong>{{ entrega.fechaVencimiento | date:'dd/MM/yyyy' }}</strong>
             </div>
           </div>
@@ -253,10 +250,10 @@
       <div>
         <span class="section-eyebrow">Historial reciente</span>
         <h3>Últimas entregas registradas</h3>
-        <p>
+<!--         <p>
           Resumen rápido del historial de entregas del cliente con su estado actual
           y código visible.
-        </p>
+        </p> -->
       </div>
 
       <button type="button" class="btn btn-secondary" (click)="goToListadoEntregas('historial')">

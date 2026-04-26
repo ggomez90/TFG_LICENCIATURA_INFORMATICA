@@ -1,6 +1,6 @@
 $dsf-green-900: #0f562a;
-$dsf-green-800: #166534;
-$dsf-green-700: #1f8a4c;
+$dsf-green-800: #0f562a;
+$dsf-green-700: #0f562a;
 $dsf-green-100: #e8f5e9;
 $dsf-lime-50: #f1f8e9;
 $dsf-border: rgba(15, 86, 42, 0.14);
@@ -244,14 +244,14 @@ $shadow-hover:
 
 .hero-card__title {
   font-weight: 900;
-  color: $dsf-green-900;
+  color: #0f562a; 
   font-size: 1.2rem;
   line-height: 1.25;
   overflow-wrap: anywhere;
 }
 
 .hero-card__text {
-  color: $dsf-green-900;
+  color: #0f562a; 
   line-height: 1.5;
   font-size: 1.1rem;
   overflow-wrap: anywhere;
@@ -513,7 +513,7 @@ $shadow-hover:
 }
 
 .meta {
-  color: rgba(15, 86, 42, 0.78);
+  color: #0f562a; 
   font-weight: 700;
   font-size: 1.1rem;
   line-height: 1.3;

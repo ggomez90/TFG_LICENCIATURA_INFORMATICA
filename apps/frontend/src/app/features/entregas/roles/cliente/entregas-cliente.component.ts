@@ -138,19 +138,19 @@ export class EntregasClienteComponent {
       {
         label: 'Total de entregas',
         value: items.length,
-        helper: 'Historial general del cliente',
+        helper: 'Historial general',
         icon: 'inventory_2',
       },
       {
         label: 'En borrador',
         value: items.filter((x) => x.estado === 1).length,
-        helper: 'Listas para editar o confirmar',
+        helper: 'Listas para confirmar',
         icon: 'edit_note',
       },
       {
         label: 'Pendientes',
         value: items.filter((x) => x.estado === 2).length,
-        helper: 'Confirmadas y a validar',
+        helper: 'Esperando validar',
         icon: 'hourglass_top',
       },
       {
@@ -162,7 +162,7 @@ export class EntregasClienteComponent {
       {
         label: 'Rechazadas',
         value: items.filter((x) => x.estado === 4).length,
-        helper: 'Entregas observadas o rechazadas',
+        helper: 'Entregas observadas',
         icon: 'rule',
       },
     ];

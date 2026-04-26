@@ -10,8 +10,7 @@
       <span class="eyebrow">Entrega registrada</span>
       <h2>La entrega fue creada correctamente</h2>
       <p>
-        Guarda este código. Será el identificador que el cliente deberá presentar
-        al momento de validar la entrega.
+        Presentá este código al momento de validar la entrega.
       </p>
     </div>
   </header>
@@ -23,17 +22,17 @@
 
   <div class="summary-grid">
     <div class="summary-card">
-      <span class="label">Desafío</span>
+      <span class="label">Desafío:</span>
       <strong>{{ desafioTitulo || 'Desafío seleccionado' }}</strong>
     </div>
 
     <div class="summary-card">
-      <span class="label">Cantidad declarada</span>
+      <span class="label">Cantidad declarada:</span>
       <strong>{{ cantidad }} {{ unidadMedida }}</strong>
     </div>
 
     <div class="summary-card">
-      <span class="label">Estado inicial</span>
+      <span class="label">Estado inicial:</span>
       <strong>{{ estadoLabel }}</strong>
     </div>
   </div>
@@ -41,8 +40,7 @@
   <div class="info-note">
     <span class="material-symbols-outlined">info</span>
     <span>
-      La entrega quedó registrada en estado <strong>{{ estadoLabel }}</strong>. Ahora podrá
-      verse, editarse o confirmarse según corresponda.
+      La entrega quedó registrada en estado <strong>{{ estadoLabel }}</strong>. Revisa los datos antes de confirmar.
     </span>
   </div>
 
