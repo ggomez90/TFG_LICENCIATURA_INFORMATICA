@@ -93,7 +93,7 @@ export class VoucherTipoController {
 
   @Get(':id')
   @UseGuards(KeycloakAuthGuard, RolesGuard)
-  @Roles('ADMIN', 'ADMINISTRADOR')
+  @Roles('ADMIN', 'ADMINISTRADOR', 'CLIENTE')
   async findOne(@Param('id', ParseIntPipe) idVoucherTipo: number) {
     return this.voucherTipoService.findOne(idVoucherTipo);
   }

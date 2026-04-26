@@ -138,7 +138,10 @@ export class ListarVoucherTipoClienteComponent {
   }
 
   verDetalleTipo(idVoucherTipo: number): void {
-    console.log('Detalle tipo voucher cliente', idVoucherTipo);
+    this.router.navigate([
+      '/menu-principal/cliente/vouchers/disponibles/ver',
+      idVoucherTipo,
+    ]);
   }
 
   getEstadoLabel(estado: EstadoDisponibilidad): string {

@@ -19,7 +19,7 @@
     </div>
 
     <aside class="cli-dsf-highlight" *ngIf="desafioDestacado as destacado">
-      <span class="cli-dsf-highlight__label">Desafío destacado</span>
+      <span class="cli-dsf-hero__eyebrow">Desafío destacado</span>
       <h2 class="cli-dsf-highlight__title">{{ destacado.titulo }}</h2>
       <p class="cli-dsf-highlight__desc">{{ destacado.descripcion }}</p>
 
@@ -31,7 +31,7 @@
         <span class="chip chip--soft">{{ destacado.puntosTotales }} pts</span>
       </div>
 
-      <button type="button" class="cli-btn cli-btn--secondary" (click)="onVerDetalle(destacado)">
+      <button type="button" class="cli-btn cli-btn--primary" (click)="onVerDetalle(destacado)">
         Ver desafío
       </button>
     </aside>
@@ -106,7 +106,7 @@
             <strong>{{ d.puntosAcumulados }}</strong>
           </div>
 
-          <button type="button" class="cli-btn cli-btn--ghost" (click)="onVerDetalle(d)">
+          <button type="button" class="cli-btn cli-btn--primary" (click)="onVerDetalle(d)">
             Ver detalle
           </button>
         </div>
@@ -147,9 +147,9 @@
         <p class="cli-card__desc">{{ d.descripcion }}</p>
 
         <div class="cli-card__meta">
-          <span>Inicio: {{ d.fechaInicio | date:'dd/MM/yyyy' }}</span>
-          <span>Fin: {{ d.fechaFin ? (d.fechaFin | date:'dd/MM/yyyy') : '—' }}</span>
-          <span>{{ d.puntosTotales }} puntos</span>
+          <span>-Inicio: {{ d.fechaInicio | date:'dd/MM/yyyy' }}</span>
+          <span>-Fin: {{ d.fechaFin ? (d.fechaFin | date:'dd/MM/yyyy') : '—' }}</span>
+          <span>-{{ d.puntosTotales }} puntos</span>
         </div>
 
         <div class="cli-card__status" *ngIf="d.yaInscripto">
@@ -157,7 +157,7 @@
         </div>
 
         <div class="cli-card__actions">
-          <button type="button" class="cli-btn cli-btn--ghost" (click)="onVerDetalle(d)">
+          <button type="button" class="cli-btn cli-btn--primary" (click)="onVerDetalle(d)">
             Ver desafío
           </button>
         </div>

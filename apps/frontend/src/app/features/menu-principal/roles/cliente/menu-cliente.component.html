@@ -47,27 +47,55 @@
 
   <section *ngIf="!loading && !error" class="stats-grid">
     <article class="stat-card stat-card--primary">
-      <span class="stat-card__label">Puntos actuales</span>
-      <strong class="stat-card__value">{{ puntosDisponibles }}</strong>
-      <span class="stat-card__hint">Disponibles para nuevos canjes</span>
+      <div class="stat-card__icon">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path fill="currentColor" d="M12 2 4 6v6c0 5.25 3.44 9.74 8 11 4.56-1.26 8-5.75 8-11V6l-8-4Zm1 15h-2v-2h2v2Zm0-4h-2V8h2v5Z"/>
+        </svg>
+      </div>
+      <div class="stat-card__body">
+        <span class="stat-card__label">Puntos actuales</span>
+        <strong class="stat-card__value">{{ puntosDisponibles }}</strong>
+        <span class="stat-card__hint">Disponibles para nuevos canjes</span>
+      </div>
     </article>
 
     <article class="stat-card">
-      <span class="stat-card__label">Vouchers adquiridos</span>
-      <strong class="stat-card__value">{{ vouchersAdquiridos }}</strong>
-      <span class="stat-card__hint">Beneficios actualmente en tu cuenta</span>
+      <div class="stat-card__icon">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path fill="currentColor" d="M3 7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v3H3V7Zm0 5h18v5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-5Zm4 2v2h4v-2H7Z"/>
+        </svg>
+      </div>
+      <div class="stat-card__body">
+        <span class="stat-card__label">Vouchers adquiridos</span>
+        <strong class="stat-card__value">{{ vouchersAdquiridos }}</strong>
+        <span class="stat-card__hint">Beneficios actualmente en tu cuenta</span>
+      </div>
     </article>
 
     <article class="stat-card">
-      <span class="stat-card__label">Vouchers utilizados</span>
-      <strong class="stat-card__value">{{ vouchersUtilizados }}</strong>
-      <span class="stat-card__hint">Canjes ya utilizados</span>
+      <div class="stat-card__icon">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path fill="currentColor" d="M9 2v2H5a2 2 0 0 0-2 2v3h18V6a2 2 0 0 0-2-2h-4V2h-2v2h-4V2H9Zm12 9H3v7a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7Zm-9 2 4 2.5L12 18v-5Z"/>
+        </svg>
+      </div>
+      <div class="stat-card__body">
+        <span class="stat-card__label">Vouchers utilizados</span>
+        <strong class="stat-card__value">{{ vouchersUtilizados }}</strong>
+        <span class="stat-card__hint">Canjes ya utilizados</span>
+      </div>
     </article>
 
     <article class="stat-card">
-      <span class="stat-card__label">Vouchers anulados</span>
-      <strong class="stat-card__value">{{ vouchersAnulados }}</strong>
-      <span class="stat-card__hint">Beneficios revertidos</span>
+      <div class="stat-card__icon">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path fill="currentColor" d="M6.4 5 5 6.4 10.6 12 5 17.6 6.4 19l5.6-5.6 5.6 5.6 1.4-1.4-5.6-5.6L19 6.4 17.6 5 12 10.6 6.4 5Z"/>
+        </svg>
+      </div>
+      <div class="stat-card__body">
+        <span class="stat-card__label">Vouchers anulados</span>
+        <strong class="stat-card__value">{{ vouchersAnulados }}</strong>
+        <span class="stat-card__hint">Beneficios revertidos</span>
+      </div>
     </article>
   </section>
 

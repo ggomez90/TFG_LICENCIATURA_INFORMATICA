@@ -61,6 +61,7 @@ import { ListarNotificacionesComponent } from './features/notificaciones/listar-
 import { ListarNotificacionesAdminComponent } from './features/notificaciones/admin/listar-notificaciones-admin.component';
 import { CrearNotificacionAdminComponent } from './features/notificaciones/admin/crear-notificacion-admin.component';
 import { EditarNotificacionAdminComponent } from './features/notificaciones/admin/editar-notificacion-admin.component';
+import { VerVoucherTipoClienteComponent } from './features/vouchers/roles/cliente/ver-voucher-tipo/ver-voucher-tipo-cliente.component';
 
 //INVITADO
 
@@ -405,6 +406,13 @@ export const routes: Routes = [
       {
         path: 'cliente/vouchers/ver/:id',
         component: VerVoucherClienteComponent,
+        canActivate: [hasRoleGuard],
+        data: { roles: ['CLIENTE'] },
+      },
+
+      {
+        path: 'cliente/vouchers/disponibles/ver/:id',
+        component: VerVoucherTipoClienteComponent,
         canActivate: [hasRoleGuard],
         data: { roles: ['CLIENTE'] },
       },

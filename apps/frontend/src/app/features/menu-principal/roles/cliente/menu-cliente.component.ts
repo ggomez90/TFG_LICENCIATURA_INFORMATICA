@@ -69,19 +69,19 @@ export class MenuClienteComponent {
     },
     {
       titulo: 'Desafíos',
-      descripcion: 'Explorá desafíos activos y participá para sumar puntos.',
+      descripcion: 'Explorá desafíos activos, inscribete y participá para sumar puntos.',
       ruta: '/menu-principal/cliente/desafios',
       variante: 'desafios',
     },
     {
       titulo: 'Biblioteca',
-      descripcion: 'Accedé a contenidos educativos y materiales informativos.',
+      descripcion: 'Accedé a contenidos educativos, materiales informativos y encuestas para que sigamos mejorando este espacio.',
       ruta: '/menu-principal/cliente/biblioteca',
       variante: 'biblioteca',
     },
     {
       titulo: 'Vouchers',
-      descripcion: 'Canjeá tus puntos por beneficios y consultá tus vouchers.',
+      descripcion: 'Consultá por vouchers disponibles y canjeá tus puntos por beneficios.',
       ruta: '/menu-principal/cliente/vouchers',
       variante: 'vouchers',
     },
