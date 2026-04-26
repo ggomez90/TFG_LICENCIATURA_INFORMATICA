@@ -14,7 +14,11 @@
     <p class="dsf-empty__text">{{ error }}</p>
   </div>
 
-  <div *ngIf="!loading && !error" class="dsf-card dsf-card--preview voucher-preview-card">
+  <div
+    *ngIf="!loading && !error"
+    class="dsf-card dsf-card--preview voucher-preview-card"
+    #voucherPdf
+  >
     <div class="voucher-frame">
       <div class="voucher-content">
         <h2 class="voucher-title">{{ tipoTitulo || '(Tipo de voucher)' }}</h2>
@@ -100,6 +104,16 @@
 
   <footer class="pv-actions">
     <button type="button" class="dsf-btn dsf-btn--ghost" (click)="onVolver()">← Volver</button>
+
+    <button
+      *ngIf="!loading && !error"
+      type="button"
+      class="dsf-btn dsf-btn--primary"
+      (click)="descargarPdf()"
+    >
+      Descargar PDF
+    </button>
+
     <div class="pv-actions__spacer"></div>
 
     <button

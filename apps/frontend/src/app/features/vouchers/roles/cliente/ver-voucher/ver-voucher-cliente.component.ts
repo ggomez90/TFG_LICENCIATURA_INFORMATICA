@@ -1,9 +1,20 @@
 import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  OnInit,
+  ViewChild,
+  inject,
+} from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { VoucherApi, VoucherListItem, EstadoVoucherCode } from '../../../../../api/voucher.api';
 import { VoucherTipoApi } from '../../../../../api/voucher-tipo.api';
+
+//import { jsPDFAPI } from 'jspdf';
+import html2canvas from 'html2canvas';
+import {jsPDF } from 'jspdf';
 
 @Component({
   standalone: true,
@@ -13,6 +24,9 @@ import { VoucherTipoApi } from '../../../../../api/voucher-tipo.api';
   styleUrls: ['./ver-voucher-cliente.component.scss'],
 })
 export class VerVoucherClienteComponent implements OnInit {
+  @ViewChild('voucherPdf', { static: false })
+  voucherPdf?: ElementRef<HTMLElement>;
+
   private router = inject(Router);
   private route = inject(ActivatedRoute);
   private voucherTipoApi = inject(VoucherTipoApi);
@@ -88,10 +102,13 @@ export class VerVoucherClienteComponent implements OnInit {
       next: (raw: any) => {
         this.tipoTitulo = String(raw?.titulo ?? this.tipoTitulo);
         this.tipoDescripcion = String(raw?.descripcion ?? '');
+
         const monto = Number(raw?.montoBeneficio);
         this.montoBeneficio = Number.isFinite(monto) ? monto : undefined;
+
         const puntos = Number(raw?.puntosRequeridos);
         this.puntosRequeridos = Number.isFinite(puntos) ? puntos : undefined;
+
         this.cdr.detectChanges();
       },
       error: () => {
@@ -146,9 +163,61 @@ export class VerVoucherClienteComponent implements OnInit {
     });
   }
 
+  async descargarPdf(): Promise<void> {
+    if (!this.voucherPdf?.nativeElement) return;
+
+    const element = this.voucherPdf.nativeElement;
+
+    try {
+      const canvas = await html2canvas(element, {
+        scale: 2,
+        backgroundColor: '#ffffff',
+        useCORS: true,
+        allowTaint: true,
+        scrollX: 0,
+        scrollY: 0,
+      });
+
+      const imgData = canvas.toDataURL('image/png');
+
+      const pdf = new jsPDF({
+        orientation: 'landscape',
+        unit: 'mm',
+        format: 'a4',
+      });
+
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      const pageHeight = pdf.internal.pageSize.getHeight();
+
+      const margin = 10;
+      const maxWidth = pageWidth - margin * 2;
+      const maxHeight = pageHeight - margin * 2;
+
+      let imgWidth = maxWidth;
+      let imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+      if (imgHeight > maxHeight) {
+        imgHeight = maxHeight;
+        imgWidth = (canvas.width * imgHeight) / canvas.height;
+      }
+
+      const x = (pageWidth - imgWidth) / 2;
+      const y = (pageHeight - imgHeight) / 2;
+
+      pdf.addImage(imgData, 'PNG', x, y, imgWidth, imgHeight);
+
+      const codigo = this.codigoTexto || this.voucherId || 'voucher';
+      pdf.save(`voucher-${codigo}.pdf`);
+    } catch (err) {
+      console.error('[VerVoucherCliente] Error generando PDF', err);
+      this.error = 'No se pudo generar el PDF del voucher.';
+      this.cdr.detectChanges();
+    }
+  }
+
   onVolver(): void {
     this.router.navigate(['/menu-principal/cliente/vouchers/mis-vouchers'], {
-      queryParams: { t: Date.now() }
+      queryParams: { t: Date.now() },
     });
   }
 
@@ -156,14 +225,14 @@ export class VerVoucherClienteComponent implements OnInit {
     this.voucherApi.anularCliente(idVoucher).subscribe({
       next: () => {
         this.router.navigate(['/menu-principal/cliente/vouchers/mis-vouchers'], {
-          queryParams: { t: Date.now() }
+          queryParams: { t: Date.now() },
         });
       },
       error: (err) => {
         console.error('[VerVoucherCliente] Error anulando voucher', err);
         this.error = err?.error?.message ?? 'No se pudo anular el voucher.';
         this.cdr.detectChanges();
-      }
+      },
     });
   }
 
@@ -174,6 +243,7 @@ export class VerVoucherClienteComponent implements OnInit {
 
   get estadoTexto(): string {
     const e = Number(this.voucher?.estadoVoucher ?? 0) as EstadoVoucherCode | 0;
+
     switch (e) {
       case 1: return 'CREADO';
       case 2: return 'ADQUIRIDO';
@@ -185,8 +255,10 @@ export class VerVoucherClienteComponent implements OnInit {
 
   get estadoClase(): 'state-badge--ok' | 'state-badge--muted' | 'state-badge--muted2' {
     const e = Number(this.voucher?.estadoVoucher ?? 0);
+
     if (e === 3) return 'state-badge--ok';
     if (e === 4) return 'state-badge--muted';
+
     return 'state-badge--muted2';
   }
 
