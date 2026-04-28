@@ -236,7 +236,7 @@
       display: grid;
       gap: 2px;
       z-index: 30;
-      font-size: 16px;
+      font-size: 1.3rem;
 
       a, button.logout{
         appearance: none;
@@ -750,94 +750,155 @@
   width: 10px;
   height: 10px;
   border-radius: 50%;
-  background: #e53935;
+  background: #ef4444;
   border: 2px solid #fff;
+  box-shadow: 0 4px 10px rgba(239, 68, 68, 0.25);
 }
 
 .bell-dropdown {
   position: absolute;
-  top: calc(100% + 10px);
+  top: calc(100% + 12px);
   right: 0;
-  width: 360px;
+  width: 390px;
   max-width: calc(100vw - 24px);
-  background: #fff;
-  border: 1px solid #dfe5dc;
-  border-radius: 16px;
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
   z-index: 50;
   overflow: hidden;
+  border-radius: 22px;
+  color: #0f562a;
+  background:
+    radial-gradient(circle at top right, rgba(34, 197, 94, 0.10), transparent 28%),
+    linear-gradient(180deg, #ffffff 0%, #f8fffa 100%);
+  border: 1px solid rgba(15, 86, 42, 0.14);
+  box-shadow:
+    0 18px 42px rgba(15, 86, 42, 0.18),
+    0 6px 16px rgba(2, 6, 23, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.58);
 }
 
 .bell-dropdown__header {
-  padding: 14px 16px;
-  font-weight: 800;
-  font-size: 14px;
-  letter-spacing: 0.03em;
-  border-bottom: 1px solid #edf2ea;
-  overflow-wrap: anywhere;
+  padding: 15px 18px;
+  font-weight: 900;
+  font-size: 1rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #0f562a;
+  border-bottom: 1px solid rgba(15, 86, 42, 0.10);
+  background:
+    radial-gradient(circle at top right, rgba(255, 255, 255, 0.18), transparent 40%),
+    linear-gradient(135deg, rgba(15, 86, 42, 0.10) 0%, rgba(15, 86, 42, 0.06) 60%, rgba(15, 86, 42, 0.04) 100%);
 }
 
 .bell-dropdown__body {
-  max-height: 360px;
+  max-height: 380px;
   overflow: auto;
+  padding: 8px;
 }
 
 .bell-dropdown__footer {
-  padding: 12px 16px;
-  border-top: 1px solid #edf2ea;
-  background: #fafcf9;
+  padding: 12px;
+  border-top: 1px solid rgba(15, 86, 42, 0.10);
+  background: rgba(248, 255, 250, 0.9);
 }
 
 .bell-state {
-  padding: 18px 16px;
+  padding: 22px 16px;
   text-align: center;
-  color: #687076;
-  font-size: 14px;
+  color: #0f562a;
+  font-size: 1rem;
+  font-weight: 800;
   overflow-wrap: anywhere;
 }
 
 .bell-item {
   width: 100%;
   text-align: left;
-  border: 0;
-  background: #fff;
-  padding: 14px 16px;
-  border-bottom: 1px solid #f0f3ee;
+  border: 1px solid rgba(15, 86, 42, 0.10);
+  border-radius: 16px;
+  background:
+    radial-gradient(circle at top right, rgba(255, 255, 255, 0.20), transparent 34%),
+    linear-gradient(135deg, rgba(15, 86, 42, 0.08) 0%, rgba(15, 86, 42, 0.04) 55%, rgba(255, 255, 255, 0.96) 100%);
+  padding: 13px 14px;
   cursor: pointer;
+  margin-bottom: 8px;
+  box-shadow:
+    0 6px 14px rgba(15, 86, 42, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.55);
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.18s ease,
+    border-color 0.18s ease,
+    background 0.18s ease;
 }
 
 .bell-item:hover {
-  background: #f7fbf5;
+  transform: translateY(-1px);
+  border-color: rgba(15, 86, 42, 0.20);
+  box-shadow:
+    0 10px 22px rgba(15, 86, 42, 0.10),
+    inset 0 1px 0 rgba(255, 255, 255, 0.62);
 }
 
 .bell-item__title {
-  font-size: 14px;
-  font-weight: 800;
-  color: #1f2a1f;
+  font-size: 1rem;
+  font-weight: 900;
+  color: #0f562a;
   margin-bottom: 4px;
   overflow-wrap: anywhere;
 }
 
 .bell-item__message {
-  font-size: 13px;
-  color: #4d5a50;
-  line-height: 1.4;
+  font-size: 0.95rem;
+  color: #0f562a;
+  line-height: 1.45;
   margin-bottom: 8px;
+  font-weight: 600;
   overflow-wrap: anywhere;
 }
 
 .bell-item__date {
-  font-size: 12px;
-  color: #7a847c;
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  font-size: 0.82rem;
+  color: #0f562a;
+  font-weight: 800;
+  padding: 5px 9px;
+  border-radius: 999px;
+  background: rgba(15, 86, 42, 0.08);
+  border: 1px solid rgba(15, 86, 42, 0.10);
 }
 
 .bell-all-btn {
   width: 100%;
-  min-height: 40px;
+  min-height: 42px;
   border: 0;
-  border-radius: 12px;
-  font-weight: 800;
+  border-radius: 14px;
+  font-weight: 900;
   cursor: pointer;
+  color: #ffffff;
+  background: linear-gradient(135deg, #22c55e 0%, #15803d 100%);
+  box-shadow: 0 10px 18px rgba(34, 197, 94, 0.22);
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.18s ease,
+    filter 0.18s ease;
+}
+
+.bell-all-btn:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.05);
+  box-shadow: 0 14px 24px rgba(34, 197, 94, 0.28);
+}
+
+@media (max-width: 480px) {
+  .bell-dropdown {
+    position: fixed;
+    top: 58px;
+    left: 10px;
+    right: 10px;
+    width: auto;
+    max-width: none;
+  }
 }
 
 /* Ajustes extra para mobile chico */

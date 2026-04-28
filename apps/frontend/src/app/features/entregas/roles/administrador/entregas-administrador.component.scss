@@ -74,7 +74,7 @@
 
 .page-sub {
   margin: 0;
-  color: #678074;
+  color: #0f562a;
   font-size: 1.2rem;
   line-height: 1.5;
   overflow-wrap: anywhere;
@@ -92,7 +92,7 @@
 .quick-search__label {
   font-size: 1.1rem;
   font-weight: 800;
-  color: #315743;
+  color: #0f562a;
   line-height: 1.3;
   overflow-wrap: anywhere;
 }
@@ -135,15 +135,15 @@
 }
 
 .stat__num {
-  font-size: clamp(2rem, 2.55vw, 2.5rem);
+  font-size: clamp(2rem, 2.55vw, 2.8rem);
   font-weight: 900;
   line-height: 1;
-  color: #0f5132;
+  color: #0f562a;
 }
 
 .stat__label {
-  font-size: 1rem;
-  color: #547062;
+  font-size: 1.2rem;
+  color: #0f562a;
   font-weight: 700;
   text-align: center;
   line-height: 1.3;
@@ -193,7 +193,7 @@
   font-size: 1.1rem;
   font-weight: 800;
   text-align: center;
-  color: #315743;
+  color: #0f562a;
   line-height: 1.3;
   overflow-wrap: anywhere;
 }
@@ -208,7 +208,7 @@ select {
   border-radius: 14px;
   border: 1px solid #cfe7d7;
   background: #fff;
-  color: #163024;
+  color: #0f562a;
   padding: 0.8rem 0.95rem;
   font-size: 1rem;
   box-sizing: border-box;
@@ -314,7 +314,7 @@ select {
   }
 
   th {
-    font-size: 0.9rem;
+    font-size: 1.1rem;
     text-transform: uppercase;
     letter-spacing: 0.04em;
     color: #0f562a;
@@ -324,7 +324,7 @@ select {
   }
 
   td {
-    color: #254032;
+    color: #0f562a;
     font-size: 1.1rem;
     background: rgba(255, 255, 255, 0.94);
     overflow-wrap: anywhere;

@@ -64,7 +64,7 @@
     margin: 0;
     max-width: 760px;
     color: rgba(255, 255, 255, 0.88);
-    font-size: 1.08rem;
+    font-size: 1.1rem;
     line-height: 1.6;
     overflow-wrap: anywhere;
   }
@@ -75,11 +75,12 @@
   display: inline-flex;
   align-items: center;
   margin-bottom: 0.55rem;
-  font-size: 1.2rem;
+  font-size: 1.3rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.08em;
   max-width: 100%;
+  color: #ffffff;
 }
 
 .hero-actions {
@@ -99,8 +100,9 @@
   min-width: 0;
 
   span {
-    font-size: 0.95rem;
+    font-size: 1.1rem;
     font-weight: 700;
+    text-align: center;
     color: rgba(255, 255, 255, 0.86);
     line-height: 1.3;
     overflow-wrap: anywhere;
@@ -156,7 +158,7 @@
 
   h2 {
     margin: 0;
-    font-size: 1.5rem;
+    font-size: 1.6rem;
     line-height: 1.25;
     font-weight: 800;
     overflow-wrap: anywhere;
@@ -173,6 +175,14 @@
   gap: 0.75rem;
   flex-wrap: wrap;
   min-width: 0;
+
+  h4 {
+    font-size: 1.3rem;
+  }
+
+  span {
+    font-size: 1.3rem;
+  }
 }
 
 .hero-stats {
@@ -199,18 +209,20 @@
 }
 
 .hero-stat__label {
-  font-size: 0.95rem;
+  font-size: 1.2rem;
   color: rgba(255, 255, 255, 0.82);
   font-weight: 700;
   line-height: 1.3;
   overflow-wrap: anywhere;
+  text-align: center;
 }
 
 .hero-stat__value {
-  font-size: 2.2rem;
+  font-size: 2.6rem;
   font-weight: 800;
   line-height: 1;
   color: #fff;
+  text-align: center;
 }
 
 .hero-progress {
@@ -224,14 +236,14 @@
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  font-size: 0.98rem;
+  font-size: 1.1rem;
   color: rgba(255, 255, 255, 0.88);
   flex-wrap: wrap;
 }
 
 .hero-progress__bar {
   width: 100%;
-  height: 12px;
+  height: 16px;
   border-radius: 999px;
   overflow: hidden;
   display: flex;
@@ -301,19 +313,19 @@
 
   h3 {
     margin: 0.2rem 0 0.3rem;
-    font-size: 1.35rem;
+    font-size: 1.4rem;
     font-weight: 800;
-    color: #163024;
+    color: #0f562a;
     line-height: 1.25;
     overflow-wrap: anywhere;
   }
 
   p {
     margin: 0;
-    color: #678074;
+    color: #0f562a;
     line-height: 1.6;
     max-width: 760px;
-    font-size: 1.1rem;
+    font-size: 1.2rem;
     overflow-wrap: anywhere;
   }
 }
@@ -369,7 +381,7 @@
 .kpi-label {
   font-size: 1.2rem;
   font-weight: 700;
-  color: #315743;
+  color: #0f562a;
   line-height: 1.3;
   overflow-wrap: anywhere;
   text-align: center;
@@ -380,11 +392,11 @@
   text-align: center;
   line-height: 1;
   font-weight: 800;
-  color: #163024;
+  color: #0f562a;
 }
 
 .kpi-helper {
-  color: #6d8578;
+  color: #0f562a;
   font-size: 1rem;
   line-height: 1.45;
   overflow-wrap: anywhere;
@@ -429,8 +441,8 @@
   gap: 0.45rem;
 
   small {
-    color: #678074;
-    font-size: 0.92rem;
+    color: #0f562a;
+    font-size: 1.1rem;
     font-weight: 700;
     line-height: 1.35;
   }
@@ -438,7 +450,7 @@
 
 .distribution-progress__bar {
   width: 100%;
-  height: 10px;
+  height: 14px;
   border-radius: 999px;
   background: #edf7f0;
   overflow: hidden;
@@ -499,7 +511,7 @@
   padding: 0.42rem 0.8rem;
   background: rgba(255, 255, 255, 0.16);
   color: inherit;
-  font-size: 0.9rem;
+  font-size: 1.1rem;
   line-height: 1.2;
 
   &.chip-soft {
@@ -565,23 +577,23 @@
 }
 
 .summary-card__label {
-  font-size: 1rem;
+  font-size: 1.2rem;
   font-weight: 700;
-  color: #547062;
+  color: #0f562a;
   text-align: center;
 }
 
 .summary-card__value {
-  font-size: 3rem;
+  font-size: 3.3rem;
   line-height: 1;
   font-weight: 800;
-  color: #163024;
+  color: #0f562a;
   text-align: center;
 }
 
 .summary-card__helper {
-  color: #6d8578;
-  font-size: 0.95rem;
+  color: #0f562a;
+  font-size: 1.1rem;
   line-height: 1.4;
   text-align: center;
 }
@@ -643,22 +655,22 @@
     padding: 0.95rem 0.85rem;
     border-bottom: 1px solid #ebf5ee;
     vertical-align: middle;
-    color: #254032;
+    color: #0f562a;
     text-align: center;
   }
 
   thead th {
     background: rgba(226, 247, 234, 0.95);
-    color: #6a8175;
+    color: #0f562a;
     font-weight: 800;
-    font-size: 1rem;
+    font-size: 1.1rem;
     text-transform: uppercase;
     letter-spacing: 0.04em;
     text-align: center;
   }
 
   tbody td {
-    font-size: 1.1rem;
+    font-size: 1.2rem;
     overflow-wrap: anywhere;
   }
 
@@ -687,7 +699,7 @@
 }
 
 .muted {
-  color: #678074;
+  color: #0f562a;
 }
 
 .small {

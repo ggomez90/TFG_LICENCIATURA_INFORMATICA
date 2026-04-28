@@ -308,7 +308,7 @@
 }
 
 .stat-card__hint {
-  color: #6d8578;
+  color: #0f562a;
   font-size: 1rem;
   line-height: 1.45;
   overflow-wrap: anywhere;
@@ -465,20 +465,19 @@
   background: rgba(255, 255, 255, 0.78);
   border: 1px solid rgba(15, 86, 42, 0.12);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.75);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  width: fit-content;
 }
 
-.highlight-card__progress-label {
-  display: block;
-  font-size: 1rem;
-  color: #0f562a;
-}
-
+.highlight-card__progress-label,
 .highlight-card__progress-value {
-  display: block;
-  margin-top: 0.32rem;
-  font-size: 1.3rem;
-  font-weight: 900;
+  display: inline;
   color: #0f562a;
+  font-weight: 900;
+  font-size: 1.5rem;
+  margin-top: 0.3rem;
 }
 
 .highlight-card__content {

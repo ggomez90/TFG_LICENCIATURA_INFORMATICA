@@ -119,25 +119,25 @@ export class EntregasOperarioComponent {
       {
         label: 'Pendientes',
         value: items.filter((x) => x.estado === 2).length,
-        helper: 'Entregas listas para control operativo',
+        helper: 'Entregas por validar/rechazar',
         icon: 'hourglass_top',
       },
       {
-        label: 'Validadas hoy',
+        label: 'Validadas',
         value: items.filter((x) => this.esHoy(x.fechaValidacion) && x.estado === 3).length,
-        helper: 'Validadas hoy por el operario actual',
+        helper: 'Entregas aceptadas hoy',
         icon: 'task_alt',
       },
       {
-        label: 'Rechazadas hoy',
+        label: 'Rechazadas',
         value: items.filter((x) => this.esHoy(x.fechaValidacion) && x.estado === 4).length,
-        helper: 'Rechazadas hoy por el operario actual',
+        helper: 'Entregas desestimadas de hoy',
         icon: 'dangerous',
       },
       {
-        label: 'Puntos otorgados hoy',
+        label: 'Puntos otorgados',
         value: items.filter((x) => this.esHoy(x.fechaValidacion) && x.estado === 5).length,
-        helper: 'Entregas confirmadas para acreditar puntos',
+        helper: 'Entregas finalizadas de hoy',
         icon: 'workspace_premium',
       },
     ];

@@ -46,9 +46,10 @@ export class EntregaOperarioModalComponent {
 
   private readonly entregaSignal = signal<EntregaOperarioModalVm | null>(null);
 
-  @Input()
+@Input()
   set entrega(value: EntregaOperarioModalVm | null) {
     this.entregaSignal.set(value);
+    this.motivoRechazo.set('');
   }
   get entrega(): EntregaOperarioModalVm | null {
     return this.entregaSignal();
@@ -77,6 +78,16 @@ export class EntregaOperarioModalComponent {
   readonly mostrarConfirmarPuntos = computed(() => this.estadoActual() === 3);
 
   readonly esPendiente = computed(() => this.estadoActual() === 2);
+
+  readonly motivoRechazoLimpio = computed(() => this.motivoRechazo().trim());
+
+  readonly puedeValidar = computed(() =>
+    this.estadoActual() === 2 && this.motivoRechazoLimpio().length === 0
+  );
+
+  readonly puedeRechazar = computed(() =>
+    this.estadoActual() === 2 && this.motivoRechazoLimpio().length > 0
+  );
 
   getEstadoLabel(estado: EstadoEntregaCode): string {
     const map: Record<EstadoEntregaCode, string> = {
@@ -110,15 +121,19 @@ export class EntregaOperarioModalComponent {
   onValidar(): void {
     const entrega = this.entregaSignal();
     if (!entrega || entrega.estado !== 2) return;
+    if (!this.puedeValidar()) return;
+
     this.validarEntrega.emit(entrega);
   }
 
   onRechazar(): void {
     const entrega = this.entregaSignal();
     if (!entrega || entrega.estado !== 2) return;
+    if (!this.puedeRechazar()) return;
+
     this.rechazarEntrega.emit({
       entrega,
-      motivo: this.motivoRechazo().trim(),
+      motivo: this.motivoRechazoLimpio(),
     });
   }
 

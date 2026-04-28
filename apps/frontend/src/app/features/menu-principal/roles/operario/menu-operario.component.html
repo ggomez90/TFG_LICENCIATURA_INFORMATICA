@@ -54,12 +54,12 @@
         </div>
       </div>
 
-      <div class="hero-note">
+<!--       <div class="hero-note">
         <span class="material-symbols-outlined">info</span>
         <span>
           El panel se construye con información real del módulo de entregas y se actualiza al recargar la vista.
         </span>
-      </div>
+      </div> -->
     </div>
   </div>
 
@@ -89,7 +89,7 @@
       <div>
         <span class="section-eyebrow">Acción rápida</span>
         <h3>Módulos principales</h3>
-        <p>Accesos directos a las tareas más frecuentes del rol operario.</p>
+        <p>Accesos directos a las tareas más frecuentes.</p>
       </div>
     </div>
 
@@ -158,7 +158,7 @@
           *ngFor="let entrega of pendientes().slice(0, 4); trackBy: trackByEntrega"
         >
           <div class="action-card-head">
-            <div>
+            <div class="action-card-head-text">
               <h4>{{ entrega.codigoVisible }}</h4>
               <small>{{ entrega.desafioTitulo }}</small>
             </div>
@@ -168,21 +168,21 @@
             </span>
           </div>
 
-          <div class="action-meta">
+          <div class="action-meta-inline">
             <div>
-              <span class="label">Cliente</span>
+              <span class="label">· Cliente</span>
               <strong>{{ entrega.clienteNombre }}</strong>
             </div>
             <div>
-              <span class="label">Cantidad</span>
+              <span class="label">· Cantidad</span>
               <strong>{{ entrega.cantidadDeclarada | number:'1.0-3' }} {{ entrega.unidadMedida }}</strong>
             </div>
             <div>
-              <span class="label">Ubicación</span>
+              <span class="label">· Ubicación</span>
               <strong>{{ entrega.ubicacion || '-' }}</strong>
             </div>
             <div>
-              <span class="label">Vencimiento</span>
+              <span class="label">· Vencimiento</span>
               <strong>{{ entrega.fechaVencimiento | date:'dd/MM/yyyy HH:mm' }}</strong>
             </div>
           </div>

@@ -28,27 +28,27 @@
 
         <div class="info-grid info-grid--compact">
           <div>
-            <span class="label">Cliente</span>
+            <span class="label">Cliente:</span>
             <strong>{{ item.clienteNombre }}</strong>
           </div>
           <div>
-            <span class="label">Desafío</span>
+            <span class="label">Desafío:</span>
             <strong>{{ item.desafioTitulo }}</strong>
           </div>
           <div>
-            <span class="label">Ubicación</span>
+            <span class="label">Ubicación:</span>
             <strong>{{ item.ubicacion || 'Sin ubicación' }}</strong>
           </div>
           <div>
-            <span class="label">Fecha creación</span>
+            <span class="label">Fecha creación:</span>
             <strong>{{ item.fechaCreacion | date:'dd/MM/yyyy HH:mm' }}</strong>
           </div>
           <div>
-            <span class="label">Fecha vencimiento</span>
+            <span class="label">Fecha vencimiento:</span>
             <strong>{{ item.fechaVencimiento | date:'dd/MM/yyyy HH:mm' }}</strong>
           </div>
           <div>
-            <span class="label">Operario</span>
+            <span class="label">Operario:</span>
             <strong>{{ item.operarioNombre || '-' }}</strong>
           </div>
         </div>
@@ -59,21 +59,21 @@
 
         <div class="info-grid info-grid--compact">
           <div>
-            <span class="label">Cantidad declarada</span>
+            <span class="label">Cantidad declarada:</span>
             <strong>{{ item.cantidadDeclarada | number:'1.0-3' }} {{ item.unidadMedida }}</strong>
           </div>
           <div>
-            <span class="label">Cantidad verificada</span>
+            <span class="label">Cantidad verificada:</span>
             <strong>
               {{ item.cantidadVerificada != null ? (item.cantidadVerificada | number:'1.0-3') + ' ' + item.unidadMedida : '-' }}
             </strong>
           </div>
           <div>
-            <span class="label">Fecha validación</span>
+            <span class="label">Fecha validación:</span>
             <strong>{{ item.fechaValidacion ? (item.fechaValidacion | date:'dd/MM/yyyy HH:mm') : '-' }}</strong>
           </div>
           <div>
-            <span class="label">Puntos estimados</span>
+            <span class="label">Puntos estimados:</span>
             <strong>{{ item.puntosEstimados ?? 0 }}</strong>
           </div>
         </div>
@@ -128,6 +128,7 @@
         *ngIf="mostrarRechazar()"
         type="button"
         class="btn btn-danger"
+        [disabled]="!puedeRechazar()"
         (click)="onRechazar()"
       >
         <span class="material-symbols-outlined">cancel</span>
@@ -138,6 +139,7 @@
         *ngIf="mostrarValidar()"
         type="button"
         class="btn btn-primary"
+        [disabled]="!puedeValidar()"
         (click)="onValidar()"
       >
         <span class="material-symbols-outlined">check_circle</span>
